@@ -1,0 +1,23 @@
+enum KeyElementsEnum {
+    GlobalReference = 'GlobalReference',
+    AccessPermissionRule = 'AccessPermissionRule',
+    Blob = 'Blob',
+    ConceptDictionary = 'ConceptDictionary',
+    DataElement = 'DataElement',
+    File = 'File',
+    Event = 'Event',
+    Operation = 'Operation',
+    OperationVariable = 'OperationVariable',
+    Property = 'Property',
+    ReferenceElement = 'ReferenceElement',
+    RelationshipElement = 'RelationshipElement',
+    SubmodelElement = 'SubmodelElement',
+    SubmodelElementCollection = 'SubmodelElementCollection',
+    View = 'View',
+    Asset = 'Asset',
+    AssetAdministrationShell = 'AssetAdministrationShell',
+    ConceptDescription = 'ConceptDescription',
+    Submodel = 'Submodel',
+    MultiLanguageProperty = 'MultiLanguageProperty',
+}
+export { KeyElementsEnum };
