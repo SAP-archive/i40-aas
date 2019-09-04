@@ -100,14 +100,8 @@
           "type": "string"
         },
         "idType": {
-          "oneOf": [
-            {
-              "type": "null"
-            },
-            {
               "$ref": "#/definitions/KeyType"
-            }
-          ]
+
         }
       }
     },
@@ -158,24 +152,14 @@
       "additionalProperties": false,
       "properties": {
         "type": {
-          "oneOf": [
-            {
-              "type": "null"
-            },
-            {
+
               "$ref": "#/definitions/KeyElements"
-            }
-          ]
+
         },
         "idType": {
-          "oneOf": [
-            {
-              "type": "null"
-            },
-            {
+
               "$ref": "#/definitions/KeyType"
-            }
-          ]
+
         },
         "value": {
           "type": "string"
@@ -282,14 +266,7 @@
           "$ref": "#/definitions/Reference"
         },
         "kind": {
-          "oneOf": [
-            {
-              "type": "null"
-            },
-            {
-              "$ref": "#/definitions/Kind"
-            }
-          ]
+          "$ref": "#/definitions/Kind"
         },
         "semanticId": {
           "$ref": "#/definitions/Reference"
@@ -310,7 +287,6 @@
     },
     "Kind": {
       "type": "string",
-      "description": "",
       "x-enumNames": ["Type", "Instance"],
       "enum": ["Type", "Instance"]
     },
@@ -345,14 +321,9 @@
           }
         },
         "kind": {
-          "oneOf": [
-            {
-              "type": "null"
-            },
-            {
-              "$ref": "#/definitions/Kind"
-            }
-          ]
+
+          "$ref": "#/definitions/Kind"
+
         },
         "semanticId": {
           "$ref": "#/definitions/Reference"
@@ -382,8 +353,7 @@
           "$ref": "#/definitions/ModelType"
         }
       },
-      "anyOf": [
-        {
+      "anyOf": [{
           "$ref": "#/definitions/Formula"
         },
         {
@@ -438,14 +408,9 @@
           "$ref": "#/definitions/Reference"
         },
         "kind": {
-          "oneOf": [
-            {
-              "type": "null"
-            },
-            {
-              "$ref": "#/definitions/Kind"
-            }
-          ]
+
+          "$ref": "#/definitions/Kind"
+
         },
         "modelType": {
           "$ref": "#/definitions/ModelType"
@@ -499,14 +464,9 @@
           "$ref": "#/definitions/Reference"
         },
         "kind": {
-          "oneOf": [
-            {
-              "type": "null"
-            },
-            {
-              "$ref": "#/definitions/Kind"
-            }
-          ]
+
+          "$ref": "#/definitions/Kind"
+
         },
         "modelType": {
           "$ref": "#/definitions/ModelType"
@@ -553,14 +513,9 @@
           "$ref": "#/definitions/Reference"
         },
         "kind": {
-          "oneOf": [
-            {
-              "type": "null"
-            },
-            {
-              "$ref": "#/definitions/Kind"
-            }
-          ]
+
+          "$ref": "#/definitions/Kind"
+
         },
         "modelType": {
           "$ref": "#/definitions/ModelType"
@@ -572,8 +527,7 @@
           }
         }
       },
-      "anyOf": [
-        {
+      "anyOf": [{
           "$ref": "#/definitions/Property"
         },
         {
@@ -595,7 +549,7 @@
           "$ref": "#/definitions/Operation"
         },
         {
-          "$ref": "#/definitions/OperationVariable"
+          "$ref": "#/definitions/MultiLanguageProperty"
         }
       ]
     },
@@ -737,14 +691,9 @@
           "$ref": "#/definitions/Reference"
         },
         "kind": {
-          "oneOf": [
-            {
-              "type": "null"
-            },
-            {
-              "$ref": "#/definitions/Kind"
-            }
-          ]
+
+          "$ref": "#/definitions/Kind"
+
         },
         "embeddedDataSpecifications": {
           "type": "array",
@@ -798,14 +747,9 @@
           "$ref": "#/definitions/Reference"
         },
         "kind": {
-          "oneOf": [
-            {
-              "type": "null"
-            },
-            {
-              "$ref": "#/definitions/Kind"
-            }
-          ]
+
+          "$ref": "#/definitions/Kind"
+
         },
         "embeddedDataSpecifications": {
           "type": "array",
@@ -856,14 +800,9 @@
           "$ref": "#/definitions/Reference"
         },
         "kind": {
-          "oneOf": [
-            {
-              "type": "null"
-            },
-            {
-              "$ref": "#/definitions/Kind"
-            }
-          ]
+
+          "$ref": "#/definitions/Kind"
+
         },
         "embeddedDataSpecifications": {
           "type": "array",
@@ -914,14 +853,9 @@
           "$ref": "#/definitions/Reference"
         },
         "kind": {
-          "oneOf": [
-            {
-              "type": "null"
-            },
-            {
-              "$ref": "#/definitions/Kind"
-            }
-          ]
+
+          "$ref": "#/definitions/Kind"
+
         },
         "embeddedDataSpecifications": {
           "type": "array",
@@ -972,14 +906,9 @@
           "$ref": "#/definitions/Reference"
         },
         "kind": {
-          "oneOf": [
-            {
-              "type": "null"
-            },
-            {
-              "$ref": "#/definitions/Kind"
-            }
-          ]
+
+          "$ref": "#/definitions/Kind"
+
         },
         "embeddedDataSpecifications": {
           "type": "array",
@@ -1030,14 +959,9 @@
           "$ref": "#/definitions/Reference"
         },
         "kind": {
-          "oneOf": [
-            {
-              "type": "null"
-            },
-            {
-              "$ref": "#/definitions/Kind"
-            }
-          ]
+
+          "$ref": "#/definitions/Kind"
+
         },
         "embeddedDataSpecifications": {
           "type": "array",
@@ -1082,14 +1006,9 @@
           "$ref": "#/definitions/Reference"
         },
         "kind": {
-          "oneOf": [
-            {
-              "type": "null"
-            },
-            {
-              "$ref": "#/definitions/Kind"
-            }
-          ]
+
+          "$ref": "#/definitions/Kind"
+
         },
         "modelType": {
           "$ref": "#/definitions/ModelType"
@@ -1147,9 +1066,8 @@
       "additionalProperties": false,
       "properties": {
         "localAccessControl": {
-          "oneOf": [
-            {
-              "$ref": "#/definitions/LocalAccessControl"
+          "oneOf": [{
+              "$ref": "#/definitions/AccessControl"
             },
             {
               "type": "null"
@@ -1157,8 +1075,7 @@
           ]
         },
         "externalAccessControl": {
-          "oneOf": [
-            {
+          "oneOf": [{
               "type": "object"
             },
             {
@@ -1185,8 +1102,7 @@
           "$ref": "#/definitions/Reference"
         },
         "selectableEnvironmentAttributes": {
-          "oneOf": [
-            {
+          "oneOf": [{
               "$ref": "#/definitions/Submodel"
             },
             {
@@ -1198,8 +1114,7 @@
           "$ref": "#/definitions/Reference"
         },
         "accessPermissionRule": {
-          "oneOf": [
-            {
+          "oneOf": [{
               "$ref": "#/definitions/AccessPermissionRule"
             },
             {
@@ -1279,8 +1194,7 @@
           "$ref": "#/definitions/Reference"
         },
         "targetObjectAttributes": {
-          "oneOf": [
-            {
+          "oneOf": [{
               "$ref": "#/definitions/ObjectAttributes"
             },
             {

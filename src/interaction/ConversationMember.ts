@@ -55,4 +55,4 @@ class Identification implements IIdentification {
     }
 }
 
-export { ConversationMember, Role };
+export { ConversationMember, Role, IConversationMember };

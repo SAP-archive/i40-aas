@@ -1,12 +1,12 @@
-import { ConversationMember } from './ConversationMember';
+import { IConversationMember, ConversationMember } from './ConversationMember';
 
 interface IFrame {
     semanticProtocol: string;
     type: string;
     messageId: string;
     replyBy?: number;
-    receiver: ConversationMember;
-    sender: ConversationMember;
+    receiver?: IConversationMember;
+    sender: IConversationMember;
     conversationId: string;
 }
 
@@ -15,11 +15,11 @@ class Frame implements IFrame {
     type: string;
     messageId: string;
     replyBy?: number | undefined;
-    receiver: ConversationMember;
+    receiver?: ConversationMember;
     sender: ConversationMember;
     conversationId: string;
 
-    constructor(obj: IFrame) {
+    constructor(obj: Frame) {
         this.semanticProtocol = obj.semanticProtocol;
         this.type = obj.type;
         this.messageId = obj.messageId;
@@ -29,4 +29,4 @@ class Frame implements IFrame {
         this.conversationId = obj.conversationId;
     }
 }
-export { Frame };
+export { Frame, IFrame };

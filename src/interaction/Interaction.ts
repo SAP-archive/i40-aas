@@ -1,7 +1,7 @@
-import { Frame } from './Frame';
+import { IFrame, Frame } from './Frame';
 
 interface IInteractionMessage {
-    frame: Frame;
+    frame: IFrame;
     interactionElements: Array<Object>;
 }
 
