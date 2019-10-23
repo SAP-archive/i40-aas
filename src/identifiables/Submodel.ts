@@ -23,7 +23,7 @@ import { Operation } from '../referables/Operation';
 interface SubmodelInterface {
     qualifiers?: Array<Constraint>;
     modelType?: ModelType;
-    idShort?: string;
+    idShort: string;
     parent?: Reference;
     category?: string;
     descriptions?: Array<Description>;
@@ -40,7 +40,7 @@ class Submodel implements HasModelType, Identifiable, HasKind, HasSemantics, Has
     }
     qualifiers?: Array<Constraint> = [];
     modelType: ModelType = { name: KeyElementsEnum.Submodel };
-    idShort?: string;
+    idShort: string;
     parent?: Reference;
     category?: string;
     descriptions: Array<Description> = [];
@@ -65,6 +65,10 @@ class Submodel implements HasModelType, Identifiable, HasKind, HasSemantics, Has
     }
     getSubmodelElements(): Array<SubmodelElement> {
         return this.submodelElements;
+    }
+
+    getSubmodelIdShort(): string {
+        return this.idShort;
     }
     setSubmodelElements(submodelElements: Array<SubmodelElement>) {
         var that = this;

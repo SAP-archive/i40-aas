@@ -5,7 +5,7 @@ interface IFrame {
     type: string;
     messageId: string;
     replyBy?: number;
-    receiver?: IConversationMember;
+    receiver: IConversationMember;
     sender: IConversationMember;
     conversationId: string;
 }
@@ -15,7 +15,7 @@ class Frame implements IFrame {
     type: string;
     messageId: string;
     replyBy?: number | undefined;
-    receiver?: ConversationMember;
+    receiver: ConversationMember;
     sender: ConversationMember;
     conversationId: string;
 

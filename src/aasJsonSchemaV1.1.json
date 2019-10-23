@@ -89,6 +89,15 @@
           "items": {
             "$ref": "#/definitions/ConceptDictionary"
           }
+        },
+        "security": {
+          "oneOf": [{
+              "$ref":"#/definitions/PolicyAdministrationPoint"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       }
     },
@@ -107,7 +116,6 @@
     },
     "KeyType": {
       "type": "string",
-      "description": "",
       "x-enumNames": ["Custom", "URI", "IRDI", "IdShort"],
       "enum": ["Custom", "URI", "IRDI", "IdShort"]
     },
