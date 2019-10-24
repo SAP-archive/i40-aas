@@ -7,19 +7,16 @@
   "scripts": {
     "format": "prettier --config .prettierrc.js --write \"./src/**/*.ts\"",
     "test": "mocha -r ts-node/register tests/**/*.test.ts",
-    "tsc": "tsc",
-    "build": "npm run tsc",
+    "build": "tsc",
     "postinstall": "npm run build",
-    "start": "npm run build && node/dist/index.js",
-    "browserify": "npm run  build && browserify ./dist/index.js --standalone aas --outfile aasForBrowser.js"
+    "start": "node /dist/index.js",
+    "browserify": "npm run build && browserify ./dist/index.js --standalone aas --outfile aasForBrowser.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "ajv": "^6.10.2",
-    "install": "^0.13.0",
     "jsonschema": "^1.2.4",
-    "npm": "^6.10.2",
     "typescript": "^3.4.5"
   },
   "devDependencies": {
@@ -29,6 +26,7 @@
     "chai": "^4.2.0",
     "mocha": "^6.1.4",
     "nyc": "^14.1.1",
+    "npm": "^6.10.2",
     "ts-node": "^8.2.0",
     "typescript": "^3.4.5",
     "prettier": "^1.18.2"

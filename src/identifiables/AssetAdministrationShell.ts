@@ -2,7 +2,6 @@ import { applyMixins } from '../characteristics/mixins';
 import { Reference } from '../characteristics/interfaces/Reference';
 import { Identifiable } from '../characteristics/Identifiable';
 import { HasDataSpecification } from '../characteristics/HasDataSpecification';
-import { throws } from 'assert';
 import { ConceptDescription } from './ConceptDescription';
 import { ConceptDictionary } from '../referables/ConceptDictionary';
 import { View } from '../referables/View';
