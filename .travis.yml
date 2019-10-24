@@ -2,9 +2,9 @@ dist: trusty
 language: node_js
 git:
   depth: 1
-branches:
-  only:
-  - master
+#branches:
+  #only:
+  #- master
 
 stages:
   - name: release
