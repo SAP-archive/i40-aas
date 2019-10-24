@@ -7,14 +7,11 @@ script:
   - printenv
 
 before_install:
-  - echo "NPM TESTS"
+  - npm install
+  - npm test
 
 install:
-  - echo "SKIP."
-  - ls -a
-  - node --version
-  - npm install express
-  - echo "NPM BUILD"
+  - npm run build
 
 before_deploy:
   - echo "GIT LOGIN, BRANCH AND COMMIT"
