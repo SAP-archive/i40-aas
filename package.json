@@ -9,6 +9,7 @@
     "test": "mocha -r ts-node/register tests/**/*.test.ts",
     "build": "tsc ",
     "start": "node dist/index.js",
+    "prepare": "npm run build",
     "browserify": "npm run build && browserify ./dist/index.js --standalone aas --outfile aasForBrowser.js"
   },
   "author": "",
