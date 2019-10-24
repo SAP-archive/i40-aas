@@ -1,0 +1,23 @@
+dist: trusty
+language: node_js
+git:
+  depth: 1
+branches:
+  only:
+  - master
+
+stages:
+  - name: release
+    if: tag =~ /(^v[0-9]+\.[0-9]+\.[0-9]+$)/
+
+install:
+  - echo "SKIP."
+  - ls -a
+  - node --version
+  - npm install express
+
+jobs:
+  include:
+    - stage: release
+      name: "release transpiled code"
+      script: echo "SUCCESS"
