@@ -6,15 +6,14 @@ node_js:
 git:
   depth: 1
 
-script:
-  - printenv
-
 before_install:
   - npm install
-  - npm test
 
 install:
   - npm run build
+
+script:
+  - npm test
 
 before_deploy:
   - echo "GIT LOGIN, BRANCH AND COMMIT"
