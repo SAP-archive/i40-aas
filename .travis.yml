@@ -16,13 +16,13 @@ script:
   - npm test
   - echo $TRAVIS_TAG
 
-before_deploy:
-  - echo "GIT LOGIN, BRANCH AND COMMIT"
+    #before_deploy:
+    # - echo "GIT LOGIN, BRANCH AND COMMIT"
 
-deploy:
-  - provider: script
-    skip_cleanup: true
-    script: echo "TO BRANCH"
-    on:
-      all_branches: true
-      condition: $TRAVIS_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+$
+    #deploy:
+    #- provider: script
+    #skip_cleanup: true
+    #script: echo "TO BRANCH"
+    #on:
+    #  all_branches: true
+    #  condition: $TRAVIS_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+$

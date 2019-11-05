@@ -1,14 +1,19 @@
 {
   "name": "i40-aas-objects",
-  "version": "1.0.0",
+  "version": "0.0.1-alpha",
   "description": "",
-  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "repository": "git://github.com/SAP/i40-aas-objects.git",
   "scripts": {
     "format": "prettier --config .prettierrc.js --write \"./src/**/*.ts\"",
-    "test": "mocha -r ts-node/register tests/**/*.test.ts",
+    "test": "mocha -r ts-node/register test/**/*.test.ts",
     "build": "tsc",
-    "postinstall": "npm run build",
+    "prepublish": "npm run clean && npm run build && npm run format",
+    "clean": "rm -rf ./dist/*",
     "start": "node /dist/index.js",
     "browserify": "npm run build && browserify ./dist/index.js --standalone aas --outfile aasForBrowser.js"
   },
@@ -16,19 +21,18 @@
   "license": "ISC",
   "dependencies": {
     "ajv": "^6.10.2",
-    "jsonschema": "^1.2.4",
-    "typescript": "^3.4.5"
+    "jsonschema": "^1.2.4"
   },
   "devDependencies": {
-    "@types/node": "^12.0.2",
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.7",
+    "@types/node": "^12.0.2",
     "chai": "^4.2.0",
     "mocha": "^6.1.4",
+    "npm": "^6.12.1",
     "nyc": "^14.1.1",
-    "npm": "^6.10.2",
+    "prettier": "^1.18.2",
     "ts-node": "^8.2.0",
-    "typescript": "^3.4.5",
-    "prettier": "^1.18.2"
+    "typescript": "^3.4.5"
   }
 }
