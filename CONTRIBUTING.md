@@ -1,6 +1,6 @@
-# Contributing to SAP/i40-aas-objects
+# Contributing to i40-aas
 
-You want to contribute to SAP/i40-aas-objects? Welcome! Please read this document to understand what you can do:
+You want to contribute to *i40-aas*? Welcome! Please read this document to understand what you can do:
  * [Analyze Issues](#analyze-issues)
  * [Issue Handling Process](#issue-handling-process)
  * [Contribute Code](#contribute-code)
@@ -9,13 +9,13 @@ You want to contribute to SAP/i40-aas-objects? Welcome! Please read this documen
 
 ## Analyze Issues
 Analyzing issue reports can be a lot of effort. Any help is welcome!
-Go to [the Github issue tracker](https://github.com/SAP/i40-aas-objects/issues?state=open) and find an open issue which needs additional work or a bugfix. Maybe you can even find and [contribute](#contribute-code) a bugfix?
+Go to [the Github issue tracker](https://github.com/SAP/i40-aas/issues?state=open) and find an open issue which needs additional work or a bugfix. Maybe you can even find and [contribute](#contribute-code) a bugfix?
 
 ## Issue Handling Process
 When an issue is reported, a committer will look at it and either confirm it as a real issue (by giving the "approved" label), close it if it is not an issue, or ask for more details. Approved issues are then either assigned to a committer in GitHub, reported in our internal issue handling system, or left open as "contribution welcome" for easy or not urgent fixes. An issue that is about a real bug is closed as soon as the fix is committed.
 
 ## Contribute Code
-You are welcome to contribute code to SAP/i40-aas-objects in order to fix bugs or to implement new features.
+You are welcome to contribute code to *i40-aas* in order to fix bugs or to implement new features.
 
 ## Reporting Security Issues
 If you find a security issue, please act responsibly and report it not in the public issue tracker, but directly to us, so we can fix it before it can be exploited.

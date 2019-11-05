@@ -1,4 +1,4 @@
-# SAP/i40-aas-objects 
+# i40-aas 
 
 ## Contents:  
 1. [Description](#description)
@@ -94,13 +94,13 @@ These can freely be replaced by any other service of your choosing or a differen
 
 <!--- Please list all known issues, or bugs, here. Even if the project is provided "as-is" any known problems should be listed. --->
 
-Please refer to the list of [issues](https://github.com/SAP/i40-aas-objects/issues) on GitHub.
+Please refer to the list of [issues](https://github.com/SAP/i40-aas/issues) on GitHub.
 
 # How to obtain support
 
 <!--- This section should contain details on how the outside user can obtain support, ask questions, or post a bug report on your project. If your project is provided "as-is", with no expected changes or support, you must state that here. --->
 
-Please use the [GitHub issue tracker](https://github.com/SAP/i40-aas-objects/issues) for any questions, bug reports, feature requests, etc.
+Please use the [GitHub issue tracker](https://github.com/SAP/i40-aas/issues) for any questions, bug reports, feature requests, etc.
 
 # Contributing
 
@@ -116,7 +116,7 @@ Simply check the [Contribution Guidelines](CONTRIBUTING.md).
 
 This project follows the specification ["Details of the AssetAdministrationShell"](https://www.plattform-i40.de/PI40/Redaktion/EN/Downloads/Publikation/2018-details-of-the-asset-administration-shell.html) part 1 version 1.0, which is work in progress. As the specification changes, so will this project.
 
-For upcoming changes under development, please refer to the [Github issue board](https://github.com/SAP/i40-aas-objects/issues). 
+For upcoming changes under development, please refer to the [Github issue board](https://github.com/SAP/i40-aas/issues). 
 
 # License
 
