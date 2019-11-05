@@ -1,0 +1,71 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mongodb
+data:
+  MONGODB_HOST: mongodb-0.mongodb-headless-svc
+  MONGODB_PORT: "27017"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mongodb-secret
+type: Opaque
+stringData:
+  MONGO_INITDB_ROOT_USERNAME: mongouser
+  MONGO_INITDB_ROOT_PASSWORD: mongopassword
+  MONGO_INITDB_DATABASE: mongodb
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: mongodb-headless-svc
+spec:
+  clusterIP: None
+  selector:
+    app: mongodb
+  ports:
+  - protocol: TCP
+    port: 27017
+    targetPort: database
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: mongodb-svc
+spec:
+  type: LoadBalancer
+  selector:
+    app: mongodb
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: database
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb
+spec:
+  selector:
+    matchLabels:
+      app: mongodb
+  serviceName: mongodb-headless-svc
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+        - name: mongodb
+          image: mongo
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - name: database
+              containerPort: 27017
+          envFrom:
+            - secretRef:
+                name: mongodb-secret
+---

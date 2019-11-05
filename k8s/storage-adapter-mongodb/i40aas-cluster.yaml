@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: storage-adapter-mongodb
+  labels: 
+    app: i40-aas
+    service: storage-adapter-mongodb
+spec:
+  ports:
+  - targetPort: 3000
+    port: 80
+    protocol: TCP
+    name: http
+  selector:
+    app: i40-aas
+    service: storage-adapter-mongodb
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: storage-adapter-mongodb
+  labels: 
+    app: i40-aas
+    service: storage-adapter-mongodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: i40-aas
+      service: storage-adapter-mongodb
+  template: 
+    metadata:
+      labels:
+        app: i40-aas
+        service: storage-adapter-mongodb
+    spec:
+      containers:
+      - name: service
+        image: i40aas.azurecr.io/i40-aas-storage-adapter-mongodb@SHA-PLACEHOLDER
+        ports: 
+        - containerPort: 3000
+        envFrom:
+          - secretRef:
+              name: mongodb-secret
+          - configMapRef:
+              name: mongodb
+          - configMapRef:
+              name: service-addresses
+          - configMapRef:
+              name: rabbitmq
+          - secretRef:
+              name: rabbitmq

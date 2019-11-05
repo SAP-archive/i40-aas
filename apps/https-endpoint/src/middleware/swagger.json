@@ -1,0 +1,156 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Service for approving AAS onboarding requests",
+    "description": "Service for approving AAS onboarding requests"
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "AAS Endpoint-Ingress",
+      "description": "API for interacting with the AAS Endpoint"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/interaction": {
+      "post": {
+        "tags": [
+          "Interaction"
+        ],
+        "description": "Register new approval request",
+        "parameters": [
+          {
+            "name": "interaction",
+            "in": "body",
+            "description": "Interaction request to be forwarded to the Message Broker of the AAS Service. Routing takes place based on the {Receiver.Role.name} of the ",
+            "schema": {
+              "$ref": "#/definitions/interaction"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Request successfully published in broker topic",
+            "schema": {
+              "$ref": "#/definitions/interaction"
+            }
+          },
+          "401": {
+            "description": "Not authorized"
+          },
+          "422": {
+            "description": "Unprocessable Entity. Request with semantical errors"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": [
+          "Status check"
+        ],
+        "description": "Register new approval request",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Server Up!"
+                     },
+          "401": {
+            "description": "Not authorized"
+          },
+          "422": {
+            "description": "Unprocessable Entity. Request with semantical errors"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "interaction": {
+      "required": [
+        "frame",
+        "interactionElements"
+      ],
+      "properties": {
+        "frame": {
+          "$ref": "#/definitions/frame"
+        },
+        "interactionElements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Referable"
+          }
+        }
+      }
+    },
+    "frame": {
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "semanticProtocol": {
+          "$ref": "adminshell.io.schema.json.1.1#/definitions/Reference"
+        },
+        "type": {
+          "type": "string"
+        },
+        "conversationId": {
+          "type": "string"
+        },
+        "messageId": {
+          "type": "string"
+        },
+        "sender": {
+          "$ref": "#/definitions/conversationMember"
+        },
+        "receiver": {
+          "$ref": "#/definitions/conversationMember"
+        },
+        "replyBy": {
+          "type": "number"
+        },
+        "inReplyTo": {
+          "type": "string"
+        }
+      },
+      "required": ["semanticProtocol", "type", "messageId"]
+    },
+    "conversationMember": {
+      "type": "object",
+      "properties": {
+        "identification": {
+          "$ref": "https://github.wdf.sap.corp/IoTInnovation/aas-objects/blob/master/schema.json#/submodels"
+        },
+        "role": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

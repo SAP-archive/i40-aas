@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: onboarding-skill
+  labels:
+    app: i40-aas
+    service: onboarding-skill
+spec:
+  ports:
+    - targetPort: 3000
+      port: 80
+      protocol: TCP
+      name: http
+  selector:
+    app: i40-aas
+    service: onboarding-skill
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: onboarding-skill
+  labels:
+    app: i40-aas
+    service: onboarding-skill
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: i40-aas
+      service: onboarding-skill
+  template:
+    metadata:
+      labels:
+        app: i40-aas
+        service: onboarding-skill
+    spec:
+      containers:
+        - name: service
+          image: i40aas.azurecr.io/i40-aas-onboarding-skill@SHA-PLACEHOLDER
+          ports:
+            - containerPort: 3000
+          env:
+            - name: REQUEST_APPROVAL
+              value: "false"
+            - name: DATA_MANAGER_USER
+              value: "admin"
+            - name: DATA_MANAGER_PASSWORD
+              value: "admin"
+          envFrom:
+            - secretRef:
+                name: mongodb-secret
+            - configMapRef:
+                name: mongodb
+            - configMapRef:
+                name: service-addresses
+            - configMapRef:
+                name: rabbitmq
+            - secretRef:
+                name: rabbitmq

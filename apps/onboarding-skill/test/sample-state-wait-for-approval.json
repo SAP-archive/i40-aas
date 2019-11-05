@@ -1,0 +1,20 @@
+{
+  "actions": [{ "type": "requestApprovalFromApprover" }],
+  "activities": {},
+  "meta": {},
+  "events": [],
+  "value": "WaitingForApproval",
+  "context": {},
+  "event": { "type": "PUBLISHINSTANCE_FROM_OPERATOR" },
+  "historyValue": { "current": "WaitingForApproval", "states": {} },
+  "history": {
+    "actions": [],
+    "activities": {},
+    "meta": {},
+    "events": [],
+    "value": "WaitingForOnboardingRequest",
+    "context": {},
+    "event": { "type": "xstate.init" }
+  },
+  "changed": true
+}

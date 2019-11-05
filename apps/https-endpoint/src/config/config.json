@@ -1,0 +1,5 @@
+{
+    "routing_table_submodels": {
+        "opc-ua-devices": "storage-adapter-ain"
+    }
+}

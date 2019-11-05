@@ -1,0 +1,69 @@
+version: '3.7'
+services:
+  ## i40-aas containers
+  i40-aas-onboarding-skill:
+    image: i40-aas/i40-aas-onboarding-skill
+    env_file:
+      - .compose-envs/mongodb.env
+      - .compose-envs/rabbitmq.env
+      - .compose-envs/serviceaddresses.env
+  i40-aas-https-endpoint:
+    image: i40-aas/i40-aas-https-endpoint
+    ports:
+      - "2000:2000"
+    env_file:
+      - .compose-envs/rabbitmq.env
+  i40-aas-https-endpoint-egress:
+    image: i40-aas/i40-aas-https-endpoint-egress
+    env_file:
+      - .compose-envs/postgres.env
+      - .compose-envs/rabbitmq.env
+      - .compose-envs/serviceaddresses.env
+  i40-aas-data-manager:
+    image: i40-aas/i40-aas-data-manager
+    env_file:
+      - .compose-envs/serviceaddresses.env
+  i40-aas-registry:
+    image: i40-aas/i40-aas-registry
+    env_file:
+      - .compose-envs/postgres.env
+  i40-aas-adapter-registry:
+    image: i40-aas/i40-aas-adapter-registry
+    env_file:
+      - .compose-envs/serviceaddresses.env
+  i40-aas-storage-adapter-mongodb:
+    image: i40-aas/i40-aas-storage-adapter-mongodb
+    ports:
+      - "3100:3100"
+    env_file:
+      - .compose-envs/mongodb.env
+      - .compose-envs/serviceaddresses.env
+
+  ## used services
+  mongodb:
+    image: mongo
+    ports:
+      - "27017:27017"
+    env_file:
+      - .compose-envs/mongodb.env
+  postgres:
+    image: postgres:alpine
+    ports:
+      - "5432:5432"
+    env_file:
+      - .compose-envs/postgres.env
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - "8080:80"
+    env_file:
+      - .compose-envs/pgadmin.env
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+      - "1883:1883"
+    volumes:
+      - ./k8s/rabbitmq-broker/enabled_plugins:/etc/rabbitmq/enabled_plugins
+

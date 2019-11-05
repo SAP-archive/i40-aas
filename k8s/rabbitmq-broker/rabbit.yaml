@@ -1,0 +1,107 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: rabbitmq
+type: Opaque
+stringData:
+  BROKER_USER: guest
+  BROKER_PASSWORD: guest
+  INGRESS_ADMIN_USER: admin
+  INGRESS_ADMIN_PASS: admin
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rabbitmq
+data:
+  AMQP_URL: rabbitmq-0.rabbitmq-headless-svc
+  RABBIT_PORT: "80"
+  BROKER_TOPIC_EGRESS: http.client
+  BROKER_EXCHANGE: amq.topic
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rabbitmq-plugins
+data:
+  enabled_plugins: |
+    [rabbitmq_management,rabbitmq_mqtt].
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: rabbitmq-headless-svc
+spec:
+  clusterIP: None
+  selector:
+    app: broker
+  ports:
+  - name: amqp
+    protocol: TCP
+    port: 80
+    targetPort: 5672
+  - name: mqtt
+    protocol: TCP
+    port: 1883
+    targetPort: 1883
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: rabbitmq-ui-svc
+spec:
+  type: LoadBalancer
+  selector:
+    app: broker
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: ui
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: rabbitmq
+spec:
+  serviceName: rabbitmq-headless-svc
+  replicas: 1
+  selector:
+    matchLabels:
+      app: broker
+  template:
+    metadata:
+      labels:
+        app: broker
+    spec:
+      containers:
+      - name: rabbitmq
+        image: rabbitmq:3-management
+        imagePullPolicy: "IfNotPresent"
+        env:
+        - name: RABBITMQ_DEFAULT_USER
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq
+              key: BROKER_USER
+        - name: RABBITMQ_DEFAULT_PASS
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq
+              key: BROKER_PASSWORD
+        ports:
+        - name: messages
+          containerPort: 5672
+        - name: ui
+          containerPort: 15672
+        - name: mqtt
+          containerPort: 1883
+        volumeMounts:
+        - name: rabbitmq-plugins
+          mountPath: /etc/rabbitmq/enabled_plugins
+          subPath: enabled_plugins
+      volumes:
+      - name: rabbitmq-plugins
+        configMap:
+          name: rabbitmq-plugins
+---

@@ -1,0 +1,34 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/root.json",
+  "type": "object",
+  "title": "A schema for the routing of data manager component",
+  "required": [
+    "routing_table_submodels"
+  ],
+  "properties": {
+    "routing_table_submodels": {
+      "$id": "#/properties/routing_table_submodels",
+      "type": "object",
+      "title": "The Routing_table_submodels Schema",
+      "required": [
+        "opc-ua-devices"
+      ],
+      "properties": {
+        "opc-ua-devices": {
+          "$id": "#/properties/routing_table_submodels/properties/opc-ua-devices",
+          "type": "string",
+          "title": "The Opc-ua-devices Schema",
+          "default": "",
+          "examples": [
+            "ain_storage_adapter"
+          ],
+          "pattern": "^(.*)$"
+        }
+      }
+    }
+  }
+}
+
+ 

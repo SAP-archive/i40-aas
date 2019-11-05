@@ -1,0 +1,56 @@
+import { ConsumeMessage } from "amqplib";
+import { AmqpClient } from "../messaging/AmqpClient";
+import { IMessageReceiver } from "../messaging/MessageInterpreter";
+import { logger } from "../log";
+import { Subscription } from "../services/onboarding/messaginginterface/Subscription";
+
+const initializeLogger = require("../log");
+let amqpClientSender: AmqpClient;
+let amqpClientReceiver: AmqpClient;
+
+let counter = 1;
+function start() {
+  if (process.env.AMQP_URL === undefined) {
+    throw new Error("No AMQP_URL found in environment");
+  }
+  amqpClientSender = new AmqpClient(
+    process.env.AMQP_URL,
+    "test",
+    "guest",
+    "guest",
+    ""
+  );
+  amqpClientReceiver = new AmqpClient(
+    process.env.AMQP_URL,
+    "test",
+    "guest",
+    "guest",
+    "listener"
+  );
+  let clockSet: boolean = false;
+  amqpClientReceiver.addSubscriptionData(
+    new Subscription(
+      "skill.*",
+      new (class MyMessageReceiver implements IMessageReceiver {
+        receive(msg: string) {
+          console.log("amqp client received message:" + msg);
+        }
+      })()
+    )
+  );
+  amqpClientReceiver.startListening(() => {
+    amqpClientSender.setupPublishing(() => {
+      if (clockSet) return;
+      setInterval(() => {
+        try {
+          amqpClientSender.publish("skill.x", "ping" + counter++);
+        } catch (error) {
+          logger.debug("Could not publish:" + error);
+        }
+      }, 1000);
+      clockSet = true;
+    });
+  });
+}
+
+start();

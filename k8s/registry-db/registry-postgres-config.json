@@ -1,0 +1,9 @@
+{ 
+  "host": "host der postgres", 
+  "user": "postgres",
+  "password": "changeme",
+  "database": "AAS_REGISTRY",
+  "maxConnections": 20, 
+  "idleTimeoutMillis": 30000,
+  "connectionTimeoutMillis": 2000 
+}
