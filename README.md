@@ -61,10 +61,19 @@ Service interactions can be tested and developed locally using Docker Compose.
 
 1. Open a terminal and go into the project folders root directory
 
-2. Start the build of the docker images and creation of containers - can take some minutes
+2. Initiate the download or build of the docker images and subsequent creation of containers (can take some minutes)
 
-```
+```bash
+## Option 1
+## Use images from Docker Hub (https://hub.docker.com/orgs/sapi40/repositories)
 docker-compose up
+
+## Option 2
+## Build & use images from this repository via Compose file extension
+## ref.:
+##  - https://docs.docker.com/compose/extends/
+##  - https://docs.docker.com/compose/compose-file/#image
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
 ```
 
 3. If you want to test the running service follow [these](docs/README_Test.md#Test) steps.
