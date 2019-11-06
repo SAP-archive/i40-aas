@@ -1,0 +1,38 @@
+sudo: required
+dist: trusty
+language: generic
+git:
+  depth: 1
+branches:
+  only:
+  - master
+
+install:
+  - docker --version
+
+stages:
+  - name: release-images
+
+jobs: 
+  include:
+    - stage: release-images
+      name: "Release sapi40/i40-aas-adapter-registry"
+      script: sh ./ci/release-docker-image.sh adapter-registry
+    - stage: release-images
+      name: "Release sapi40/i40-aas-data-manager"
+      script: sh ./ci/release-docker-image.sh data-manager
+    - stage: release-images
+      name: "Release sapi40/i40-aas-endpoint-registry"
+      script: sh ./ci/release-docker-image.sh endpoint-registry
+    - stage: release-images
+      name: "Release sapi40/i40-aas-https-endpoint-egress"
+      script: sh ./ci/release-docker-image.sh https-endpoint-egress
+    - stage: release-images
+      name: "Release sapi40/i40-aas-https-endpoint-ingress"
+      script: sh ./ci/release-docker-image.sh https-endpoint-ingress
+    - stage: release-images
+      name: "Release sapi40/i40-aas-onboarding-skill"
+      script: sh ./ci/release-docker-image.sh onboarding-skill
+    - stage: release-images
+      name: "Release sapi40/i40-aas-storage-adapter-mongodb"
+      script: sh ./ci/release-docker-image.sh storage-adapter-mongodb

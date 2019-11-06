@@ -1,5 +1,9 @@
 # i40-aas 
 
+[![Build Status](https://travis-ci.com/SAP/i40-aas.svg?branch=master)](https://travis-ci.com/SAP/i40-aas)
+
+---
+
 ## Contents:  
 1. [Description](#description)
 1. [Requirements](#requirements)
