@@ -14,7 +14,8 @@ RUN npm run clean \
 ###################################
 FROM node:lts-alpine
 
-RUN adduser -D aasuser
+## TODO: Uncomment once node-persist has been removed and file system permissions are no longer required
+#RUN adduser -D aasuser
 
 WORKDIR /service
 
@@ -23,7 +24,8 @@ COPY package.json /service
 
 RUN npm install --production
 
-USER aasuser
+## TODO: Uncomment once node-persist has been removed and file system permissions are no longer required
+#USER aasuser
 EXPOSE 4500
 
 ENTRYPOINT [ "npm", "start" ]
