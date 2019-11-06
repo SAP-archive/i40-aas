@@ -3,15 +3,15 @@ dist: trusty
 language: generic
 git:
   depth: 1
-branches:
-  only:
-  - master
 
 install:
   - docker --version
 
 stages:
   - name: release-images
+    if: |
+      branch = master AND \
+      type = push
 
 jobs: 
   include:
