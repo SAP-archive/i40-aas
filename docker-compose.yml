@@ -2,37 +2,37 @@ version: '3.7'
 services:
   ## i40-aas containers
   i40-aas-onboarding-skill:
-    image: i40-aas/i40-aas-onboarding-skill
+    image: sapi40/i40-aas-onboarding-skill
     env_file:
       - .compose-envs/mongodb.env
       - .compose-envs/rabbitmq.env
       - .compose-envs/serviceaddresses.env
-  i40-aas-https-endpoint:
-    image: i40-aas/i40-aas-https-endpoint
+  i40-aas-https-endpoint-ingress:
+    image: sapi40/i40-aas-https-endpoint-ingress
     ports:
       - "2000:2000"
     env_file:
       - .compose-envs/rabbitmq.env
   i40-aas-https-endpoint-egress:
-    image: i40-aas/i40-aas-https-endpoint-egress
+    image: sapi40/i40-aas-https-endpoint-egress
     env_file:
       - .compose-envs/postgres.env
       - .compose-envs/rabbitmq.env
       - .compose-envs/serviceaddresses.env
   i40-aas-data-manager:
-    image: i40-aas/i40-aas-data-manager
+    image: sapi40/i40-aas-data-manager
     env_file:
       - .compose-envs/serviceaddresses.env
-  i40-aas-registry:
-    image: i40-aas/i40-aas-registry
+  i40-aas-endpoint-registry:
+    image: sapi40/i40-aas-endpoint-registry
     env_file:
       - .compose-envs/postgres.env
   i40-aas-adapter-registry:
-    image: i40-aas/i40-aas-adapter-registry
+    image: sapi40/i40-aas-adapter-registry
     env_file:
       - .compose-envs/serviceaddresses.env
   i40-aas-storage-adapter-mongodb:
-    image: i40-aas/i40-aas-storage-adapter-mongodb
+    image: sapi40/i40-aas-storage-adapter-mongodb
     ports:
       - "3100:3100"
     env_file:
