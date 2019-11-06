@@ -6,11 +6,11 @@ services:
       context: apps/onboarding-skill
       network: host
       dockerfile: ../../docker/onboarding-skill/Dockerfile
-  i40-aas-https-endpoint:
+  i40-aas-https-endpoint-ingress:
     build:
-      context: apps/https-endpoint
+      context: apps/https-endpoint-ingress
       network: host
-      dockerfile: ../../docker/https-endpoint/Dockerfile
+      dockerfile: ../../docker/https-endpoint-ingress/Dockerfile
   i40-aas-https-endpoint-egress:
     build:
       context: apps/https-endpoint-egress
@@ -21,11 +21,11 @@ services:
       context: apps/data-manager
       network: host
       dockerfile: ../../docker/data-manager/Dockerfile
-  i40-aas-registry:
+  i40-aas-endpoint-registry:
     build:
-      context: apps/registry
+      context: apps/endpoint-registry
       network: host
-      dockerfile: ../../docker/registry/Dockerfile
+      dockerfile: ../../docker/endpoint-registry/Dockerfile
   i40-aas-adapter-registry:
     build:
       context: apps/adapter-registry
