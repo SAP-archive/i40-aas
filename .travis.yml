@@ -3,16 +3,14 @@ dist: trusty
 language: generic
 git:
   depth: 1
-branches:
-  only:
-  - master
 
 install:
   - docker --version
 
 stages:
   - name: release-images
-
+    if: branch = master AND env(TRAVIS_PULL_REQUEST) = false
+    
 jobs: 
   include:
     - stage: release-images
