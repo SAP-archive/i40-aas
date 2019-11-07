@@ -42,7 +42,7 @@ class SkillActionMap {
     let md = this.messageDispatcher;
     this.logRequestError(event.data);
     if (!event.data.response) {
-      md.replyError(context.message);
+      md.sendErrorToOperator(context.message);
     } else {
       switch (event.data.response.status) {
         case 400:

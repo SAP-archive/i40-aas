@@ -70,9 +70,12 @@ class MessageDispatcher implements IMessageDispatcher {
     submodel: Submodel
   ) {
     //TODO: an error here leads to unhandled rejection
-    this.messageSender.replyTo(message.frame, MessageTypes.RESPONSE_INSTANCE, [
-      submodel
-    ]);
+    this.sendNextMessageInConversationTo(
+      "Operator",
+      MessageTypes.RESPONSE_INSTANCE,
+      message.frame,
+      [submodel]
+    );
   }
 
   sendErrorToOperator(message: InteractionMessage) {
