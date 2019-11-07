@@ -15,8 +15,8 @@ metadata:
   name: adapter-registry
 type: Opaque
 stringData:
-  ADAPTER_REG_USER: admin
-  ADAPTER_REG_PASS: admin
+  ADAPTER_REG_ADMIN_USER: admin
+  ADAPTER_REG_ADMIN_PASS: admin
 ---
 apiVersion: v1
 kind: Service
