@@ -3,7 +3,7 @@ import { Identifier, Frame, IdTypeEnum } from 'i40-aas-objects';
 import { RegistryError } from '../../utils/RegistryError';
 import { RegistryResultSet, IRegistryResultSet } from './daos/interfaces/IRegistryResultSet';
 import { iRegistry } from './daos/interfaces/IRegistry';
-import { IRegisterAas } from './daos/interfaces/IApiRequests';
+import { IRegisterAas, ICreateRole, ICreateSemanticProtocol, IAssignRoles } from './daos/interfaces/IApiRequests';
 
 async function readRecordByIdentifier(identifier: Identifier): Promise<Array<RegistryResultSet>> {
   var registryDao: iRegistry = await RegistryFactory.getRegistry();
@@ -48,6 +48,42 @@ async function register(req: IRegisterAas) {
     registryDao.release();
   }
 }
+async function createRole(req: ICreateRole) {
+  var registryDao: iRegistry = await RegistryFactory.getRegistry();
+  try {
+    var result = await registryDao.createRole(req);
+    console.log(result);
+    return result;
+  } catch (e) {
+    throw e;
+  } finally {
+    registryDao.release();
+  }
+}
+async function assignRolesToAAS(req: IAssignRoles) {
+  var registryDao: iRegistry = await RegistryFactory.getRegistry();
+  try {
+    var result = await registryDao.assignRoles(req);
+    console.log(result);
+    return result;
+  } catch (e) {
+    throw e;
+  } finally {
+    registryDao.release();
+  }
+}
+async function createSemanticProtocol(req: ICreateSemanticProtocol) {
+  var registryDao: iRegistry = await RegistryFactory.getRegistry();
+  try {
+    var result = await registryDao.createSemanticProtocol(req);
+    console.log(result);
+    return result;
+  } catch (e) {
+    throw e;
+  } finally {
+    registryDao.release();
+  }
+}
 
 async function getEndpointsByFrame(frame: Frame): Promise<Array<IRegistryResultSet>> {
   if (!frame) {
@@ -59,4 +95,4 @@ async function getEndpointsByFrame(frame: Frame): Promise<Array<IRegistryResultS
     return readRecordBySemanticProtocolAndRole(frame.semanticProtocol, frame.receiver.role.name);
   }
 }
-export { readRecordByIdentifier, register, readRecordBySemanticProtocolAndRole, getEndpointsByFrame };
+export { readRecordByIdentifier,assignRolesToAAS, createSemanticProtocol, register, readRecordBySemanticProtocolAndRole, getEndpointsByFrame, createRole };
