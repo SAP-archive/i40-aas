@@ -1,20 +1,30 @@
 import * as logger from "winston";
-import { MessageHandler } from "./RegistryConnector";
 import { Subscription } from "./interfaces/Subscription";
 import { IMessageReceiver } from "./interfaces/IMessageReceiver";
 import { IInteractionMessage } from "i40-aas-objects";
 import { AmqpClient } from "./AMQPClient";
+import { RegistryConnector } from "./RegistryConnector";
 
 /*
 Class that receives the the Interaction Messages received from the broker.
-The messages after validation are sent to the MessageHandler that makes a request to the client
+The messages after validation are sent to the RegistryConnector that makes a request to the client
 */
 
 class BrokerMessageInterpreter implements IMessageReceiver {
+  
+// Import events module
+events = require('events');
+eventEmitter: any;
+// Create an eventEmitter object
+ 
+
+  
   constructor(
-    private msgHandler: MessageHandler,
+    private registryConnector: RegistryConnector,
     private brokerClient: AmqpClient
-  ) {}
+  ) {
+    this.eventEmitter = new this.events.EventEmitter();
+  }
 
   /**
    * Initiate listening to the broker topic, designated for forwarding responses from skills to clients
@@ -35,7 +45,7 @@ class BrokerMessageInterpreter implements IMessageReceiver {
         ", in incoming message:" +
         message
     );
-    this.msgHandler.receivedUnintelligibleMessage(message);
+    this.registryConnector.receivedUnintelligibleMessage(message);
   }
   /*
 Decide what to do if the message can not be handled (eg. because receiver role is missing)
@@ -116,10 +126,10 @@ Decide what to do if the message can not be handled (eg. because receiver role i
     //logger.info("Got msg: " + msg);
     let message = this.validateEssentialInteractionElements(msg);
     if (message && this.validateRequired(message)) {
-      //if validation successful, forward message to the handler
-      this.msgHandler.getReceiverURLFromRegistry(message);
+      //if validation successful, get the AAS receiver endpoint from AAS-registry service
+      this.registryConnector.getReceiverURLFromRegistry(message);
     }
   }
 }
 
-export { BrokerMessageInterpreter, IMessageReceiver };
+export { BrokerMessageInterpreter };
