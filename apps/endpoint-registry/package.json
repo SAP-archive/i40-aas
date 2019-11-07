@@ -1,5 +1,5 @@
 {
-  "name": "i40-aas-registry",
+  "name": "i40-aas-endpoint-registry",
   "version": "1.0.0",
   "description": "",
   "main": "src/index.js",
@@ -18,29 +18,29 @@
   },
   "dependencies": {
     "i40-aas-objects": "0.0.1-alpha",
-    "@types/compression": "0.0.36",
-    "@types/cors": "^2.8.5",
-    "@types/express": "^4.17.0",
-    "@types/node": "^12.0.2",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-basic-auth": "^1.2.0",
     "generic-pool": "^3.7.1",
     "pg": "^7.11.0",
-    "ts-postgres": "^1.1.0",
-    "typescript": "^3.5.1"
+    "ts-postgres": "^1.1.0"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/dotenv": "^6.1.1",
     "@types/mocha": "^5.2.7",
+    "@types/compression": "0.0.36",
+    "@types/cors": "^2.8.5",
+    "@types/express": "^4.17.0",
     "chai": "^4.2.0",
     "dotenv": "^8.1.0",
     "mocha": "^6.1.4",
     "nyc": "^14.1.1",
-    "ts-node": "^8.2.0"
+    "ts-node": "^8.2.0",
+    "@types/node": "^12.0.2",
+    "typescript": "^3.5.1"
   },
   "author": "D062507",
-  "license": "ISC"
+  "license": "SEE LICENSE IN LICENSE"
 }

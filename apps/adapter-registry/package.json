@@ -1,5 +1,5 @@
 {
-  "name": "i40-aas-registry",
+  "name": "i40-aas-adapter-registry",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
@@ -16,11 +16,6 @@
     "url": "https://github.com/SAP/i40-aas.git"
   },
   "dependencies": {
-    "@types/compression": "0.0.36",
-    "@types/cors": "^2.8.5",
-    "@types/express": "^4.17.0",
-    "@types/node": "^12.0.2",
-    "@types/swagger-ui-express": "^3.0.1",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "express": "^4.17.1",
@@ -31,21 +26,26 @@
     "dotenv": "^8.1.0",
     "pg": "^7.11.0",
     "swagger-ui-express": "^4.1.2",
-    "ts-postgres": "^1.1.0",
-    "tsc-watch": "^4.0.0",
-    "typescript": "^3.5.1",
     "winston": "^3.2.1"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/dotenv": "^6.1.1",
     "@types/mocha": "^5.2.7",
+    "@types/compression": "0.0.36",
+    "@types/cors": "^2.8.5",
+    "@types/express": "^4.17.0",
+    "@types/node": "^12.0.2",
+    "@types/swagger-ui-express": "^3.0.1",
     "chai": "^4.2.0",
     "dotenv": "^8.2.0",
     "mocha": "^6.1.4",
     "nyc": "^14.1.1",
-    "ts-node": "^8.2.0"
+    "ts-node": "^8.2.0",
+    "ts-postgres": "^1.1.0",
+    "tsc-watch": "^4.0.0",
+    "typescript": "^3.5.1"
   },
-  "author": "D062507",
-  "license": "ISC"
+  "author": "",
+  "license": "SEE LICENSE IN LICENSE"
 }

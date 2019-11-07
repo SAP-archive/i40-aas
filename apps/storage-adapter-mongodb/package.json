@@ -32,7 +32,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
     "i40-aas-objects": "0.0.1-alpha",
     "compression": "^1.7.4",
