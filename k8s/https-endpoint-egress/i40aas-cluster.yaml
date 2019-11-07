@@ -47,11 +47,22 @@ spec:
             requests:
               cpu: 25m
               memory: 273M
+          env:
+            - name: REGISTRY_URL
+              valueFrom: 
+                configMapRefKey:
+                  name: service-addresses
+                  key: REGISTRY_URL
+            - name: DATA_MANAGER_URL
+              valueFrom: 
+                configMapRefKey:
+                  name: service-addresses
+                  key: DATA_MANAGER_URL
           envFrom:
+            - secretRef:
+                name: endpoint-registry
             - configMapRef:
-                name: registry-postgres
-            - configMapRef:
-                name: service-addresses
+                name: endpoint-registry-postgres
             - configMapRef:
                 name: rabbitmq
             - secretRef:

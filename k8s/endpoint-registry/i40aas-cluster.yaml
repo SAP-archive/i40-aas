@@ -1,5 +1,15 @@
 ---
 apiVersion: v1
+kind: Secret
+metadata:
+  name: endpoint-registry
+type: Opaque
+stringData:
+  REGISTRY_URL_GET_SUFFIX: /endpoints
+  REGISTRY_ADMIN_USER: admin
+  REGISTRY_ADMIN_PASSWORD: admin
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: endpoint-registry
@@ -49,7 +59,9 @@ spec:
             memory: 263M
         envFrom:
         - secretRef:
-            name: postgres-secret
+            name: endpoint-registry-postgres
+        - secretRef:
+            name: endpoint-registry
         - configMapRef:
-            name: registry-postgres
+            name: endpoint-registry-postgres
 ---

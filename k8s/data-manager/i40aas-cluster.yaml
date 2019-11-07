@@ -1,5 +1,14 @@
 ---
 apiVersion: v1
+kind: Secret
+metadata:
+  name: data-manager
+type: Opaque
+stringData:
+  DATA_MANAGER_USER: admin
+  DATA_MANAGER_PASSWORD: admin
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: data-manager
@@ -49,13 +58,13 @@ spec:
             memory: 273M
         env:
         - name: ADAPTER_REG_URL
-          value: "http://adapter-registry:80/adapters"
-        - name: ADAPTER_REG_USER
-          value: "admin"
-        - name: ADAPTER_REG_PASS
-          value: "admin"
-        - name: DATA_MANAGER_USER
-          value: "admin"
-        - name: DATA_MANAGER_PASSWORD
-          value: "admin"
+          valueFrom: 
+            configMapRefKey:
+              name: service-addresses
+              key: ADAPTER_REG_URL
+        envFrom:
+        - secretRef:
+            name: adapter-registry
+        - secretRef:
+            name: data-manager
 ---

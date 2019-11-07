@@ -5,3 +5,6 @@ metadata:
 data:
   REGISTRY_URL: endpoint-registry
   DATA_MANAGER_URL: http://data-manager
+  AIN_ADAPTER_URL: http://storage-adapter-ain:80/submodels
+  MONGO_ADAPTER_URL: http://storage-adapter-mongodb:80/submodels
+  ADAPTER_REG_URL: http://adapter-registry:80/adapters

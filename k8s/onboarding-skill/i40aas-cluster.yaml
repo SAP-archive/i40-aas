@@ -50,17 +50,23 @@ spec:
           env:
             - name: REQUEST_APPROVAL
               value: "false"
-            - name: DATA_MANAGER_USER
-              value: "admin"
-            - name: DATA_MANAGER_PASSWORD
-              value: "admin"
+            - name: REGISTRY_URL
+              valueFrom: 
+                configMapRefKey:
+                  name: service-addresses
+                  key: REGISTRY_URL
+            - name: DATA_MANAGER_URL
+              valueFrom: 
+                configMapRefKey:
+                  name: service-addresses
+                  key: DATA_MANAGER_URL
           envFrom:
+            - secretRef:
+                name: data-manager
             - secretRef:
                 name: mongodb-secret
             - configMapRef:
                 name: mongodb
-            - configMapRef:
-                name: service-addresses
             - configMapRef:
                 name: rabbitmq
             - secretRef:
