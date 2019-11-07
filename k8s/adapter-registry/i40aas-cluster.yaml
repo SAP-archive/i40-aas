@@ -1,3 +1,23 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: adapter-registry
+data:
+  AIN_ADAPTER_ID: storage-adapter-ain
+  MONGO_ADAPTER_ID: storage-adapter-mongodb
+  AIN_ADAPTER_SUBMODEL_ID: opc-ua-devices
+  MONGO_ADAPTER_SUBMODEL_ID: opc-ua-devices
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: adapter-registry
+type: Opaque
+stringData:
+  ADAPTER_REG_ADMIN_USER: admin
+  ADAPTER_REG_ADMIN_PASS: admin
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -7,10 +27,9 @@ metadata:
     service: adapter-registry
 spec:
   ports:
-  - targetPort: 4500
+  - targetPort: endpoint
     port: 80
     protocol: TCP
-    name: http
   selector:
     app: i40-aas
     service: adapter-registry
@@ -35,27 +54,33 @@ spec:
     spec:
       containers:
       - name: adapter-registry
-        image: i40aas.azurecr.io/i40-aas-adapter-registry@SHA-PLACEHOLDER
+        image: sapi40/i40-aas-adapter-registry
         ports: 
-        - containerPort: 4500
-        env:
-        - name: ADAPTER_REG_USER
-          value: "admin"
-        - name: ADAPTER_REG_PASS
-          value: "admin"
-        - name: AIN_ADAPTER_ID
-          value: "storage-adapter-ain"
-        - name: MONGO_ADAPTER_ID
-          value: "storage-adapter-mongodb"
+        - name: endpoint
+          containerPort: 4500
+        resources:
+          limits:
+            cpu: 53m
+            memory: 324M
+          requests:
+            cpu: 48m
+            memory: 263M
+        env: 
         - name: AIN_ADAPTER_URL
-          value: "http://storage-adapter-ain:80/submodels"
+          valueFrom: 
+            configMapRefKey:
+              name: service-addresses
+              key: AIN_ADAPTER_URL
         - name: MONGO_ADAPTER_URL
-          value: "http://storage-adapter-mongodb:80/submodels"
-        - name: AIN_ADAPTER_SUBMODEL_ID
-          value: "opc-ua-devices"
-        - name: MONGO_ADAPTER_SUBMODEL_ID
-          value: "opc-ua-devices"
-        - name: REGISTRY_ADMIN_USER
-          value: "admin"
-        - name: REGISTRY_ADMIN_PASSWORD
-          value: "admin"
+          valueFrom: 
+            configMapRefKey:
+              name: service-addresses
+              key: MONGO_ADAPTER_URL
+        envFrom:
+        - secretRef:
+            name: adapter-registry
+        - secretRef:
+            name: endpoint-registry
+        - configMapRef:
+            name: adapter-registry
+---

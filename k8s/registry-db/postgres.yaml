@@ -2,18 +2,15 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: registry-postgres
+  name: endpoint-registry-postgres
 data:
   POSTGRES_HOST: postgres-0.postgres-svc
   POSTGRES_PORT: "5432"
-  REGISTRY_URL_GET_SUFFIX: /endpoints
-  REGISTRY_ADMIN_USER: admin
-  REGISTRY_ADMIN_PASSWORD: admin
 ---
 apiVersion: v1
 kind: Secret
 metadata:
-  name: postgres-secret
+  name: endpoint-registry-postgres
 type: Opaque
 stringData:
   POSTGRES_DB: AAS_REGISTRY
@@ -23,7 +20,7 @@ stringData:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: pgadmin-secret
+  name: endpoint-registry-pgadmin
 type: Opaque
 stringData:
   PGADMIN_DEFAULT_EMAIL: admin
@@ -79,7 +76,7 @@ spec:
               containerPort: 5432
           envFrom:
             - secretRef:
-                name: postgres-secret
+                name: endpoint-registry-postgres
         - name: pgadmin
           image: dpage/pgadmin4
           imagePullPolicy: "IfNotPresent"
@@ -88,4 +85,5 @@ spec:
               containerPort: 80
           envFrom:
             - secretRef:
-                name: pgadmin-secret
+                name: endpoint-registry-pgadmin
+---

@@ -1,3 +1,13 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: data-manager
+type: Opaque
+stringData:
+  DATA_MANAGER_USER: admin
+  DATA_MANAGER_PASSWORD: admin
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -7,10 +17,9 @@ metadata:
     service: data-manager
 spec:
   ports:
-  - targetPort: 4000
+  - targetPort: endpoint
     port: 80
     protocol: TCP
-    name: http
   selector:
     app: i40-aas
     service: data-manager
@@ -36,13 +45,26 @@ spec:
     spec:
       containers:
       - name: service
-        image: i40aas.azurecr.io/i40-aas-data-manager@SHA-PLACEHOLDER
+        image: sapi40/i40-aas-data-manager
         ports: 
-        - containerPort: 4000
+        - name: endpoint
+          containerPort: 4000
+        resources:
+          limits:
+            cpu: 50m
+            memory: 384M
+          requests:
+            cpu: 25m
+            memory: 273M
         env:
         - name: ADAPTER_REG_URL
-          value: "http://adapter-registry:80/adapters"
-        - name: ADAPTER_REG_USER
-          value: "admin"
-        - name: ADAPTER_REG_PASS
-          value: "admin"
+          valueFrom: 
+            configMapRefKey:
+              name: service-addresses
+              key: ADAPTER_REG_URL
+        envFrom:
+        - secretRef:
+            name: adapter-registry
+        - secretRef:
+            name: data-manager
+---
