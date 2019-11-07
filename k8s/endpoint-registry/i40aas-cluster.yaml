@@ -1,46 +1,55 @@
+---
 apiVersion: v1
 kind: Service
 metadata:
-  name: registry
+  name: endpoint-registry
   labels: 
     app: i40-aas
-    service: registry
+    service: endpoint-registry
 spec:
   ports:
-  - targetPort: 4400
+  - targetPort: endpoint
     port: 80
     protocol: TCP
-    name: http
   selector:
     app: i40-aas
-    service: registry
+    service: endpoint-registry
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: registry
+  name: endpoint-registry
   labels: 
     app: i40-aas
-    service: registry
+    service: endpoint-registry
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: i40-aas
-      service: registry
+      service: endpoint-registry
   template: 
     metadata:
       labels:
         app: i40-aas
-        service: registry
+        service: endpoint-registry
     spec:
       containers:
       - name: registry
-        image: i40aas.azurecr.io/i40-aas-registry@SHA-PLACEHOLDER
+        image: sapi40/i40-aas-endpoint-registry
         ports: 
-        - containerPort: 4400
+        - name: endpoint
+          containerPort: 4400
+        resources:
+          limits:
+            cpu: 50m
+            memory: 500M
+          requests:
+            cpu: 25m
+            memory: 263M
         envFrom:
         - secretRef:
             name: postgres-secret
         - configMapRef:
             name: registry-postgres
+---

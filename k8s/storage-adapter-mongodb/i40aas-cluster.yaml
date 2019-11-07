@@ -1,3 +1,4 @@
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -7,10 +8,9 @@ metadata:
     service: storage-adapter-mongodb
 spec:
   ports:
-  - targetPort: 3000
+  - targetPort: endpoint
     port: 80
     protocol: TCP
-    name: http
   selector:
     app: i40-aas
     service: storage-adapter-mongodb
@@ -36,9 +36,17 @@ spec:
     spec:
       containers:
       - name: service
-        image: i40aas.azurecr.io/i40-aas-storage-adapter-mongodb@SHA-PLACEHOLDER
+        image: sapi40/i40-aas-storage-adapter-mongodb
         ports: 
-        - containerPort: 3000
+        - name: endpoint
+          containerPort: 3100
+        resources:
+          limits:
+            cpu: 50m
+            memory: 300M
+          requests:
+            cpu: 25m
+            memory: 263M
         envFrom:
           - secretRef:
               name: mongodb-secret
@@ -50,3 +58,4 @@ spec:
               name: rabbitmq
           - secretRef:
               name: rabbitmq
+---

@@ -3,5 +3,5 @@ kind: ConfigMap
 metadata:
   name: service-addresses
 data:
-  REGISTRY_URL: registry
+  REGISTRY_URL: endpoint-registry
   DATA_MANAGER_URL: http://data-manager

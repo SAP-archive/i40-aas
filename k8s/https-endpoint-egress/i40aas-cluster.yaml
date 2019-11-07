@@ -7,12 +7,10 @@ metadata:
     app: i40-aas
     service: https-endpoint-egress
 spec:
-#  type: LoadBalancer
   ports:
-    - targetPort: 3000
+    - targetPort: endpoint
       port: 80
       protocol: TCP
-      name: http
   selector:
     app: i40-aas
     service: https-endpoint-egress
@@ -38,9 +36,17 @@ spec:
     spec:
       containers:
         - name: service
-          image: i40aas.azurecr.io/i40-aas-https-endpoint-egress@SHA-PLACEHOLDER
+          image: sapi40/i40-aas-https-endpoint-egress
           ports:
-            - containerPort: 3000
+            - name: endpoint
+              containerPort: 3000
+          resources:
+            limits:
+              cpu: 50m
+              memory: 320M
+            requests:
+              cpu: 25m
+              memory: 273M
           envFrom:
             - configMapRef:
                 name: registry-postgres
