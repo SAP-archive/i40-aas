@@ -37,7 +37,7 @@ class SkillActionMap {
     //logger.debug(error);
   }
 
-  sendErrorBack(context: ISkillContext, event: any) {
+  sendErrorToOperator(context: ISkillContext, event: any) {
     logger.debug("Received error. Now sending error back");
     let md = this.messageDispatcher;
     this.logRequestError(event.data);
@@ -46,13 +46,13 @@ class SkillActionMap {
     } else {
       switch (event.data.response.status) {
         case 400:
-          md.replyNotUnderstood(context.message);
+          md.sendNotUnderstoodToOperator(context.message);
           break;
         case 401:
-          md.sendRequestRefusedToInitiator(context.message);
+          md.sendRequestRefusedToOperator(context.message);
           break;
         default:
-          md.replyError(context.message);
+          md.sendErrorToOperator(context.message);
       }
     }
   }
@@ -65,7 +65,7 @@ class SkillActionMap {
   //TODO: why context.message and context.message...
   sendResponseToInitiatorAndRequestType(context: ISkillContext, event: any) {
     logger.debug("Calling sendResponseInstanceToInitiator");
-    this.messageDispatcher.sendResponseInstanceToInitiator(
+    this.messageDispatcher.sendResponseInstanceToOperator(
       context.message,
       context.message.interactionElements[0]
     );
@@ -76,20 +76,21 @@ class SkillActionMap {
   createInstance(context: ISkillContext, event: any): Promise<AxiosResponse> {
     logger.debug("SkillActionMap::createInstance called");
     return this.messageDispatcher.createInstanceOnCAR(
-      context.message.interactionElements    );
+      context.message.interactionElements
+    );
   }
   sendResponseInstanceToInitiator(context: ISkillContext, event: any) {
     logger.debug("onDone called");
-    return this.messageDispatcher.sendResponseInstanceToInitiator(
+    return this.messageDispatcher.sendResponseInstanceToOperator(
       context.message,
       context.message.interactionElements[0]
     );
   }
 
   //called in case manufacturer rejects the request
-  sendRequestRefusedToInitiator(context: ISkillContext, event: any) {
+  sendRequestRefusedToOperator(context: ISkillContext, event: any) {
     let message = context.message as InteractionMessage;
-    this.messageDispatcher.sendRequestRefusedToInitiator(message);
+    this.messageDispatcher.replyRequestRefused(message);
   }
 
   sendErrorToInitiator(context: ISkillContext, event: any) {
@@ -100,7 +101,7 @@ class SkillActionMap {
   sendResponseTypeToInitiator(context: ISkillContext, event: any) {
     let message = context.message as InteractionMessage;
     //TODO: get response type from message
-    this.messageDispatcher.sendResponseTypeToInitiator(message, {});
+    this.messageDispatcher.sendResponseTypeToOperator(message, {});
   }
 }
 export { SkillActionMap };

@@ -59,7 +59,7 @@ class SkillStateMachineSpecification {
           ],
           onError: {
             target: "OperationFailed",
-            actions: "sendErrorBack"
+            actions: "sendErrorToOperator"
           }
         }
       },
@@ -119,15 +119,15 @@ class SkillStateMachineSpecification {
       }
     },
     actions: {
-      sendErrorBack: (context: any, event: any) =>
-        context.actionMap.sendErrorBack(context, event),
+      sendErrorToOperator: (context: any, event: any) =>
+        context.actionMap.sendErrorToOperator(context, event),
       sendResponseToInitiatorAndRequestType: (context: any, event: any) =>
         context.actionMap.sendResponseToInitiatorAndRequestType(context, event),
       //only send back response
       sendResponseInstanceToInitiator: (context, event) =>
         context.actionMap.sendResponseInstanceToInitiator(context, event),
       sendRequestRefusedToInitiator: (context, event) =>
-        context.actionMap.sendRequestRefusedToInitiator(context, event),
+        context.actionMap.sendRequestRefusedToOperator(context, event),
 
       sendErrorToInitiator: (context, event) =>
         context.actionMap.sendErrorToInitiator(context, event),

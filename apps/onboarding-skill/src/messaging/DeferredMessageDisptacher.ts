@@ -8,23 +8,44 @@ import { AxiosResponse } from "axios";
 import { logger } from "../log";
 
 class DeferredMessageDispatcher implements IMessageDispatcher {
+  private commandCollector: CommandCollector = new CommandCollector();
+
+  constructor(private messageDispatcher: IMessageDispatcher) {}
+
+  //no need to defer this, as no database commit involved
+  createInstanceOnCAR(submodels: Submodel[]): Promise<AxiosResponse> {
+    return this.messageDispatcher.createInstanceOnCAR(submodels);
+  }
+
+  sendErrorToOperator(message: InteractionMessage): void {
+    var that = this;
+    this.commandCollector.add({
+      fn: () => that.messageDispatcher.sendErrorToOperator(message)
+    });
+  }
+  sendRequestRefusedToOperator(message: InteractionMessage): void {
+    var that = this;
+    this.commandCollector.add({
+      fn: () => that.messageDispatcher.sendRequestRefusedToOperator(message)
+    });
+  }
+  sendNotUnderstoodToOperator(message: InteractionMessage): void {
+    var that = this;
+    this.commandCollector.add({
+      fn: () => that.messageDispatcher.sendNotUnderstoodToOperator(message)
+    });
+  }
   requestApprovalFromApprover(message: InteractionMessage): void {
     var that = this;
     this.commandCollector.add({
       fn: () => that.messageDispatcher.requestApprovalFromApprover(message)
     });
   }
-  private commandCollector: CommandCollector = new CommandCollector();
 
-  constructor(private messageDispatcher: IMessageDispatcher) {}
-
-  createInstanceOnCAR(submodels: Submodel[]): Promise<AxiosResponse> {
-    return this.messageDispatcher.createInstanceOnCAR(submodels);
-  }
-  sendRequestRefusedToInitiator(message: InteractionMessage): void {
+  replyRequestRefused(message: InteractionMessage): void {
     var that = this;
     this.commandCollector.add({
-      fn: () => that.messageDispatcher.sendRequestRefusedToInitiator(message)
+      fn: () => that.messageDispatcher.replyRequestRefused(message)
     });
   }
   replyError(message: InteractionMessage): void {
@@ -33,24 +54,20 @@ class DeferredMessageDispatcher implements IMessageDispatcher {
       fn: () => that.messageDispatcher.replyError(message)
     });
   }
-  sendResponseInstanceToInitiator(
+  sendResponseInstanceToOperator(
     message: InteractionMessage,
     submodel: Submodel
   ): void {
     var that = this;
     this.commandCollector.add({
       fn: () =>
-        that.messageDispatcher.sendResponseInstanceToInitiator(
-          message,
-          submodel
-        )
+        that.messageDispatcher.sendResponseInstanceToOperator(message, submodel)
     });
   }
-  sendResponseTypeToInitiator(message: InteractionMessage, type: any): void {
+  sendResponseTypeToOperator(message: InteractionMessage, type: any): void {
     var that = this;
     this.commandCollector.add({
-      fn: () =>
-        that.messageDispatcher.sendResponseTypeToInitiator(message, type)
+      fn: () => that.messageDispatcher.sendResponseTypeToOperator(message, type)
     });
   }
   requestTypeFromManufacturer(receiverId: string, typeDescription: any): void {

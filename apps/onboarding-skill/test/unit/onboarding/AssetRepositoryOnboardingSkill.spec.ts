@@ -108,7 +108,7 @@ describe("applyEvent", function() {
       let fakeSendResponseInstanceToInitiator = sinon.fake();
       sinon.replace(
         messageDispatcher,
-        "sendResponseInstanceToInitiator",
+        "sendResponseInstanceToOperator",
         fakeSendResponseInstanceToInitiator
       );
 
@@ -297,7 +297,7 @@ describe("applyEvent", function() {
     let fakeSendResponseInstanceToInitiator = sinon.fake();
     sinon.replace(
       messageDispatcher,
-      "sendResponseInstanceToInitiator",
+      "sendResponseInstanceToOperator",
       fakeSendResponseInstanceToInitiator
     );
 
@@ -498,8 +498,8 @@ describe("applyEvent", function() {
       })
     );
     sinon.replace(dbClient, "update", sinon.fake());
-    let fakeReplyTo = sinon.fake();
-    sinon.replace(messageSender, "replyTo", fakeReplyTo);
+    let fakeSendTo = sinon.fake();
+    sinon.replace(messageSender, "sendTo", fakeSendTo);
 
     let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
       messageDispatcher,
@@ -511,11 +511,10 @@ describe("applyEvent", function() {
       message,
       state => {
         if (state.value === "InstanceAndTypePublished") {
-          expect(fakeReplyTo.called).to.be.true;
+          expect(fakeSendTo.called).to.be.true;
           sinon.assert.calledWith(
-            fakeReplyTo,
-            sinon.match.any,
-            sinon.match("responseType"),
+            fakeSendTo,
+            sinon.match.hasNested("type", "responseType"),
             sinon.match.any
           );
           done();
@@ -542,7 +541,7 @@ describe("applyEvent", function() {
     let fakeSendResponseInstanceToInitiator = sinon.fake();
     sinon.replace(
       messageDispatcher,
-      "sendResponseInstanceToInitiator",
+      "sendResponseInstanceToOperator",
       fakeSendResponseInstanceToInitiator
     );
 
@@ -578,8 +577,13 @@ describe("applyEvent", function() {
 
   it("responds with notUnderstood if a 400 error takes place in creating an instance", function(done) {
     let conversationId = "abcd1234";
+    let messageSender: MessageSender = new MessageSender(
+      <AmqpClient>{},
+      <IConversationMember>{},
+      ""
+    );
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      <IMessageSender>{},
+      messageSender,
       new WebClient("http://base.com", "user", "password"),
       "data-manager"
     );
@@ -594,12 +598,12 @@ describe("applyEvent", function() {
     let fakeSendResponseInstanceToInitiator = sinon.fake();
     sinon.replace(
       messageDispatcher,
-      "sendResponseInstanceToInitiator",
+      "sendResponseInstanceToOperator",
       fakeSendResponseInstanceToInitiator
     );
 
-    let fakeNotUnderstood = sinon.fake();
-    sinon.replace(messageDispatcher, "replyNotUnderstood", fakeNotUnderstood);
+    let sendTo = sinon.fake();
+    sinon.replace(messageSender, "sendTo", sendTo);
 
     let fakePost = sinon.fake.rejects(makeRequestError(400));
     sinon.replace(Axios, "post", fakePost);
@@ -616,7 +620,11 @@ describe("applyEvent", function() {
       state => {
         if (state.value === "OperationFailed") {
           sinon.assert.notCalled(fakeSendResponseInstanceToInitiator);
-          sinon.assert.called(fakeNotUnderstood);
+          sinon.assert.calledWith(
+            sendTo,
+            sinon.match.hasNested("type", "notUnderstood"),
+            sinon.match.any
+          );
           done();
         }
       }
@@ -649,13 +657,13 @@ describe("applyEvent", function() {
       fakecreateInstanceOnCAR
     );
 
-    let fakereplyTo = sinon.fake();
-    sinon.replace(messageSender, "replyTo", fakereplyTo);
+    let sendTo = sinon.fake();
+    sinon.replace(messageSender, "sendTo", sendTo);
 
     let fakeSendResponseInstanceToInitiator = sinon.fake();
     sinon.replace(
       messageDispatcher,
-      "sendResponseInstanceToInitiator",
+      "sendResponseInstanceToOperator",
       fakeSendResponseInstanceToInitiator
     );
 
@@ -670,11 +678,10 @@ describe("applyEvent", function() {
       message,
       state => {
         if (state.value === "OperationFailed") {
-          sinon.assert.calledOnce(fakereplyTo);
           sinon.assert.calledWith(
-            fakereplyTo,
-            sinon.match.any,
-            sinon.match("requestRefused")
+            sendTo,
+            sinon.match.hasNested("type", "requestRefused"),
+            sinon.match.any
           );
           sinon.assert.notCalled(fakeSendResponseInstanceToInitiator);
           done();
@@ -709,8 +716,8 @@ describe("applyEvent", function() {
       fakecreateInstanceOnCAR
     );
 
-    let fakereplyTo = sinon.fake();
-    sinon.replace(messageSender, "replyTo", fakereplyTo);
+    let sendTo = sinon.fake();
+    sinon.replace(messageSender, "sendTo", sendTo);
 
     let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
       messageDispatcher,
@@ -724,9 +731,9 @@ describe("applyEvent", function() {
       state => {
         if (state.value === "OperationFailed") {
           sinon.assert.calledWith(
-            fakereplyTo,
-            sinon.match.hasNested("receiver.identification.id", "receiver-id"),
-            sinon.match("error")
+            sendTo,
+            sinon.match.hasNested("type", "error"),
+            sinon.match.any
           );
           done();
         }
