@@ -27,35 +27,7 @@ async function preloadRegistryInitialRecords(): Promise<
 > {
   var registryDao: IAdapterRegistry = await RegistryFactory.getRegistryLocal();
 
-  if (AIN_ADAPTER_ID && AIN_ADAPTER_URL && AIN_ADAPTER_SUBMODEL_ID) {
-    try {
-      let adapter = new Adapter(
-        AIN_ADAPTER_ID,
-        AIN_ADAPTER_URL,
-        "SAP-AIN-Adapter",
-        AIN_ADAPTER_SUBMODEL_ID
-      );
-      let submodelEntry = new SubmodelEntry(AIN_ADAPTER_SUBMODEL_ID);
-
-      let rrs: IRegisterAdapterAssignment = new AdapterAssignmentResultSet(
-        adapter,
-        submodelEntry
-      );
-
-      var result = await registryDao.registerAdapter(rrs);
-      logger.debug(
-        `Adapter ${AIN_ADAPTER_ID} for submodel with Idshort ${AIN_ADAPTER_SUBMODEL_ID} was stored in registry`
-      );
-      
-    } catch (e) {
-      logger.error(" No env variables ");
-      throw e;
-    }
-  }
-  
-
-   if (MONGO_ADAPTER_ID && MONGO_ADAPTER_URL && MONGO_ADAPTER_SUBMODEL_ID) {
-
+  if (MONGO_ADAPTER_ID && MONGO_ADAPTER_URL && MONGO_ADAPTER_SUBMODEL_ID) {
     try {
       let adapter = new Adapter(
         MONGO_ADAPTER_ID,
@@ -64,7 +36,7 @@ async function preloadRegistryInitialRecords(): Promise<
         MONGO_ADAPTER_SUBMODEL_ID
       );
       let submodelEntry = new SubmodelEntry(MONGO_ADAPTER_SUBMODEL_ID);
-     
+
       let rrs: IRegisterAdapterAssignment = new AdapterAssignmentResultSet(
         adapter,
         submodelEntry
@@ -72,7 +44,8 @@ async function preloadRegistryInitialRecords(): Promise<
 
       var result = await registryDao.registerAdapter(rrs);
       logger.debug(
-        `Adapter ${MONGO_ADAPTER_ID} for submodel with Idshort ${MONGO_ADAPTER_SUBMODEL_ID} was stored in registry`      );
+        `Adapter ${MONGO_ADAPTER_ID} for submodel with Idshort ${MONGO_ADAPTER_SUBMODEL_ID} was stored in registry`
+      );
     } catch (e) {
       throw e;
     }
