@@ -1,6 +1,6 @@
 import { Router } from "express";
 import express = require("express");
-import boom = require("boom");
+import boom = require("@hapi/boom");
 import * as logger from "winston";
 
 let parserErrorHandler: express.ErrorRequestHandler = function(

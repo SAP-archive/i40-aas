@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { Submodel, Property, SubmodelInterface } from "i40-aas-objects";
-import boom = require("boom");
+import boom = require("@hapi/boom");
 import { logger } from "../../log";
 import { IDatabaseClient } from "./operations/IDatabaseClient";
 import { SimpleMongoDbClient } from "./operations/SimpleMongoDbClient";
