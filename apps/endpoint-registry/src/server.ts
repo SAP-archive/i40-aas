@@ -1,10 +1,13 @@
 import http from 'http';
 import express from 'express';
 import { applyMiddleware, applyRoutes } from './utils';
+import healthRoute from './services/health/routes';
+
 import routes from './services';
 import middleware from './middleware';
 
 const router = express();
+applyRoutes(healthRoute, router);
 applyMiddleware(middleware, router);
 applyRoutes(routes, router);
 

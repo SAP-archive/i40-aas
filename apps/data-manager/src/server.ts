@@ -1,6 +1,7 @@
 import http from "http";
 import express from "express";
 import { applyMiddleware, applyRoutes } from "./utils";
+import healthRoute from "./services/health/routes";
 import routes from "./services";
 import middleware from "./middleware";
 import errorHandlers from "./middleware/errorHandlers";
@@ -29,7 +30,7 @@ const router = express();
  * when something bad has happened in the controller.
  * Or if threw an exception and wanted to catch it by the error handlers middleware
  */
-
+applyRoutes(healthRoute, router);
 applyMiddleware(middleware, router);
 applyRoutes(routes, router);
 //error handling

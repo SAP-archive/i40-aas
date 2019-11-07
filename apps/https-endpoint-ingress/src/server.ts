@@ -8,7 +8,9 @@ import { initiateBroker } from "./services/aas-router/RoutingController";
 
 //init logger
 import { logger } from "./utils/log";
+import healthRoute from "./services/health/routes";
 import routes from "./services";
+
 
 const dotenv = require("dotenv");
 dotenv.config();
@@ -18,40 +20,6 @@ var BROKER_EXCHANGE = process.env.BROKER_EXCHANGE;
 var BROKER_USER = process.env.BROKER_USER;
 var BROKER_PASSWORD = process.env.BROKER_PASSWORD;
 
-if (BROKER_URL) {
-  logger.info("[AMQP]" + " AMQP_URL from env is: " + BROKER_URL);
-} else {
-  logger.info(
-    "[AMQP]" + " AMQP_URL not found will try to connect to: " + BROKER_URL
-  );
-}
-
-if (BROKER_EXCHANGE) {
-  logger.info("[AMQP]" + " Exchange name from env is: " + BROKER_EXCHANGE);
-} else {
-  logger.error(
-    "[AMQP]" +
-      " Exchange name not found will try to connect to: " +
-      BROKER_EXCHANGE
-  );
-}
-if (BROKER_USER) {
-  logger.info("[AMQP]" + " Broker  username loaded from env");
-} else {
-  logger.error(
-    "[AMQP]" +
-      " Username env variable was not found will try to connect to: " +
-      BROKER_USER
-  );
-}
-if (BROKER_PASSWORD) {
-  logger.info("[AMQP]" + " Broker password loaded from env ");
-} else {
-  logger.error(
-    "[AMQP]" +
-      " Broker password not found will try to connect with user default pass"
-  );
-}
 //avoid crashing the process when an unhandled Exception occurs
 process.on("uncaughtException", e => {
   logger.error("uncaughtException " + e);
@@ -70,6 +38,7 @@ const router = express();
  * when something bad has happened in the controller.
  * Or if threw an exception and wanted to catch it by the error handlers middleware
  */
+applyRoutes(healthRoute, router);
 
 applyMiddleware(middleware, router);
 applyRoutes(routes, router);
