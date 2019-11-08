@@ -14,12 +14,6 @@ import { IRegisterAdapterAssignment } from "./interfaces/IAPIRequests";
 const dotenv = require("dotenv");
 dotenv.config();
 
-let AIN_ADAPTER_ID = process.env.AIN_ADAPTER_ID;
-var AIN_ADAPTER_URL = process.env.AIN_ADAPTER_URL;
-var AIN_ADAPTER_SUBMODEL_ID = process.env.AIN_ADAPTER_SUBMODEL_ID;
-let MONGO_ADAPTER_ID = process.env.MONGO_ADAPTER_ID;
-var MONGO_ADAPTER_URL = process.env.MONGO_ADAPTER_URL;
-var MONGO_ADAPTER_SUBMODEL_ID = process.env.MONGO_ADAPTER_SUBMODEL_ID;
 
 /**
  * Register a storage adapter with its submodel assignment
@@ -31,9 +25,8 @@ async function register(
 
   try {
     var result = await registryDao.registerAdapter(req);
-    logger.debug(
-      `Adapter ${MONGO_ADAPTER_ID} for submodel with Idshort ${MONGO_ADAPTER_SUBMODEL_ID} was stored in registry`
-    );
+    console.log('Adapter %s for submodel with ID %s was stored in registry'
+    ,req.adapter.adapterId, req.submodel.submodelIdShort);
   } catch (e) {
     throw e;
   }
@@ -41,16 +34,16 @@ async function register(
   return result;
 }
 
-async function getAdaptersBySubmodelId(
+async function readAdapterBySubmodelId(
   idShort: string
-): Promise<Array<IStorageAdapter>> {
+): Promise<IStorageAdapter> {
   var registryDao: IAdapterRegistry = await RegistryFactory.getRegistryLocal();
   try {
-    var result = await registryDao.listAdaptersBySubmodelID(idShort);
+    var result = await registryDao.getAdapterBySubmodelId(idShort);
     return result;
   } catch (e) {
     throw e;
   }
 }
 
-export { getAdaptersBySubmodelId, register };
+export { readAdapterBySubmodelId, register };

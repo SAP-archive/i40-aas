@@ -7,7 +7,7 @@ interface IAdapterRegistry {
   registerAdapter(req: ICreateAdapter): Promise<IAdapterAssignmentResultSet>;
   updateAdapter(req: ICreateAdapter): Promise<IAdapterAssignmentResultSet>;
   deleteAdapterByAdapterID(aasId: Identifier): Promise<void>;
-  listAdaptersBySubmodelID(submodelId: string): Promise<Array<IStorageAdapter>>;
+  getAdapterBySubmodelId(submodelId: string): Promise<IStorageAdapter>;
   listAllSubmodels(): Promise<Array<IAdapterAssignmentResultSet>>;
   release(): void;
   //regsiter a new submodel that can be handled from an adapter
