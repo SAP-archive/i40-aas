@@ -54,7 +54,7 @@ class SkillStateMachineSpecification {
             {
               target: "WaitingForType",
               cond: "requestType",
-              actions: "sendResponseToInitiatorAndRequestType"
+              actions: "sendResponseToOperatorAndRequestType"
             }
           ],
           onError: {
@@ -121,8 +121,8 @@ class SkillStateMachineSpecification {
     actions: {
       sendErrorToOperator: (context: any, event: any) =>
         context.actionMap.sendErrorToOperator(context, event),
-      sendResponseToInitiatorAndRequestType: (context: any, event: any) =>
-        context.actionMap.sendResponseToInitiatorAndRequestType(context, event),
+      sendResponseToOperatorAndRequestType: (context: any, event: any) =>
+        context.actionMap.sendResponseToOperatorAndRequestType(context, event),
       //only send back response
       sendResponseInstanceToOperator: (context, event) =>
         context.actionMap.sendResponseInstanceToOperator(context, event),

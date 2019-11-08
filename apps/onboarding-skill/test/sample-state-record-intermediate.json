@@ -14,14 +14,14 @@
           {
             "target": "WaitingForType",
             "cond": "requestType",
-            "actions": "sendResponseToInitiatorAndRequestType"
+            "actions": "sendResponseToOperatorAndRequestType"
           }
         ],
         "onError": { "target": "OperationFailed", "actions": "sendErrorBack" },
         "type": "xstate.invoke"
       }
     },
-    { "type": "sendResponseToInitiatorAndRequestType" }
+    { "type": "sendResponseToOperatorAndRequestType" }
   ],
   "activities": { "xstate.invoke": false },
   "meta": {},
@@ -72,7 +72,7 @@
             {
               "target": "WaitingForType",
               "cond": "requestType",
-              "actions": "sendResponseToInitiatorAndRequestType"
+              "actions": "sendResponseToOperatorAndRequestType"
             }
           ],
           "onError": {
@@ -98,7 +98,7 @@
             {
               "target": "WaitingForType",
               "cond": "requestType",
-              "actions": "sendResponseToInitiatorAndRequestType"
+              "actions": "sendResponseToOperatorAndRequestType"
             }
           ],
           "onError": {

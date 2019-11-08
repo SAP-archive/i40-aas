@@ -63,7 +63,7 @@ class SkillActionMap {
   }
 
   //TODO: why context.message and context.message...
-  sendResponseToInitiatorAndRequestType(context: ISkillContext, event: any) {
+  sendResponseToOperatorAndRequestType(context: ISkillContext, event: any) {
     logger.debug("Calling sendResponseInstanceToOperator");
     this.messageDispatcher.sendResponseInstanceToOperator(
       context.message,
@@ -88,9 +88,10 @@ class SkillActionMap {
   }
 
   //called in case manufacturer rejects the request
+  //TODO: write test to make sure message sent to right role with right message type in this case
   sendRequestRefusedToOperator(context: ISkillContext, event: any) {
     let message = context.message as InteractionMessage;
-    this.messageDispatcher.replyRequestRefused(message);
+    this.messageDispatcher.sendRequestRefusedToOperator(message);
   }
 
   sendErrorToInitiator(context: ISkillContext, event: any) {
