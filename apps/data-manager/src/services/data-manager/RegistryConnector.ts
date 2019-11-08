@@ -1,7 +1,5 @@
 import * as logger from "winston";
 import { Submodel } from "i40-aas-objects";
-import _submodelToaAdapterRoutes from "../../config/config.json";
-import _adapterURLs from "../../config/adapterURLConfig/adapter-urls.json";
 import { IStorageAdapter } from "./IStorageAdapter";
 import { WebClient } from "./WebClient/WebClient";
 
@@ -19,25 +17,23 @@ async function getAdapterFromRegistry(
   submodelIdShort: string
 ): Promise<Array<IStorageAdapter>> {
   if (ADAPTER_REG_URL && ADAPTER_REG_USER && ADAPTER_REG_PASS) {
+    var regResponse = await webClient.getRequest(
+      ADAPTER_REG_URL,
+      submodelIdShort,
+      ADAPTER_REG_USER,
+      ADAPTER_REG_PASS
+    );
 
-      var regResponse = await webClient.getRequest(
-        ADAPTER_REG_URL,
-        submodelIdShort,
-        ADAPTER_REG_USER,
-        ADAPTER_REG_PASS
+    let adaptersArray = regResponse.data as IStorageAdapter[];
+
+    adaptersArray.forEach(adapter => {
+      //TODO: Validation required
+      logger.debug(
+        `The submodel with id ${submodelIdShort}, will be routed to ${adapter.url}`
       );
-    
-      let adaptersArray = regResponse.data as IStorageAdapter[];
+    });
 
-      adaptersArray.forEach(adapter => {
-        //TODO: Validation required
-        logger.debug(
-          `The submodel with id ${submodelIdShort}, will be routed to ${adapter.url}`
-        );
-      });
-
-      return adaptersArray;
-    
+    return adaptersArray;
   } else {
     logger.error(
       " Cannot contact Adapter Registry, Env. Variables are not set "
