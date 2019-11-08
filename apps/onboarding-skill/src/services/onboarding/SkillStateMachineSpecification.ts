@@ -76,7 +76,7 @@ class SkillStateMachineSpecification {
         on: {
           RESPONSETYPE_FROM_MANUFACTURER: {
             target: "InstanceAndTypePublished",
-            actions: ["sendResponseTypeToInitiator"]
+            actions: ["sendResponseTypeToOperator"]
           },
           NOTUNDERSTOOD_FROM_MANUFACTURER: {
             target: "OperationFailed",
@@ -132,8 +132,8 @@ class SkillStateMachineSpecification {
       sendErrorToInitiator: (context, event) =>
         context.actionMap.sendErrorToInitiator(context, event),
 
-      sendResponseTypeToInitiator: (context, event) =>
-        context.actionMap.sendResponseTypeToInitiator(context, event),
+      sendResponseTypeToOperator: (context, event) =>
+        context.actionMap.sendResponseTypeToOperator(context, event),
 
       requestApprovalFromApprover: (context, event) =>
         context.actionMap.requestApprovalFromApprover(context, event)

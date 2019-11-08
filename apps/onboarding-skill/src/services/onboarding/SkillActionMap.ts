@@ -88,7 +88,6 @@ class SkillActionMap {
   }
 
   //called in case manufacturer rejects the request
-  //TODO: write test to make sure message sent to right role with right message type in this case
   sendRequestRefusedToOperator(context: ISkillContext, event: any) {
     let message = context.message as InteractionMessage;
     this.messageDispatcher.sendRequestRefusedToOperator(message);
@@ -99,7 +98,7 @@ class SkillActionMap {
     this.messageDispatcher.replyError(message);
   }
 
-  sendResponseTypeToInitiator(context: ISkillContext, event: any) {
+  sendResponseTypeToOperator(context: ISkillContext, event: any) {
     let message = context.message as InteractionMessage;
     //TODO: get response type from message
     this.messageDispatcher.sendResponseTypeToOperator(message, {});

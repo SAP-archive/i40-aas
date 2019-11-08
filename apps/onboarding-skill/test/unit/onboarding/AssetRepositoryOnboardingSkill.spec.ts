@@ -1269,8 +1269,8 @@ describe("applyEvent", function() {
       })
     );
 
-    let fakereplyTo = sinon.fake();
-    sinon.replace(messageSender, "replyTo", fakereplyTo);
+    let sendTo = sinon.fake();
+    sinon.replace(messageSender, "sendTo", sendTo);
 
     let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
       messageDispatcher,
@@ -1283,9 +1283,11 @@ describe("applyEvent", function() {
       message
     );
     sinon.assert.calledWith(
-      fakereplyTo,
-      sinon.match.any,
-      sinon.match("requestRefused")
+      sendTo,
+      sinon.match
+        .hasNested("type", "requestRefused")
+        .and(sinon.match.hasNested("receiver.role.name", "Operator")),
+      sinon.match.any
     );
   });
 
