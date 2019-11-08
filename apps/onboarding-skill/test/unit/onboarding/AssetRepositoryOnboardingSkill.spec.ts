@@ -19,6 +19,7 @@ import { IDatabaseClient } from "../../../src/services/onboarding/persistenceint
 const initializeLogger = require("../../../src/log");
 
 //TODO: if tests fail they do not signal done to Mocha
+//assertions need to be put in a try catch block, signalling done("Error") in case of failure
 function makeRequestError(statusCode: number): AxiosError<any> {
   let error: Error = new Error("AxiosError");
   let axiosProps: AxiosError = {
