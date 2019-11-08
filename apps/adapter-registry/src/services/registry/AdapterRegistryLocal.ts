@@ -25,30 +25,26 @@ class AdapterRegistryLocal implements IAdapterRegistry {
   ): Promise<AdapterAssignmentResultSet[]> {
     throw new Error("Method not implemented.");
   }
+
   async registerAdapter(
     record: import("./interfaces/IAPIRequests").IRegisterAdapterAssignment
   ): Promise<AdapterAssignmentResultSet> {
-    try {
-      const insertSubmodelResult = await this.storage.setItem(
-        record.submodel.submodelIdShort,
-        record.submodel
-      );
-    } catch (e) {
-      throw e;
-    }
 
     try {
+      //since submodel to Adapter is 1..1 we use the submodelid as key
       const insertAdapterResult = await this.storage.setItem(
-        record.adapter.adapterId,
+        record.submodel.submodelIdShort,
         record.adapter
       );
     } catch (e) {
+      logger.error(
+        "Error storing adapter entry " + record.submodel.submodelIdShort
+      );
       throw e;
     }
-    logger.info("Registerd record: " + record);
+    logger.info("Registed record: " + record);
     return record;
   }
-
 
   updateAdapter(
     req: import("./interfaces/IAPIRequests").ICreateAdapter
@@ -58,34 +54,25 @@ class AdapterRegistryLocal implements IAdapterRegistry {
   deleteAdapterByAdapterID(aasId: Identifier): Promise<void> {
     throw new Error("Method not implemented.");
   }
-  async listAdaptersBySubmodelID(
-    submodelId: string
-  ): Promise<IStorageAdapter[]> {
-    //get all entries with a key that includes "adapter"
-    //TODO:naming convention for adapter-ids should be kept for this schema to work. Consider looking thourhg all keys for adapters
-    /*
-    this.storage.forEach(async function(callback) {
-    // callback: look for adapters
-});
-    */
-    var aaRS: Adapter[] = new Array<Adapter>();
+  async getAdapterBySubmodelId(submodelId: string): Promise<IStorageAdapter> {
 
-    try{
-    //find which keys contain adapters
-    let values: Adapter[] = await this.storage.valuesWithKeyMatch(/adapter/); //output: [{name: "Bruce Wayne"},{name: "Clark Kent"}]
+    try {
+      //find which keys contain the submodel id
+      let adapter = await this.storage.get(submodelId);
 
-    values.forEach(Adapter => {
-      logger.debug("Adapter found : " + JSON.stringify(Adapter));
-      if (Adapter.submodelId === submodelId) {
-        aaRS.push(Adapter);
+      if(adapter) {
+      logger.debug("Adapter found : " + JSON.stringify(adapter));
+
+      return adapter;
       }
-    });
+      else {
+        logger.debug("No adapter for submodel : " + submodelId);
 
-    return aaRS;
-  }
-  catch(e){
-    throw new Error("internal storage error");
-  }
+        return new Adapter();
+      }
+    } catch (e) {
+      throw new Error("internal storage error");
+    }
     //return [new AdapterAssignmentResultSet({ id: aasRecord.aasId, idType: aasRecord.idType }, endpoints, { id: '123', idType: IdTypeEnum.Custom })];
   }
   listAllSubmodels(): Promise<AdapterAssignmentResultSet[]> {

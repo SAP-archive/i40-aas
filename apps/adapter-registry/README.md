@@ -11,6 +11,23 @@ A service component that offers an API for:
 
 Not yet implemented
 
+POST /register
+
+```javascript
+[
+    {
+        "adapter": {
+          "adapterId":"fooAdapterId",
+          "url":"fooURL",
+          "name":"testAdaptername",
+        "submodelId": "opc-ua-devices"
+        }
+    }
+]
+```
+
+
+
 ## Read
 
 
@@ -52,6 +69,6 @@ Not yet implemented
 Refistry admin user is available as the following environment variables:
 
 ```
-REGISTRY_ADMIN_USER 
-REGISTRY_ADMIN_PASSWORD
+ADAPTER_REG_ADMIN_USER 
+ADAPTER_REG_ADMIN_PASS
 ```
