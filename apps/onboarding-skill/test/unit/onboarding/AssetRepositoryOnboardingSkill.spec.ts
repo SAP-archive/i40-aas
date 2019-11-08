@@ -17,6 +17,7 @@ import { IConversationMember } from "i40-aas-objects/dist/src/interaction/Conver
 
 const initializeLogger = require("../../../src/log");
 
+//TODO: independency problem, if one async test fails multiple fail
 function makeRequestError(statusCode: number): AxiosError<any> {
   let error: Error = new Error("AxiosError");
   let axiosProps: AxiosError = {
@@ -105,11 +106,11 @@ describe("applyEvent", function() {
       sinon.replace(dbClient, "update", fakeStoreInDb);
       sinon.replace(dbClient, "getOneByKey", sinon.fake.returns(null));
 
-      let fakeSendResponseInstanceToInitiator = sinon.fake();
+      let fakesendResponseInstanceToOperator = sinon.fake();
       sinon.replace(
         messageDispatcher,
         "sendResponseInstanceToOperator",
-        fakeSendResponseInstanceToInitiator
+        fakesendResponseInstanceToOperator
       );
 
       let fakecreateInstanceOnCAR = sinon.fake.resolves({ status: 200 });
@@ -147,7 +148,7 @@ describe("applyEvent", function() {
               ),
               sinon.match.any
             );
-            sinon.assert.calledOnce(fakeSendResponseInstanceToInitiator);
+            sinon.assert.calledOnce(fakesendResponseInstanceToOperator);
             done();
           }
         }
@@ -179,7 +180,7 @@ describe("applyEvent", function() {
 
     let fakesendTo = sinon.fake();
     sinon.replace(messageSender, "sendTo", fakesendTo);
-    sinon.replace(messageSender, "replyTo", sinon.fake());
+    //sinon.replace(messageSender, "replyTo", sinon.fake());
 
     let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
       messageDispatcher,
@@ -210,6 +211,34 @@ describe("applyEvent", function() {
 
   it("moves into CreatingInstance from WaitForApproval on receipt of APPROVED_FROM_APPROVER (when requestApproval is set), sending out the correct messages", function(done) {
     process.env["REQUEST_APPROVAL"] = "true";
+
+    let messageFromApprover = <InteractionMessage>{
+      frame: {
+        type: "approved",
+        messageId: "messageId",
+        receiver: {
+          identification: {
+            id: "receiver-id",
+            idType: "idType"
+          },
+          role: {
+            name: "central-asset-repository"
+          }
+        },
+        semanticProtocol: "semprot",
+        sender: {
+          identification: {
+            id: "sender-id",
+            idType: "idType"
+          },
+          role: {
+            name: "approver"
+          }
+        },
+        conversationId: "conversationId"
+      },
+      interactionElements: [{}]
+    };
 
     let conversationId = "abcd1234";
     let messageSender: MessageSender = new MessageSender(
@@ -249,7 +278,11 @@ describe("applyEvent", function() {
       fakecreateInstanceOnCAR
     );
 
-    sinon.replace(messageSender, "replyTo", sinon.fake());
+    let fakeReplyTo = sinon.fake();
+    sinon.replace(messageSender, "replyTo", fakeReplyTo);
+
+    let fakeSendTo = sinon.fake();
+    sinon.replace(messageSender, "sendTo", fakeSendTo);
 
     let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
       messageDispatcher,
@@ -259,10 +292,426 @@ describe("applyEvent", function() {
     skill.applyEvent(
       "APPROVED_FROM_APPROVER",
       conversationId,
-      message,
+      messageFromApprover,
       state => {
         if (state.value === "CreatingInstance") {
+          sinon.assert.notCalled(fakeReplyTo);
           sinon.assert.calledOnce(fakecreateInstanceOnCAR);
+          sinon.assert.calledWith(
+            fakeSendTo,
+            sinon.match
+              .hasNested("type", "responseInstance")
+              .and(sinon.match.hasNested("receiver.role.name", "Operator")),
+            sinon.match.any
+          );
+          process.env["REQUEST_APPROVAL"] = "false";
+          done();
+        }
+      }
+    );
+  });
+
+  it("sends error to the right role, if there is an error creating an instance after approval", function(done) {
+    process.env["REQUEST_APPROVAL"] = "true";
+
+    let messageFromApprover = <InteractionMessage>{
+      frame: {
+        type: "approved",
+        messageId: "messageId",
+        receiver: {
+          identification: {
+            id: "receiver-id",
+            idType: "idType"
+          },
+          role: {
+            name: "central-asset-repository"
+          }
+        },
+        semanticProtocol: "semprot",
+        sender: {
+          identification: {
+            id: "sender-id",
+            idType: "idType"
+          },
+          role: {
+            name: "Approver"
+          }
+        },
+        conversationId: "conversationId"
+      },
+      interactionElements: [{}]
+    };
+
+    let conversationId = "abcd1234";
+    let messageSender: MessageSender = new MessageSender(
+      <AmqpClient>{},
+      <IConversationMember>{},
+      ""
+    );
+    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
+      messageSender,
+      <WebClient>{},
+      "data-manager"
+    );
+    let dbClient = makeDbClient();
+
+    let fakeStoreInDb = sinon.fake.resolves({ result: "ok" });
+
+    sinon.replace(dbClient, "connect", sinon.fake.resolves({}));
+    sinon.replace(dbClient, "disconnect", sinon.fake.resolves({}));
+    sinon.replace(dbClient, "update", fakeStoreInDb);
+    sinon.replace(
+      dbClient,
+      "getOneByKey",
+      sinon.fake.resolves({
+        _id: conversationId,
+        version: 2,
+        serializedState: fs.readFileSync(
+          process.cwd() + "/test/sample-state-wait-for-approval.json",
+          "utf8"
+        )
+      })
+    );
+
+    let fakecreateInstanceOnCAR = sinon.fake.rejects({ status: 550 });
+    sinon.replace(
+      messageDispatcher,
+      "createInstanceOnCAR",
+      fakecreateInstanceOnCAR
+    );
+
+    let fakeReplyTo = sinon.fake();
+    sinon.replace(messageSender, "replyTo", fakeReplyTo);
+
+    let fakeSendTo = sinon.fake();
+    sinon.replace(messageSender, "sendTo", fakeSendTo);
+
+    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
+      messageDispatcher,
+      dbClient
+    );
+
+    skill.applyEvent(
+      "APPROVED_FROM_APPROVER",
+      conversationId,
+      messageFromApprover,
+      state => {
+        if (state.value === "CreatingInstance") {
+          sinon.assert.notCalled(fakeReplyTo);
+          sinon.assert.calledOnce(fakecreateInstanceOnCAR);
+          sinon.assert.calledWith(
+            fakeSendTo,
+            sinon.match
+              .hasNested("type", "error")
+              .and(sinon.match.hasNested("receiver.role.name", "Operator")),
+            sinon.match.any
+          );
+          process.env["REQUEST_APPROVAL"] = "false";
+          done();
+        }
+      }
+    );
+  });
+
+  it("sends a notUnderstood to the right role, if there is a 400 error creating an instance after approval", function(done) {
+    process.env["REQUEST_APPROVAL"] = "true";
+
+    let messageFromApprover = <InteractionMessage>{
+      frame: {
+        type: "approved",
+        messageId: "messageId",
+        receiver: {
+          identification: {
+            id: "receiver-id",
+            idType: "idType"
+          },
+          role: {
+            name: "central-asset-repository"
+          }
+        },
+        semanticProtocol: "semprot",
+        sender: {
+          identification: {
+            id: "sender-id",
+            idType: "idType"
+          },
+          role: {
+            name: "Approver"
+          }
+        },
+        conversationId: "conversationId"
+      },
+      interactionElements: [{}]
+    };
+
+    let conversationId = "abcd1234";
+    let messageSender: MessageSender = new MessageSender(
+      <AmqpClient>{},
+      <IConversationMember>{},
+      ""
+    );
+    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
+      messageSender,
+      <WebClient>{},
+      "data-manager"
+    );
+    let dbClient = makeDbClient();
+
+    let fakeStoreInDb = sinon.fake.resolves({ result: "ok" });
+
+    sinon.replace(dbClient, "connect", sinon.fake.resolves({}));
+    sinon.replace(dbClient, "disconnect", sinon.fake.resolves({}));
+    sinon.replace(dbClient, "update", fakeStoreInDb);
+    sinon.replace(
+      dbClient,
+      "getOneByKey",
+      sinon.fake.resolves({
+        _id: conversationId,
+        version: 2,
+        serializedState: fs.readFileSync(
+          process.cwd() + "/test/sample-state-wait-for-approval.json",
+          "utf8"
+        )
+      })
+    );
+
+    let fakecreateInstanceOnCAR = sinon.fake.rejects(makeRequestError(400));
+    sinon.replace(
+      messageDispatcher,
+      "createInstanceOnCAR",
+      fakecreateInstanceOnCAR
+    );
+
+    let fakeReplyTo = sinon.fake();
+    sinon.replace(messageSender, "replyTo", fakeReplyTo);
+
+    let fakeSendTo = sinon.fake();
+    sinon.replace(messageSender, "sendTo", fakeSendTo);
+
+    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
+      messageDispatcher,
+      dbClient
+    );
+
+    skill.applyEvent(
+      "APPROVED_FROM_APPROVER",
+      conversationId,
+      messageFromApprover,
+      state => {
+        if (state.value === "CreatingInstance") {
+          sinon.assert.notCalled(fakeReplyTo);
+          sinon.assert.calledOnce(fakecreateInstanceOnCAR);
+          sinon.assert.calledWith(
+            fakeSendTo,
+            sinon.match
+              .hasNested("type", "notUnderstood")
+              .and(sinon.match.hasNested("receiver.role.name", "Operator")),
+            sinon.match.any
+          );
+          process.env["REQUEST_APPROVAL"] = "false";
+          done();
+        }
+      }
+    );
+  });
+
+  it("sends a requestRefused to the right role, if there is a 401 error creating an instance after approval", function(done) {
+    process.env["REQUEST_APPROVAL"] = "true";
+
+    let messageFromApprover = <InteractionMessage>{
+      frame: {
+        type: "approved",
+        messageId: "messageId",
+        receiver: {
+          identification: {
+            id: "receiver-id",
+            idType: "idType"
+          },
+          role: {
+            name: "central-asset-repository"
+          }
+        },
+        semanticProtocol: "semprot",
+        sender: {
+          identification: {
+            id: "sender-id",
+            idType: "idType"
+          },
+          role: {
+            name: "Approver"
+          }
+        },
+        conversationId: "conversationId"
+      },
+      interactionElements: [{}]
+    };
+
+    let conversationId = "abcd1234";
+    let messageSender: MessageSender = new MessageSender(
+      <AmqpClient>{},
+      <IConversationMember>{},
+      ""
+    );
+    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
+      messageSender,
+      <WebClient>{},
+      "data-manager"
+    );
+    let dbClient = makeDbClient();
+
+    let fakeStoreInDb = sinon.fake.resolves({ result: "ok" });
+
+    sinon.replace(dbClient, "connect", sinon.fake.resolves({}));
+    sinon.replace(dbClient, "disconnect", sinon.fake.resolves({}));
+    sinon.replace(dbClient, "update", fakeStoreInDb);
+    sinon.replace(
+      dbClient,
+      "getOneByKey",
+      sinon.fake.resolves({
+        _id: conversationId,
+        version: 2,
+        serializedState: fs.readFileSync(
+          process.cwd() + "/test/sample-state-wait-for-approval.json",
+          "utf8"
+        )
+      })
+    );
+
+    let fakecreateInstanceOnCAR = sinon.fake.rejects(makeRequestError(401));
+    sinon.replace(
+      messageDispatcher,
+      "createInstanceOnCAR",
+      fakecreateInstanceOnCAR
+    );
+
+    let fakeReplyTo = sinon.fake();
+    sinon.replace(messageSender, "replyTo", fakeReplyTo);
+
+    let fakeSendTo = sinon.fake();
+    sinon.replace(messageSender, "sendTo", fakeSendTo);
+
+    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
+      messageDispatcher,
+      dbClient
+    );
+
+    skill.applyEvent(
+      "APPROVED_FROM_APPROVER",
+      conversationId,
+      messageFromApprover,
+      state => {
+        if (state.value === "CreatingInstance") {
+          sinon.assert.notCalled(fakeReplyTo);
+          sinon.assert.calledOnce(fakecreateInstanceOnCAR);
+          sinon.assert.calledWith(
+            fakeSendTo,
+            sinon.match
+              .hasNested("type", "requestRefused")
+              .and(sinon.match.hasNested("receiver.role.name", "Operator")),
+            sinon.match.any
+          );
+          process.env["REQUEST_APPROVAL"] = "false";
+          done();
+        }
+      }
+    );
+  });
+
+  it("sends a error to the right role, if there is a 500 error creating an instance after approval", function(done) {
+    process.env["REQUEST_APPROVAL"] = "true";
+
+    let messageFromApprover = <InteractionMessage>{
+      frame: {
+        type: "approved",
+        messageId: "messageId",
+        receiver: {
+          identification: {
+            id: "receiver-id",
+            idType: "idType"
+          },
+          role: {
+            name: "central-asset-repository"
+          }
+        },
+        semanticProtocol: "semprot",
+        sender: {
+          identification: {
+            id: "sender-id",
+            idType: "idType"
+          },
+          role: {
+            name: "Approver"
+          }
+        },
+        conversationId: "conversationId"
+      },
+      interactionElements: [{}]
+    };
+
+    let conversationId = "abcd1234";
+    let messageSender: MessageSender = new MessageSender(
+      <AmqpClient>{},
+      <IConversationMember>{},
+      ""
+    );
+    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
+      messageSender,
+      <WebClient>{},
+      "data-manager"
+    );
+    let dbClient = makeDbClient();
+
+    let fakeStoreInDb = sinon.fake.resolves({ result: "ok" });
+
+    sinon.replace(dbClient, "connect", sinon.fake.resolves({}));
+    sinon.replace(dbClient, "disconnect", sinon.fake.resolves({}));
+    sinon.replace(dbClient, "update", fakeStoreInDb);
+    sinon.replace(
+      dbClient,
+      "getOneByKey",
+      sinon.fake.resolves({
+        _id: conversationId,
+        version: 2,
+        serializedState: fs.readFileSync(
+          process.cwd() + "/test/sample-state-wait-for-approval.json",
+          "utf8"
+        )
+      })
+    );
+
+    let fakecreateInstanceOnCAR = sinon.fake.rejects(makeRequestError(500));
+    sinon.replace(
+      messageDispatcher,
+      "createInstanceOnCAR",
+      fakecreateInstanceOnCAR
+    );
+
+    let fakeReplyTo = sinon.fake();
+    sinon.replace(messageSender, "replyTo", fakeReplyTo);
+
+    let fakeSendTo = sinon.fake();
+    sinon.replace(messageSender, "sendTo", fakeSendTo);
+
+    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
+      messageDispatcher,
+      dbClient
+    );
+
+    skill.applyEvent(
+      "APPROVED_FROM_APPROVER",
+      conversationId,
+      messageFromApprover,
+      state => {
+        if (state.value === "CreatingInstance") {
+          sinon.assert.notCalled(fakeReplyTo);
+          sinon.assert.calledOnce(fakecreateInstanceOnCAR);
+          sinon.assert.calledWith(
+            fakeSendTo,
+            sinon.match
+              .hasNested("type", "error")
+              .and(sinon.match.hasNested("receiver.role.name", "Operator")),
+            sinon.match.any
+          );
           process.env["REQUEST_APPROVAL"] = "false";
           done();
         }
@@ -294,11 +743,11 @@ describe("applyEvent", function() {
       fakerequestTypeFromManufacturer
     );
 
-    let fakeSendResponseInstanceToInitiator = sinon.fake();
+    let fakesendResponseInstanceToOperator = sinon.fake();
     sinon.replace(
       messageDispatcher,
       "sendResponseInstanceToOperator",
-      fakeSendResponseInstanceToInitiator
+      fakesendResponseInstanceToOperator
     );
 
     let fakecreateInstanceOnCAR = sinon.fake.resolves({ status: 200 });
@@ -320,7 +769,7 @@ describe("applyEvent", function() {
       state => {
         if (state.value === "WaitingForType") {
           sinon.assert.calledOnce(fakerequestTypeFromManufacturer);
-          sinon.assert.calledOnce(fakeSendResponseInstanceToInitiator);
+          sinon.assert.calledOnce(fakesendResponseInstanceToOperator);
           process.env["REQUEST_TYPE"] = "false";
           done();
         }
@@ -538,11 +987,11 @@ describe("applyEvent", function() {
     sinon.replace(dbClient, "update", fakeStoreInDb);
     sinon.replace(dbClient, "getOneByKey", sinon.fake.returns(null));
 
-    let fakeSendResponseInstanceToInitiator = sinon.fake();
+    let fakesendResponseInstanceToOperator = sinon.fake();
     sinon.replace(
       messageDispatcher,
       "sendResponseInstanceToOperator",
-      fakeSendResponseInstanceToInitiator
+      fakesendResponseInstanceToOperator
     );
 
     let fakeSendError = sinon.fake();
@@ -567,7 +1016,7 @@ describe("applyEvent", function() {
       () => {},
       state => {
         if (state.value === "InstancePublished") {
-          sinon.assert.notCalled(fakeSendResponseInstanceToInitiator);
+          sinon.assert.notCalled(fakesendResponseInstanceToOperator);
           sinon.assert.called(fakeSendError);
           done();
         }
@@ -595,11 +1044,11 @@ describe("applyEvent", function() {
     sinon.replace(dbClient, "update", fakeStoreInDb);
     sinon.replace(dbClient, "getOneByKey", sinon.fake.returns(null));
 
-    let fakeSendResponseInstanceToInitiator = sinon.fake();
+    let fakesendResponseInstanceToOperator = sinon.fake();
     sinon.replace(
       messageDispatcher,
       "sendResponseInstanceToOperator",
-      fakeSendResponseInstanceToInitiator
+      fakesendResponseInstanceToOperator
     );
 
     let sendTo = sinon.fake();
@@ -619,7 +1068,7 @@ describe("applyEvent", function() {
       message,
       state => {
         if (state.value === "OperationFailed") {
-          sinon.assert.notCalled(fakeSendResponseInstanceToInitiator);
+          sinon.assert.notCalled(fakesendResponseInstanceToOperator);
           sinon.assert.calledWith(
             sendTo,
             sinon.match.hasNested("type", "notUnderstood"),
@@ -660,11 +1109,11 @@ describe("applyEvent", function() {
     let sendTo = sinon.fake();
     sinon.replace(messageSender, "sendTo", sendTo);
 
-    let fakeSendResponseInstanceToInitiator = sinon.fake();
+    let fakesendResponseInstanceToOperator = sinon.fake();
     sinon.replace(
       messageDispatcher,
       "sendResponseInstanceToOperator",
-      fakeSendResponseInstanceToInitiator
+      fakesendResponseInstanceToOperator
     );
 
     let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
@@ -683,7 +1132,7 @@ describe("applyEvent", function() {
             sinon.match.hasNested("type", "requestRefused"),
             sinon.match.any
           );
-          sinon.assert.notCalled(fakeSendResponseInstanceToInitiator);
+          sinon.assert.notCalled(fakesendResponseInstanceToOperator);
           done();
         }
       }
@@ -820,8 +1269,8 @@ describe("applyEvent", function() {
       })
     );
 
-    let fakereplyTo = sinon.fake();
-    sinon.replace(messageSender, "replyTo", fakereplyTo);
+    let sendTo = sinon.fake();
+    sinon.replace(messageSender, "sendTo", sendTo);
 
     let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
       messageDispatcher,
@@ -834,9 +1283,11 @@ describe("applyEvent", function() {
       message
     );
     sinon.assert.calledWith(
-      fakereplyTo,
-      sinon.match.any,
-      sinon.match("requestRefused")
+      sendTo,
+      sinon.match
+        .hasNested("type", "requestRefused")
+        .and(sinon.match.hasNested("receiver.role.name", "Operator")),
+      sinon.match.any
     );
   });
 

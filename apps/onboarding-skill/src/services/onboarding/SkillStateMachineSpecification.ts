@@ -37,7 +37,7 @@ class SkillStateMachineSpecification {
           },
           REQUESTREFUSED_FROM_APPROVER: {
             target: "OperationFailed",
-            actions: ["sendRequestRefusedToInitiator"]
+            actions: ["sendRequestRefusedToOperator"]
           }
         }
       },
@@ -49,17 +49,17 @@ class SkillStateMachineSpecification {
             {
               target: "InstancePublished",
               cond: "notRequestType",
-              actions: "sendResponseInstanceToInitiator"
+              actions: "sendResponseInstanceToOperator"
             },
             {
               target: "WaitingForType",
               cond: "requestType",
-              actions: "sendResponseToInitiatorAndRequestType"
+              actions: "sendResponseToOperatorAndRequestType"
             }
           ],
           onError: {
             target: "OperationFailed",
-            actions: "sendErrorToOperator"
+            actions: "sendCreationErrorToOperator"
           }
         }
       },
@@ -76,19 +76,19 @@ class SkillStateMachineSpecification {
         on: {
           RESPONSETYPE_FROM_MANUFACTURER: {
             target: "InstanceAndTypePublished",
-            actions: ["sendResponseTypeToInitiator"]
+            actions: ["sendResponseTypeToOperator"]
           },
           NOTUNDERSTOOD_FROM_MANUFACTURER: {
             target: "OperationFailed",
-            actions: ["sendErrorToInitiator"]
+            actions: ["sendErrorToOperator"]
           },
           ERROR_FROM_MANUFACTURER: {
             target: "OperationFailed",
-            actions: ["sendErrorToInitiator"]
+            actions: ["sendErrorToOperator"]
           },
           REQUESTREFUSED_FROM_MANUFACTURER: {
             target: "OperationFailed",
-            actions: ["sendRequestRefusedToInitiator"]
+            actions: ["sendRequestRefusedToOperator"]
           }
         }
       }
@@ -119,21 +119,21 @@ class SkillStateMachineSpecification {
       }
     },
     actions: {
-      sendErrorToOperator: (context: any, event: any) =>
-        context.actionMap.sendErrorToOperator(context, event),
-      sendResponseToInitiatorAndRequestType: (context: any, event: any) =>
-        context.actionMap.sendResponseToInitiatorAndRequestType(context, event),
+      sendCreationErrorToOperator: (context: any, event: any) =>
+        context.actionMap.sendCreationErrorToOperator(context, event),
+      sendResponseToOperatorAndRequestType: (context: any, event: any) =>
+        context.actionMap.sendResponseToOperatorAndRequestType(context, event),
       //only send back response
-      sendResponseInstanceToInitiator: (context, event) =>
-        context.actionMap.sendResponseInstanceToInitiator(context, event),
-      sendRequestRefusedToInitiator: (context, event) =>
+      sendResponseInstanceToOperator: (context, event) =>
+        context.actionMap.sendResponseInstanceToOperator(context, event),
+      sendRequestRefusedToOperator: (context, event) =>
         context.actionMap.sendRequestRefusedToOperator(context, event),
 
-      sendErrorToInitiator: (context, event) =>
-        context.actionMap.sendErrorToInitiator(context, event),
+      sendErrorToOperator: (context, event) =>
+        context.actionMap.sendErrorToOperator(context, event),
 
-      sendResponseTypeToInitiator: (context, event) =>
-        context.actionMap.sendResponseTypeToInitiator(context, event),
+      sendResponseTypeToOperator: (context, event) =>
+        context.actionMap.sendResponseTypeToOperator(context, event),
 
       requestApprovalFromApprover: (context, event) =>
         context.actionMap.requestApprovalFromApprover(context, event)

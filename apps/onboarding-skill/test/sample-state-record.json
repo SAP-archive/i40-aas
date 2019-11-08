@@ -9,19 +9,19 @@
           {
             "target": "InstancePublished",
             "cond": "notRequestType",
-            "actions": "sendResponseInstanceToInitiator"
+            "actions": "sendResponseInstanceToOperator"
           },
           {
             "target": "WaitingForType",
             "cond": "requestType",
-            "actions": "sendResponseToInitiatorAndRequestType"
+            "actions": "sendResponseToOperatorAndRequestType"
           }
         ],
         "onError": { "target": "OperationFailed", "actions": "sendErrorBack" },
         "type": "xstate.invoke"
       }
     },
-    { "type": "sendResponseInstanceToInitiator" }
+    { "type": "sendResponseInstanceToOperator" }
   ],
   "activities": { "xstate.invoke": false },
   "meta": {},
@@ -67,12 +67,12 @@
             {
               "target": "InstancePublished",
               "cond": "notRequestType",
-              "actions": "sendResponseInstanceToInitiator"
+              "actions": "sendResponseInstanceToOperator"
             },
             {
               "target": "WaitingForType",
               "cond": "requestType",
-              "actions": "sendResponseToInitiatorAndRequestType"
+              "actions": "sendResponseToOperatorAndRequestType"
             }
           ],
           "onError": {
@@ -93,12 +93,12 @@
             {
               "target": "InstancePublished",
               "cond": "notRequestType",
-              "actions": "sendResponseInstanceToInitiator"
+              "actions": "sendResponseInstanceToOperator"
             },
             {
               "target": "WaitingForType",
               "cond": "requestType",
-              "actions": "sendResponseToInitiatorAndRequestType"
+              "actions": "sendResponseToOperatorAndRequestType"
             }
           ],
           "onError": {

@@ -37,12 +37,12 @@ class SkillActionMap {
     //logger.debug(error);
   }
 
-  sendErrorToOperator(context: ISkillContext, event: any) {
+  sendCreationErrorToOperator(context: ISkillContext, event: any) {
     logger.debug("Received error. Now sending error back");
     let md = this.messageDispatcher;
     this.logRequestError(event.data);
     if (!event.data.response) {
-      md.replyError(context.message);
+      md.sendErrorToOperator(context.message);
     } else {
       switch (event.data.response.status) {
         case 400:
@@ -63,8 +63,8 @@ class SkillActionMap {
   }
 
   //TODO: why context.message and context.message...
-  sendResponseToInitiatorAndRequestType(context: ISkillContext, event: any) {
-    logger.debug("Calling sendResponseInstanceToInitiator");
+  sendResponseToOperatorAndRequestType(context: ISkillContext, event: any) {
+    logger.debug("Calling sendResponseInstanceToOperator");
     this.messageDispatcher.sendResponseInstanceToOperator(
       context.message,
       context.message.interactionElements[0]
@@ -79,7 +79,7 @@ class SkillActionMap {
       context.message.interactionElements
     );
   }
-  sendResponseInstanceToInitiator(context: ISkillContext, event: any) {
+  sendResponseInstanceToOperator(context: ISkillContext, event: any) {
     logger.debug("onDone called");
     return this.messageDispatcher.sendResponseInstanceToOperator(
       context.message,
@@ -90,15 +90,15 @@ class SkillActionMap {
   //called in case manufacturer rejects the request
   sendRequestRefusedToOperator(context: ISkillContext, event: any) {
     let message = context.message as InteractionMessage;
-    this.messageDispatcher.replyRequestRefused(message);
+    this.messageDispatcher.sendRequestRefusedToOperator(message);
   }
 
-  sendErrorToInitiator(context: ISkillContext, event: any) {
+  sendErrorToOperator(context: ISkillContext, event: any) {
     let message = context.message as InteractionMessage;
-    this.messageDispatcher.replyError(message);
+    this.messageDispatcher.sendErrorToOperator(message);
   }
 
-  sendResponseTypeToInitiator(context: ISkillContext, event: any) {
+  sendResponseTypeToOperator(context: ISkillContext, event: any) {
     let message = context.message as InteractionMessage;
     //TODO: get response type from message
     this.messageDispatcher.sendResponseTypeToOperator(message, {});
