@@ -7,8 +7,8 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 let ADAPTER_REG_URL = process.env.ADAPTER_REG_URL;
-let ADAPTER_REG_USER = process.env.ADAPTER_REG_USER;
-let ADAPTER_REG_PASS = process.env.ADAPTER_REG_PASS;
+let ADAPTER_REG_ADMIN_USER = process.env.ADAPTER_REG_ADMIN_USER;
+let ADAPTER_REG_ADMIN_PASS = process.env.ADAPTER_REG_ADMIN_PASS;
 
 var webClient = new WebClient();
 
@@ -16,12 +16,12 @@ var webClient = new WebClient();
 async function getAdapterFromRegistry(
   submodelIdShort: string
 ): Promise<Array<IStorageAdapter>> {
-  if (ADAPTER_REG_URL && ADAPTER_REG_USER && ADAPTER_REG_PASS) {
+  if (ADAPTER_REG_URL && ADAPTER_REG_ADMIN_USER && ADAPTER_REG_ADMIN_PASS) {
     var regResponse = await webClient.getRequest(
       ADAPTER_REG_URL,
       submodelIdShort,
-      ADAPTER_REG_USER,
-      ADAPTER_REG_PASS
+      ADAPTER_REG_ADMIN_USER,
+      ADAPTER_REG_ADMIN_PASS
     );
 
     let adaptersArray = regResponse.data as IStorageAdapter[];
