@@ -4,7 +4,7 @@ import {
   checkReqBodyEmpty,
   validateSubmodelsRequest
 } from "../../middleware/checks";
-import boom = require("boom");
+import boom = require("@hapi/boom");
 import { getAdapterFromRegistry } from "./RegistryConnector";
 import * as logger from "winston";
 import { postSubmoduleToAdapter } from "./AdapterConnector";

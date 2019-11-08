@@ -1,6 +1,6 @@
 import * as logger from "winston";
 import Axios, { AxiosError, AxiosResponse, AxiosRequestConfig } from "axios";
-import boom = require("boom");
+import boom = require("@hapi/boom");
 
 class WebClient {
   constructor() {}

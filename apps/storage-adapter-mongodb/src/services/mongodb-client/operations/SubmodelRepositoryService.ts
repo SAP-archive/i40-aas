@@ -2,7 +2,7 @@ import { IDatabaseClient } from "./IDatabaseClient";
 import { Submodel } from "i40-aas-objects/dist/src/identifiables/Submodel";
 import { Property } from "i40-aas-objects";
 import { logger } from "../../../log";
-import boom = require("boom");
+import boom = require("@hapi/boom");
 import { ISubmodelRecord } from "../model/ISubmodelRecord";
 import { WriteOpResult } from "mongodb";
 let md5 = require("md5");
