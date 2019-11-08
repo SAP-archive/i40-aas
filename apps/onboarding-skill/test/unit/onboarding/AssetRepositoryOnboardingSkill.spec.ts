@@ -14,6 +14,7 @@ import { AmqpClient } from "../../../src/messaging/AmqpClient";
 import { fail } from "assert";
 import { InteractionMessage } from "i40-aas-objects";
 import { IConversationMember } from "i40-aas-objects/dist/src/interaction/ConversationMember";
+import { IDatabaseClient } from "../../../src/services/onboarding/persistenceinterface/IDatabaseClient";
 
 const initializeLogger = require("../../../src/log");
 
@@ -36,22 +37,8 @@ function makeRequestError(statusCode: number): AxiosError<any> {
   Object.assign(error, axiosProps);
   return error as AxiosError;
 }
-function makeDbClient() {
-  if (
-    !process.env.MONGODB_HOST ||
-    !process.env.MONGODB_PORT ||
-    !process.env.MONGO_INITDB_DATABASE
-  ) {
-    throw new Error(
-      "These environment variables need to be set: MONGODB_HOST, MONGODB_PORT, MONGO_INITDB_DATABASE"
-    );
-  }
-  return new SimpleMongoDbClient(
-    "tests",
-    process.env.MONGO_INITDB_DATABASE,
-    process.env.MONGODB_HOST,
-    process.env.MONGO_INITDB_DATABASE
-  );
+function makeMockDbClient() {
+  return new SimpleMongoDbClient("tests", "", "", "");
 }
 
 describe("applyEvent", function() {
@@ -98,7 +85,7 @@ describe("applyEvent", function() {
         "data-manager"
       );
 
-      let dbClient = makeDbClient();
+      let dbClient = makeMockDbClient();
 
       let fakeStoreInDb = sinon.fake.resolves({ result: "ok" });
       sinon.replace(dbClient, "connect", sinon.fake.resolves({}));
@@ -170,7 +157,7 @@ describe("applyEvent", function() {
       "data-manager"
     );
 
-    let dbClient = makeDbClient();
+    let dbClient = makeMockDbClient();
 
     let fakeStoreInDb = sinon.fake.resolves({ result: "ok" });
     sinon.replace(dbClient, "connect", sinon.fake.resolves({}));
@@ -251,7 +238,7 @@ describe("applyEvent", function() {
       <WebClient>{},
       "data-manager"
     );
-    let dbClient = makeDbClient();
+    let dbClient = makeMockDbClient();
 
     let fakeStoreInDb = sinon.fake.resolves({ result: "ok" });
 
@@ -353,7 +340,7 @@ describe("applyEvent", function() {
       <WebClient>{},
       "data-manager"
     );
-    let dbClient = makeDbClient();
+    let dbClient = makeMockDbClient();
 
     let fakeStoreInDb = sinon.fake.resolves({ result: "ok" });
 
@@ -443,7 +430,7 @@ describe("applyEvent", function() {
       <WebClient>{},
       "data-manager"
     );
-    let dbClient = makeDbClient();
+    let dbClient = makeMockDbClient();
 
     let fakeStoreInDb = sinon.fake.resolves({ result: "ok" });
 
@@ -545,7 +532,7 @@ describe("applyEvent", function() {
       <WebClient>{},
       "data-manager"
     );
-    let dbClient = makeDbClient();
+    let dbClient = makeMockDbClient();
 
     let fakeStoreInDb = sinon.fake.resolves({ result: "ok" });
 
@@ -634,7 +621,7 @@ describe("applyEvent", function() {
       <WebClient>{},
       "data-manager"
     );
-    let dbClient = makeDbClient();
+    let dbClient = makeMockDbClient();
 
     let fakeStoreInDb = sinon.fake.resolves({ result: "ok" });
 
@@ -724,7 +711,7 @@ describe("applyEvent", function() {
       <WebClient>{},
       "data-manager"
     );
-    let dbClient = makeDbClient();
+    let dbClient = makeMockDbClient();
 
     let fakeStoreInDb = sinon.fake.resolves({ result: "ok" });
 
@@ -826,7 +813,7 @@ describe("applyEvent", function() {
       <WebClient>{},
       "data-manager"
     );
-    let dbClient = makeDbClient();
+    let dbClient = makeMockDbClient();
 
     let fakeStoreInDb = sinon.fake.resolves({ result: "ok" });
 
@@ -928,7 +915,7 @@ describe("applyEvent", function() {
       <WebClient>{},
       "data-manager"
     );
-    let dbClient = makeDbClient();
+    let dbClient = makeMockDbClient();
 
     let fakeStoreInDb = sinon.fake.resolves({ result: "ok" });
 
@@ -997,7 +984,7 @@ describe("applyEvent", function() {
       <WebClient>{},
       "data-manager"
     );
-    let dbClient = makeDbClient();
+    let dbClient = makeMockDbClient();
 
     let fakeStoreInDb = sinon.fake.resolves({ result: "ok" });
     sinon.replace(dbClient, "connect", sinon.fake.resolves({}));
@@ -1066,7 +1053,7 @@ describe("applyEvent", function() {
       <WebClient>{},
       "data-manager"
     );
-    let dbClient = makeDbClient();
+    let dbClient = makeMockDbClient();
     sinon.replace(dbClient, "connect", sinon.fake.resolves({}));
     sinon.replace(dbClient, "disconnect", sinon.fake.resolves({}));
     sinon.replace(
@@ -1109,7 +1096,7 @@ describe("applyEvent", function() {
       <WebClient>{},
       "data-manager"
     );
-    let dbClient = makeDbClient();
+    let dbClient = makeMockDbClient();
     sinon.replace(dbClient, "connect", sinon.fake.resolves({}));
     sinon.replace(dbClient, "disconnect", sinon.fake.resolves({}));
     sinon.replace(
@@ -1152,7 +1139,7 @@ describe("applyEvent", function() {
       <WebClient>{},
       "data-manager"
     );
-    let dbClient = makeDbClient();
+    let dbClient = makeMockDbClient();
     sinon.replace(dbClient, "connect", sinon.fake.resolves({}));
     sinon.replace(dbClient, "disconnect", sinon.fake.resolves({}));
     sinon.replace(
@@ -1200,7 +1187,7 @@ describe("applyEvent", function() {
       <WebClient>{},
       "data-manager"
     );
-    let dbClient = makeDbClient();
+    let dbClient = makeMockDbClient();
     sinon.replace(dbClient, "connect", sinon.fake.resolves({}));
     sinon.replace(dbClient, "disconnect", sinon.fake.resolves({}));
     sinon.replace(
@@ -1248,7 +1235,7 @@ describe("applyEvent", function() {
       <WebClient>{},
       "data-manager"
     );
-    let dbClient = makeDbClient();
+    let dbClient = makeMockDbClient();
 
     let fakeStoreInDb = sinon.fake.rejects({ result: "error" });
     sinon.replace(dbClient, "connect", sinon.fake.resolves({}));
@@ -1305,7 +1292,7 @@ describe("applyEvent", function() {
       new WebClient("http://base.com", "user", "password"),
       "data-manager"
     );
-    let dbClient = makeDbClient();
+    let dbClient = makeMockDbClient();
 
     let fakeStoreInDb = sinon.fake();
     sinon.replace(dbClient, "connect", sinon.fake.resolves({}));
@@ -1361,7 +1348,7 @@ describe("applyEvent", function() {
       <WebClient>{},
       "data-manager"
     );
-    let dbClient = makeDbClient();
+    let dbClient = makeMockDbClient();
 
     sinon.replace(dbClient, "connect", sinon.fake.resolves({}));
     sinon.replace(dbClient, "disconnect", sinon.fake.resolves({}));
@@ -1420,7 +1407,7 @@ describe("applyEvent", function() {
       <WebClient>{},
       "data-manager"
     );
-    let dbClient = makeDbClient();
+    let dbClient = makeMockDbClient();
 
     sinon.replace(dbClient, "connect", sinon.fake.resolves({}));
     sinon.replace(dbClient, "disconnect", sinon.fake.resolves({}));
@@ -1471,7 +1458,7 @@ describe("applyEvent", function() {
       <WebClient>{},
       "data-manager"
     );
-    let dbClient = makeDbClient();
+    let dbClient = makeMockDbClient();
 
     sinon.replace(dbClient, "connect", sinon.fake.resolves({}));
     sinon.replace(dbClient, "disconnect", sinon.fake.resolves({}));
@@ -1536,7 +1523,7 @@ describe("applyEvent", function() {
       <WebClient>{},
       "data-manager"
     );
-    let dbClient = makeDbClient();
+    let dbClient = makeMockDbClient();
 
     sinon.replace(dbClient, "connect", sinon.fake.resolves({}));
     sinon.replace(dbClient, "disconnect", sinon.fake.resolves({}));
@@ -1588,7 +1575,7 @@ describe("applyEvent", function() {
       <WebClient>{},
       "data-manager"
     );
-    let dbClient = makeDbClient();
+    let dbClient = makeMockDbClient();
 
     sinon.replace(dbClient, "connect", sinon.fake.resolves({}));
     sinon.replace(dbClient, "disconnect", sinon.fake.resolves({}));
@@ -1639,7 +1626,7 @@ describe("applyEvent", function() {
       <WebClient>{},
       "data-manager"
     );
-    let dbClient = makeDbClient();
+    let dbClient = makeMockDbClient();
 
     sinon.replace(dbClient, "connect", sinon.fake.resolves({}));
     sinon.replace(dbClient, "disconnect", sinon.fake.resolves({}));
