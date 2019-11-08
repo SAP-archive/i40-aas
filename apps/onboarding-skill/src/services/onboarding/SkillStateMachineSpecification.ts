@@ -37,7 +37,7 @@ class SkillStateMachineSpecification {
           },
           REQUESTREFUSED_FROM_APPROVER: {
             target: "OperationFailed",
-            actions: ["sendRequestRefusedToInitiator"]
+            actions: ["sendRequestRefusedToOperator"]
           }
         }
       },
@@ -88,7 +88,7 @@ class SkillStateMachineSpecification {
           },
           REQUESTREFUSED_FROM_MANUFACTURER: {
             target: "OperationFailed",
-            actions: ["sendRequestRefusedToInitiator"]
+            actions: ["sendRequestRefusedToOperator"]
           }
         }
       }
@@ -126,7 +126,7 @@ class SkillStateMachineSpecification {
       //only send back response
       sendResponseInstanceToInitiator: (context, event) =>
         context.actionMap.sendResponseInstanceToInitiator(context, event),
-      sendRequestRefusedToInitiator: (context, event) =>
+      sendRequestRefusedToOperator: (context, event) =>
         context.actionMap.sendRequestRefusedToOperator(context, event),
 
       sendErrorToInitiator: (context, event) =>
