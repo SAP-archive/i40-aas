@@ -21,9 +21,6 @@ POST /register
           "url":"fooURL",
           "name":"testAdaptername",
         "submodelId": "opc-ua-devices"
-        },
-        "SubmodelEntry": {
-        "IdShort": "testSubmodelID"
         }
     }
 ]
