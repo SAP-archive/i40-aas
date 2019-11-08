@@ -23,7 +23,7 @@ export default [
          tp be forwarded 
          */
         let submodelsArray: submodel[] | undefined;
-        var storageAdapterArray: IStorageAdapter[];
+        var storageAdapter: IStorageAdapter;
 
         submodelsArray = req.body;
 
@@ -31,20 +31,14 @@ export default [
           logger.info("Num of submodels in the request: " + submodelsArray.length);
           submodelsArray.forEach(async submodel => {
             try {
-              storageAdapterArray = await getAdapterFromRegistry(
+              storageAdapter = await getAdapterFromRegistry(
                 submodel.idShort
               );
-            
-            logger.info(
-              `Num of adapters for submodel ${submodel.idShort} found: ` +
-                storageAdapterArray.length
-            );
-            //post to each adapter
-            storageAdapterArray.forEach(async adapter => {
-                let result = await postSubmoduleToAdapter(submodel, adapter);
-                res.status(200).send(submodel);   
-            });
+
+            let result = await postSubmoduleToAdapter(submodel, storageAdapter);
+            res.status(200).send(submodel);   
           } catch (err) {
+            logger.error(" Error getting adapter from registry "+err)
             next(new Error("Internal Server Error"));
           }});
         } else {

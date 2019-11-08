@@ -15,7 +15,7 @@ var webClient = new WebClient();
 //get the URL of the adapter from the Adapter registry
 async function getAdapterFromRegistry(
   submodelIdShort: string
-): Promise<Array<IStorageAdapter>> {
+): Promise<IStorageAdapter> {
   if (ADAPTER_REG_URL && ADAPTER_REG_ADMIN_USER && ADAPTER_REG_ADMIN_PASS) {
     var regResponse = await webClient.getRequest(
       ADAPTER_REG_URL,
@@ -24,16 +24,14 @@ async function getAdapterFromRegistry(
       ADAPTER_REG_ADMIN_PASS
     );
 
-    let adaptersArray = regResponse.data as IStorageAdapter[];
+    let adapter = regResponse.data as IStorageAdapter;
 
-    adaptersArray.forEach(adapter => {
       //TODO: Validation required
       logger.debug(
         `The submodel with id ${submodelIdShort}, will be routed to ${adapter.url}`
       );
-    });
-
-    return adaptersArray;
+  
+    return adapter;
   } else {
     logger.error(
       " Cannot contact Adapter Registry, Env. Variables are not set "
