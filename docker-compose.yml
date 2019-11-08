@@ -29,6 +29,8 @@ services:
       - .compose-envs/postgres.env
   i40-aas-adapter-registry:
     image: sapi40/i40-aas-adapter-registry
+    ports:
+      - "4500:4500"
     env_file:
       - .compose-envs/serviceaddresses.env
   i40-aas-storage-adapter-mongodb:

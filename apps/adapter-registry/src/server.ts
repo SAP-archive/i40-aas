@@ -6,7 +6,6 @@ import healthRoute from './services/health/routes';
 import middleware from './middleware';
 //init logger
 import { logger } from "./utils/log";
-import { preloadRegistryInitialRecords } from './services/registry/registry-api';
 
 
 const router = express();
@@ -31,15 +30,5 @@ const server = http.createServer(router);
 
 server.listen(PORT, () => logger.info(`A St. Adapter Registry Service is running http://localhost:${PORT}...`));
 
-
-(async () => {
-  try {
-      var initEntries = await  preloadRegistryInitialRecords();
-      logger.debug(" Initial records loaded into storage "+ JSON.stringify(initEntries)); 
-
-  } catch (e) {
-    logger.error("Registry init was not executed");
-  }
-})();
 
 
