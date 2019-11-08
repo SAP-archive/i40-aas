@@ -1,7 +1,5 @@
 import { Submodel } from "i40-aas-objects";
 import * as logger from "winston";
-import _submodelToaAdapterRoutes from "../../config/config.json";
-import _adapterURLs from "../../config/adapterURLConfig/adapter-urls.json";
 import { WebClient } from "./WebClient/WebClient";
 import { IStorageAdapter } from "./IStorageAdapter";
 
