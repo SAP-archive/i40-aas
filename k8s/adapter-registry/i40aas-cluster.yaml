@@ -68,12 +68,12 @@ spec:
         env: 
         - name: AIN_ADAPTER_URL
           valueFrom: 
-            configMapRefKey:
+            configMapKeyRef:
               name: service-addresses
               key: AIN_ADAPTER_URL
         - name: MONGO_ADAPTER_URL
           valueFrom: 
-            configMapRefKey:
+            configMapKeyRef:
               name: service-addresses
               key: MONGO_ADAPTER_URL
         envFrom:
