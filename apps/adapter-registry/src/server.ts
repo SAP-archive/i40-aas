@@ -2,6 +2,7 @@ import http from 'http';
 import express from 'express';
 import { applyMiddleware, applyRoutes } from './utils';
 import routes from './services';
+import healthRoute from './services/health/routes';
 import middleware from './middleware';
 //init logger
 import { logger } from "./utils/log";
@@ -9,6 +10,7 @@ import { preloadRegistryInitialRecords } from './services/registry/registry-api'
 
 
 const router = express();
+applyRoutes(healthRoute, router);
 applyMiddleware(middleware, router);
 applyRoutes(routes, router);
 

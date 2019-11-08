@@ -1,7 +1,7 @@
 import { AmqpClient } from "./messaging/AMQPClient";
 import { BrokerMessageInterpreter } from "./messaging/BrokerMessageInterpreter";
 import { logger } from "./utils/log";
-import { MessageHandler } from "./messaging/RegistryConnector";
+import { RegistryConnector } from "./messaging/RegistryConnector";
 
 // if (process.env.NODE_ENV !== 'production') {
 const dotenv = require("dotenv");
@@ -47,7 +47,7 @@ if (
     BROKER_PASSWORD,
     BROCKER_QUEUE
   );
-  var msgHandler = new MessageHandler(
+  var messageDispatcher = new RegistryConnector(
     REGISTRY_URL,
     REGISTRY_URL_GET_SUFFIX,
     REGISTRY_ADMIN_USER as string,
@@ -57,13 +57,12 @@ if (
   logger.info("HTTP Endpoint - Egress Service Started");
 
   let messageInterpreter: BrokerMessageInterpreter = new BrokerMessageInterpreter(
-    msgHandler,
+    messageDispatcher,
     brokerClient
   );
 
+  //start listening for messages at the broker
   messageInterpreter.start([BROKER_TOPIC_EGRESS as string]);
 } else {
-  logger.info("One or more env variable not set, exiting service");
-  //TODO: check why process does not exit on some occasions (npn run script?)
-  process.exit(1);
+  logger.error("One or more env variable not set, service not started");
 }

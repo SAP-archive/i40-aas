@@ -4,11 +4,10 @@ import { ISkillContext } from "./statemachineinterface/ISkillContext";
 
 import { logger } from "../../log";
 
-//TODO: if instance created and request type from manufactuer failed
-//what should be the best response to the initiator?
-//how does the receiver know that the requestRefused message refers to
-//the type request?
-//(the operator gets two responses for one request)
+//TODO:
+//the state machine could be specified such that any error/notUnderstood from a third party leads to
+//OperationFailed, resulting in a message sent to the operator
+//this is currently not the case
 class SkillStateMachineSpecification {
   private readonly machineDescription = {
     id: "onboarding-central-asset-repository",
@@ -37,7 +36,15 @@ class SkillStateMachineSpecification {
           },
           REQUESTREFUSED_FROM_APPROVER: {
             target: "OperationFailed",
-            actions: ["sendRequestRefusedToInitiator"]
+            actions: ["sendRequestRefusedToOperator"]
+          },
+          NOTUNDERSTOOD_FROM_APPROVER: {
+            target: "OperationFailed",
+            actions: ["sendRequestRefusedToOperator"]
+          },
+          ERROR_FROM_APPROVER: {
+            target: "OperationFailed",
+            actions: ["sendRequestRefusedToOperator"]
           }
         }
       },
@@ -49,17 +56,17 @@ class SkillStateMachineSpecification {
             {
               target: "InstancePublished",
               cond: "notRequestType",
-              actions: "sendResponseInstanceToInitiator"
+              actions: "sendResponseInstanceToOperator"
             },
             {
               target: "WaitingForType",
               cond: "requestType",
-              actions: "sendResponseToInitiatorAndRequestType"
+              actions: "sendResponseToOperatorAndRequestType"
             }
           ],
           onError: {
             target: "OperationFailed",
-            actions: "sendErrorBack"
+            actions: "sendCreationErrorToOperator"
           }
         }
       },
@@ -76,19 +83,16 @@ class SkillStateMachineSpecification {
         on: {
           RESPONSETYPE_FROM_MANUFACTURER: {
             target: "InstanceAndTypePublished",
-            actions: ["sendResponseTypeToInitiator"]
+            actions: ["sendResponseTypeToOperator"]
           },
           NOTUNDERSTOOD_FROM_MANUFACTURER: {
-            target: "OperationFailed",
-            actions: ["sendErrorToInitiator"]
+            target: "InstancePublished"
           },
           ERROR_FROM_MANUFACTURER: {
-            target: "OperationFailed",
-            actions: ["sendErrorToInitiator"]
+            target: "InstancePublished"
           },
           REQUESTREFUSED_FROM_MANUFACTURER: {
-            target: "OperationFailed",
-            actions: ["sendRequestRefusedToInitiator"]
+            target: "InstancePublished"
           }
         }
       }
@@ -119,21 +123,21 @@ class SkillStateMachineSpecification {
       }
     },
     actions: {
-      sendErrorBack: (context: any, event: any) =>
-        context.actionMap.sendErrorBack(context, event),
-      sendResponseToInitiatorAndRequestType: (context: any, event: any) =>
-        context.actionMap.sendResponseToInitiatorAndRequestType(context, event),
+      sendCreationErrorToOperator: (context: any, event: any) =>
+        context.actionMap.sendCreationErrorToOperator(context, event),
+      sendResponseToOperatorAndRequestType: (context: any, event: any) =>
+        context.actionMap.sendResponseToOperatorAndRequestType(context, event),
       //only send back response
-      sendResponseInstanceToInitiator: (context, event) =>
-        context.actionMap.sendResponseInstanceToInitiator(context, event),
-      sendRequestRefusedToInitiator: (context, event) =>
-        context.actionMap.sendRequestRefusedToInitiator(context, event),
+      sendResponseInstanceToOperator: (context, event) =>
+        context.actionMap.sendResponseInstanceToOperator(context, event),
+      sendRequestRefusedToOperator: (context, event) =>
+        context.actionMap.sendRequestRefusedToOperator(context, event),
 
-      sendErrorToInitiator: (context, event) =>
-        context.actionMap.sendErrorToInitiator(context, event),
+      sendErrorToOperator: (context, event) =>
+        context.actionMap.sendErrorToOperator(context, event),
 
-      sendResponseTypeToInitiator: (context, event) =>
-        context.actionMap.sendResponseTypeToInitiator(context, event),
+      sendResponseTypeToOperator: (context, event) =>
+        context.actionMap.sendResponseTypeToOperator(context, event),
 
       requestApprovalFromApprover: (context, event) =>
         context.actionMap.requestApprovalFromApprover(context, event)

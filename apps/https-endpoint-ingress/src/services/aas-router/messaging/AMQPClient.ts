@@ -131,7 +131,7 @@ class AmqpClient implements IMessageBrokerClient {
     }
   }
 
-  setupPublishing(cb?: () => void) {
+  async setupPublishing(cb?: () => void) {
     let that = this;
     function publishSetup() {
       logger.debug("Called setupPublishing");

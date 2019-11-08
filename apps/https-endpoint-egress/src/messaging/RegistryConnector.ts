@@ -195,4 +195,4 @@ class RegistryConnector {
     }
   }
 }
-export { RegistryConnector as MessageHandler };
+export { RegistryConnector };

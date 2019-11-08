@@ -11,15 +11,13 @@ import * as basicAuth from "express-basic-auth";
 const dotenv = require("dotenv");
 dotenv.config();
 
-let DATAMANAGER_USER: string | undefined = process.env.DATA_MANAGER_USER;
-let DATAMANAGER_PASS: string | undefined = process.env.DATA_MANAGER_PASSWORD;
+let DATA_MANAGER_USER: string | undefined = process.env.DATA_MANAGER_USER;
+let DATA_MANAGER_PASSWORD: string | undefined = process.env.DATA_MANAGER_PASSWORD;
 
-if (DATAMANAGER_USER === undefined) {
-  logger.error(" [Basic auth] No  username was found in environment");
+if (!DATA_MANAGER_USER  || !DATA_MANAGER_PASSWORD) {
+  logger.error(" [Basic auth] No  username or password was found in environment");
 }
-if (DATAMANAGER_PASS === undefined) {
-  logger.error(" [Basic auth] No  password was found in environment");
-}
+
 
 
 export const handleCors = (router: Router) =>
@@ -35,14 +33,9 @@ export const handleCompression = (router: Router) => {
 };
 
 let user: any = {};
-if (DATAMANAGER_USER && DATAMANAGER_PASS) {
-  user[DATAMANAGER_USER] = DATAMANAGER_PASS;
-} else {
-  logger.info("One or more env variable not set, exiting service");
-  //TODO: check why process does not exit on some occasions (npn run script?)
-  process.exit(1);
+if (DATA_MANAGER_USER && DATA_MANAGER_PASSWORD) {
+  user[DATA_MANAGER_USER] = DATA_MANAGER_PASSWORD;
 }
-
 export const handleBasicAuth = (router: Router) =>
   router.use(
     basicAuth.default({

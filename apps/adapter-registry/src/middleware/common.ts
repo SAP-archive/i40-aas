@@ -13,7 +13,7 @@ let ADAPTER_REG_ADMIN_USER: string | undefined =
 let ADAPTER_REG_ADMIN_PASS: string | undefined =
   process.env.ADAPTER_REG_ADMIN_PASS;
 
-if (ADAPTER_REG_ADMIN_PASS === undefined) {
+if (ADAPTER_REG_ADMIN_USER === undefined) {
   logger.error(" [Basic auth] No  username was found in environment");
 }
 if (ADAPTER_REG_ADMIN_PASS === undefined) {
@@ -33,9 +33,9 @@ export const handleCompression = (router: Router) => {
 };
 
 let user: any = {};
-if(process.env.REGISTRY_ADMIN_USER && process.env.REGISTRY_ADMIN_PASSWORD){
-  user[process.env.REGISTRY_ADMIN_USER ] =
-  process.env.REGISTRY_ADMIN_PASSWORD;
+if(ADAPTER_REG_ADMIN_USER && process.env.ADAPTER_REG_ADMIN_PASS){
+  user[ADAPTER_REG_ADMIN_USER] =
+  process.env.ADAPTER_REG_ADMIN_PASS;
 }
 
 export const handleBasicAuth = (router: Router) =>

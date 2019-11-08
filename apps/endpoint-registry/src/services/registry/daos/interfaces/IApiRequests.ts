@@ -10,11 +10,16 @@ interface IRegisterAas {
 
 interface ICreateSemanticProtocol {
   semanticProtocol: string;
-  roles: Array<string>;
 }
-interface IRegisterRoles {
-  aasId: Identifier;
-  roles: Array<string>;
+interface ICreateRole {
+  roleId: string;
+  semanticProtocol: string;
 }
 
-export { IRegisterAas, ICreateSemanticProtocol, IRegisterRoles };
+
+interface IAssignRoles {
+  aasId: Identifier;
+  roleId: string;
+}
+
+export { IRegisterAas, ICreateSemanticProtocol, IAssignRoles, ICreateRole };
