@@ -59,7 +59,7 @@ class SkillStateMachineSpecification {
           ],
           onError: {
             target: "OperationFailed",
-            actions: "sendErrorToOperator"
+            actions: "sendCreationErrorToOperator"
           }
         }
       },
@@ -80,11 +80,11 @@ class SkillStateMachineSpecification {
           },
           NOTUNDERSTOOD_FROM_MANUFACTURER: {
             target: "OperationFailed",
-            actions: ["sendErrorToInitiator"]
+            actions: ["sendErrorToOperator"]
           },
           ERROR_FROM_MANUFACTURER: {
             target: "OperationFailed",
-            actions: ["sendErrorToInitiator"]
+            actions: ["sendErrorToOperator"]
           },
           REQUESTREFUSED_FROM_MANUFACTURER: {
             target: "OperationFailed",
@@ -119,8 +119,8 @@ class SkillStateMachineSpecification {
       }
     },
     actions: {
-      sendErrorToOperator: (context: any, event: any) =>
-        context.actionMap.sendErrorToOperator(context, event),
+      sendCreationErrorToOperator: (context: any, event: any) =>
+        context.actionMap.sendCreationErrorToOperator(context, event),
       sendResponseToOperatorAndRequestType: (context: any, event: any) =>
         context.actionMap.sendResponseToOperatorAndRequestType(context, event),
       //only send back response
@@ -129,8 +129,8 @@ class SkillStateMachineSpecification {
       sendRequestRefusedToOperator: (context, event) =>
         context.actionMap.sendRequestRefusedToOperator(context, event),
 
-      sendErrorToInitiator: (context, event) =>
-        context.actionMap.sendErrorToInitiator(context, event),
+      sendErrorToOperator: (context, event) =>
+        context.actionMap.sendErrorToOperator(context, event),
 
       sendResponseTypeToOperator: (context, event) =>
         context.actionMap.sendResponseTypeToOperator(context, event),

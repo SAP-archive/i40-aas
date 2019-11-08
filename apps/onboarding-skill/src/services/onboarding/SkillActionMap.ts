@@ -37,7 +37,7 @@ class SkillActionMap {
     //logger.debug(error);
   }
 
-  sendErrorToOperator(context: ISkillContext, event: any) {
+  sendCreationErrorToOperator(context: ISkillContext, event: any) {
     logger.debug("Received error. Now sending error back");
     let md = this.messageDispatcher;
     this.logRequestError(event.data);
@@ -93,9 +93,9 @@ class SkillActionMap {
     this.messageDispatcher.sendRequestRefusedToOperator(message);
   }
 
-  sendErrorToInitiator(context: ISkillContext, event: any) {
+  sendErrorToOperator(context: ISkillContext, event: any) {
     let message = context.message as InteractionMessage;
-    this.messageDispatcher.replyError(message);
+    this.messageDispatcher.sendErrorToOperator(message);
   }
 
   sendResponseTypeToOperator(context: ISkillContext, event: any) {

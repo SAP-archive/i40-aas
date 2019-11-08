@@ -71,7 +71,7 @@ class MessageDispatcher implements IMessageDispatcher {
   ) {
     //TODO: an error here leads to unhandled rejection
     this.sendNextMessageInConversationTo(
-      "Operator",
+      Roles.OPERATOR,
       MessageTypes.RESPONSE_INSTANCE,
       message.frame,
       [submodel]
@@ -105,8 +105,8 @@ class MessageDispatcher implements IMessageDispatcher {
   //TODO: do this properly, not just mock
   sendResponseTypeToOperator(message: InteractionMessage, type: any) {
     this.sendNextMessageInConversationTo(
-      "Operator",
-      "responseType",
+      Roles.OPERATOR,
+      MessageTypes.RESPONSE_TYPE,
       message.frame
     );
   }
@@ -116,7 +116,7 @@ class MessageDispatcher implements IMessageDispatcher {
   }
 
   replyNotUnderstood(message: InteractionMessage): void {
-    this.messageSender.replyTo(message.frame, "notUnderstood", []);
+    this.messageSender.replyTo(message.frame, MessageTypes.NOT_UNDERSTOOD, []);
   }
   start(notifyReady?: () => void) {
     this.messageSender.start(notifyReady);
