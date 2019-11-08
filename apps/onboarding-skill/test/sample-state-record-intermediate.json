@@ -9,7 +9,7 @@
           {
             "target": "InstancePublished",
             "cond": "notRequestType",
-            "actions": "sendResponseInstanceToInitiator"
+            "actions": "sendResponseInstanceToOperator"
           },
           {
             "target": "WaitingForType",
@@ -67,7 +67,7 @@
             {
               "target": "InstancePublished",
               "cond": "notRequestType",
-              "actions": "sendResponseInstanceToInitiator"
+              "actions": "sendResponseInstanceToOperator"
             },
             {
               "target": "WaitingForType",
@@ -93,7 +93,7 @@
             {
               "target": "InstancePublished",
               "cond": "notRequestType",
-              "actions": "sendResponseInstanceToInitiator"
+              "actions": "sendResponseInstanceToOperator"
             },
             {
               "target": "WaitingForType",

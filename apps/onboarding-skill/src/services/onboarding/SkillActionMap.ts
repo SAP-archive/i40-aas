@@ -64,7 +64,7 @@ class SkillActionMap {
 
   //TODO: why context.message and context.message...
   sendResponseToInitiatorAndRequestType(context: ISkillContext, event: any) {
-    logger.debug("Calling sendResponseInstanceToInitiator");
+    logger.debug("Calling sendResponseInstanceToOperator");
     this.messageDispatcher.sendResponseInstanceToOperator(
       context.message,
       context.message.interactionElements[0]
@@ -79,7 +79,7 @@ class SkillActionMap {
       context.message.interactionElements
     );
   }
-  sendResponseInstanceToInitiator(context: ISkillContext, event: any) {
+  sendResponseInstanceToOperator(context: ISkillContext, event: any) {
     logger.debug("onDone called");
     return this.messageDispatcher.sendResponseInstanceToOperator(
       context.message,

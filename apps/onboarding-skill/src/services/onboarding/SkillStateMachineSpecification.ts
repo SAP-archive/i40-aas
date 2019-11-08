@@ -49,7 +49,7 @@ class SkillStateMachineSpecification {
             {
               target: "InstancePublished",
               cond: "notRequestType",
-              actions: "sendResponseInstanceToInitiator"
+              actions: "sendResponseInstanceToOperator"
             },
             {
               target: "WaitingForType",
@@ -124,8 +124,8 @@ class SkillStateMachineSpecification {
       sendResponseToInitiatorAndRequestType: (context: any, event: any) =>
         context.actionMap.sendResponseToInitiatorAndRequestType(context, event),
       //only send back response
-      sendResponseInstanceToInitiator: (context, event) =>
-        context.actionMap.sendResponseInstanceToInitiator(context, event),
+      sendResponseInstanceToOperator: (context, event) =>
+        context.actionMap.sendResponseInstanceToOperator(context, event),
       sendRequestRefusedToOperator: (context, event) =>
         context.actionMap.sendRequestRefusedToOperator(context, event),
 

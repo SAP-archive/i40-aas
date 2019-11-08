@@ -106,11 +106,11 @@ describe("applyEvent", function() {
       sinon.replace(dbClient, "update", fakeStoreInDb);
       sinon.replace(dbClient, "getOneByKey", sinon.fake.returns(null));
 
-      let fakeSendResponseInstanceToInitiator = sinon.fake();
+      let fakesendResponseInstanceToOperator = sinon.fake();
       sinon.replace(
         messageDispatcher,
         "sendResponseInstanceToOperator",
-        fakeSendResponseInstanceToInitiator
+        fakesendResponseInstanceToOperator
       );
 
       let fakecreateInstanceOnCAR = sinon.fake.resolves({ status: 200 });
@@ -148,7 +148,7 @@ describe("applyEvent", function() {
               ),
               sinon.match.any
             );
-            sinon.assert.calledOnce(fakeSendResponseInstanceToInitiator);
+            sinon.assert.calledOnce(fakesendResponseInstanceToOperator);
             done();
           }
         }
@@ -743,11 +743,11 @@ describe("applyEvent", function() {
       fakerequestTypeFromManufacturer
     );
 
-    let fakeSendResponseInstanceToInitiator = sinon.fake();
+    let fakesendResponseInstanceToOperator = sinon.fake();
     sinon.replace(
       messageDispatcher,
       "sendResponseInstanceToOperator",
-      fakeSendResponseInstanceToInitiator
+      fakesendResponseInstanceToOperator
     );
 
     let fakecreateInstanceOnCAR = sinon.fake.resolves({ status: 200 });
@@ -769,7 +769,7 @@ describe("applyEvent", function() {
       state => {
         if (state.value === "WaitingForType") {
           sinon.assert.calledOnce(fakerequestTypeFromManufacturer);
-          sinon.assert.calledOnce(fakeSendResponseInstanceToInitiator);
+          sinon.assert.calledOnce(fakesendResponseInstanceToOperator);
           process.env["REQUEST_TYPE"] = "false";
           done();
         }
@@ -987,11 +987,11 @@ describe("applyEvent", function() {
     sinon.replace(dbClient, "update", fakeStoreInDb);
     sinon.replace(dbClient, "getOneByKey", sinon.fake.returns(null));
 
-    let fakeSendResponseInstanceToInitiator = sinon.fake();
+    let fakesendResponseInstanceToOperator = sinon.fake();
     sinon.replace(
       messageDispatcher,
       "sendResponseInstanceToOperator",
-      fakeSendResponseInstanceToInitiator
+      fakesendResponseInstanceToOperator
     );
 
     let fakeSendError = sinon.fake();
@@ -1016,7 +1016,7 @@ describe("applyEvent", function() {
       () => {},
       state => {
         if (state.value === "InstancePublished") {
-          sinon.assert.notCalled(fakeSendResponseInstanceToInitiator);
+          sinon.assert.notCalled(fakesendResponseInstanceToOperator);
           sinon.assert.called(fakeSendError);
           done();
         }
@@ -1044,11 +1044,11 @@ describe("applyEvent", function() {
     sinon.replace(dbClient, "update", fakeStoreInDb);
     sinon.replace(dbClient, "getOneByKey", sinon.fake.returns(null));
 
-    let fakeSendResponseInstanceToInitiator = sinon.fake();
+    let fakesendResponseInstanceToOperator = sinon.fake();
     sinon.replace(
       messageDispatcher,
       "sendResponseInstanceToOperator",
-      fakeSendResponseInstanceToInitiator
+      fakesendResponseInstanceToOperator
     );
 
     let sendTo = sinon.fake();
@@ -1068,7 +1068,7 @@ describe("applyEvent", function() {
       message,
       state => {
         if (state.value === "OperationFailed") {
-          sinon.assert.notCalled(fakeSendResponseInstanceToInitiator);
+          sinon.assert.notCalled(fakesendResponseInstanceToOperator);
           sinon.assert.calledWith(
             sendTo,
             sinon.match.hasNested("type", "notUnderstood"),
@@ -1109,11 +1109,11 @@ describe("applyEvent", function() {
     let sendTo = sinon.fake();
     sinon.replace(messageSender, "sendTo", sendTo);
 
-    let fakeSendResponseInstanceToInitiator = sinon.fake();
+    let fakesendResponseInstanceToOperator = sinon.fake();
     sinon.replace(
       messageDispatcher,
       "sendResponseInstanceToOperator",
-      fakeSendResponseInstanceToInitiator
+      fakesendResponseInstanceToOperator
     );
 
     let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
@@ -1132,7 +1132,7 @@ describe("applyEvent", function() {
             sinon.match.hasNested("type", "requestRefused"),
             sinon.match.any
           );
-          sinon.assert.notCalled(fakeSendResponseInstanceToInitiator);
+          sinon.assert.notCalled(fakesendResponseInstanceToOperator);
           done();
         }
       }
