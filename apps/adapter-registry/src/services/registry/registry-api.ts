@@ -21,38 +21,23 @@ let MONGO_ADAPTER_ID = process.env.MONGO_ADAPTER_ID;
 var MONGO_ADAPTER_URL = process.env.MONGO_ADAPTER_URL;
 var MONGO_ADAPTER_SUBMODEL_ID = process.env.MONGO_ADAPTER_SUBMODEL_ID;
 
-//TODO: for now register one adapter per call, consider an array
-async function preloadRegistryInitialRecords(): Promise<
-  IAdapterAssignmentResultSet
-> {
+/**
+ * Register a storage adapter with its submodel assignment
+ */
+async function register(
+  req: IRegisterAdapterAssignment
+): Promise<IAdapterAssignmentResultSet> {
   var registryDao: IAdapterRegistry = await RegistryFactory.getRegistryLocal();
 
-  if (MONGO_ADAPTER_ID && MONGO_ADAPTER_URL && MONGO_ADAPTER_SUBMODEL_ID) {
-    try {
-      let adapter = new Adapter(
-        MONGO_ADAPTER_ID,
-        MONGO_ADAPTER_URL,
-        "SAP-MongoDB-Adapter",
-        MONGO_ADAPTER_SUBMODEL_ID
-      );
-      let submodelEntry = new SubmodelEntry(MONGO_ADAPTER_SUBMODEL_ID);
-
-      let rrs: IRegisterAdapterAssignment = new AdapterAssignmentResultSet(
-        adapter,
-        submodelEntry
-      );
-
-      var result = await registryDao.registerAdapter(rrs);
-      logger.debug(
-        `Adapter ${MONGO_ADAPTER_ID} for submodel with Idshort ${MONGO_ADAPTER_SUBMODEL_ID} was stored in registry`
-      );
-    } catch (e) {
-      throw e;
-    }
-  } else {
-    logger.error(" No env variables found for ain adapter preloading");
-    throw new Error(" Could not preload adapter records");
+  try {
+    var result = await registryDao.registerAdapter(req);
+    logger.debug(
+      `Adapter ${MONGO_ADAPTER_ID} for submodel with Idshort ${MONGO_ADAPTER_SUBMODEL_ID} was stored in registry`
+    );
+  } catch (e) {
+    throw e;
   }
+
   return result;
 }
 
@@ -68,4 +53,4 @@ async function getAdaptersBySubmodelId(
   }
 }
 
-export { getAdaptersBySubmodelId, preloadRegistryInitialRecords };
+export { getAdaptersBySubmodelId, register };
