@@ -12,6 +12,9 @@ import { DeferredMessageDispatcher } from "../../messaging/DeferredMessageDispta
 import * as _ from "lodash";
 import { InteractionMessage } from "i40-aas-objects";
 
+//Try to keep this generic. Do not mention roles or message types. Do not perform actions that
+//should be modelled in the state machine. This class should remain relatively constant. It
+//could be any skill
 class AssetRepositoryOnboardingSkill {
   private readonly stateMachineSpecification: SkillStateMachine = new SkillStateMachine();
 
@@ -180,6 +183,9 @@ class AssetRepositoryOnboardingSkill {
       } else if (AssetRepositoryOnboardingSkill.isInvalidTransition(error)) {
         this.messageDispatcher.replyNotUnderstood(context.message);
       } else {
+        //TODO: a valid transition cannot take place. The state machine is probably now useless.
+        //Need to move it into a failed state, or handle otherwise.
+        logger.error("SEVERE: A valid transition could not take place.");
         this.messageDispatcher.replyError(context.message);
       }
     }

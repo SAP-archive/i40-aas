@@ -4,11 +4,10 @@ import { ISkillContext } from "./statemachineinterface/ISkillContext";
 
 import { logger } from "../../log";
 
-//TODO: if instance created and request type from manufactuer failed
-//what should be the best response to the initiator?
-//how does the receiver know that the requestRefused message refers to
-//the type request?
-//(the operator gets two responses for one request)
+//TODO:
+//the state machine could be specified such that any error/notUnderstood from a third party leads to
+//OperationFailed, resulting in a message sent to the operator
+//this is currently not the case
 class SkillStateMachineSpecification {
   private readonly machineDescription = {
     id: "onboarding-central-asset-repository",
@@ -36,6 +35,14 @@ class SkillStateMachineSpecification {
             target: "CreatingInstance"
           },
           REQUESTREFUSED_FROM_APPROVER: {
+            target: "OperationFailed",
+            actions: ["sendRequestRefusedToOperator"]
+          },
+          NOTUNDERSTOOD_FROM_APPROVER: {
+            target: "OperationFailed",
+            actions: ["sendRequestRefusedToOperator"]
+          },
+          ERROR_FROM_APPROVER: {
             target: "OperationFailed",
             actions: ["sendRequestRefusedToOperator"]
           }
@@ -79,16 +86,13 @@ class SkillStateMachineSpecification {
             actions: ["sendResponseTypeToOperator"]
           },
           NOTUNDERSTOOD_FROM_MANUFACTURER: {
-            target: "OperationFailed",
-            actions: ["sendErrorToOperator"]
+            target: "InstancePublished"
           },
           ERROR_FROM_MANUFACTURER: {
-            target: "OperationFailed",
-            actions: ["sendErrorToOperator"]
+            target: "InstancePublished"
           },
           REQUESTREFUSED_FROM_MANUFACTURER: {
-            target: "OperationFailed",
-            actions: ["sendRequestRefusedToOperator"]
+            target: "InstancePublished"
           }
         }
       }
