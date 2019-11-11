@@ -46,4 +46,17 @@ async function readAdapterBySubmodelId(
   }
 }
 
-export { readAdapterBySubmodelId, register };
+async function clearAllEntries(
+  ): Promise<string> {
+  var registryDao: IAdapterRegistry = await RegistryFactory.getRegistryLocal();
+  try {
+    var result = await registryDao.clearAll();
+  } catch (e) {
+    throw e;
+  }
+  return "OK";
+}
+
+
+
+export { readAdapterBySubmodelId, register, clearAllEntries };
