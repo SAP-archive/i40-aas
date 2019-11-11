@@ -40,14 +40,12 @@ GET /adapters
 response </br>
 NOTE: only one adapter per submodel is assumed
 ```javascript
-[
     {
         "url": "http://localhost:3000/submodels",
         "adapterId": "storage-adapter-ain",
         "name": "SAP-AIN-Adapter",
         "submodelId": "opc-ua-devices"
     }
-]
 ```
 
 error

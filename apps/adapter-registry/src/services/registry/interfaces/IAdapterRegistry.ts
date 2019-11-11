@@ -10,6 +10,7 @@ interface IAdapterRegistry {
   getAdapterBySubmodelId(submodelId: string): Promise<IStorageAdapter>;
   listAllSubmodels(): Promise<Array<IAdapterAssignmentResultSet>>;
   release(): void;
+  clearAll(): Promise<void>;
   //regsiter a new submodel that can be handled from an adapter
   createSubmodel(req: ICreateSubmodelEntry): void;
   //assign an Adapter to handle a Submodels type 
