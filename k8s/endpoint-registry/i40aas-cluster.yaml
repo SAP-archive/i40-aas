@@ -17,6 +17,7 @@ metadata:
     app: i40-aas
     service: endpoint-registry
 spec:
+  type: LoadBalancer
   ports:
   - targetPort: endpoint
     port: 80

@@ -1,15 +1,5 @@
 ---
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: adapter-registry
-data:
-  AIN_ADAPTER_ID: storage-adapter-ain
-  MONGO_ADAPTER_ID: storage-adapter-mongodb
-  AIN_ADAPTER_SUBMODEL_ID: opc-ua-devices
-  MONGO_ADAPTER_SUBMODEL_ID: opc-ua-devices
----
-apiVersion: v1
 kind: Secret
 metadata:
   name: adapter-registry
@@ -26,6 +16,7 @@ metadata:
     app: i40-aas
     service: adapter-registry
 spec:
+  type: LoadBalancer
   ports:
   - targetPort: endpoint
     port: 80
@@ -65,22 +56,9 @@ spec:
           requests:
             cpu: 48m
             memory: 263M
-        env: 
-        - name: AIN_ADAPTER_URL
-          valueFrom: 
-            configMapKeyRef:
-              name: service-addresses
-              key: AIN_ADAPTER_URL
-        - name: MONGO_ADAPTER_URL
-          valueFrom: 
-            configMapKeyRef:
-              name: service-addresses
-              key: MONGO_ADAPTER_URL
         envFrom:
         - secretRef:
             name: adapter-registry
         - secretRef:
             name: endpoint-registry
-        - configMapRef:
-            name: adapter-registry
 ---
