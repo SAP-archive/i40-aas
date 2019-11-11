@@ -57,7 +57,6 @@ class MessageDispatcher implements IMessageDispatcher {
   }
 
   replyRequestRefused(message: InteractionMessage) {
-    //TODO: use constants for strings
     this.messageSender.replyTo(message.frame, MessageTypes.REQUEST_REFUSED);
   }
 

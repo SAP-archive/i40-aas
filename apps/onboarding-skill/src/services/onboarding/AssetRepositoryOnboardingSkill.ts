@@ -138,7 +138,7 @@ class AssetRepositoryOnboardingSkill {
         : 0;
 
       //TODO: move out for better readability
-      //TODO: does this need to be set for each and every event? yes
+      //this needs to be set for each and every event
       onboardingService.onTransition(async state => {
         logger.debug("Transitioned to " + JSON.stringify(state.value));
         if (!state.changed) return;
