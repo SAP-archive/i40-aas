@@ -9,8 +9,6 @@ A service component that offers an API for:
 
 ## Register 
 
-Not yet implemented
-
 POST /register
 
 ```javascript
@@ -21,7 +19,10 @@ POST /register
           "url":"fooURL",
           "name":"testAdaptername",
         "submodelId": "opc-ua-devices"
-        }
+        },
+         "submodel": {
+      "submodelIdShort": "opc-ua-devices"
+      }
     }
 ]
 ```
@@ -66,7 +67,10 @@ Not yet implemented
 
 Refistry admin user is available as the following environment variables:
 
+### Environement Variables
+Basic Auth:
 ```
-ADAPTER_REG_ADMIN_USER 
-ADAPTER_REG_ADMIN_PASS
+- ADAPTER_REG_ADMIN_USER : Basic Auth credentials of the adapter-registry
+- ADAPTER_REG_ADMIN_PASS : Basic Auth credentials of the adapter-registry
+
 ```
