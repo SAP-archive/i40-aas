@@ -52,12 +52,12 @@ spec:
               value: "false"
             - name: REGISTRY_URL
               valueFrom: 
-                configMapRefKey:
+                configMapKeyRef:
                   name: service-addresses
                   key: REGISTRY_URL
             - name: DATA_MANAGER_URL
               valueFrom: 
-                configMapRefKey:
+                configMapKeyRef:
                   name: service-addresses
                   key: DATA_MANAGER_URL
           envFrom:
