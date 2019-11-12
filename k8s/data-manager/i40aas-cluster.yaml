@@ -59,7 +59,7 @@ spec:
         env:
         - name: ADAPTER_REG_URL
           valueFrom: 
-            configMapRefKey:
+            configMapKeyRef:
               name: service-addresses
               key: ADAPTER_REG_URL
         envFrom:
