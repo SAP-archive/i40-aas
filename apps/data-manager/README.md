@@ -15,3 +15,18 @@ Technologies:
 - [Mocha](https://mochajs.org/) : Testing Framework
 - [Chai](https://www.chaijs.com/): Assertion library
 - [Nock](https://github.com/nock/nock) : Mocking External HTTP Requests in Node Tests 
+
+### Environment Variables
+
+Adapter Registry Access:
+```
+- ADAPTER_REG_URL : The endpoint for retrieving the an adapter from adapter-registry
+- ADAPTER_REG_ADMIN_USER : Basic Auth credentials of the adapter-registry
+- ADAPTER_REG_ADMIN_PASS : Basic Auth credentials of the adapter-registry
+```
+
+Basic Auth:
+```
+- DATA_MANAGER_USER :  Basic Auth for data-manager service
+- DATA_MANAGER_PASSWORD : Basic Auth for the data-manager serice
+```

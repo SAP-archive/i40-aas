@@ -99,11 +99,10 @@ POSTGRES_PASSWORD
 ```
 
 
-## Registry basic auth
+## Environment Variables
 
-Registry admin user is available as the following environment variables:
-
+Basic Auth:
 ```
-REGISTRY_ADMIN_USER 
-REGISTRY_ADMIN_PASSWORD 
+- REGISTRY_ADMIN_USER (should be renamed to ENDPOINT-REG-USER)
+- REGISTRY_ADMIN_PASSWORD (should be renamed to ENDPOINT-REG-PASS)
 ```

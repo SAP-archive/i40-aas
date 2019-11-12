@@ -15,7 +15,7 @@ var expect = chai.expect;
 // or:
 chai.should();
 
-//TODO: if these tests do not work reliably some of these can be converted into useful unit tests
+//If these tests do not work reliably some of these can be converted into useful unit tests
 
 describe("AmpqClient", function() {
   let amqpClientSender: AmqpClient;
