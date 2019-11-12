@@ -3,6 +3,9 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: rabbitmq
+  labels:
+    app: i40-aas
+    service: message-broker
 type: Opaque
 stringData:
   BROKER_USER: guest
@@ -14,6 +17,9 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: rabbitmq
+  labels:
+    app: i40-aas
+    service: message-broker
 data:
   AMQP_URL: rabbitmq-0.rabbitmq-headless-svc
   RABBIT_PORT: "80"
@@ -24,6 +30,9 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: rabbitmq-plugins
+  labels:
+    app: i40-aas
+    service: message-broker
 data:
   enabled_plugins: |
     [rabbitmq_management,rabbitmq_mqtt].
@@ -32,10 +41,14 @@ kind: Service
 apiVersion: v1
 metadata:
   name: rabbitmq-headless-svc
+  labels:
+    app: i40-aas
+    service: message-broker
 spec:
   clusterIP: None
   selector:
-    app: broker
+    app: i40-aas
+    service: message-broker
   ports:
   - name: amqp
     protocol: TCP
@@ -50,10 +63,14 @@ kind: Service
 apiVersion: v1
 metadata:
   name: rabbitmq-ui-svc
+  labels:
+    app: i40-aas
+    service: message-broker
 spec:
   type: LoadBalancer
   selector:
-    app: broker
+    app: i40-aas
+    service: message-broker
   ports:
   - protocol: TCP
     port: 80
@@ -63,16 +80,21 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: rabbitmq
+  labels:
+    app: i40-aas
+    service: message-broker
 spec:
   serviceName: rabbitmq-headless-svc
   replicas: 1
   selector:
     matchLabels:
-      app: broker
+      app: i40-aas
+      service: message-broker
   template:
     metadata:
       labels:
-        app: broker
+        app: i40-aas
+        service: message-broker
     spec:
       containers:
       - name: rabbitmq
