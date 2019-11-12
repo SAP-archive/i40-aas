@@ -17,9 +17,7 @@ class AmqpConnectionDetails {
   subscription: Subscription | undefined;
 }
 
-//TODO: check if keeping variables and functions static is a good idea
 //TODO: set proper time gap for connection retries (6s currently).
-//TODO: not to use static methods
 class AmqpClient implements IMessageBrokerClient {
   private myConn: AmqpConnectionDetails = new AmqpConnectionDetails();
   private listenerQName: string;

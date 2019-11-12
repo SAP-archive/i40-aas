@@ -62,7 +62,6 @@ class SkillActionMap {
     this.messageDispatcher.requestApprovalFromApprover(context.message);
   }
 
-  //TODO: why context.message and context.message...
   sendResponseToOperatorAndRequestType(context: ISkillContext, event: any) {
     logger.debug("Calling sendResponseInstanceToOperator");
     this.messageDispatcher.sendResponseInstanceToOperator(

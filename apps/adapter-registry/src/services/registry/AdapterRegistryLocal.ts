@@ -14,6 +14,17 @@ import * as logger from "winston";
  * a local key-value store
  */
 class AdapterRegistryLocal implements IAdapterRegistry {
+
+
+  
+  async clearAll(): Promise<void> {
+    try {
+      await this.storage.clear();
+    } catch (e) {
+      logger.error("Error clearing the registry local storage ");
+      throw e;
+    }
+  }
   storage: any;
 
   constructor(client: any) {
@@ -29,7 +40,6 @@ class AdapterRegistryLocal implements IAdapterRegistry {
   async registerAdapter(
     record: import("./interfaces/IAPIRequests").IRegisterAdapterAssignment
   ): Promise<AdapterAssignmentResultSet> {
-
     try {
       //since submodel to Adapter is 1..1 we use the submodelid as key
       const insertAdapterResult = await this.storage.setItem(
@@ -55,17 +65,15 @@ class AdapterRegistryLocal implements IAdapterRegistry {
     throw new Error("Method not implemented.");
   }
   async getAdapterBySubmodelId(submodelId: string): Promise<IStorageAdapter> {
-
     try {
       //find which keys contain the submodel id
       let adapter = await this.storage.get(submodelId);
 
-      if(adapter) {
-      logger.debug("Adapter found : " + JSON.stringify(adapter));
+      if (adapter) {
+        logger.debug("Adapter found : " + JSON.stringify(adapter));
 
-      return adapter;
-      }
-      else {
+        return adapter;
+      } else {
         logger.debug("No adapter for submodel : " + submodelId);
 
         return new Adapter();
