@@ -4,35 +4,37 @@ services:
   i40-aas-onboarding-skill:
     build:
       context: apps/onboarding-skill
-      network: host
       dockerfile: ../../docker/onboarding-skill/Dockerfile
   i40-aas-https-endpoint-ingress:
     build:
       context: apps/https-endpoint-ingress
-      network: host
       dockerfile: ../../docker/https-endpoint-ingress/Dockerfile
   i40-aas-https-endpoint-egress:
     build:
       context: apps/https-endpoint-egress
-      network: host
       dockerfile: ../../docker/https-endpoint-egress/Dockerfile
   i40-aas-data-manager:
     build:
       context: apps/data-manager
-      network: host
       dockerfile: ../../docker/data-manager/Dockerfile
   i40-aas-endpoint-registry:
     build:
       context: apps/endpoint-registry
-      network: host
       dockerfile: ../../docker/endpoint-registry/Dockerfile
   i40-aas-adapter-registry:
     build:
       context: apps/adapter-registry
-      network: host
       dockerfile: ../../docker/adapter-registry/Dockerfile
   i40-aas-storage-adapter-mongodb:
     build:
       context: apps/storage-adapter-mongodb
-      network: host
       dockerfile: ../../docker/storage-adapter-mongodb/Dockerfile
+
+  ## Additional services:
+  ## Monitor Postgres DB
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - "8080:80"
+    env_file:
+      - .compose-envs/pgadmin.env

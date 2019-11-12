@@ -6,7 +6,7 @@ services:
     env_file:
       - .compose-envs/mongodb.env
       - .compose-envs/rabbitmq.env
-      - .compose-envs/serviceaddresses.env
+      - .compose-envs/onboarding-skill.env
   i40-aas-https-endpoint-ingress:
     image: sapi40/i40-aas-https-endpoint-ingress
     ports:
@@ -16,30 +16,30 @@ services:
   i40-aas-https-endpoint-egress:
     image: sapi40/i40-aas-https-endpoint-egress
     env_file:
-      - .compose-envs/postgres.env
       - .compose-envs/rabbitmq.env
-      - .compose-envs/serviceaddresses.env
+      - .compose-envs/endpoint-registry.env
   i40-aas-data-manager:
     image: sapi40/i40-aas-data-manager
     env_file:
-      - .compose-envs/serviceaddresses.env
+      - .compose-envs/adapter-registry.env
+      - .compose-envs/data-manager.env
   i40-aas-endpoint-registry:
     image: sapi40/i40-aas-endpoint-registry
     env_file:
       - .compose-envs/postgres.env
+      - .compose-envs/endpoint-registry.env
   i40-aas-adapter-registry:
     image: sapi40/i40-aas-adapter-registry
     ports:
       - "4500:4500"
     env_file:
-      - .compose-envs/serviceaddresses.env
+      - .compose-envs/adapter-registry.env
   i40-aas-storage-adapter-mongodb:
     image: sapi40/i40-aas-storage-adapter-mongodb
     ports:
       - "3100:3100"
     env_file:
       - .compose-envs/mongodb.env
-      - .compose-envs/serviceaddresses.env
 
   ## used services
   mongodb:
@@ -54,12 +54,6 @@ services:
       - "5432:5432"
     env_file:
       - .compose-envs/postgres.env
-  pgadmin:
-    image: dpage/pgadmin4
-    ports:
-      - "8080:80"
-    env_file:
-      - .compose-envs/pgadmin.env
   rabbitmq:
     image: rabbitmq:3-management
     ports:
