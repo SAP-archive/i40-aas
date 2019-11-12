@@ -16,7 +16,7 @@ The message should contain an interaction form.
 
 ## Environment Variables
 
-Message Broker Access:
+Message Broker Access (owned by broker-service):
 ```
 - AMQP_URL: the URL of the AMQP broker
 - BROKER_EXCHANGE: the name of the exchange
@@ -27,10 +27,10 @@ Message Broker Access:
 - BROKER_TOPIC_EGRESS: the topic to subscribe to
 ```
 
-Endpoint-Registry Access:
+Endpoint-Registry Access (owned by endpoint-registry service):
 ``` 
-- REGISTRY_URL : URL of Endpoint-registry (without the /endpoint suffix)
-- REGISTRY_URL_GET_SUFFIX: (the endpoint-registry endpoint to GET the AAS endpoints) (NOTE: should be set to "/endpoints")
+- ENDPOINT_REGISTRY_BASE_URL : URL of Endpoint-registry (without the /endpoint suffix)
+- ENDPOINT_REGISTRY_BASE_URL_GET_ENDPOINTS_SUFFIX: (the endpoint-registry endpoint to GET the AAS endpoints) (NOTE: should be set to "/endpoints")
 - REGISTRY_ADMIN_USER (should be renamed to ENDPOINT-REG-USER)
 - REGISTRY_ADMIN_PASSWORD (should be renamed to ENDPOINT-REG-PASS))
 ```
