@@ -83,4 +83,20 @@ spec:
             name: endpoint-registry
         - configMapRef:
             name: adapter-registry
+        volumeMounts:
+        - mountPath: /service/.node-persist
+          name: node-persist
+  volumeClaimTemplates:
+  - metadata:
+      name: node-persist
+      labels:
+        app: i40-aas
+        service: adapter-registry
+    spec:
+      storageClassName: standard
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 100Mi
 ---

@@ -77,6 +77,9 @@ spec:
           envFrom:
             - secretRef:
                 name: endpoint-registry-postgres
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: endpoint-registry-postgres
         - name: pgadmin
           image: dpage/pgadmin4
           imagePullPolicy: "IfNotPresent"
@@ -86,4 +89,17 @@ spec:
           envFrom:
             - secretRef:
                 name: endpoint-registry-pgadmin
+  volumeClaimTemplates:
+  - metadata:
+      name: endpoint-registry-postgres
+      labels:
+        app: i40-aas
+        service: endpoint-registry
+    spec:
+      storageClassName: standard
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 100Mi
 ---

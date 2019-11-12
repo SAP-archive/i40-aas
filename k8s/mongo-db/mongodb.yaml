@@ -68,4 +68,20 @@ spec:
           envFrom:
             - secretRef:
                 name: mongodb-secret
+          volumeMounts:
+            - mountPath: /data/db
+              name: mongodb
+  volumeClaimTemplates:
+  - metadata:
+      name: mongodb
+      labels:
+        app: i40-aas
+        service: mongodb
+    spec:
+      storageClassName: standard
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 100Mi
 ---
