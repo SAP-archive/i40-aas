@@ -11,7 +11,11 @@ import { logger } from "./utils/log";
 const dotenv = require('dotenv');
 dotenv.config();
 
+let ADAPTER_REG_URL = process.env.ADAPTER_REG_URL;
+let ADAPTER_REG_ADMIN_USER = process.env.ADAPTER_REG_ADMIN_USER;
+let ADAPTER_REG_ADMIN_PASS = process.env.ADAPTER_REG_ADMIN_PASS;
 
+var webClient = new WebClient();
 
 process.on("uncaughtException", e => {
   logger.error(e);

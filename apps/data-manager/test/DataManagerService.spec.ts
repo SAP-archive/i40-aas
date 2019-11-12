@@ -1,6 +1,5 @@
 import sinon from "sinon";
 import fs from "fs";
-import boom = require("boom");
 import chaiHttp = require("chai-http");
 import Axios, { AxiosError } from "axios";
 
@@ -25,7 +24,7 @@ const assert = chai.assert;
 chai.should();
 
 describe("the server", async function() {
-  let submodelsArray: string;
+  let submodelsRequest: string;
 
   //read a sample interaction.json to use as body for requests
   before(function(done) {
@@ -35,12 +34,12 @@ describe("the server", async function() {
 
     fs.readFile(filePath, "utf8", function(err: any, fileContents: string) {
       if (err) throw err;
-      submodelsArray = fileContents;
+      submodelsRequest = fileContents;
       done();
     });
   });
 
-  it("should return a 'Server Up' response on call to /health", async () => {
+  it("should return a 'Server Up' response on call to /health",  () => {
     return chai
       .request(app)
       .get("/health")
@@ -68,7 +67,7 @@ describe("the server", async function() {
       });
   });
 */
-  it("will give a 422 response if the submodel IdShort is missing", async () => {
+  it("will give a 422 response if the submodel IdShort is missing",  () => {
     let request = [
       {
         embeddedDataSpecifications: [],
@@ -108,22 +107,33 @@ describe("the server", async function() {
       });
   });
 
-  it("will give a 400 response if the input is not parseable", async function() {
+  it("will give a 400 response if the input is not parseable",  function() {
     return chai
       .request(app)
       .post("/submodels")
       .auth(DATAMANAGER_USER, DATAMANAGER_PASS)
       .set("content-type", "application/json")
-      .send(submodelsArray + "xx")
+      .send("[]")
+      .then(function(res: any) {
+        chai.expect(res).to.have.status(400);
+      });
+  });
+  it("will give a 400 response if no submodels in request",  function() {
+    return chai
+      .request(app)
+      .post("/submodels")
+      .auth(DATAMANAGER_USER, DATAMANAGER_PASS)
+      .set("content-type", "application/json")
+      .send(submodelsRequest)
       .then(function(res: any) {
         chai.expect(res).to.have.status(400);
       });
   });
 
-  /*
-  it('Should return a 200 if no errors are encountered and if interaction message successfully forwarded to broker', (done) => {
+ /*
+  it('If multiple submodels are received, then each submodel is forwared to respective adapter', (done) => {
       chai.request(app).post('/interaction')
-      .auth(INGRESS_ADMIN_USER, INGRESS_ADMIN_PASS)
+      .auth(DATAMANAGER_USER, DATAMANAGER_PASS)
       .set("content-type", "application/json")
       .send(interaction)
       .then((res:any) => { 
@@ -133,5 +143,21 @@ describe("the server", async function() {
       });
     });
 
-    */
+*/
+
+
+
+
+  it('Should return a 200 if no errors are encountered and if submodel forwarded to adapter', (done) => {
+      chai.request(app).post('/submodels')
+      .auth(DATAMANAGER_USER, DATAMANAGER_PASS)
+      .set("content-type", "application/json")
+      .send(submodelsRequest)
+      .then((res:any) => { 
+        //chai.assert(res.body.displayname).to.eql('name'); // assertion expression which will be true if "displayname" equal to "name" 
+        chai.expect(res.status).to.eql(200);// expression which will be true if response status equal to 200 
+        done();
+      });
+    });
+    
 });
