@@ -8,7 +8,7 @@ import boom = require("@hapi/boom");
 import * as logger from "winston";
 import { postSubmoduleToAdapter } from "./AdapterConnector";
 import { IStorageAdapter } from "./IStorageAdapter";
-import { HTTP400Error } from "../../utils/httpErrors";
+import { HTTP400Error } from ".././interfaces/IStorageAdapterrs";
 
 export default [
   {

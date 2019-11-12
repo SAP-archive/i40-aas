@@ -20,10 +20,8 @@ class AmqpConnectionDetails {
 //TODO: set proper time gap for connection retries (6s currently).
 //TODO: not to use static methods
 class AmqpClient implements IMessageBrokerClient {
-
-
   isConnected(): boolean {
-    return this.myConn.connectionClosed?false:true;
+    return this.myConn.connectionClosed ? false : true;
   }
   private myConn: AmqpConnectionDetails = new AmqpConnectionDetails();
   public listenerCounter = 0;
@@ -49,7 +47,6 @@ class AmqpClient implements IMessageBrokerClient {
     process.on("SIGINT", function() {
       that.cleanup();
     });
-
   }
 
   static sleep(millis: number) {

@@ -1,7 +1,7 @@
 import { Submodel } from "i40-aas-objects";
 import * as logger from "winston";
 import { WebClient } from "./WebClient/WebClient";
-import { IStorageAdapter } from "./IStorageAdapter";
+import { IStorageAdapter } from "./interfaces/IStorageAdapter";
 
 var webClient = new WebClient();
 /**
