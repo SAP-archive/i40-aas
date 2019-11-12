@@ -3,6 +3,9 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: adapter-registry
+  labels: 
+    app: i40-aas
+    service: adapter-registry
 type: Opaque
 stringData:
   ADAPTER_REG_ADMIN_USER: admin
@@ -61,4 +64,20 @@ spec:
             name: adapter-registry
         - secretRef:
             name: endpoint-registry
+        volumeMounts:
+        - mountPath: /service/.node-persist
+          name: adapter-registry
+  volumeClaimTemplates:
+  - metadata:
+      name: adapter-registry
+      labels:
+        app: i40-aas
+        service: adapter-registry
+    spec:
+      storageClassName: standard
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 100Mi
 ---
