@@ -4,6 +4,9 @@ This component implements a REST API and handles requests by forwarding them to 
 
 API available at the server under `/api-docs`
 
+## Configuration
+Service configuration is handled via environment variable injection. Within the `env_file:` section of `docker-compose.yml` you find a list of _.env_-files mounted. The corresponding default configurations and explanations are located in: `.compose-envs/<SERVICE-NAME>.env`.
+
 ## Running
 
 - To start: `npm run dev` from this directory
@@ -48,18 +51,3 @@ Technologies:
 #### Unit Tests
 - Run unit tests using `npm run test`
 - Run unit tests with coverage with `npm run coverage`
-
-### Environment Variables
-
-Message Broker Access:
-```
-- AMQP_URL: the URL of the AMQP broker
-- BROKER_EXCHANGE: the name of the exchange
-- BROKER_USER: broker access username
-- BROKER_PASSWORD: broker access password
-```
-Basic Auth
-```
-- INGRESS_ADMIN_USER
-- INGRESS_ADMIN_PASS
-```

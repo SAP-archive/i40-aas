@@ -1,5 +1,8 @@
 # Registry
 
+## Configuration
+Service configuration is handled via environment variable injection. Within the `env_file:` section of `docker-compose.yml` you find a list of _.env_-files mounted. The corresponding default configurations and explanations are located in: `.compose-envs/<SERVICE-NAME>.env`.
+
 ## Register 
 
 POST /register
@@ -85,24 +88,3 @@ Create Database
 2. create assets table 
 3. create asset_administration_shells table
 4. create endpoints table 
-
-## Database Connection
-
-Database properties are available as the following environment variables:
-
-```
-POSTGRES_HOST
-POSTGRES_PORT
-POSTGRES_DB
-POSTGRES_USER
-POSTGRES_PASSWORD
-```
-
-
-## Environment Variables
-
-Basic Auth:
-```
-- REGISTRY_ADMIN_USER (should be renamed to ENDPOINT-REG-USER)
-- REGISTRY_ADMIN_PASSWORD (should be renamed to ENDPOINT-REG-PASS)
-```

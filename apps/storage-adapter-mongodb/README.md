@@ -1,16 +1,7 @@
 # Storage-adapter-mongodb
 
-## MongoDB Access
-
-Database properties are available as the following environment variables:
-
-```
-MONGODB_HOST
-MONGODB_PORT
-MONGO_INITDB_ROOT_USERNAME
-MONGO_INITDB_ROOT_PASSWORD
-MONGO_INITDB_DATABASE
-```
+## Configuration
+Service configuration is handled via environment variable injection. Within the `env_file:` section of `docker-compose.yml` you find a list of _.env_-files mounted. The corresponding default configurations and explanations are located in: `.compose-envs/<SERVICE-NAME>.env`.
 
 ## Running
 
@@ -32,15 +23,3 @@ MONGO_INITDB_DATABASE
 
 - Run unit tests using `npm run test`
 - Run unit tests with coverage with `npm run coverage`
-
-## Environment Variables
-
-The current values can be found in folder {project root}/.compose-envs.
-
-| Environment Variable       |                     Description                     |
-| -------------------------- | :-------------------------------------------------: |
-| MONGODB_HOST               |                The MongoDB host name                |
-| MONGODB_PORT               |            The MongoDB port on the host             |
-| MONGO_INITDB_ROOT_USERNAME |     The MongoDB user name used by this service      |
-| MONGO_INITDB_ROOT_PASSWORD |   The MongoDB user password used by this service    |
-| MONGO_INITDB_DATABASE      | The database used by this service to store its data |

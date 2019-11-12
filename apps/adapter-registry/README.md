@@ -6,6 +6,9 @@ A service component that offers an API for:
  - assigning a submodel to a storage adapter
  - retrieving the adapter(s) that can  handle a submodel
 
+## Configuration
+Service configuration is handled via environment variable injection. Within the `env_file:` section of `docker-compose.yml` you find a list of _.env_-files mounted. The corresponding default configurations and explanations are located in: `.compose-envs/<SERVICE-NAME>.env`.
+
 
 ## Register 
 
@@ -61,16 +64,3 @@ error
 Not yet implemented
 
 [node-persist](https://www.npmjs.com/package/node-persist) as Local storage is used
-
-
-## Registry basic auth
-
-Refistry admin user is available as the following environment variables:
-
-### Environement Variables
-Basic Auth:
-```
-- ADAPTER_REG_ADMIN_USER : Basic Auth credentials of the adapter-registry
-- ADAPTER_REG_ADMIN_PASS : Basic Auth credentials of the adapter-registry
-
-```
