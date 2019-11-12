@@ -51,14 +51,14 @@ Technologies:
 
 ### Environment Variables
 
-Message Broker Access:
+Message Broker Access (owned by broker service):
 ```
 - AMQP_URL: the URL of the AMQP broker
 - BROKER_EXCHANGE: the name of the exchange
 - BROKER_USER: broker access username
 - BROKER_PASSWORD: broker access password
 ```
-Basic Auth
+Basic Auth (self-owned)
 ```
 - INGRESS_ADMIN_USER
 - INGRESS_ADMIN_PASS
