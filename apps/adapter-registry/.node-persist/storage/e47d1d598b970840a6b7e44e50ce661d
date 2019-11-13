@@ -1,1 +1,0 @@
-{"key":"storage-adapter-mongodb","value":{"url":"http://localhost:3100/submodels","adapterId":"storage-adapter-mongodb","name":"SAP-MongoDB-Adapter","submodelId":"opc-ua-devices"}}

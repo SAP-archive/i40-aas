@@ -8,7 +8,6 @@ var mqtt = require("mqtt");
 
 class SapMqttClient implements IMessageBrokerClient {
   private subscription: Subscription | undefined;
-  //TODO: Can these members be put into (already modelled) objects, rather than staying here?
   private client: Client;
 
   addSubscriptionData(subscription: Subscription) {

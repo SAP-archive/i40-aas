@@ -5,7 +5,9 @@ import { ISkillContext } from "./statemachineinterface/ISkillContext";
 import { logger } from "../../log";
 
 //TODO:
-//the state machine could be specified such that any error/notUnderstood from a third party leads to
+//the state machine could be specified such that any error/notUnderstood from a third party
+//such as manufacturer or approver
+//leads to
 //OperationFailed, resulting in a message sent to the operator
 //this is currently not the case
 class SkillStateMachineSpecification {

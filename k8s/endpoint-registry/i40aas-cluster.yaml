@@ -3,6 +3,9 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: endpoint-registry
+  labels: 
+    app: i40-aas
+    service: endpoint-registry
 type: Opaque
 stringData:
   REGISTRY_URL_GET_SUFFIX: /endpoints
@@ -17,6 +20,7 @@ metadata:
     app: i40-aas
     service: endpoint-registry
 spec:
+  type: LoadBalancer
   ports:
   - targetPort: endpoint
     port: 80

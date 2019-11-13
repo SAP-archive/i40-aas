@@ -86,24 +86,28 @@ Create Database
 3. create asset_administration_shells table
 4. create endpoints table 
 
-## Database Connection
 
-Database properties are available as the following environment variables:
+## Environment Variables
 
+Basic Auth (self-owned):
 ```
-POSTGRES_HOST
-POSTGRES_PORT
-POSTGRES_DB
-POSTGRES_USER
-POSTGRES_PASSWORD
+- REGISTRY_ADMIN_USER (should be renamed to ENDPOINT-REGISTRY-USER)
+- REGISTRY_ADMIN_PASSWORD (should be renamed to ENDPOINT-REGISTRY-PASS)
 ```
 
 
-## Registry basic auth
+Exposed Endpoints (self-owned)
+```
+- ENDPOINT_REGISTRY_BASE_URL : URL of Endpoint-registry (without the /endpoint suffix)
+- ENDPOINT_REGISTRY_BASE_URL_GET_ENDPOINTS_SUFFIX: (the endpoint-registry endpoint to GET the AAS endpoints) (NOTE: should be set to "/endpoints")
+```
 
-Registry admin user is available as the following environment variables:
+Database connection (self-owned):
 
 ```
-REGISTRY_ADMIN_USER 
-REGISTRY_ADMIN_PASSWORD 
+- POSTGRES_HOST ('ENDPOINT_REGISTRY_' prefix should be added to all) 
+- POSTGRES_PORT
+- POSTGRES_DB
+- POSTGRES_USER
+- POSTGRES_PASSWORD
 ```

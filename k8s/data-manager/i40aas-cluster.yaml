@@ -3,6 +3,9 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: data-manager
+  labels: 
+    app: i40-aas
+    service: data-manager
 type: Opaque
 stringData:
   DATA_MANAGER_USER: admin
@@ -59,7 +62,7 @@ spec:
         env:
         - name: ADAPTER_REG_URL
           valueFrom: 
-            configMapRefKey:
+            configMapKeyRef:
               name: service-addresses
               key: ADAPTER_REG_URL
         envFrom:
