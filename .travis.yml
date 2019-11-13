@@ -1,8 +1,10 @@
-sudo: required
 dist: trusty
 language: generic
 git:
   depth: 1
+
+if: branch = master AND \
+    type = push
 
 env:
   - SERVICE=adapter-registry
@@ -18,10 +20,4 @@ install:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker build -t "sapi40/i40-aas-${SERVICE}:latest" -f "docker/${SERVICE}/Dockerfile" "apps/${SERVICE}"
   - docker push "sapi40/i40-aas-${SERVICE}:latest"
-
-stages:
-  - name: release-images
-    if: |
-      branch = master AND \
-      type = push
 
