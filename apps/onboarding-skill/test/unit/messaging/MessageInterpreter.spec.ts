@@ -23,21 +23,7 @@ var expect = chai.expect;
 chai.should();
 
 function makeDbClient() {
-  if (
-    !process.env.MONGODB_HOST ||
-    !process.env.MONGODB_PORT ||
-    !process.env.MONGO_INITDB_DATABASE
-  ) {
-    throw new Error(
-      "These environment variables need to be set: MONGODB_HOST, MONGODB_PORT, MONGO_INITDB_DATABASE"
-    );
-  }
-  return new SimpleMongoDbClient(
-    "tests",
-    process.env.MONGO_INITDB_DATABASE,
-    process.env.MONGODB_HOST,
-    process.env.MONGO_INITDB_DATABASE
-  );
+  return new SimpleMongoDbClient("tests", "", "", "");
 }
 
 function makeFakeDbClient() {

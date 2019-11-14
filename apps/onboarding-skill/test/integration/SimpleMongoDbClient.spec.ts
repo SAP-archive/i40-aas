@@ -1,7 +1,7 @@
 import { fail } from "assert";
-import { logger } from "../../../src/log";
-import { SimpleMongoDbClient } from "../../../src/persistence/SimpleMongoDbClient";
-import { IStateRecord } from "../../../src/services/onboarding/persistenceinterface/IStateRecord";
+import { logger } from "../../src/log";
+import { SimpleMongoDbClient } from "../../src/persistence/SimpleMongoDbClient";
+import { IStateRecord } from "../../src/services/onboarding/persistenceinterface/IStateRecord";
 var chai = require("chai");
 var chaiAsPromised = require("chai-as-promised");
 chai.use(chaiAsPromised);
@@ -13,34 +13,50 @@ var expect = chai.expect;
 // or:
 chai.should();
 
+function checkEnvVar(variableName: string): string {
+  let retVal: string | undefined = process.env[variableName];
+  if (retVal) {
+    return retVal;
+  } else {
+    throw new Error(
+      "A variable that is required by the skill has not been defined in the environment:" +
+        variableName
+    );
+  }
+}
+
 describe("SimpleMongoDbClient", function() {
   const uuidv1 = require("uuid/v1");
   let mongoDbClient: SimpleMongoDbClient;
   let collectionName: string = "tests" + uuidv1();
+  let MONGODB_INITDB_DATABASE = checkEnvVar(
+    "STORAGE_ADAPTER_MONGODB_MONGODB_INITDB_DATABASE"
+  );
+  let MONGODB_HOST = checkEnvVar("MONGODB_HOST");
+  let MONGODB_PORT = checkEnvVar("MONGODB_PORT");
+  let MONGODB_INITDB_ROOT_USERNAME = checkEnvVar(
+    "ONBOARDING_SKILL_MONGODB_INITDB_ROOT_USERNAME"
+  );
+  let MONGODB_INITDB_ROOT_PASSWORD = checkEnvVar(
+    "ONBOARDING_SKILL_MONGODB_INITDB_ROOT_PASSWORD"
+  );
 
   before(async () => {
-    if (
-      !process.env.MONGODB_HOST ||
-      !process.env.MONGODB_PORT ||
-      !process.env.MONGO_INITDB_DATABASE
-    ) {
+    if (!MONGODB_HOST || !MONGODB_PORT || !MONGODB_INITDB_DATABASE) {
       throw new Error(
-        "These environment variables need to be set: MONGODB_HOST, MONGODB_PORT, MONGO_INITDB_DATABASE"
+        "These environment variables need to be set: MONGODB_HOST, MONGODB_PORT, MONGODB_INITDB_DATABASE"
       );
     }
-    if (
-      process.env.MONGO_INITDB_ROOT_USERNAME &&
-      process.env.MONGO_INITDB_ROOT_PASSWORD
-    ) {
+    if (MONGODB_INITDB_ROOT_USERNAME && MONGODB_INITDB_ROOT_PASSWORD) {
       logger.info("Using authentication");
     }
     mongoDbClient = new SimpleMongoDbClient(
       collectionName,
-      process.env.MONGO_INITDB_DATABASE,
-      process.env.MONGODB_HOST,
-      process.env.MONGO_INITDB_DATABASE,
-      process.env.MONGO_INITDB_ROOT_USERNAME,
-      process.env.MONGO_INITDB_ROOT_PASSWORD
+      MONGODB_INITDB_DATABASE,
+      MONGODB_HOST,
+      MONGODB_INITDB_DATABASE,
+      MONGODB_INITDB_ROOT_USERNAME,
+      MONGODB_INITDB_ROOT_PASSWORD
     );
     await mongoDbClient.connect();
   });
