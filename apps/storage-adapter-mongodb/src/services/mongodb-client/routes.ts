@@ -18,9 +18,6 @@ function checkEnvVar(variableName: string): string {
   }
 }
 
-const dotenv = require("dotenv");
-dotenv.config();
-
 let COLLECTION_IN_DATABASE = checkEnvVar(
   "STORAGE_ADAPTER_SUBOMODELS_COLLECTION"
 );
