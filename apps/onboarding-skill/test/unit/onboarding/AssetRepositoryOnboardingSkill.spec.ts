@@ -144,7 +144,7 @@ describe("applyEvent", function() {
     }
   );
   it("moves into WaitForApproval when requestApproval is set, sending out the correct messages", function(done) {
-    process.env["REQUEST_APPROVAL"] = "true";
+    process.env["ONBOARDING_SKILL_REQUEST_APPROVAL"] = "true";
 
     let conversationId = "abcd1234";
     let messageSender: MessageSender = new MessageSender(
@@ -190,7 +190,7 @@ describe("applyEvent", function() {
                 "central-asset-repository"
               )
           );
-          process.env["REQUEST_APPROVAL"] = "false";
+          process.env["ONBOARDING_SKILL_REQUEST_APPROVAL"] = "false";
           done();
         }
       }
@@ -198,7 +198,7 @@ describe("applyEvent", function() {
   });
 
   it("moves into CreatingInstance from WaitForApproval on receipt of APPROVED_FROM_APPROVER (when requestApproval is set), sending out the correct messages", function(done) {
-    process.env["REQUEST_APPROVAL"] = "true";
+    process.env["ONBOARDING_SKILL_REQUEST_APPROVAL"] = "true";
 
     let messageFromApprover = <InteractionMessage>{
       frame: {
@@ -292,7 +292,7 @@ describe("applyEvent", function() {
               .and(sinon.match.hasNested("receiver.role.name", "Operator")),
             sinon.match.any
           );
-          process.env["REQUEST_APPROVAL"] = "false";
+          process.env["ONBOARDING_SKILL_REQUEST_APPROVAL"] = "false";
           done();
         }
       }
@@ -300,7 +300,7 @@ describe("applyEvent", function() {
   });
 
   it("sends back a requestRefused on receipt of REQUESTREFUSED_FROM_APPROVER (when requestApproval is set)", function(done) {
-    process.env["REQUEST_APPROVAL"] = "true";
+    process.env["ONBOARDING_SKILL_REQUEST_APPROVAL"] = "true";
 
     let messageFromApprover = <InteractionMessage>{
       frame: {
@@ -382,7 +382,7 @@ describe("applyEvent", function() {
               .and(sinon.match.hasNested("receiver.role.name", "Operator")),
             sinon.match.any
           );
-          process.env["REQUEST_APPROVAL"] = "false";
+          process.env["ONBOARDING_SKILL_REQUEST_APPROVAL"] = "false";
           done();
         }
       }
@@ -390,7 +390,7 @@ describe("applyEvent", function() {
   });
 
   it("sends error to the right role, if there is an error creating an instance after approval", function(done) {
-    process.env["REQUEST_APPROVAL"] = "true";
+    process.env["ONBOARDING_SKILL_REQUEST_APPROVAL"] = "true";
 
     let messageFromApprover = <InteractionMessage>{
       frame: {
@@ -484,7 +484,7 @@ describe("applyEvent", function() {
               .and(sinon.match.hasNested("receiver.role.name", "Operator")),
             sinon.match.any
           );
-          process.env["REQUEST_APPROVAL"] = "false";
+          process.env["ONBOARDING_SKILL_REQUEST_APPROVAL"] = "false";
           done();
         }
       }
@@ -492,7 +492,7 @@ describe("applyEvent", function() {
   });
 
   it("sends back a requestRefused on receipt of NOTUNDERSTOOD_FROM_APPROVER (when requestApproval is set)", function(done) {
-    process.env["REQUEST_APPROVAL"] = "true";
+    process.env["ONBOARDING_SKILL_REQUEST_APPROVAL"] = "true";
 
     let messageFromApprover = <InteractionMessage>{
       frame: {
@@ -574,14 +574,14 @@ describe("applyEvent", function() {
               .and(sinon.match.hasNested("receiver.role.name", "Operator")),
             sinon.match.any
           );
-          process.env["REQUEST_APPROVAL"] = "false";
+          process.env["ONBOARDING_SKILL_REQUEST_APPROVAL"] = "false";
           done();
         }
       }
     );
   });
   it("sends back a requestRefused on receipt of ERROR_FROM_APPROVER (when requestApproval is set)", function(done) {
-    process.env["REQUEST_APPROVAL"] = "true";
+    process.env["ONBOARDING_SKILL_REQUEST_APPROVAL"] = "true";
 
     let messageFromApprover = <InteractionMessage>{
       frame: {
@@ -663,7 +663,7 @@ describe("applyEvent", function() {
               .and(sinon.match.hasNested("receiver.role.name", "Operator")),
             sinon.match.any
           );
-          process.env["REQUEST_APPROVAL"] = "false";
+          process.env["ONBOARDING_SKILL_REQUEST_APPROVAL"] = "false";
           done();
         }
       }
@@ -671,7 +671,7 @@ describe("applyEvent", function() {
   });
 
   it("sends a notUnderstood to the right role, if there is a 400 error creating an instance after approval", function(done) {
-    process.env["REQUEST_APPROVAL"] = "true";
+    process.env["ONBOARDING_SKILL_REQUEST_APPROVAL"] = "true";
 
     let messageFromApprover = <InteractionMessage>{
       frame: {
@@ -765,7 +765,7 @@ describe("applyEvent", function() {
               .and(sinon.match.hasNested("receiver.role.name", "Operator")),
             sinon.match.any
           );
-          process.env["REQUEST_APPROVAL"] = "false";
+          process.env["ONBOARDING_SKILL_REQUEST_APPROVAL"] = "false";
           done();
         }
       }
@@ -773,7 +773,7 @@ describe("applyEvent", function() {
   });
 
   it("sends a requestRefused to the right role, if there is a 401 error creating an instance after approval", function(done) {
-    process.env["REQUEST_APPROVAL"] = "true";
+    process.env["ONBOARDING_SKILL_REQUEST_APPROVAL"] = "true";
 
     let messageFromApprover = <InteractionMessage>{
       frame: {
@@ -867,7 +867,7 @@ describe("applyEvent", function() {
               .and(sinon.match.hasNested("receiver.role.name", "Operator")),
             sinon.match.any
           );
-          process.env["REQUEST_APPROVAL"] = "false";
+          process.env["ONBOARDING_SKILL_REQUEST_APPROVAL"] = "false";
           done();
         }
       }
@@ -875,7 +875,7 @@ describe("applyEvent", function() {
   });
 
   it("sends a error to the right role, if there is a 500 error creating an instance after approval", function(done) {
-    process.env["REQUEST_APPROVAL"] = "true";
+    process.env["ONBOARDING_SKILL_REQUEST_APPROVAL"] = "true";
 
     let messageFromApprover = <InteractionMessage>{
       frame: {
@@ -969,7 +969,7 @@ describe("applyEvent", function() {
               .and(sinon.match.hasNested("receiver.role.name", "Operator")),
             sinon.match.any
           );
-          process.env["REQUEST_APPROVAL"] = "false";
+          process.env["ONBOARDING_SKILL_REQUEST_APPROVAL"] = "false";
           done();
         }
       }
@@ -977,7 +977,7 @@ describe("applyEvent", function() {
   });
 
   it("moves into WaitingForType if requestType is set, sending out the correct messages", function(done) {
-    process.env["REQUEST_TYPE"] = "true";
+    process.env["ONBOARDING_SKILL_REQUEST_TYPE"] = "true";
 
     let conversationId = "abcd1234";
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
@@ -1027,7 +1027,7 @@ describe("applyEvent", function() {
         if (state.value === "WaitingForType") {
           sinon.assert.calledOnce(fakerequestTypeFromManufacturer);
           sinon.assert.calledOnce(fakesendResponseInstanceToOperator);
-          process.env["REQUEST_TYPE"] = "false";
+          process.env["ONBOARDING_SKILL_REQUEST_TYPE"] = "false";
           done();
         }
       }

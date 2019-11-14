@@ -48,15 +48,15 @@ spec:
               cpu: 48m
               memory: 324M
           env:
-            - name: REQUEST_APPROVAL
+            - name: ONBOARDING_SKILL_REQUEST_APPROVAL
               value: "false"
             - name: REGISTRY_URL
-              valueFrom: 
+              valueFrom:
                 configMapKeyRef:
                   name: service-addresses
                   key: REGISTRY_URL
             - name: DATA_MANAGER_URL
-              valueFrom: 
+              valueFrom:
                 configMapKeyRef:
                   name: service-addresses
                   key: DATA_MANAGER_URL
@@ -72,3 +72,4 @@ spec:
             - secretRef:
                 name: rabbitmq
 ---
+
