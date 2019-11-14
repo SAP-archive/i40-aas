@@ -6,29 +6,43 @@ import { IDatabaseClient } from "./operations/IDatabaseClient";
 import { SimpleMongoDbClient } from "./operations/SimpleMongoDbClient";
 import { SubmodelRepositoryService } from "./operations/SubmodelRepositoryService";
 
-//TODO: put all these in configuration file or environment
-let COLLECTION_IN_DATABASE = "storage-adapter-mongodb-submodels";
+function checkEnvVar(variableName: string): string {
+  let retVal: string | undefined = process.env[variableName];
+  if (retVal) {
+    return retVal;
+  } else {
+    throw new Error(
+      "A variable that is required by the skill has not been defined in the environment:" +
+        variableName
+    );
+  }
+}
 
-const dotenv = require('dotenv');
+const dotenv = require("dotenv");
 dotenv.config();
 
-if (
-  !process.env.MONGODB_HOST ||
-  !process.env.MONGODB_PORT ||
-  !process.env.MONGO_INITDB_DATABASE
-) {
-  throw new Error(
-    "These environment variables need to be set: MONGODB_HOST, MONGODB_PORT, MONGO_INITDB_DATABASE"
-  );
-}
+let COLLECTION_IN_DATABASE = checkEnvVar(
+  "STORAGE_ADAPTER_SUBOMODELS_COLLECTION"
+);
+let MONGO_INITDB_DATABASE = checkEnvVar(
+  "STORAGE_ADAPTER_MONGO_INITDB_DATABASE"
+);
+let MONGODB_HOST = checkEnvVar("MONGODB_HOST");
+let MONGODB_PORT = checkEnvVar("MONGODB_PORT");
+let MONGO_INITDB_ROOT_USERNAME = checkEnvVar(
+  "STORAGE_ADAPTER_MONGO_INITDB_ROOT_USERNAME"
+);
+let MONGO_INITDB_ROOT_PASSWORD = checkEnvVar(
+  "STORAGE_ADAPTER_MONGO_INITDB_ROOT_PASSWORD"
+);
 
 let dbClient: IDatabaseClient = new SimpleMongoDbClient(
   COLLECTION_IN_DATABASE,
-  process.env.MONGO_INITDB_DATABASE,
-  process.env.MONGODB_HOST,
-  process.env.MONGODB_PORT,
-  process.env.MONGO_INITDB_ROOT_USERNAME,
-  process.env.MONGO_INITDB_ROOT_PASSWORD
+  MONGO_INITDB_DATABASE,
+  MONGODB_HOST,
+  MONGODB_PORT,
+  MONGO_INITDB_ROOT_USERNAME,
+  MONGO_INITDB_ROOT_PASSWORD
 );
 let repositoryService = new SubmodelRepositoryService(dbClient);
 

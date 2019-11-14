@@ -10,7 +10,7 @@ import { logger } from "./log";
 
 function checkEnvVar(variableName: string): string {
   let retVal: string | undefined = process.env[variableName];
-  if (retVal !== undefined) {
+  if (retVal) {
     return retVal;
   } else {
     throw new Error(
@@ -36,15 +36,17 @@ let DATA_MANAGER_BASE_URL = checkEnvVar("DATA_MANAGER_URL");
 let MONGO_INITDB_DATABASE = checkEnvVar(
   "ONBOARDING_SKILL_MONGO_INITDB_DATABASE"
 );
-let MONGODB_HOST = checkEnvVar("ONBOARDING_SKILL_MONGODB_HOST");
-let MONGODB_PORT = checkEnvVar("ONBOARDING_SKILL_MONGODB_PORT");
+let MONGODB_HOST = checkEnvVar("MONGODB_HOST");
+let MONGODB_PORT = checkEnvVar("MONGODB_PORT");
 let MONGO_INITDB_ROOT_USERNAME = checkEnvVar(
   "ONBOARDING_SKILL_MONGO_INITDB_ROOT_USERNAME"
 );
 let MONGO_INITDB_ROOT_PASSWORD = checkEnvVar(
   "ONBOARDING_SKILL_MONGO_INITDB_ROOT_PASSWORD"
 );
-let HTTP_ENDPOINT_ROUTING_KEY = checkEnvVar("HTTP_ENDPOINT_ROUTING_KEY");
+let HTTPS_ENDPOINT_ROUTING_KEY = checkEnvVar(
+  "HTTPS_ENDPOINT_EGRESS_ROUTING_KEY"
+);
 
 //Do not remove the next line as it initializes the logger
 const initializeLogger = require("./log");
@@ -69,7 +71,7 @@ let messageDispatcher: MessageDispatcher = new MessageDispatcher(
         name: MY_ROLE
       }
     },
-    HTTP_ENDPOINT_ROUTING_KEY
+    HTTPS_ENDPOINT_ROUTING_KEY
   ),
   new WebClient(
     DATA_MANAGER_BASE_URL,
