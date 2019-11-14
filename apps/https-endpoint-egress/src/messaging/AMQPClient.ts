@@ -26,17 +26,18 @@ class AmqpClient implements IMessageBrokerClient {
   public static retryCounter = 0;
   public static successCounter = 0;
   public static start: number;
-
-  //private subscription: Subscription | undefined;
+  private  ampqUrl:string;
 
   constructor(
-    private ampqUrl: string,
+    private brokerHost: string,
+    private brokerPort: string,
     private brokerExchange: string,
     private brockerUser: string,
     private brokerPass: string,
     uniqueListenerId: string,
     useMqtt?: boolean
   ) {
+    this.ampqUrl = "amqp://"+brokerHost+":"+brokerPort ,
     AmqpClient.start = Date.now();
     AmqpClient.listenerQName = uniqueListenerId;
     logger.debug("AmpqClient created");
@@ -60,7 +61,7 @@ class AmqpClient implements IMessageBrokerClient {
     let opt = {
       credentials: require("amqplib").credentials.plain(user, pass)
     };
-    let url = " amqp://" + ampqUrl + "?heartbeat=60";
+    let url = ampqUrl + "?heartbeat=60";
     logger.debug("Connecting to " + url);
     try {
       amqp.connect(url, opt, async function(err, conn: Connection) {

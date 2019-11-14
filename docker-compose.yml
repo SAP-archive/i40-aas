@@ -7,12 +7,15 @@ services:
       - .compose-envs/mongodb.env
       - .compose-envs/rabbitmq.env
       - .compose-envs/onboarding-skill.env
+      - .compose-envs/data-manager.env
+
   i40-aas-https-endpoint-ingress:
     image: sapi40/i40-aas-https-endpoint-ingress
     ports:
       - "2000:2000"
     env_file:
       - .compose-envs/rabbitmq.env
+      - .compose-envs/https-endpoint-ingress.env
   i40-aas-https-endpoint-egress:
     image: sapi40/i40-aas-https-endpoint-egress
     env_file:
@@ -40,6 +43,7 @@ services:
       - "3100:3100"
     env_file:
       - .compose-envs/mongodb.env
+      - .compose-envs/storage-adapter-mongodb.env
 
   ## used services
   mongodb:

@@ -8,20 +8,26 @@ dotenv.config();
 
 class AdapterRegistryConnector {
   private webClient: WebClient;
-  private adapter_reg_base_URL: string;
+  private adapter_reg_protocol: string;
+  private adapter_reg_host: string;
+  private adapter_reg_port: string;
   private adapter_reg_suffix:string;
   private adapter_reg_user: string;
   private adapter_reg_pass: string;
 
   constructor(
     wC: WebClient,
-    adapter_reg_base_URL: string,
+    adapter_reg_protocol: string,
+    adapter_reg_host: string,
+    adapter_reg_port: string,
     adapter_reg_suffix:string,
     adapter_reg_user: string,
     adapter_reg_pass: string
   ) {
     this.webClient = wC;
-    this.adapter_reg_base_URL = adapter_reg_base_URL;
+    this.adapter_reg_protocol = adapter_reg_protocol;
+    this.adapter_reg_host = adapter_reg_host;
+    this.adapter_reg_port = adapter_reg_port;
     this.adapter_reg_suffix = adapter_reg_suffix;
     this.adapter_reg_user = adapter_reg_user;
     this.adapter_reg_pass = adapter_reg_pass;
@@ -32,7 +38,9 @@ class AdapterRegistryConnector {
     submodelIdShort: string
   ): Promise<IStorageAdapter> {
     var regResponse = await this.webClient.getRequest(
-      this.adapter_reg_base_URL,
+      this.adapter_reg_protocol,
+      this.adapter_reg_host,
+      this.adapter_reg_port,
       this.adapter_reg_suffix,
       submodelIdShort,
       this.adapter_reg_user,

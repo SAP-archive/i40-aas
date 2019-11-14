@@ -31,16 +31,20 @@ class AmqpClient implements IMessageBrokerClient {
   public static MQTT_EXCHANGE = "amq.topic";
   public useMqtt = false;
   private destroyed: boolean = false;
+  private  ampqUrl:string;
 
   //private subscription: Subscription | undefined;
 
   constructor(
-    private ampqUrl: string,
-    private brokerExchange: string,
+    private brokerHost: string,
+    private brokerPort: string,
+        private brokerExchange: string,
     private brokerUser: string,
     private brokerPass: string,
     private reconnectAfterMilliSecs?: number
   ) {
+    this.ampqUrl = "amqp://"+brokerHost+":"+brokerPort ,
+
     this.start = Date.now();
     logger.debug("AmpqClient created");
     let that = this;
@@ -73,7 +77,7 @@ class AmqpClient implements IMessageBrokerClient {
         this.brokerPass
       )
     };
-    let url = " amqp://" + this.ampqUrl + "?heartbeat=60";
+    let url = this.ampqUrl + "?heartbeat=60";
     logger.debug("Connecting to " + url);
     var that = this;
     try {

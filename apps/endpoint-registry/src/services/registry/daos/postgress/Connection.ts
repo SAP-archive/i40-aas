@@ -1,16 +1,16 @@
 var pgConfig: object;
 try {
   pgConfig = {
-    host: process.env.POSTGRES_HOST,
-    port: process.env.POSTGRES_PORT,
-    user: process.env.POSTGRES_USER,
-    password: process.env.POSTGRES_PASSWORD,
-    database: process.env.POSTGRES_DB,
+    host: process.env.ENDPOINT_REGISTRY_POSTGRES_HOST,
+    port: process.env.ENDPOINT_REGISTRY_POSTGRES_PORT,
+    user: process.env.ENDPOINT_REGISTRY_POSTGRES_USER,
+    password: process.env.ENDPOINT_REGISTRY_POSTGRES_PASSWORD,
+    database: process.env.ENDPOINT_REGISTRY_POSTGRES_DB,
     maxConnections: 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 2000
   };
-  console.log(pgConfig);
+  console.log("Pgconfig is :" + pgConfig);
 } catch (e) {
   throw new Error('Can not read PG environment variables.');
 }
