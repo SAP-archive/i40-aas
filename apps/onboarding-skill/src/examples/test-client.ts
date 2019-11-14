@@ -7,21 +7,16 @@ import { Subscription } from "../services/onboarding/messaginginterface/Subscrip
 const initializeLogger = require("../log");
 let amqpClientSender: AmqpClient;
 let amqpClientReceiver: AmqpClient;
+let AMQP_URL = process.env.RABBITMQ_AMQP_HOST;
 
 let counter = 1;
 function start() {
-  if (process.env.AMQP_URL === undefined) {
+  if (AMQP_URL === undefined) {
     throw new Error("No AMQP_URL found in environment");
   }
-  amqpClientSender = new AmqpClient(
-    process.env.AMQP_URL,
-    "test",
-    "guest",
-    "guest",
-    ""
-  );
+  amqpClientSender = new AmqpClient(AMQP_URL, "test", "guest", "guest", "");
   amqpClientReceiver = new AmqpClient(
-    process.env.AMQP_URL,
+    AMQP_URL,
     "test",
     "guest",
     "guest",
