@@ -12,7 +12,7 @@ function checkEnvVar(variableName: string): string {
     return retVal;
   } else {
     throw new Error(
-      "A variable that is required by the skill has not been defined in the environment:" +
+      "A variable that is required by the storage adapter has not been defined in the environment:" +
         variableName
     );
   }
