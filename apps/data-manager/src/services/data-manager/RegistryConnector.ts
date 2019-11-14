@@ -6,7 +6,7 @@ import { WebClient } from "./WebClient/WebClient";
 const dotenv = require("dotenv");
 dotenv.config();
 
-class RegistryConnector {
+class AdapterRegistryConnector {
   private webClient: WebClient;
   private adapter_reg_URL: string;
   private adapter_reg_user: string;
@@ -45,3 +45,5 @@ class RegistryConnector {
     return adapter;
   }
 }
+
+export {AdapterRegistryConnector}

@@ -6,8 +6,8 @@ import Axios, { AxiosError } from "axios";
 const dotenv = require("dotenv");
 dotenv.config();
 
-var DATAMANAGER_USER = process.env.DATAMANGER_USER;
-var DATAMANAGER_PASS = process.env.DATAMANAGER_PASS;
+var DATA_MANAGER_USER = process.env.DATA_MANAGER_USER;
+var DATA_MANAGER_PASS = process.env.DATA_MANAGER_PASS;
 
 var chai = require("chai");
 chai.use(chaiHttp);
@@ -43,7 +43,7 @@ describe("the server", async function() {
     return chai
       .request(app)
       .get("/health")
-      .auth(DATAMANAGER_USER, DATAMANAGER_PASS)
+      .auth(DATA_MANAGER_USER, DATA_MANAGER_PASS)
       .then(function(res: any) {
         chai.expect(res.text).to.eql("Server Up!");
       });
@@ -68,7 +68,7 @@ describe("the server", async function() {
   });
 */
   it("will give a 422 response if the submodel IdShort is missing",  () => {
-    let request = [
+    let submodelRequestNoId = [
       {
         embeddedDataSpecifications: [],
         semanticId: {
@@ -99,9 +99,9 @@ describe("the server", async function() {
     return chai
       .request(app)
       .post("/submodels")
-      .auth(DATAMANAGER_USER, DATAMANAGER_PASS)
+      .auth(DATA_MANAGER_USER, DATA_MANAGER_PASS)
       .set("content-type", "application/json")
-      .send(request)
+      .send(submodelRequestNoId)
       .then(function(res: any) {
         chai.expect(res).to.have.status(422);
       });
@@ -111,22 +111,25 @@ describe("the server", async function() {
     return chai
       .request(app)
       .post("/submodels")
-      .auth(DATAMANAGER_USER, DATAMANAGER_PASS)
+      .auth(DATA_MANAGER_USER, DATA_MANAGER_PASS)
       .set("content-type", "application/json")
-      .send("[]")
+      .send(submodelsRequest + "xx")
       .then(function(res: any) {
         chai.expect(res).to.have.status(400);
       });
   });
-  it("will give a 400 response if no submodels in request",  function() {
+  it("will give a 400 response if request body empty",  () => {
+  
+    
     return chai
       .request(app)
       .post("/submodels")
-      .auth(DATAMANAGER_USER, DATAMANAGER_PASS)
+      .auth(DATA_MANAGER_USER, DATA_MANAGER_PASS)
       .set("content-type", "application/json")
-      .send(submodelsRequest)
+      .send("")
       .then(function(res: any) {
         chai.expect(res).to.have.status(400);
+    
       });
   });
 
@@ -143,11 +146,11 @@ describe("the server", async function() {
       });
     });
 
-*/
+*/ 
 
 
 
-
+/*
   it('Should return a 200 if no errors are encountered and if submodel forwarded to adapter', (done) => {
       chai.request(app).post('/submodels')
       .auth(DATAMANAGER_USER, DATAMANAGER_PASS)
@@ -159,5 +162,5 @@ describe("the server", async function() {
         done();
       });
     });
-    
+  */  
 });

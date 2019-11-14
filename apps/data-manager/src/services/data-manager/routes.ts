@@ -6,15 +6,16 @@ import {
 } from "../../middleware/checks";
 import boom = require("@hapi/boom");
 import * as logger from "winston";
-import { postSubmoduleToAdapter } from "./AdapterConnector";
-import { IStorageAdapter } from "./IStorageAdapter";
-import { HTTP400Error } from ".././interfaces/IStorageAdapterrs";
+
+import { RoutingController } from "./RoutingController";
+import { HTTP400Error } from "../../utils/httpErrors";
+import { IStorageAdapter } from "./interfaces/IStorageAdapter";
 
 export default [
   {
     path: "/submodels",
     method: "post",
-    handler: [
+    handler: [checkReqBodyEmpty,
       validateSubmodelsRequest,
       async (req: Request, res: Response, next: NextFunction) => {
         /**
@@ -22,24 +23,23 @@ export default [
          tp be forwarded 
          */
         let submodelsArray: submodel[] | undefined;
-        var storageAdapter: IStorageAdapter;
 
         submodelsArray = req.body;
 
-        if (submodelsArray) {
-          logger.info("Num of submodels in the request: " + submodelsArray.length);
+        if (submodelsArray && submodelsArray.length>0) {
+          logger.info(
+            "Num of submodels in the request: " + submodelsArray.length
+          );
           submodelsArray.forEach(async submodel => {
             try {
-              storageAdapter = await getAdapterFromRegistry(
-                submodel.idShort
-              );
+              let result = await RoutingController.routeSubmodel(submodel);
 
-            let result = await postSubmoduleToAdapter(submodel, storageAdapter);
-            res.status(200).send(submodel);   
-          } catch (err) {
-            logger.error(" Error getting adapter from registry "+err)
-            next(new Error("Internal Server Error"));
-          }});
+              res.status(200).send(result);
+            } catch (err) {
+              logger.error(" Error getting adapter from registry " + err);
+              next(new Error());
+            }
+          });
         } else {
           next(new HTTP400Error("Error with request body, no Submodels found"));
         }
