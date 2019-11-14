@@ -11,7 +11,8 @@ export const checkReqBodyEmpty = (
   //check if the req body is empty
   if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
     throw new HTTP400Error("Submodel JSON is empty, check request body!");
-  } else {
+  }
+  else {
     next();
   }
 };
@@ -32,7 +33,7 @@ export const validateSubmodelsRequest = (
         let submodelID:string = submodel.idShort;
         logger.debug("id " + submodelID);
     if(!submodelID) {
-        logger.error("Missing id in submodel");
+        logger.error("Missing id in submodel "+submodel.identification.id);
         throw new HTTP422Error("Missing required fields in Request: idShort");
 
       }  
