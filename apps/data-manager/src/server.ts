@@ -11,14 +11,13 @@ import { RoutingController } from "./services/data-manager/RoutingController";
 import { AdapterConnector } from "./services/data-manager/AdapterConnector";
 import { AdapterRegistryConnector } from "./services/data-manager/RegistryConnector";
 
-
-const dotenv = require('dotenv');
+const dotenv = require("dotenv");
 dotenv.config();
 
-let ADAPTER_REG_URL = process.env.ADAPTER_REG_URL;
-let ADAPTER_REG_ADMIN_USER = process.env.ADAPTER_REG_ADMIN_USER;
-let ADAPTER_REG_ADMIN_PASS = process.env.ADAPTER_REG_ADMIN_PASS;
-
+let ADAPTER_REGISTRY_BASE_URL = process.env.ADAPTER_REGISTRY_BASE_URL;
+let ADAPTER_REGISTRY_ADMIN_USER = process.env.ADAPTER_REGISTRY_ADMIN_USER;
+let ADAPTER_REG_ADMIN_PASS = process.env.ADAPTER_REGISTRY_ADMIN_PASSWORD;
+let ADAPTER_REGISTRY_URL_SUFFIX = process.env.ADAPTER_REGISTRY_URL_SUFFIX;
 var webClient = new WebClient();
 
 process.on("uncaughtException", e => {
@@ -49,19 +48,25 @@ const server = http.createServer(router);
 
 var webClient = new WebClient();
 
-if(ADAPTER_REG_URL && ADAPTER_REG_ADMIN_USER && ADAPTER_REG_ADMIN_PASS ){
-
-
+if (
+  ADAPTER_REGISTRY_BASE_URL &&
+  ADAPTER_REGISTRY_ADMIN_USER &&
+  ADAPTER_REG_ADMIN_PASS &&
+  ADAPTER_REGISTRY_URL_SUFFIX
+) {
   let adapterConnector = new AdapterConnector(webClient);
-let registryConnector = new AdapterRegistryConnector(webClient,ADAPTER_REG_URL, ADAPTER_REG_ADMIN_USER, ADAPTER_REG_ADMIN_PASS );
+  let registryConnector = new AdapterRegistryConnector(
+    webClient,
+    ADAPTER_REGISTRY_BASE_URL,
+    ADAPTER_REGISTRY_URL_SUFFIX,
+    ADAPTER_REGISTRY_ADMIN_USER,
+    ADAPTER_REG_ADMIN_PASS
+  );
   RoutingController.initController(registryConnector, adapterConnector);
 }
-
-
 
 server.listen(PORT, () =>
   logger.info(`A Server is running http://localhost:${PORT} ...`)
 );
 
-
-export {router as app}
+export { router as app };

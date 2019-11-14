@@ -27,11 +27,12 @@ class WebClient {
 
   async getRequest<T>(
     baseUrl: string,
+    suffix:string,
     param: string,
     username: string,
     password: string
   ): Promise<AxiosResponse<T>> {
-    let url: string = baseUrl;
+    let url: string = baseUrl + suffix;
     logger.debug("Get request from " + url);
     logger.debug("param " + param);
     // logger.debug(
