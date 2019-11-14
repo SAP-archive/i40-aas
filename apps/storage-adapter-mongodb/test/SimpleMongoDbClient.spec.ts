@@ -41,11 +41,7 @@ describe("SimpleMongoDbClient", function() {
   let MONGO_INITDB_ROOT_PASSWORD = checkEnvVar(
     "STORAGE_ADAPTER_MONGO_INITDB_ROOT_PASSWORD"
   );
-  if (!MONGODB_HOST || !MONGODB_PORT || !MONGO_INITDB_DATABASE) {
-    throw new Error(
-      "These environment variables need to be set: MONGODB_HOST, MONGODB_PORT, MONGO_INITDB_DATABASE"
-    );
-  }
+
   if (MONGO_INITDB_ROOT_USERNAME && MONGO_INITDB_ROOT_PASSWORD) {
     logger.info("Using authentication");
   }
