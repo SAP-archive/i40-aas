@@ -13,6 +13,17 @@ import { expect } from "chai";
 var chai = require("chai");
 chai.should();
 let md5 = require("md5");
+function checkEnvVar(variableName: string): string {
+  let retVal: string | undefined = process.env[variableName];
+  if (retVal) {
+    return retVal;
+  } else {
+    throw new Error(
+      "A variable that is required by the skill has not been defined in the environment:" +
+        variableName
+    );
+  }
+}
 function getProperty(idShort: string, value: string | undefined): Property {
   return new Property({
     embeddedDataSpecifications: [],
@@ -76,29 +87,31 @@ describe("createEquipmentAndSetInitialValues", function() {
   const uuidv1 = require("uuid/v1");
   let mongoDbClient: SimpleMongoDbClient;
   let collectionName: string = "tests" + uuidv1();
+  let MONGO_INITDB_DATABASE = checkEnvVar(
+    "STORAGE_ADAPTER_MONGO_INITDB_DATABASE"
+  );
+  let MONGODB_HOST = checkEnvVar("MONGODB_HOST");
+  let MONGODB_PORT = checkEnvVar("MONGODB_PORT");
+  let MONGO_INITDB_ROOT_USERNAME = checkEnvVar(
+    "STORAGE_ADAPTER_MONGO_INITDB_ROOT_USERNAME"
+  );
+  let MONGO_INITDB_ROOT_PASSWORD = checkEnvVar(
+    "STORAGE_ADAPTER_MONGO_INITDB_ROOT_PASSWORD"
+  );
+  if (MONGO_INITDB_ROOT_USERNAME && MONGO_INITDB_ROOT_PASSWORD) {
+    logger.info("Using authentication");
+  }
   before(async () => {
-    if (
-      !process.env.MONGODB_HOST ||
-      !process.env.MONGODB_PORT ||
-      !process.env.MONGO_INITDB_DATABASE
-    ) {
-      throw new Error(
-        "These environment variables need to be set: MONGODB_HOST, MONGODB_PORT, MONGO_INITDB_DATABASE"
-      );
-    }
-    if (
-      process.env.MONGO_INITDB_ROOT_USERNAME &&
-      process.env.MONGO_INITDB_ROOT_PASSWORD
-    ) {
+    if (MONGO_INITDB_ROOT_USERNAME && MONGO_INITDB_ROOT_PASSWORD) {
       logger.info("Using authentication");
     }
     mongoDbClient = new SimpleMongoDbClient(
       collectionName,
-      process.env.MONGO_INITDB_DATABASE,
-      process.env.MONGODB_HOST,
-      process.env.MONGO_INITDB_DATABASE,
-      process.env.MONGO_INITDB_ROOT_USERNAME,
-      process.env.MONGO_INITDB_ROOT_PASSWORD
+      MONGO_INITDB_DATABASE,
+      MONGODB_HOST,
+      MONGODB_PORT,
+      MONGO_INITDB_ROOT_USERNAME,
+      MONGO_INITDB_ROOT_PASSWORD
     );
     await mongoDbClient.connect();
   });
@@ -192,29 +205,28 @@ describe("getSubmodels", function() {
   const uuidv1 = require("uuid/v1");
   let mongoDbClient: SimpleMongoDbClient;
   let collectionName: string = "tests" + uuidv1();
+  let MONGO_INITDB_DATABASE = checkEnvVar(
+    "STORAGE_ADAPTER_MONGO_INITDB_DATABASE"
+  );
+  let MONGODB_HOST = checkEnvVar("MONGODB_HOST");
+  let MONGODB_PORT = checkEnvVar("MONGODB_PORT");
+  let MONGO_INITDB_ROOT_USERNAME = checkEnvVar(
+    "STORAGE_ADAPTER_MONGO_INITDB_ROOT_USERNAME"
+  );
+  let MONGO_INITDB_ROOT_PASSWORD = checkEnvVar(
+    "STORAGE_ADAPTER_MONGO_INITDB_ROOT_PASSWORD"
+  );
   before(async () => {
-    if (
-      !process.env.MONGODB_HOST ||
-      !process.env.MONGODB_PORT ||
-      !process.env.MONGO_INITDB_DATABASE
-    ) {
-      throw new Error(
-        "These environment variables need to be set: MONGODB_HOST, MONGODB_PORT, MONGO_INITDB_DATABASE"
-      );
-    }
-    if (
-      process.env.MONGO_INITDB_ROOT_USERNAME &&
-      process.env.MONGO_INITDB_ROOT_PASSWORD
-    ) {
+    if (MONGO_INITDB_ROOT_USERNAME && MONGO_INITDB_ROOT_PASSWORD) {
       logger.info("Using authentication");
     }
     mongoDbClient = new SimpleMongoDbClient(
       collectionName,
-      process.env.MONGO_INITDB_DATABASE,
-      process.env.MONGODB_HOST,
-      process.env.MONGO_INITDB_DATABASE,
-      process.env.MONGO_INITDB_ROOT_USERNAME,
-      process.env.MONGO_INITDB_ROOT_PASSWORD
+      MONGO_INITDB_DATABASE,
+      MONGODB_HOST,
+      MONGO_INITDB_DATABASE,
+      MONGO_INITDB_ROOT_USERNAME,
+      MONGO_INITDB_ROOT_PASSWORD
     );
     await mongoDbClient.connect();
     try {
@@ -268,29 +280,29 @@ describe("delete", function() {
   const uuidv1 = require("uuid/v1");
   let mongoDbClient: SimpleMongoDbClient;
   let collectionName: string = "tests" + uuidv1();
+  let MONGO_INITDB_DATABASE = checkEnvVar(
+    "STORAGE_ADAPTER_MONGO_INITDB_DATABASE"
+  );
+  let MONGODB_HOST = checkEnvVar("MONGODB_HOST");
+  let MONGODB_PORT = checkEnvVar("MONGODB_PORT");
+  let MONGO_INITDB_ROOT_USERNAME = checkEnvVar(
+    "STORAGE_ADAPTER_MONGO_INITDB_ROOT_USERNAME"
+  );
+  let MONGO_INITDB_ROOT_PASSWORD = checkEnvVar(
+    "STORAGE_ADAPTER_MONGO_INITDB_ROOT_PASSWORD"
+  );
+
   before(async () => {
-    if (
-      !process.env.MONGODB_HOST ||
-      !process.env.MONGODB_PORT ||
-      !process.env.MONGO_INITDB_DATABASE
-    ) {
-      throw new Error(
-        "These environment variables need to be set: MONGODB_HOST, MONGODB_PORT, MONGO_INITDB_DATABASE"
-      );
-    }
-    if (
-      process.env.MONGO_INITDB_ROOT_USERNAME &&
-      process.env.MONGO_INITDB_ROOT_PASSWORD
-    ) {
+    if (MONGO_INITDB_ROOT_USERNAME && MONGO_INITDB_ROOT_PASSWORD) {
       logger.info("Using authentication");
     }
     mongoDbClient = new SimpleMongoDbClient(
       collectionName,
-      process.env.MONGO_INITDB_DATABASE,
-      process.env.MONGODB_HOST,
-      process.env.MONGO_INITDB_DATABASE,
-      process.env.MONGO_INITDB_ROOT_USERNAME,
-      process.env.MONGO_INITDB_ROOT_PASSWORD
+      MONGO_INITDB_DATABASE,
+      MONGODB_HOST,
+      MONGODB_PORT,
+      MONGO_INITDB_ROOT_USERNAME,
+      MONGO_INITDB_ROOT_PASSWORD
     );
     await mongoDbClient.connect();
     try {
