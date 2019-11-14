@@ -11,10 +11,10 @@ dotenv.config();
 let HTTPS_ENDPOINT_INGRESS_USER: string | undefined = process.env.HTTPS_ENDPOINT_INGRESS_USER;
 let HTTPS_ENDPOINT_INGRESS_PASSWORD: string | undefined = process.env.HTTPS_ENDPOINT_INGRESS_PASSWORD;
 
-if (HTTPS_ENDPOINT_INGRESS_USER === undefined) {
+if (!HTTPS_ENDPOINT_INGRESS_USER) {
   logger.error(" [Basic auth] No  username was found in environment");
 }
-if (HTTPS_ENDPOINT_INGRESS_PASSWORD === undefined) {
+if (!HTTPS_ENDPOINT_INGRESS_PASSWORD) {
   logger.error(" [Basic auth] No  password was found in environment");
 }
 
