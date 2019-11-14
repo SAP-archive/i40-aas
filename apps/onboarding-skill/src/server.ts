@@ -44,9 +44,7 @@ let MONGO_INITDB_ROOT_USERNAME = checkEnvVar(
 let MONGO_INITDB_ROOT_PASSWORD = checkEnvVar(
   "ONBOARDING_SKILL_MONGO_INITDB_ROOT_PASSWORD"
 );
-let HTTPS_ENDPOINT_ROUTING_KEY = checkEnvVar(
-  "HTTPS_ENDPOINT_EGRESS_ROUTING_KEY"
-);
+let HTTPS_ENDPOINT_ROUTING_KEY = checkEnvVar("RABBITMQ_BROKER_TOPIC_EGRESS");
 
 //Do not remove the next line as it initializes the logger
 const initializeLogger = require("./log");
