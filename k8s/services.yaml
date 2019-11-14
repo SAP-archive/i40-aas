@@ -5,4 +5,4 @@ metadata:
 data:
   REGISTRY_URL: endpoint-registry
   DATA_MANAGER_URL: http://data-manager
-  ADAPTER_REG_URL: http://adapter-registry:80/adapters
+  ADAPTER_REG_URL: http://adapter-registry-0.adapter-registry:80/adapters

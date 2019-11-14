@@ -19,6 +19,23 @@ metadata:
     app: i40-aas
     service: adapter-registry
 spec:
+  clusterIP: None
+  ports:
+  - targetPort: endpoint
+    port: 80
+    protocol: TCP
+  selector:
+    app: i40-aas
+    service: adapter-registry
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: adapter-registry-exposed
+  labels: 
+    app: i40-aas
+    service: adapter-registry
+spec:
   type: LoadBalancer
   ports:
   - targetPort: endpoint
@@ -29,13 +46,15 @@ spec:
     service: adapter-registry
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: adapter-registry
   labels: 
     app: i40-aas
     service: adapter-registry
 spec:
+  serviceName: adapter-registry
+  replicas: 1
   selector:
     matchLabels:
       app: i40-aas
