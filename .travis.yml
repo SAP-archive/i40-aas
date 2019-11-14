@@ -3,8 +3,7 @@ language: generic
 git:
   depth: 1
 
-if: branch = master AND \
-    type = push
+if: branch = master AND type = push
 
 env:
   - SERVICE=adapter-registry
