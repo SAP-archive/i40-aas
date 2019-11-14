@@ -8,10 +8,10 @@ import { logger } from "../utils/log";
 const dotenv = require("dotenv");
 dotenv.config();
 
-let INGRESS_ADMIN_USER: string | undefined = process.env.INGRESS_ADMIN_USER;
+let HTTPS_ENDPOINT_INGRESS_HOST: string | undefined = process.env.HTTPS_ENDPOINT_INGRESS_HOST;
 let INGRESS_ADMIN_PASS: string | undefined = process.env.INGRESS_ADMIN_PASS;
 
-if (INGRESS_ADMIN_USER === undefined) {
+if (HTTPS_ENDPOINT_INGRESS_HOST === undefined) {
   logger.error(" [Basic auth] No  username was found in environment");
 }
 if (INGRESS_ADMIN_PASS === undefined) {
@@ -31,8 +31,8 @@ export const handleCompression = (router: Router) => {
 };
 
 let user: any = {};
-if (INGRESS_ADMIN_USER && INGRESS_ADMIN_PASS) {
-  user[INGRESS_ADMIN_USER] = INGRESS_ADMIN_PASS;
+if (HTTPS_ENDPOINT_INGRESS_HOST && INGRESS_ADMIN_PASS) {
+  user[HTTPS_ENDPOINT_INGRESS_HOST] = INGRESS_ADMIN_PASS;
 } else {
   logger.info("One or more env variable not set, exiting service");
   //TODO: check why process does not exit on some occasions (npn run script?)
