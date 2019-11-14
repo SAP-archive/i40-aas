@@ -13,7 +13,7 @@ let AMQP_URL = process.env.RABBITMQ_AMQP_HOST;
 let counter = 1;
 function start() {
   if (AMQP_URL === undefined) {
-    throw new Error("No AMQP_URL found in environment");
+    throw new Error("No RABBITMQ_AMQP_HOST found in environment");
   }
 
   receiver = new SapMqttClient(AMQP_URL, "guest", "guest");
