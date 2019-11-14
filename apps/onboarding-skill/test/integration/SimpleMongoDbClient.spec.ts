@@ -44,7 +44,7 @@ describe("SimpleMongoDbClient", function() {
   before(async () => {
     if (!MONGODB_HOST || !MONGODB_PORT || !MONGODB_INITDB_DATABASE) {
       throw new Error(
-        "These environment variables need to be set: MONGODB_HOST, MONGODB_PORT, MONGODB_INITDB_DATABASE"
+        "These environment variables need to be set: MONGODB_HOST, MONGODB_PORT, STORAGE_ADAPTER_MONGODB_MONGODB_INITDB_DATABASE"
       );
     }
     if (MONGODB_INITDB_ROOT_USERNAME && MONGODB_INITDB_ROOT_PASSWORD) {
