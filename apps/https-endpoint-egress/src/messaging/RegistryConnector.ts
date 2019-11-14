@@ -15,22 +15,29 @@ i.e. asks the Registry App for the endpoints to which the message should be
 forwarded to, based on the id or role of the receiver
 */
 class RegistryConnector {
-  private REGISTRY_URL: string;
+  private endpoint_reg_protocol: string;
+  private endpoint_reg_host: string;
+  private endpoint_reg_port: string;
   private webClient: WebClient;
-  private REGISTRY_URL_GET_SUFFIX: string;
-  private REGISTRY_ADMIN_USER: string;
-  private REGISTRY_ADMIN_PASSWORD: string;
+  private regURL_GET_SUFFIX: string;
+  private regAdminUser: string;
+  private regAdminPass: string;
 
   constructor(
-    regURL: string,
+    endpoint_reg_protocol: string,
+    endpoint_reg_host: string,
+    endpoint_reg_port: string,
     regURL_GET_SUFFIX: string,
     regAdminUser: string,
     regAdminPass: string
   ) {
-    this.REGISTRY_URL = regURL;
-    this.REGISTRY_URL_GET_SUFFIX = regURL_GET_SUFFIX;
-    this.REGISTRY_ADMIN_USER = regAdminUser;
-    this.REGISTRY_ADMIN_PASSWORD = regAdminPass;
+    this.endpoint_reg_protocol = endpoint_reg_protocol;
+    this.endpoint_reg_host = endpoint_reg_host;
+    this.endpoint_reg_port = endpoint_reg_port;
+    this.regURL_GET_SUFFIX = regURL_GET_SUFFIX;
+    this.regAdminUser = regAdminUser;
+    this.regAdminPass = regAdminPass;
+
 
     this.webClient = new WebClient();
   }
@@ -53,11 +60,13 @@ class RegistryConnector {
     reqParam = JSON.stringify(message.frame);
 
     response = await this.webClient.getRequest(
-      this.REGISTRY_URL,
-      this.REGISTRY_URL_GET_SUFFIX,
+      this.endpoint_reg_protocol,
+      this.endpoint_reg_host,
+      this.endpoint_reg_port,
+      this.regURL_GET_SUFFIX,
       reqParam,
-      this.REGISTRY_ADMIN_USER,
-      this.REGISTRY_ADMIN_PASSWORD
+      this.regAdminUser,
+      this.regAdminPass
     );
 
     if (response && "data" in response) {
