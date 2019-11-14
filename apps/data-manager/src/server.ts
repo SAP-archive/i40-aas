@@ -14,9 +14,11 @@ import { AdapterRegistryConnector } from "./services/data-manager/RegistryConnec
 const dotenv = require("dotenv");
 dotenv.config();
 
-let ADAPTER_REGISTRY_BASE_URL = process.env.ADAPTER_REGISTRY_BASE_URL;
+let ADAPTER_REGISTRY_PROTOCOL = process.env.ADAPTER_REGISTRY_PROTOCOL;
+let ADAPTER_REGISTRY_HOST = process.env.ADAPTER_REGISTRY_HOST;
+let ADAPTER_REGISTRY_PORT = process.env.ADAPTER_REGISTRY_PORT;
 let ADAPTER_REGISTRY_ADMIN_USER = process.env.ADAPTER_REGISTRY_ADMIN_USER;
-let ADAPTER_REG_ADMIN_PASS = process.env.ADAPTER_REGISTRY_ADMIN_PASSWORD;
+let ADAPTER_REGISTRY_ADMIN_PASSWORD = process.env.ADAPTER_REGISTRY_ADMIN_PASSWORD;
 let ADAPTER_REGISTRY_URL_SUFFIX = process.env.ADAPTER_REGISTRY_URL_SUFFIX;
 var webClient = new WebClient();
 
@@ -49,18 +51,20 @@ const server = http.createServer(router);
 var webClient = new WebClient();
 
 if (
-  ADAPTER_REGISTRY_BASE_URL &&
+  ADAPTER_REGISTRY_PROTOCOL &&
   ADAPTER_REGISTRY_ADMIN_USER &&
-  ADAPTER_REG_ADMIN_PASS &&
+  ADAPTER_REGISTRY_ADMIN_PASSWORD &&
   ADAPTER_REGISTRY_URL_SUFFIX
 ) {
   let adapterConnector = new AdapterConnector(webClient);
   let registryConnector = new AdapterRegistryConnector(
     webClient,
-    ADAPTER_REGISTRY_BASE_URL,
+    ADAPTER_REGISTRY_PROTOCOL,
+    ADAPTER_REGISTRY_HOST,
+    ADAPTER_REGISTRY_PORT,
     ADAPTER_REGISTRY_URL_SUFFIX,
     ADAPTER_REGISTRY_ADMIN_USER,
-    ADAPTER_REG_ADMIN_PASS
+    ADAPTER_REGISTRY_ADMIN_PASSWORD
   );
   RoutingController.initController(registryConnector, adapterConnector);
 }
