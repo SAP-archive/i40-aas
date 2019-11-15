@@ -16,6 +16,7 @@ class SimpleMongoDbClient implements IDatabaseClient {
     private userName?: string,
     private password?: string
   ) {
+    logger.info("Using database called " + dbName);
     if (userName && password) {
       logger.info(
         "Using authenticated access for user " +

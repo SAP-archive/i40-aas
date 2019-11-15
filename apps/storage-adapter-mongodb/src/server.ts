@@ -11,12 +11,12 @@ applyMiddleware(middleware, router);
 applyRoutes(routes, router);
 applyMiddleware(errors, router);
 
-const { STORAGE_ADAPTER_MONGODB_MONGODB_PORT = 3100 } = process.env;
+const { STORAGE_ADAPTER_MONGODB_PORT = 3100 } = process.env;
 //const server = http.createServer(router);
 
-router.listen(STORAGE_ADAPTER_MONGODB_MONGODB_PORT, () => {
+router.listen(STORAGE_ADAPTER_MONGODB_PORT, () => {
   console.log(
-    `A Server is running http://localhost:${STORAGE_ADAPTER_MONGODB_MONGODB_PORT}...`
+    `A Server is running http://localhost:${STORAGE_ADAPTER_MONGODB_PORT}...`
   );
   router.emit("app_started");
 });

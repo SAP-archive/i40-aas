@@ -30,30 +30,24 @@ describe("SimpleMongoDbClient", function() {
   const uuidv1 = require("uuid/v1");
   let mongoDbClient: SimpleMongoDbClient;
   let collectionName: string = "tests" + uuidv1();
-  let MONGODB_INITDB_DATABASE = checkEnvVar(
-    "STORAGE_ADAPTER_MONGODB_MONGODB_INITDB_DATABASE"
-  );
+  let MONGO_INITDB_DATABASE = checkEnvVar("MONGO_INITDB_DATABASE");
   let MONGODB_HOST = checkEnvVar("MONGODB_HOST");
   let MONGODB_PORT = checkEnvVar("MONGODB_PORT");
-  let MONGODB_INITDB_ROOT_USERNAME = checkEnvVar(
-    "STORAGE_ADAPTER_MONGODB_MONGODB_INITDB_ROOT_USER"
-  );
-  let MONGODB_INITDB_ROOT_PASSWORD = checkEnvVar(
-    "STORAGE_ADAPTER_MONGODB_MONGODB_INITDB_ROOT_PASSWORD"
-  );
+  let MONGO_INITDB_ROOT_USERNAME = checkEnvVar("MONGO_INITDB_ROOT_USER");
+  let MONGO_INITDB_ROOT_PASSWORD = checkEnvVar("MONGO_INITDB_ROOT_PASSWORD");
 
-  if (MONGODB_INITDB_ROOT_USERNAME && MONGODB_INITDB_ROOT_PASSWORD) {
+  if (MONGO_INITDB_ROOT_USERNAME && MONGO_INITDB_ROOT_PASSWORD) {
     logger.info("Using authentication");
   }
 
   before(async () => {
     mongoDbClient = new SimpleMongoDbClient(
       collectionName,
-      MONGODB_INITDB_DATABASE,
+      MONGO_INITDB_DATABASE,
       MONGODB_HOST,
       MONGODB_PORT,
-      MONGODB_INITDB_ROOT_USERNAME,
-      MONGODB_INITDB_ROOT_PASSWORD
+      MONGO_INITDB_ROOT_USERNAME,
+      MONGO_INITDB_ROOT_PASSWORD
     );
     await mongoDbClient.connect();
   });
