@@ -34,11 +34,13 @@ export default [
             try {
               let result = await RoutingController.routeSubmodel(submodel);
 
-              res.status(200).send(result);
             } catch (err) {
-              logger.error(" Error getting adapter from registry " + err);
+              logger.error(" Error posting submodel to adapter " + err);
               next(new Error());
             }
+            //TODO: check if we need to send back the response of the adapter
+            res.status(200).send(submodel);
+
           });
         } else {
           next(new HTTP400Error("Error with request body, no Submodels found"));
