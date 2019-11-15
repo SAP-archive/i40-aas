@@ -66,7 +66,7 @@ class WebClient {
     password?: string
   ): Promise<AxiosResponse<T>> {
     let url: string = serviceURL;
-    
+
     logger.debug("POSTing to adapter with url: " + url);
 
     const response = await Axios.post<T>(url, bo, {

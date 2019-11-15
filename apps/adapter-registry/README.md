@@ -1,8 +1,8 @@
 # Adapter-registry
 
 A service component that offers an API for:
- - registering a storage adapter 
- - retrieving a storage adapter  
+ - registering a storage adapter
+ - retrieving a storage adapter
  - assigning a submodel to a storage adapter
  - retrieving the adapter(s) that can  handle a submodel
 
@@ -10,7 +10,7 @@ A service component that offers an API for:
 Service configuration is handled via environment variable injection. Within the `env_file:` section of `docker-compose.yml` you find a list of _.env_-files mounted. The corresponding default configurations and explanations are located in: `.compose-envs/<SERVICE-NAME>.env`.
 
 
-## Register 
+## Register
 
 POST /register
 
@@ -36,7 +36,7 @@ POST /register
 
 
 GET /adapters
- 
+
 |   parameter         |      Description                 |
 |   :-------:         | :-------------------:            |
 |   submodelidshort   | i40-aas-objects Submodel.idshort |
@@ -64,3 +64,21 @@ error
 Not yet implemented
 
 [node-persist](https://www.npmjs.com/package/node-persist) as Local storage is used
+
+
+## Registry basic auth
+
+Refistry admin user is available as the following environment variables:
+
+### Environement Variables
+Basic Auth (self-owned):
+```
+- ADAPTER_REG_ADMIN_USER : Basic Auth credentials of the adapter-registry
+- ADAPTER_REG_ADMIN_PASS : Basic Auth credentials of the adapter-registry
+```
+
+Exposed Routes (self-owned):
+```
+- ADAPTER_REGISTRY_BASE_URL
+- ADAPTER_REGISTRY_BASE_URL_GET_ADAPTER_SUFFIX (Note: default "/adapters")
+```

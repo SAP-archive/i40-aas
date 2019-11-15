@@ -19,7 +19,7 @@ Service configuration is handled via environment variable injection. Within the 
 ```
 <semantic protocol>.<receiver.role.name>.<msg-type>
 ```
-Note: the "." characters in any of the above components will be replace with a "-". For example, a message of type "publishInstance" inteded for the SAP_CentralAssetRepository Skill based on the onboarding protocol will be published in the following channel 
+Note: the "." characters in any of the above components will be replace with a "-". For example, a message of type "publishInstance" inteded for the SAP_CentralAssetRepository Skill based on the onboarding protocol will be published in the following channel
 ```
 "40:registry-semanticProtocol/onboarding.CentralAssetRepository.publishInstance";
 ```

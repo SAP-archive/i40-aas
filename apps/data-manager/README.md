@@ -17,4 +17,4 @@ Service configuration is handled via environment variable injection. Within the 
 Technologies:
 - [Mocha](https://mochajs.org/) : Testing Framework
 - [Chai](https://www.chaijs.com/): Assertion library
-- [Nock](https://github.com/nock/nock) : Mocking External HTTP Requests in Node Tests 
+- [Nock](https://github.com/nock/nock) : Mocking External HTTP Requests in Node Tests
