@@ -67,15 +67,3 @@ Not yet implemented
 
 Refistry admin user is available as the following environment variables:
 
-### Environement Variables
-Basic Auth (self-owned):
-```
-- ADAPTER_REG_ADMIN_USER : Basic Auth credentials of the adapter-registry
-- ADAPTER_REG_ADMIN_PASS : Basic Auth credentials of the adapter-registry
-```
-
-Exposed Routes (self-owned):
-```
-- ADAPTER_REGISTRY_BASE_URL
-- ADAPTER_REGISTRY_BASE_URL_GET_ADAPTER_SUFFIX (Note: default "/adapters")
-```

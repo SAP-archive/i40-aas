@@ -27,6 +27,8 @@ services:
     image: sapi40/i40-aas-endpoint-registry
     env_file:
       - .compose-envs/postgres.env
+    ports:
+      - "4400:4400"
   i40-aas-adapter-registry:
     image: sapi40/i40-aas-adapter-registry
     ports:
