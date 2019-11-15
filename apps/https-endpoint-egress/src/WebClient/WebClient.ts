@@ -33,9 +33,9 @@ class WebClient {
     protocol: string,
     host: string,
     port: string,
-    urlSuffix: string
+    urlSuffix?: string
   ): string {
-    return protocol + "://" + host + ":" + urlSuffix;
+    return protocol + "://" + host + ":" + port + urlSuffix;
   }
 
   async getRequest<T>(
