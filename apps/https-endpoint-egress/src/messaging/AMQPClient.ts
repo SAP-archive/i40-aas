@@ -26,7 +26,7 @@ class AmqpClient implements IMessageBrokerClient {
   public static retryCounter = 0;
   public static successCounter = 0;
   public static start: number;
-  private  ampqUrl:string;
+  private ampqUrl: string;
 
   constructor(
     private brokerHost: string,
@@ -37,8 +37,8 @@ class AmqpClient implements IMessageBrokerClient {
     uniqueListenerId: string,
     useMqtt?: boolean
   ) {
-    this.ampqUrl = "amqp://"+brokerHost+":"+brokerPort ,
-    AmqpClient.start = Date.now();
+    (this.ampqUrl = "amqp://" + brokerHost + ":" + brokerPort),
+      (AmqpClient.start = Date.now());
     AmqpClient.listenerQName = uniqueListenerId;
     logger.debug("AmpqClient created");
     process.on("SIGINT", function() {
