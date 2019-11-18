@@ -100,7 +100,7 @@ spec:
             - secretRef:
                 name: endpoint-registry-postgres
           volumeMounts:
-            - mountPath: /var/lib/postgresql/data
+            - mountPath: /var/lib/postgresql
               name: endpoint-registry-postgres
         - name: pgadmin
           image: dpage/pgadmin4
@@ -118,7 +118,7 @@ spec:
         app: i40-aas
         service: endpoint-registry-postgres
     spec:
-      storageClassName: standard
+      storageClassName: default
       accessModes:
         - ReadWriteOnce
       resources:

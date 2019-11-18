@@ -17,6 +17,8 @@ env:
 install:
   - docker --version
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - docker build -t "sapi40/i40-aas-${SERVICE}:latest" -f "docker/${SERVICE}/Dockerfile" "apps/${SERVICE}"
+  - cp docker/${SERVICE}/Dockerfile apps/${SERVICE}
+  - cd apps/${SERVICE}
+  - docker build -t "sapi40/i40-aas-${SERVICE}:latest" .
   - docker push "sapi40/i40-aas-${SERVICE}:latest"
 

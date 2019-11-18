@@ -93,7 +93,7 @@ spec:
         app: i40-aas
         service: adapter-registry
     spec:
-      storageClassName: standard
+      storageClassName: default
       accessModes:
         - ReadWriteOnce
       resources:
