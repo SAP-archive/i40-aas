@@ -1,5 +1,20 @@
 ---
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: adapter-registry
+  labels: 
+    app: i40-aas
+    service: adapter-registry
+data:
+  # Networking
+  ADAPTER_REGISTRY_PROTOCOL: http
+  ADAPTER_REGISTRY_HOST: adapter-registry-exposed
+  ADAPTER_REGISTRY_PORT: "80"
+  # Exposed Routes 
+  ADAPTER_REGISTRY_URL_SUFFIX: /adapters
+---
+apiVersion: v1
 kind: Secret
 metadata:
   name: adapter-registry
@@ -8,8 +23,8 @@ metadata:
     service: adapter-registry
 type: Opaque
 stringData:
-  ADAPTER_REG_ADMIN_USER: admin
-  ADAPTER_REG_ADMIN_PASS: admin
+  ADAPTER_REGISTRY_ADMIN_USER: admin
+  ADAPTER_REGISTRY_ADMIN_PASSWORD: admin
 ---
 apiVersion: v1
 kind: Service
@@ -81,8 +96,6 @@ spec:
         envFrom:
         - secretRef:
             name: adapter-registry
-        - secretRef:
-            name: endpoint-registry
         volumeMounts:
         - mountPath: /service/.node-persist
           name: adapter-registry

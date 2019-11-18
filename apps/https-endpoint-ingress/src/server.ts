@@ -11,14 +11,14 @@ import { logger } from "./utils/log";
 import healthRoute from "./services/health/routes";
 import routes from "./services";
 
-
 const dotenv = require("dotenv");
 dotenv.config();
 
-let BROKER_URL = process.env.AMQP_URL;
-var BROKER_EXCHANGE = process.env.BROKER_EXCHANGE;
-var BROKER_USER = process.env.BROKER_USER;
-var BROKER_PASSWORD = process.env.BROKER_PASSWORD;
+let RABBITMQ_AMQP_HOST = process.env.RABBITMQ_AMQP_HOST;
+let RABBITMQ_AMQP_PORT = process.env.RABBITMQ_AMQP_PORT;
+var RABBITMQ_BROKER_EXCHANGE = process.env.RABBITMQ_BROKER_EXCHANGE;
+var RABBITMQ_BROKER_USER = process.env.RABBITMQ_BROKER_USER;
+var RABBITMQ_BROKER_PASSWORD = process.env.RABBITMQ_BROKER_PASSWORD;
 
 //avoid crashing the process when an unhandled Exception occurs
 process.on("uncaughtException", e => {
@@ -45,12 +45,19 @@ applyRoutes(routes, router);
 //error handling
 applyMiddleware(errorHandlers, router);
 
-if (BROKER_URL && BROKER_EXCHANGE && BROKER_USER && BROKER_PASSWORD) {
+if (
+  RABBITMQ_AMQP_HOST &&
+  RABBITMQ_AMQP_PORT &&
+  RABBITMQ_BROKER_EXCHANGE &&
+  RABBITMQ_BROKER_USER &&
+  RABBITMQ_BROKER_PASSWORD
+) {
   let brokerClient = new AmqpClient(
-    BROKER_URL,
-    BROKER_EXCHANGE,
-    BROKER_USER,
-    BROKER_PASSWORD
+    RABBITMQ_AMQP_HOST,
+    RABBITMQ_AMQP_PORT,
+    RABBITMQ_BROKER_EXCHANGE,
+    RABBITMQ_BROKER_USER,
+    RABBITMQ_BROKER_PASSWORD
   );
 
   initiateBroker(brokerClient);
@@ -59,10 +66,12 @@ if (BROKER_URL && BROKER_EXCHANGE && BROKER_USER && BROKER_PASSWORD) {
  * start the broker client and connect
  *  */
 
-const { PORT = 2000 } = process.env;
+const { HTTPS_ENDPOINT_INGRESS_PORT = 2000 } = process.env;
 
-router.listen(PORT, () => {
-  logger.info(`A Server is running http://localhost:${PORT}...`);
+router.listen(HTTPS_ENDPOINT_INGRESS_PORT, () => {
+  logger.info(
+    `A Server is running http://localhost:${HTTPS_ENDPOINT_INGRESS_PORT}...`
+  );
   router.emit("app_started");
 });
 

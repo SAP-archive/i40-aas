@@ -4,6 +4,9 @@ This component implements a REST API and handles requests by forwarding them to 
 
 API available at the server under `/api-docs`
 
+## Configuration
+Service configuration is handled via environment variable injection. Within the `env_file:` section of `docker-compose.yml` you find a list of _.env_-files mounted. The corresponding default configurations and explanations are located in: `.compose-envs/<SERVICE-NAME>.env`.
+
 ## Running
 
 - To start: `npm run dev` from this directory
@@ -16,7 +19,7 @@ API available at the server under `/api-docs`
 ```
 <semantic protocol>.<receiver.role.name>.<msg-type>
 ```
-Note: the "." characters in any of the above components will be replace with a "-". For example, a message of type "publishInstance" inteded for the SAP_CentralAssetRepository Skill based on the onboarding protocol will be published in the following channel 
+Note: the "." characters in any of the above components will be replace with a "-". For example, a message of type "publishInstance" inteded for the SAP_CentralAssetRepository Skill based on the onboarding protocol will be published in the following channel
 ```
 "40:registry-semanticProtocol/onboarding.CentralAssetRepository.publishInstance";
 ```

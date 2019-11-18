@@ -8,23 +8,17 @@ import { Subscription } from "../services/onboarding/messaginginterface/Subscrip
 const initializeLogger = require("../log");
 let sender: IMessageBrokerClient;
 let receiver: IMessageBrokerClient;
+let AMQP_URL = process.env.RABBITMQ_AMQP_HOST;
 
 let counter = 1;
 function start() {
-  if (process.env.AMQP_URL === undefined) {
-    throw new Error("No AMQP_URL found in environment");
+  if (AMQP_URL === undefined) {
+    throw new Error("No RABBITMQ_AMQP_HOST found in environment");
   }
 
-  receiver = new SapMqttClient(process.env.AMQP_URL, "guest", "guest");
+  receiver = new SapMqttClient(AMQP_URL, "guest", "guest");
 
-  sender = new AmqpClient(
-    process.env.AMQP_URL,
-    "test",
-    "guest",
-    "guest",
-    "",
-    true
-  );
+  sender = new AmqpClient(AMQP_URL, "test", "guest", "guest", "", true);
   let clockSet: boolean = false;
   receiver.addSubscriptionData(
     new Subscription(

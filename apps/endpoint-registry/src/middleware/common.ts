@@ -17,8 +17,8 @@ export const handleCompression = (router: Router) => {
 };
 
 let user: any = {};
-if (process.env.REGISTRY_ADMIN_USER && process.env.REGISTRY_ADMIN_PASSWORD) {
-  user[process.env.REGISTRY_ADMIN_USER] = process.env.REGISTRY_ADMIN_PASSWORD;
+if (process.env.ENDPOINT_REGISTRY_ADMIN_USER && process.env.ENDPOINT_REGISTRY_ADMIN_PASSWORD) {
+  user[process.env.ENDPOINT_REGISTRY_ADMIN_USER] = process.env.ENDPOINT_REGISTRY_ADMIN_PASSWORD;
 }
 export const handleBasicAuth = (router: Router) =>
   router.use(

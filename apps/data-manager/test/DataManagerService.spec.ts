@@ -1,14 +1,13 @@
 import sinon from "sinon";
 import fs from "fs";
-import boom = require("boom");
 import chaiHttp = require("chai-http");
 import Axios, { AxiosError } from "axios";
 
 const dotenv = require("dotenv");
 dotenv.config();
 
-var DATAMANAGER_USER = process.env.DATAMANGER_USER;
-var DATAMANAGER_PASS = process.env.DATAMANAGER_PASS;
+var DATA_MANAGER_USER = process.env.DATA_MANAGER_USER;
+var DATA_MANAGER_PASS = process.env.DATA_MANAGER_PASS;
 
 var chai = require("chai");
 chai.use(chaiHttp);
@@ -25,7 +24,7 @@ const assert = chai.assert;
 chai.should();
 
 describe("the server", async function() {
-  let submodelsArray: string;
+  let submodelsRequest: string;
 
   //read a sample interaction.json to use as body for requests
   before(function(done) {
@@ -35,16 +34,16 @@ describe("the server", async function() {
 
     fs.readFile(filePath, "utf8", function(err: any, fileContents: string) {
       if (err) throw err;
-      submodelsArray = fileContents;
+      submodelsRequest = fileContents;
       done();
     });
   });
 
-  it("should return a 'Server Up' response on call to /health", async () => {
+  it("should return a 'Server Up' response on call to /health",  () => {
     return chai
       .request(app)
       .get("/health")
-      .auth(DATAMANAGER_USER, DATAMANAGER_PASS)
+      .auth(DATA_MANAGER_USER, DATA_MANAGER_PASS)
       .then(function(res: any) {
         chai.expect(res.text).to.eql("Server Up!");
       });
@@ -68,8 +67,8 @@ describe("the server", async function() {
       });
   });
 */
-  it("will give a 422 response if the submodel IdShort is missing", async () => {
-    let request = [
+  it("will give a 422 response if the submodel IdShort is missing",  () => {
+    let submodelRequestNoId = [
       {
         embeddedDataSpecifications: [],
         semanticId: {
@@ -100,30 +99,44 @@ describe("the server", async function() {
     return chai
       .request(app)
       .post("/submodels")
-      .auth(DATAMANAGER_USER, DATAMANAGER_PASS)
+      .auth(DATA_MANAGER_USER, DATA_MANAGER_PASS)
       .set("content-type", "application/json")
-      .send(request)
+      .send(submodelRequestNoId)
       .then(function(res: any) {
         chai.expect(res).to.have.status(422);
       });
   });
 
-  it("will give a 400 response if the input is not parseable", async function() {
+  it("will give a 400 response if the input is not parseable",  function() {
     return chai
       .request(app)
       .post("/submodels")
-      .auth(DATAMANAGER_USER, DATAMANAGER_PASS)
+      .auth(DATA_MANAGER_USER, DATA_MANAGER_PASS)
       .set("content-type", "application/json")
-      .send(submodelsArray + "xx")
+      .send(submodelsRequest + "xx")
       .then(function(res: any) {
         chai.expect(res).to.have.status(400);
       });
   });
+  it("will give a 400 response if request body empty",  () => {
+  
+    
+    return chai
+      .request(app)
+      .post("/submodels")
+      .auth(DATA_MANAGER_USER, DATA_MANAGER_PASS)
+      .set("content-type", "application/json")
+      .send("")
+      .then(function(res: any) {
+        chai.expect(res).to.have.status(400);
+    
+      });
+  });
 
-  /*
-  it('Should return a 200 if no errors are encountered and if interaction message successfully forwarded to broker', (done) => {
+ /*
+  it('If multiple submodels are received, then each submodel is forwared to respective adapter', (done) => {
       chai.request(app).post('/interaction')
-      .auth(INGRESS_ADMIN_USER, INGRESS_ADMIN_PASS)
+      .auth(DATAMANAGER_USER, DATAMANAGER_PASS)
       .set("content-type", "application/json")
       .send(interaction)
       .then((res:any) => { 
@@ -133,5 +146,21 @@ describe("the server", async function() {
       });
     });
 
-    */
+*/ 
+
+
+
+/*
+  it('Should return a 200 if no errors are encountered and if submodel forwarded to adapter', (done) => {
+      chai.request(app).post('/submodels')
+      .auth(DATAMANAGER_USER, DATAMANAGER_PASS)
+      .set("content-type", "application/json")
+      .send(submodelsRequest)
+      .then((res:any) => { 
+        //chai.assert(res.body.displayname).to.eql('name'); // assertion expression which will be true if "displayname" equal to "name" 
+        chai.expect(res.status).to.eql(200);// expression which will be true if response status equal to 200 
+        done();
+      });
+    });
+  */  
 });

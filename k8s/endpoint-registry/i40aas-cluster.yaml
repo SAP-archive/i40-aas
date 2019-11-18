@@ -1,5 +1,20 @@
 ---
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: endpoint-registry
+  labels: 
+    app: i40-aas
+    service: endpoint-registry
+data:
+  # Networking
+  ENDPOINT_REGISTRY_PROTOCOL: http
+  ENDPOINT_REGISTRY_HOST: endpoint-registry
+  ENDPOINT_REGISTRY_PORT: "80"
+  # Exposed Routes 
+  ENDPOINT_REGISTRY_URL_SUFFIX: /endpoints
+---
+apiVersion: v1
 kind: Secret
 metadata:
   name: endpoint-registry
@@ -8,9 +23,8 @@ metadata:
     service: endpoint-registry
 type: Opaque
 stringData:
-  REGISTRY_URL_GET_SUFFIX: /endpoints
-  REGISTRY_ADMIN_USER: admin
-  REGISTRY_ADMIN_PASSWORD: admin
+  ENDPOINT_REGISTRY_ADMIN_USER: admin
+  ENDPOINT_REGISTRY_ADMIN_PASSWORD: admin
 ---
 apiVersion: v1
 kind: Service

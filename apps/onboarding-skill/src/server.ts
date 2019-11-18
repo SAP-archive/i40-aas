@@ -1,5 +1,4 @@
 import { AmqpClient } from "./messaging/AmqpClient";
-import { ConsumeMessage } from "amqplib/callback_api";
 import { MessageInterpreter } from "./messaging/MessageInterpreter";
 import { AssetRepositoryOnboardingSkill } from "./services/onboarding/AssetRepositoryOnboardingSkill";
 import { MessageDispatcher } from "./messaging/MessageDispatcher";
@@ -9,57 +8,55 @@ import { SimpleMongoDbClient } from "./persistence/SimpleMongoDbClient";
 import { IDatabaseClient } from "./services/onboarding/persistenceinterface/IDatabaseClient";
 import { logger } from "./log";
 
-//the last entry or the topic acts as wildcard to see for the type=approved and requestRejected cases
-let TOPIC = "i40:registry-semanticProtocol/onboarding.CentralAssetRepository.*";
-let MY_URI = "sap.com/aas/skills/onboarding/CentralAssetRepository";
-let MY_ROLE = "CentralAssetRepository";
-let DATA_MANAGER_USER: string | undefined = process.env.DATA_MANAGER_USER;
-let DATA_MANAGER_PASSWORD: string | undefined =
-  process.env.DATA_MANAGER_PASSWORD;
-let DATA_MANAGER_URL_SUFFIX = "/submodels";
-let COLLECTION_IN_DATABASE = "car-onboarding-states";
+function checkEnvVar(variableName: string): string {
+  let retVal: string | undefined = process.env[variableName];
+  if (retVal) {
+    return retVal;
+  } else {
+    throw new Error(
+      "A variable that is required by the skill has not been defined in the environment:" +
+        variableName
+    );
+  }
+}
 
-let BROKER_URL: string | undefined = process.env.AMQP_URL;
-let BROKER_EXCHANGE: string | undefined = process.env.BROKER_EXCHANGE;
-let BROKER_USER: string | undefined = process.env.BROKER_USER;
-let BROKER_PASSWORD: string | undefined = process.env.BROKER_PASSWORD;
-let DATA_MANAGER_BASE_URL: string | undefined = process.env.DATA_MANAGER_URL;
+let DATA_MANAGER_USER = checkEnvVar("DATA_MANAGER_USER");
+let DATA_MANAGER_PASSWORD = checkEnvVar("DATA_MANAGER_PASSWORD");
+let DATA_MANAGER_URL_SUFFIX = checkEnvVar("DATA_MANAGER_SUBMODELS_ROUTE");
+let DATA_MANAGER_BASE_URL =
+  checkEnvVar("DATA_MANAGER_PROTOCOL") +
+  "://" +
+  checkEnvVar("DATA_MANAGER_HOST") +
+  ":" +
+  checkEnvVar("DATA_MANAGER_PORT");
 
-if (BROKER_URL === undefined) {
-  throw new Error("[AMQP] No AMQP_URL found in environment");
-}
-if (BROKER_EXCHANGE === undefined) {
-  BROKER_EXCHANGE = "amq.topic";
-  logger.warn("[AMQP] No broker exchange type was found in environment");
-}
-if (BROKER_USER === undefined) {
-  throw new Error(" [AMQP] No Broker user was found in environment");
-}
-if (BROKER_PASSWORD === undefined) {
-  throw new Error(" [AMQP] No Broker password was found in environment");
-}
-if (DATA_MANAGER_BASE_URL === undefined) {
-  throw new Error(" [AMQP] No data manager url was found in environment");
-}
-if (DATA_MANAGER_USER === undefined) {
-  throw new Error(" [AMQP] No data manager user was found in environment");
-}
-if (DATA_MANAGER_PASSWORD === undefined) {
-  throw new Error(" [AMQP] No data manager password was found in environment");
-}
+let ROOT_TOPIC = checkEnvVar("ONBOARDING_SKILL_ROOT_TOPIC");
+let TOPIC = ROOT_TOPIC + ".*";
+let MY_URI = checkEnvVar("ONBOARDING_SKILL_URI");
+let MY_ROLE = checkEnvVar("ONBOARDING_SKILL_ROLE");
+let COLLECTION_IN_DATABASE = checkEnvVar("ONBOARDING_SKILL_STATES_COLLECTION");
+let MONGO_INITDB_DATABASE = checkEnvVar("MONGO_INITDB_DATABASE");
+let MONGO_INITDB_ROOT_USERNAME = checkEnvVar("MONGO_INITDB_ROOT_USERNAME");
+let MONGO_INITDB_ROOT_PASSWORD = checkEnvVar("MONGO_INITDB_ROOT_PASSWORD");
+
+let BROKER_URL = checkEnvVar("RABBITMQ_AMQP_HOST");
+let BROKER_EXCHANGE = checkEnvVar("RABBITMQ_BROKER_EXCHANGE");
+let BROKER_USER = checkEnvVar("RABBITMQ_BROKER_USER");
+let BROKER_PASSWORD = checkEnvVar("RABBITMQ_BROKER_PASSWORD");
+let HTTPS_ENDPOINT_ROUTING_KEY = checkEnvVar("RABBITMQ_BROKER_TOPIC_EGRESS");
+
+let MONGODB_HOST = checkEnvVar("MONGODB_HOST");
+let MONGODB_PORT = checkEnvVar("MONGODB_PORT");
 
 //Do not remove the next line as it initializes the logger
 const initializeLogger = require("./log");
-let HTTP_ENDPOINT_ROUTING_KEY = "http.client";
-if (BROKER_URL === undefined) {
-  throw new Error("No AMQP_URL found in environment");
-}
+
 let amqpClient = new AmqpClient(
   BROKER_URL,
   BROKER_EXCHANGE,
   BROKER_USER,
   BROKER_PASSWORD,
-  "i40:registry-semanticProtocol-onboarding.SAP_CentralAssetRepository"
+  ROOT_TOPIC
 );
 
 let messageDispatcher: MessageDispatcher = new MessageDispatcher(
@@ -74,7 +71,7 @@ let messageDispatcher: MessageDispatcher = new MessageDispatcher(
         name: MY_ROLE
       }
     },
-    HTTP_ENDPOINT_ROUTING_KEY
+    HTTPS_ENDPOINT_ROUTING_KEY
   ),
   new WebClient(
     DATA_MANAGER_BASE_URL,
@@ -84,22 +81,13 @@ let messageDispatcher: MessageDispatcher = new MessageDispatcher(
   DATA_MANAGER_URL_SUFFIX
 );
 
-if (
-  !process.env.MONGODB_HOST ||
-  !process.env.MONGODB_PORT ||
-  !process.env.MONGO_INITDB_DATABASE
-) {
-  throw new Error(
-    "These environment variables need to be set: MONGODB_HOST, MONGODB_PORT, MONGO_INITDB_DATABASE"
-  );
-}
 let dbClient: IDatabaseClient = new SimpleMongoDbClient(
   COLLECTION_IN_DATABASE,
-  process.env.MONGO_INITDB_DATABASE,
-  process.env.MONGODB_HOST,
-  process.env.MONGODB_PORT,
-  process.env.MONGO_INITDB_ROOT_USERNAME,
-  process.env.MONGO_INITDB_ROOT_PASSWORD
+  MONGO_INITDB_DATABASE,
+  MONGODB_HOST,
+  MONGODB_PORT,
+  MONGO_INITDB_ROOT_USERNAME,
+  MONGO_INITDB_ROOT_PASSWORD
 );
 
 let skill = new AssetRepositoryOnboardingSkill(messageDispatcher, dbClient);
@@ -110,7 +98,7 @@ let messageInterpreter: MessageInterpreter = new MessageInterpreter(
   amqpClient
 );
 
-logger.info("***Central asset repository onboarding (A0002) skill ready***");
+logger.info("***Central asset repository onboarding skill ready***");
 
 messageDispatcher.start(() => {
   messageInterpreter.start(TOPIC);

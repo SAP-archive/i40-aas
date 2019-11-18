@@ -1,5 +1,30 @@
 ---
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: https-endpoint-ingress
+  labels: 
+    app: i40-aas
+    service: https-endpoint-ingress
+data:
+  # Networking
+  HTTPS_ENDPOINT_INGRESS_PROTOCOL: http
+  HTTPS_ENDPOINT_INGRESS_HOST: https-endpoint-ingress
+  HTTPS_ENDPOINT_INGRESS_PORT: "80"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: https-endpoint-ingress
+  labels: 
+    app: i40-aas
+    service: https-endpoint-ingress
+type: Opaque
+stringData:
+  HTTPS_ENDPOINT_INGRESS_USER: admin
+  HTTPS_ENDPOINT_INGRESS_PASSWORD: admin
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: https-endpoint-ingress
@@ -49,6 +74,10 @@ spec:
               cpu: 62m
               memory: 273M
           envFrom:
+          - configMapRef:
+              name: https-endpoint-ingress
+          - secretRef:
+              name: https-endpoint-ingress
           - configMapRef:
               name: rabbitmq
           - secretRef:

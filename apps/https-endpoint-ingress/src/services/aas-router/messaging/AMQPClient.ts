@@ -20,10 +20,8 @@ class AmqpConnectionDetails {
 //TODO: set proper time gap for connection retries (6s currently).
 //TODO: not to use static methods
 class AmqpClient implements IMessageBrokerClient {
-
-
   isConnected(): boolean {
-    return this.myConn.connectionClosed?false:true;
+    return this.myConn.connectionClosed ? false : true;
   }
   private myConn: AmqpConnectionDetails = new AmqpConnectionDetails();
   public listenerCounter = 0;
@@ -33,23 +31,26 @@ class AmqpClient implements IMessageBrokerClient {
   public static MQTT_EXCHANGE = "amq.topic";
   public useMqtt = false;
   private destroyed: boolean = false;
+  private  ampqUrl:string;
 
   //private subscription: Subscription | undefined;
 
   constructor(
-    private ampqUrl: string,
-    private brokerExchange: string,
+    private brokerHost: string,
+    private brokerPort: string,
+        private brokerExchange: string,
     private brokerUser: string,
     private brokerPass: string,
     private reconnectAfterMilliSecs?: number
   ) {
+    this.ampqUrl = "amqp://"+brokerHost+":"+brokerPort ,
+
     this.start = Date.now();
     logger.debug("AmpqClient created");
     let that = this;
     process.on("SIGINT", function() {
       that.cleanup();
     });
-
   }
 
   static sleep(millis: number) {
@@ -76,7 +77,7 @@ class AmqpClient implements IMessageBrokerClient {
         this.brokerPass
       )
     };
-    let url = " amqp://" + this.ampqUrl + "?heartbeat=60";
+    let url = this.ampqUrl + "?heartbeat=60";
     logger.debug("Connecting to " + url);
     var that = this;
     try {
