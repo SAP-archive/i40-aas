@@ -1,5 +1,17 @@
 ---
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: storage-adapter-mongodb
+  labels: 
+    app: i40-aas
+    service: storage-adapter-mongodb
+data:
+  # Networking
+  STORAGE_ADAPTER_MONGODB_PORT: "80"
+  STORAGE_ADAPTER_MONGODB_SUBOMODELS_COLLECTION: storage-adapter-mongodb-submodels
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: storage-adapter-mongodb
@@ -64,7 +76,5 @@ spec:
             - configMapRef:
                 name: mongodb
             - configMapRef:
-                name: rabbitmq
-            - secretRef:
-                name: rabbitmq
+                name: storage-adapter-mongodb
 ---
