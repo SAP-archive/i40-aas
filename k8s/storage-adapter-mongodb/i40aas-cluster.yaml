@@ -60,7 +60,7 @@ spec:
                 key: DATA_MANAGER_URL
           envFrom:
             - secretRef:
-                name: mongodb-secret
+                name: mongodb
             - configMapRef:
                 name: mongodb
             - configMapRef:
