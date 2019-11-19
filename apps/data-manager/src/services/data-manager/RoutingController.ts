@@ -11,27 +11,39 @@ module RoutingController {
   var registryConn: AdapterRegistryConnector;
 
   export async function routeSubmodel(
-    submodel: Submodel): Promise<AxiosResponse>  {
+    submodel: Submodel
+  ): Promise<AxiosResponse> {
     let sM = submodel;
-    var adapter: IStorageAdapter;
     //get the storage adapter responsible for this model from adapter-registry
     if (adapterConn && registryConn) {
-      adapter = await registryConn.getAdapterFromRegistry(sM.idShort);
+      let adapter: IStorageAdapter = await registryConn.getAdapterFromRegistry(
+        sM.idShort
+      );
+      logger.debug("Adapter " + JSON.stringify(adapter));
 
-      let result = await adapterConn.postSubmoduleToAdapter(submodel, adapter);
-
-      return result;
-    }else{
+      if (adapter.url) {
+        let result = await adapterConn.postSubmoduleToAdapter(
+          submodel,
+          adapter
+        );
+        return result;
+      } else {
+        logger.error(" Adapter not found from registry");
+        throw new Error(" Internal Server Error");
+      }
+    } else {
       logger.error(" Adapter or Registry connector not initialised");
-      
-      throw new Error(" Internal Server Error")
+      throw new Error(" Internal Server Error");
     }
   }
 
-  export function initController(rC: AdapterRegistryConnector, aC: AdapterConnector) {
+  export function initController(
+    rC: AdapterRegistryConnector,
+    aC: AdapterConnector
+  ) {
     registryConn = rC;
     adapterConn = aC;
   }
 }
 
-export {RoutingController}
+export { RoutingController };

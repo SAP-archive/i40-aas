@@ -66,11 +66,11 @@ if (
  * start the broker client and connect
  *  */
 
-const { HTTPS_ENDPOINT_INGRESS_PORT = 2000 } = process.env;
+const PORT = 2000;
 
-router.listen(HTTPS_ENDPOINT_INGRESS_PORT, () => {
+router.listen(PORT, () => {
   logger.info(
-    `A Server is running http://localhost:${HTTPS_ENDPOINT_INGRESS_PORT}...`
+    `A Server is running http://localhost:${PORT}...`
   );
   router.emit("app_started");
 });

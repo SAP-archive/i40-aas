@@ -18,7 +18,7 @@ export const badRequestError = () => {
 
 
 export const clientError = (err: Error, res: Response, next: NextFunction) => {
-  logger.debug("instance "+ err.name )
+  logger.debug("Error_object "+ err.name )
   if (err instanceof HTTPClientError ) {
     logger.error("Client error "+err);
     res.status(err.statusCode).send(err.message);
@@ -37,6 +37,6 @@ export const serverError = (err: Error, res: Response, next: NextFunction) => {
   if (process.env.NODE_ENV === "production") {
     res.status(500).send("Internal Server Error");
   } else {
-    res.status(500).send(err.stack);
+    res.status(500).send(err);
   }
 };
