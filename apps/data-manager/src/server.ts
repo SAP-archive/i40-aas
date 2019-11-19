@@ -70,6 +70,10 @@ if (
   );
   RoutingController.initController(registryConnector, adapterConnector);
 }
+else{
+  logger.error("One or more env. variable was not set. Exiting ");
+  throw new Error();
+}
 
 server.listen(PORT, () =>
   logger.info(`A Server is running http://localhost:${PORT} ...`)
