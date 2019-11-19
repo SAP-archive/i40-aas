@@ -1,0 +1,128 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-rabbitmq
+  labels:
+    service: rabbitmq
+    {{- include "i40-aas.labels" . | nindent 4 }}
+data:
+  RABBITMQ_AMQP_HOST: {{ .Release.Name }}-rabbitmq-0.{{ .Release.Name }}-rabbitmq
+  RABBITMQ_AMQP_PORT: "5672"
+  RABBITMQ_MQTT_PORT: "1883"
+  RABBITMQ_BROKER_TOPIC_EGRESS: {{ .Values.config.rabbitmqBrokerTopicEgress }}
+  RABBITMQ_BROKER_EXCHANGE: {{ .Values.config.rabbitmqBrokerExchange }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Release.Name }}-rabbitmq
+  labels:
+    service: rabbitmq
+    {{- include "i40-aas.labels" . | nindent 4 }}
+type: Opaque
+stringData:
+  RABBITMQ_BROKER_USER: {{ .Values.credentials.rabbitmqBrokerUser | default (randAlphaNum 20) }}
+  RABBITMQ_BROKER_PASSWORD: {{ .Values.credentials.rabbitmqBrokerPassword | default (randAlphaNum 20) }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-rabbitmq-plugins
+  labels:
+    service: rabbitmq
+    {{- include "i40-aas.labels" . | nindent 4 }}
+data:
+  enabled_plugins: |
+    [rabbitmq_management,rabbitmq_mqtt].
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-rabbitmq
+  labels:
+    service: rabbitmq
+    {{- include "i40-aas.labels" . | nindent 4 }}
+spec:
+  clusterIP: None
+  ports:
+  - name: amqp
+    protocol: TCP
+    port: 5672
+    targetPort: 5672
+  - name: mqtt
+    protocol: TCP
+    port: 1883
+    targetPort: 1883
+  selector:
+    service: rabbitmq
+    {{- include "i40-aas.selectorLabels" . | nindent 4 }}
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-rabbitmq-ui
+  labels:
+    service: rabbitmq
+    {{- include "i40-aas.labels" . | nindent 4 }}
+spec:
+  type: LoadBalancer
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: ui
+  selector:
+    service: rabbitmq
+    {{- include "i40-aas.selectorLabels" . | nindent 4 }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}-rabbitmq
+  labels:
+    service: rabbitmq
+    {{- include "i40-aas.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ .Release.Name }}-rabbitmq
+  replicas: 1
+  selector:
+    matchLabels:
+      service: rabbitmq
+      {{- include "i40-aas.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        service: rabbitmq
+        {{- include "i40-aas.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - name: rabbitmq
+        image: rabbitmq:3-management
+        imagePullPolicy: "IfNotPresent"
+        env:
+        - name: RABBITMQ_DEFAULT_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-rabbitmq
+              key: RABBITMQ_BROKER_USER
+        - name: RABBITMQ_DEFAULT_PASS
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-rabbitmq
+              key: RABBITMQ_BROKER_PASSWORD
+        ports:
+        - name: messages
+          containerPort: 5672
+        - name: ui
+          containerPort: 15672
+        - name: mqtt
+          containerPort: 1883
+        volumeMounts:
+        - name: rabbitmq-plugins
+          mountPath: /etc/rabbitmq/enabled_plugins
+          subPath: enabled_plugins
+      volumes:
+      - name: rabbitmq-plugins
+        configMap:
+          name: {{ .Release.Name }}-rabbitmq-plugins
+---

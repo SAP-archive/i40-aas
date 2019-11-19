@@ -1,0 +1,76 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-onboarding-skill
+  labels: 
+    service: onboarding-skill
+    {{- include "i40-aas.labels" . | nindent 4 }}
+data:
+  # Approval Process
+  ONBOARDING_SKILL_REQUEST_APPROVAL: {{ .Values.config.onboardingSkillRequestApproval | quote }}
+  ONBOARDING_SKILL_REQUEST_TYPE: {{ .Values.config.onboardingSkillRequestType | quote }}
+  ONBOARDING_SKILL_STATES_COLLECTION: {{ .Values.config.onboardingSkillStatesCollection }}
+  ONBOARDING_SKILL_ROOT_TOPIC: {{ .Values.config.onboardingSkillRootTopic }}
+  ONBOARDING_SKILL_ROLE: {{ .Values.config.onboardingSkillRole }}
+  ONBOARDING_SKILL_URI: {{ .Values.config.onboardingSkillURI }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-onboarding-skill
+  labels:
+    service: onboarding-skill
+    {{- include "i40-aas.labels" . | nindent 4 }}
+spec:
+  ports:
+    - targetPort: endpoint
+      port: 80
+      protocol: TCP
+  selector:
+    service: onboarding-skill
+    {{- include "i40-aas.selectorLabels" . | nindent 4 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-onboarding-skill
+  labels:
+    service: onboarding-skill
+    {{- include "i40-aas.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      service: onboarding-skill
+      {{- include "i40-aas.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        service: onboarding-skill
+        {{- include "i40-aas.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: onboarding-skill
+          image: "{{ .Values.image.repository }}/i40-aas-onboarding-skill:{{ .Values.image.release }}"
+          ports:
+            - name: endpoint
+              containerPort: 3000
+          envFrom:
+            - secretRef:
+                name: {{ .Release.Name }}-data-manager
+            - secretRef:
+                name: {{ .Release.Name }}-mongodb
+            - secretRef:
+                name: {{ .Release.Name }}-rabbitmq
+            - configMapRef:
+                name: {{ .Release.Name }}-onboarding-skill
+            - configMapRef:
+                name: {{ .Release.Name }}-data-manager
+            - configMapRef:
+                name: {{ .Release.Name }}-mongodb
+            - configMapRef:
+                name: {{ .Release.Name }}-rabbitmq
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+---

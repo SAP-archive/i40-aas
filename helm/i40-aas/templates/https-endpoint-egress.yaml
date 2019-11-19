@@ -1,0 +1,54 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-https-endpoint-egress
+  labels: 
+    service: https-endpoint-egress
+    {{- include "i40-aas.labels" . | nindent 4 }}
+spec:
+  ports:
+    - targetPort: endpoint
+      port: 80
+      protocol: TCP
+  selector:
+    service: https-endpoint-egress
+    {{- include "i40-aas.selectorLabels" . | nindent 4 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-https-endpoint-egress
+  labels: 
+    service: https-endpoint-egress
+    {{- include "i40-aas.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      service: https-endpoint-egress
+      {{- include "i40-aas.selectorLabels" . | nindent 6 }}
+  template: 
+    metadata:
+      labels:
+        service: https-endpoint-egress
+        {{- include "i40-aas.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: https-endpoint-egress
+          image: "{{ .Values.image.repository }}/i40-aas-https-endpoint-egress:{{ .Values.image.release }}"
+          ports:
+            - name: endpoint
+              containerPort: 3000
+          envFrom:
+            - secretRef:
+                name: {{ .Release.Name }}-endpoint-registry
+            - configMapRef:
+                name: {{ .Release.Name }}-endpoint-registry
+            - configMapRef:
+                name: {{ .Release.Name }}-rabbitmq
+            - secretRef:
+                name: {{ .Release.Name }}-rabbitmq
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+---
