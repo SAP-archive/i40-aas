@@ -32,7 +32,6 @@ metadata:
     service: https-endpoint-ingress
     {{- include "i40-aas.labels" . | nindent 4 }}
 spec:
-  type: LoadBalancer
   ports:
     - targetPort: endpoint
       port: 80

@@ -43,12 +43,11 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: {{ .Release.Name }}-mongodb-expose
+  name: {{ .Release.Name }}-mongodb-api
   labels:
     service: mongodb
     {{- include "i40-aas.labels" . | nindent 4 }}
 spec:
-  type: LoadBalancer
   ports:
   - protocol: TCP
     port: 80

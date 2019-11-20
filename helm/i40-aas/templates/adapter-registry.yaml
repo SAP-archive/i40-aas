@@ -9,7 +9,7 @@ metadata:
 data:
   # Networking
   ADAPTER_REGISTRY_PROTOCOL: http
-  ADAPTER_REGISTRY_HOST: {{ .Release.Name }}-adapter-registry-exposed
+  ADAPTER_REGISTRY_HOST: {{ .Release.Name }}-adapter-registry-api
   ADAPTER_REGISTRY_PORT: "80"
   # Exposed Routes 
   ADAPTER_REGISTRY_URL_SUFFIX: /adapters
@@ -46,12 +46,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}-adapter-registry-exposed
+  name: {{ .Release.Name }}-adapter-registry-api
   labels: 
     service: adapter-registry
     {{- include "i40-aas.labels" . | nindent 4 }}
 spec:
-  type: LoadBalancer
   ports:
   - targetPort: endpoint
     port: 80

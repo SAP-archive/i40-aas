@@ -34,7 +34,6 @@ metadata:
     service: endpoint-registry
     {{- include "i40-aas.labels" . | nindent 4 }}
 spec:
-  type: LoadBalancer
   ports:
   - targetPort: endpoint
     port: 80
