@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.com/SAP/i40-aas.svg?branch=master)](https://travis-ci.com/SAP/i40-aas)
 
+__i40-aas__ is currently in alpha and open to [contributions](#contributing). Please read about [known issues](#known-issues) and [upcoming changes](#upcoming-changes).
+
 ---
 
 ## Contents:  

@@ -26,6 +26,8 @@ services:
     env_file:
       - .compose-envs/adapter-registry.env
       - .compose-envs/data-manager.env
+    ports:
+      - "4000:4000"
   i40-aas-endpoint-registry:
     image: sapi40/i40-aas-endpoint-registry
     env_file:
