@@ -42,11 +42,16 @@ class AdapterRegistryConnector {
           logger.debug(
       `The submodel with id ${submodelIdShort}, will be routed to ${adapter.url}`
     );
-    }
-    //TODO: Validation required
-
-
     return adapter;
+    }
+    else{
+      logger.error(
+        `The registry did not return a valid url for the adapter `
+      );
+      throw new Error("Server Error");
+    }
+
+    
   }
 }
 
