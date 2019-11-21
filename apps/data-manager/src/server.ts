@@ -45,7 +45,7 @@ applyRoutes(routes, router);
 //error handling
 applyMiddleware(errorHandlers, router);
 
-const { PORT = 4000 } = process.env;
+const PORT = 4000 ;
 const server = http.createServer(router);
 
 var webClient = new WebClient();

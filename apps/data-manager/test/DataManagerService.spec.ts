@@ -1,4 +1,8 @@
 import sinon from "sinon";
+<<<<<<< HEAD
+=======
+import fs from "fs";
+>>>>>>> master
 import chaiHttp = require("chai-http");
 import Axios, { AxiosError } from "axios";
 

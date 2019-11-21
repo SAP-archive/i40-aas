@@ -13,7 +13,7 @@ data:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: onboarding-skill-mongodb
+  name: mongodb
   labels:
     app: i40-aas
     service: mongodb
@@ -86,7 +86,7 @@ spec:
               containerPort: 27017
           envFrom:
             - secretRef:
-                name: mongodb-secret
+                name: mongodb
           volumeMounts:
             - mountPath: /data/db
               name: mongodb
@@ -97,7 +97,7 @@ spec:
         app: i40-aas
         service: mongodb
     spec:
-      storageClassName: standard
+      storageClassName: default
       accessModes:
         - ReadWriteOnce
       resources:

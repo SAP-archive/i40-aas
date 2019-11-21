@@ -11,7 +11,11 @@ applyRoutes(healthRoute, router);
 applyMiddleware(middleware, router);
 applyRoutes(routes, router);
 
+<<<<<<< HEAD
 const { ENDPOINT_REGISTRY_PORT = 4400 } = process.env;
+=======
+const PORT = 4400;
+>>>>>>> master
 const server = http.createServer(router);
 
 server.listen(ENDPOINT_REGISTRY_PORT, () => console.log(`A Server is running http://localhost:${ENDPOINT_REGISTRY_PORT}...`));

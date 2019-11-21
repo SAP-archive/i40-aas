@@ -1,5 +1,21 @@
 ---
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: onboarding-skill
+  labels: 
+    app: i40-aas
+    service: onboarding-skill
+data:
+  # Approval Process
+  ONBOARDING_SKILL_REQUEST_APPROVAL: false
+  ONBOARDING_SKILL_REQUEST_TYPE: false
+  ONBOARDING_SKILL_STATES_COLLECTION: car-onboarding-states
+  ONBOARDING_SKILL_ROOT_TOPIC: i40:registry-semanticProtocol/onboarding.CentralAssetRepository
+  ONBOARDING_SKILL_ROLE: CentralAssetRepository
+  ONBOARDING_SKILL_URI: sap.com/aas/skills/onboarding/CentralAssetRepository
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: onboarding-skill
@@ -47,6 +63,7 @@ spec:
             requests:
               cpu: 48m
               memory: 324M
+<<<<<<< HEAD
           env:
             - name: ONBOARDING_SKILL_REQUEST_APPROVAL
               value: "false"
@@ -60,16 +77,22 @@ spec:
                 configMapKeyRef:
                   name: service-addresses
                   key: DATA_MANAGER_URL
+=======
+>>>>>>> master
           envFrom:
             - secretRef:
                 name: data-manager
             - secretRef:
-                name: mongodb-secret
+                name: mongodb
+            - secretRef:
+                name: rabbitmq
+            - configMapRef:
+                name: onboarding-skill
+            - configMapRef:
+                name: data-manager
             - configMapRef:
                 name: mongodb
             - configMapRef:
-                name: rabbitmq
-            - secretRef:
                 name: rabbitmq
 ---
 

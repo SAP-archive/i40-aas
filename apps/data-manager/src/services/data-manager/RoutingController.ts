@@ -13,17 +13,28 @@ module RoutingController {
   export async function routeSubmodel(
     submodel: Submodel
   ): Promise<AxiosResponse> {
+
+    let sM = submodel;
     //get the storage adapter responsible for this model from adapter-registry
     if (adapterConn && registryConn) {
-      let adapter: IStorageAdapter = await registryConn.getAdapterFromRegistry(submodel.idShort);
+      let adapter: IStorageAdapter = await registryConn.getAdapterFromRegistry(
+        sM.idShort
+      );
+      logger.debug("Adapter " + JSON.stringify(adapter));
 
-      let result = await adapterConn.postSubmoduleToAdapter(submodel, adapter);
-
-      return result;
+      if (adapter.url) {
+        let result = await adapterConn.postSubmoduleToAdapter(
+          submodel,
+          adapter
+        );
+        return result;
+      } else {
+        logger.error(" Adapter not found from registry");
+        throw new Error(" Internal Server Error");
+      }
     } else {
-      logger.error("Adapter or Registry connector not initialised");
-
-      throw new Error("Internal Server Error");
+      logger.error(" Adapter or Registry connector not initialised");
+      throw new Error(" Internal Server Error");
     }
   }
 
