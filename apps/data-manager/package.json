@@ -40,6 +40,7 @@
   "dependencies": {
     "amqplib": "^0.5.5",
     "axios": "^0.19.0",
+    "chai-asserttype-extra": "^1.2.0",
     "class-validator": "^0.9.1",
     "compression": "^1.7.4",
     "cors": "^2.8.5",

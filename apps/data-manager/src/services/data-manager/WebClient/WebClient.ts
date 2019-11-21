@@ -24,25 +24,14 @@ class WebClient {
     return undefined;
   }
 
-  private makeURL(protocol:string,
-    host:string,
-    port:string,
-    suffix?:string){
-
-      return protocol+"://"+host+":"+port+suffix;
-    }
 
 
   async getRequest<T>(
-    protocol: string,
-    host: string,
-    port: string,
-    suffix:string,
+    url:string,
     param: string,
     username: string,
     password: string
   ): Promise<AxiosResponse<T>> {
-    let url: string =this.makeURL(protocol,host,port,suffix);
     logger.debug("Get request from " + url);
     logger.debug("param " + param);
     // logger.debug(

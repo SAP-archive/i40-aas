@@ -49,7 +49,13 @@ const { PORT = 4000 } = process.env;
 const server = http.createServer(router);
 
 var webClient = new WebClient();
+var buildUrl = (protocol:string,
+    host:string,
+    port:string,
+    suffix?:string):string =>{
 
+      return protocol+"://"+host+":"+port+suffix;
+    }
 if (
   ADAPTER_REGISTRY_PROTOCOL &&
   ADAPTER_REGISTRY_HOST &&
@@ -58,14 +64,14 @@ if (
   ADAPTER_REGISTRY_ADMIN_PASSWORD &&
   ADAPTER_REGISTRY_URL_SUFFIX
 ) {
+
+let getAdaptersULR = new URL(buildUrl(ADAPTER_REGISTRY_PROTOCOL,ADAPTER_REGISTRY_HOST,ADAPTER_REGISTRY_PORT,ADAPTER_REGISTRY_URL_SUFFIX));
+
   let adapterConnector = new AdapterConnector(webClient);
   let registryConnector = new AdapterRegistryConnector(
     webClient,
-    ADAPTER_REGISTRY_PROTOCOL,
-    ADAPTER_REGISTRY_HOST,
-    ADAPTER_REGISTRY_PORT,
-    ADAPTER_REGISTRY_URL_SUFFIX,
-    ADAPTER_REGISTRY_ADMIN_USER,
+    getAdaptersULR,
+        ADAPTER_REGISTRY_ADMIN_USER,
     ADAPTER_REGISTRY_ADMIN_PASSWORD
   );
   RoutingController.initController(registryConnector, adapterConnector);

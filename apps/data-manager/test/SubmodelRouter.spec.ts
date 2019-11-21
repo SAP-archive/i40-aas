@@ -1,14 +1,19 @@
 import sinon from "sinon";
-import chaiHttp = require("chai-http");
-import { assert } from "chai";
 import { WebClient } from "../src/services/data-manager/WebClient/WebClient";
 import { AdapterConnector } from "../src/services/data-manager/AdapterConnector";
 import { AdapterRegistryConnector } from "../src/services/data-manager/RegistryConnector";
 import { RoutingController } from "../src/services/data-manager/RoutingController";
 import { AxiosResponse } from "axios";
-import { Submodel } from "i40-aas-objects";
+import { Submodel, IdTypeEnum } from "i40-aas-objects";
 import { logger } from "../src/utils/log";
 import { IStorageAdapter } from "../src/services/data-manager/interfaces/IStorageAdapter";
+import { fail } from "assert";
+import Axios from "axios";
+import ChaiPluginAssertType = require('chai-asserttype-extra');
+import { expect } from "chai";
+const chai = ChaiPluginAssertType.install();
+
+
 
 const dotenv = require("dotenv");
 dotenv.config();
@@ -16,8 +21,6 @@ dotenv.config();
 var DATA_MANAGER_USER = process.env.DATA_MANAGER_USER;
 var DATA_MANAGER_PASS = process.env.DATA_MANAGER_PASS;
 
-var chai = require("chai");
-chai.use(chaiHttp);
 
 const app = require("../src/server").app;
 
@@ -36,8 +39,8 @@ describe("the routing controller ", function() {
     });
   });
 
-  it("should return a 200 OK from the adapter, after posting the submodel to the correct adapter ",async function() {
-    let regResponse:IStorageAdapter = {
+  it("should return a 200 OK from the adapter, after posting the submodel to the correct adapter ", async function() {
+    let regResponse: IStorageAdapter = {
       url: "http://localhost:3000/submodels",
       adapterId: "storage-adapter-ain",
       name: "SAP-AIN-Adapter",
@@ -49,12 +52,9 @@ describe("the routing controller ", function() {
     );
     let registryConnector: AdapterRegistryConnector = new AdapterRegistryConnector(
       <WebClient>{},
-      "a",
+      new URL("http://www.foobar.com/foo"),
       "b",
-      "c",
-      "d",
-      "e",
-      "f"
+      "c"
     );
     sinon.replace(
       registryConnector,
@@ -68,29 +68,64 @@ describe("the routing controller ", function() {
       sinon.fake.resolves({ status: 200 })
     );
 
-    console.log("result " +await registryConnector.getAdapterFromRegistry(submodelsRequest.idShort));
+    console.log(
+      "result " +
+        (await registryConnector.getAdapterFromRegistry(
+          submodelsRequest.idShort
+        ))
+    );
 
     RoutingController.initController(registryConnector, adapterConnector);
-    let actual =await  RoutingController.routeSubmodel(submodelsRequest);
+    let actual = await RoutingController.routeSubmodel(submodelsRequest);
 
     sinon.assert.match(actual, { status: 200 });
   });
-  
+
   it("should throw an Error if adapterConn is undefined ", async function() {
-    let adapterConnector:any = undefined;
+    let adapterConnector: any = undefined;
     let registryConnector: AdapterRegistryConnector = new AdapterRegistryConnector(
       <WebClient>{},
-      "a",
+      new URL("http://www.foobar.com/foo"),
       "b",
-      "c",
-      "d",
-      "e",
-      "f"
+      "c"
     );
     RoutingController.initController(registryConnector, adapterConnector);
-    let actual =await  RoutingController.routeSubmodel(submodelsRequest);
 
-    sinon.assert.match(actual, { status: 200 });
+    try {
+      var result = await RoutingController.routeSubmodel(submodelsRequest);
+      fail("Error should have been thrown");
+    } catch (err) {
+      console.log("catch error");
+    }
   });
-  
+});
+
+describe("the registry connector ", function() {
+
+  it("should get an IStorageAdapter from the adapter-registry ", async function() {
+    let fakeGet = sinon.fake.resolves({
+      status: 200,
+      data: 
+        {
+
+        }
+      
+    });  
+    sinon.replace(Axios,"get",fakeGet);
+    let registryConnector: AdapterRegistryConnector = new AdapterRegistryConnector(
+     new WebClient(),
+      new URL("http://www.foobar.com/foo"),
+      "b",
+      "c"
+    );
+    let result: IStorageAdapter  = await registryConnector.getAdapterFromRegistry("fooIdShort");
+console.log(result);
+      // expect( isStorageAdapter(result),"should be an adapter object").to.be.true;
+  });
+  function isStorageAdapter(obj: any): obj is IStorageAdapter {
+    if((obj as IStorageAdapter).url){
+      return true
+    }
+    return false
+  }
 });

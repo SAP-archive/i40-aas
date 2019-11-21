@@ -21,9 +21,9 @@ module RoutingController {
 
       return result;
     } else {
-      logger.error(" Adapter or Registry connector not initialised");
+      logger.error("Adapter or Registry connector not initialised");
 
-      throw new Error(" Internal Server Error");
+      throw new Error("Internal Server Error");
     }
   }
 
