@@ -64,4 +64,3 @@ error
 Not yet implemented
 
 [node-persist](https://www.npmjs.com/package/node-persist) as Local storage is used
-
