@@ -15,7 +15,8 @@ export default [
   {
     path: "/submodels",
     method: "post",
-    handler: [checkReqBodyEmpty,
+    handler: [
+      checkReqBodyEmpty,
       validateSubmodelsRequest,
       async (req: Request, res: Response, next: NextFunction) => {
         /**
@@ -26,22 +27,21 @@ export default [
 
         submodelsArray = req.body;
 
-        if (submodelsArray && submodelsArray.length>0) {
+        if (submodelsArray && submodelsArray.length > 0) {
           logger.info(
             "Num of submodels in the request: " + submodelsArray.length
           );
           submodelsArray.forEach(async submodel => {
             try {
               let result = await RoutingController.routeSubmodel(submodel);
-
               res.status(200).send(submodel);
             } catch (err) {
-              logger.error(" Could not process the forwarding of submodel " + err);
+              logger.error(
+                " Could not process the forwarding of submodel " + err
+              );
               next(new Error(" Server Error "));
             }
             //TODO: check if we need to send back the response of the adapter
-            
-
           });
         } else {
           next(new HTTP400Error("Error with request body, no Submodels found"));
