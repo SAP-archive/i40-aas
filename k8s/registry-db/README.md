@@ -14,7 +14,7 @@ POSTGRES_PASSWORD
 
 The PGAdmin credentials are
 
-e-mail: `admin`  
+e-mail: `admin`
 pw: `admin`
 
 ## Registry basic auth
@@ -22,6 +22,6 @@ pw: `admin`
 Registry admin user is available as the following environment variables:
 
 ```
-REGISTRY_ADMIN_USER 
-REGISTRY_ADMIN_PASSWORD 
+REGISTRY_ADMIN_USER
+REGISTRY_ADMIN_PASSWORD
 ```
