@@ -21,16 +21,8 @@ module RoutingController {
       );
       logger.debug("Adapter " + JSON.stringify(adapter));
 
-      if (adapter.url) {
-        let result = await adapterConn.postSubmoduleToAdapter(
-          submodel,
-          adapter
-        );
-        return result;
-      } else {
-        logger.error(" Adapter not found from registry");
-        throw new Error(" Internal Server Error");
-      }
+      let result = await adapterConn.postSubmoduleToAdapter(submodel, adapter);
+      return result;
     } else {
       logger.error(" Adapter or Registry connector not initialised");
       throw new Error(" Internal Server Error");

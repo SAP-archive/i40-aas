@@ -33,16 +33,15 @@ class WebClient {
     }
 
 
+
   async getRequest<T>(
-    protocol: string,
-    host: string,
-    port: string,
-    suffix:string,
+    url:string,
+
     param: string,
     username: string,
     password: string
   ): Promise<AxiosResponse<T>> {
-    let url: string =this.makeURL(protocol,host,port,suffix);
+
     logger.debug("Get request from " + url);
     logger.debug("param " + param);
     // logger.debug(
@@ -60,8 +59,7 @@ class WebClient {
 
   async postRequest<T>(
     serviceURL: string,
-    bo: any,
-    urlSuffix?: string,
+    body: any,
     username?: string,
     password?: string
   ): Promise<AxiosResponse<T>> {
@@ -69,7 +67,7 @@ class WebClient {
 
     logger.debug("POSTing to adapter with url: " + url);
 
-    const response = await Axios.post<T>(url, bo, {
+    const response = await Axios.post<T>(url, body, {
       auth: {
         username: username as string,
         password: password as string
