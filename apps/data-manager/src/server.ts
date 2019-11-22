@@ -65,12 +65,12 @@ if (
   ADAPTER_REGISTRY_URL_SUFFIX
 ) {
 
-let getAdaptersULR = new URL(buildUrl(ADAPTER_REGISTRY_PROTOCOL,ADAPTER_REGISTRY_HOST,ADAPTER_REGISTRY_PORT,ADAPTER_REGISTRY_URL_SUFFIX));
+let storageAdapterRegistryURL = new URL(buildUrl(ADAPTER_REGISTRY_PROTOCOL,ADAPTER_REGISTRY_HOST,ADAPTER_REGISTRY_PORT,ADAPTER_REGISTRY_URL_SUFFIX));
 
   let adapterConnector = new AdapterConnector(webClient);
   let registryConnector = new AdapterRegistryConnector(
     webClient,
-    getAdaptersULR,
+    storageAdapterRegistryURL,
         ADAPTER_REGISTRY_ADMIN_USER,
     ADAPTER_REGISTRY_ADMIN_PASSWORD
   );
