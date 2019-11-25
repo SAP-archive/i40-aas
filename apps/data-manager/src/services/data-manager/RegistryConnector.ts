@@ -8,27 +8,18 @@ dotenv.config();
 
 class AdapterRegistryConnector {
   private webClient: WebClient;
-  private adapter_reg_protocol: string;
-  private adapter_reg_host: string;
-  private adapter_reg_port: string;
-  private adapter_reg_suffix:string;
+  private registryGETAdaptersURL:URL;
   private adapter_reg_user: string;
   private adapter_reg_pass: string;
 
   constructor(
     wC: WebClient,
-    adapter_reg_protocol: string,
-    adapter_reg_host: string,
-    adapter_reg_port: string,
-    adapter_reg_suffix:string,
+    registryGETAdaptersURL:URL,
     adapter_reg_user: string,
     adapter_reg_pass: string
   ) {
     this.webClient = wC;
-    this.adapter_reg_protocol = adapter_reg_protocol;
-    this.adapter_reg_host = adapter_reg_host;
-    this.adapter_reg_port = adapter_reg_port;
-    this.adapter_reg_suffix = adapter_reg_suffix;
+    this.registryGETAdaptersURL = registryGETAdaptersURL;
     this.adapter_reg_user = adapter_reg_user;
     this.adapter_reg_pass = adapter_reg_pass;
   }
@@ -38,10 +29,7 @@ class AdapterRegistryConnector {
     submodelIdShort: string
   ): Promise<IStorageAdapter> {
     var regResponse = await this.webClient.getRequest(
-      this.adapter_reg_protocol,
-      this.adapter_reg_host,
-      this.adapter_reg_port,
-      this.adapter_reg_suffix,
+      this.registryGETAdaptersURL.href,
       submodelIdShort,
       this.adapter_reg_user,
       this.adapter_reg_pass
@@ -50,12 +38,20 @@ class AdapterRegistryConnector {
 
     let adapter = regResponse.data as IStorageAdapter;
 
-    //TODO: Validation required
-    logger.debug(
+    if(adapter.url){
+          logger.debug(
       `The submodel with id ${submodelIdShort}, will be routed to ${adapter.url}`
     );
-
     return adapter;
+    }
+    else{
+      logger.error(
+        `The registry did not return a valid url for the adapter `
+      );
+      throw new Error("Server Error");
+    }
+
+    
   }
 }
 

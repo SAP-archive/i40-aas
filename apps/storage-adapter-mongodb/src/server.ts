@@ -11,6 +11,7 @@ applyMiddleware(middleware, router);
 applyRoutes(routes, router);
 applyMiddleware(errors, router);
 
+
 const PORT = 3100;
 //const server = http.createServer(router);
 

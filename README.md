@@ -1,4 +1,4 @@
-# i40-aas 
+# i40-aas
 
 [![Build Status](https://travis-ci.com/SAP/i40-aas.svg?branch=master)](https://travis-ci.com/SAP/i40-aas)
 
@@ -6,7 +6,7 @@ __i40-aas__ is currently in alpha and open to [contributions](#contributing). Pl
 
 ---
 
-## Contents:  
+## Contents:
 1. [Description](#description)
 1. [Requirements](#requirements)
 1. [Download and Installation](#download-and-installation)
@@ -22,11 +22,11 @@ __i40-aas__ is currently in alpha and open to [contributions](#contributing). Pl
 This implementation is related to the [Plattform Industrie 4.0](https://www.plattform-i40.de/PI40/Navigation/EN/Home/home.html) activities being driven by working groups in Germany. Especially the working group [Reference Architectures, Standards, and Norms](https://www.plattform-i40.de/PI40/Navigation/EN/ThePlatform/PlatformWorkingGroups/Reference-Architectures-Standards-Norms/reference-architectures-standards-norms.html) has defined a reference architecture and a [specification](https://www.plattform-i40.de/PI40/Redaktion/EN/Downloads/Publikation/2018-details-of-the-asset-administration-shell.pdf?__blob=publicationFile&v=5) to address a challenging topic to hardware and software vendors: __interoperability__. Especially the integration of assets (devices, machines, software, documents, etc.) into business processes is always cumbersome, time-consuming, and usually costly. As shown in the following figure, this service is meant to simplify the integration processes, and has further potential to extend existing applications.
 
 
-[ramisap]: docs/images/RAMI_SAP.png "Based on RAMI"
+[ramisap]: docs/images/RAMI_SAP.png "Based on RAMI 4.0"
 
 |![alt text][ramisap]|
 |:--:|
-| *SAP's AAS Service as Integrator and Enabler for Interoperability - representation based on RAMI* |
+| *SAP's AAS Service as Integrator and Enabler for Interoperability - representation based on RAMI 4.0* |
 
 This service is orchestrated in containers and can be deployed anywhere, where clusters or minimal computing power can be provided, and docker containers can be composed.
 
@@ -72,14 +72,17 @@ Service interactions can be tested and developed locally using Docker Compose.
 ```bash
 ## Option 1
 ## Use images from Docker Hub (https://hub.docker.com/orgs/sapi40/repositories)
-docker-compose up
+$ docker-compose pull
+$ docker-compose up
+
+
 
 ## Option 2
 ## Build & use images from this repository via Compose file extension
 ## ref.:
 ##  - https://docs.docker.com/compose/extends/
 ##  - https://docs.docker.com/compose/compose-file/#image
-docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+$ docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
 ```
 
 3. If you want to test the running service follow [these](docs/README_Test.md#Test) steps.
@@ -94,16 +97,16 @@ docker kill $(docker ps -q)
 ```
 
 
-Refer to [this](docs/README_Minikube.md) how to run the AAS Service on a local cluster (e.g. Minikube). 
+Refer to [this](docs/README_Minikube.md) how to run the AAS Service on a local cluster (e.g. Minikube).
 
 # Configuration
 
 The local setup uses the configurations in the folder [.compose-envs/](.compose-envs/).
 
-See [here](docs/README_Network.md) how to join service containers locally. 
+See [here](docs/README_Network.md) how to join service containers locally.
 
-We have included minimalistic instances of popular opensource services for a message broker and for database persistance in some parts. 
-These can freely be replaced by any other service of your choosing or a different configuration of those same services as long as they deliver the same functionality and adhere to the internal API. 
+We have included minimalistic instances of popular opensource services for a message broker and for database persistance in some parts.
+These can freely be replaced by any other service of your choosing or a different configuration of those same services as long as they deliver the same functionality and adhere to the internal API.
 
 # Known Issues
 
@@ -121,7 +124,7 @@ Please use the [GitHub issue tracker](https://github.com/SAP/i40-aas/issues) for
 
 <!--- Details on how external developers can contribute to your code should be posted here. You can also link to a dedicated CONTRIBUTING.md file. See further details here. --->
 
-You are welcome to join us in our efforts to improve and increase the set of tools to realize the Asset Administration Shell for Industrie 4.0!  
+You are welcome to join us in our efforts to improve and increase the set of tools to realize the Asset Administration Shell for Industrie 4.0!
 
 Simply check the [Contribution Guidelines](CONTRIBUTING.md).
 
@@ -131,7 +134,7 @@ Simply check the [Contribution Guidelines](CONTRIBUTING.md).
 
 This project follows the specification ["Details of the AssetAdministrationShell"](https://www.plattform-i40.de/PI40/Redaktion/EN/Downloads/Publikation/2018-details-of-the-asset-administration-shell.html) part 1 version 1.0, which is work in progress. As the specification changes, so will this project.
 
-For upcoming changes under development, please refer to the [Github issue board](https://github.com/SAP/i40-aas/issues). 
+For upcoming changes under development, please refer to the [Github issue board](https://github.com/SAP/i40-aas/issues).
 
 # License
 
