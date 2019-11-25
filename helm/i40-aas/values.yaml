@@ -1,0 +1,79 @@
+# Default values for i40-aas.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+config:
+  # MongoDB
+  mongo_initdb_database: mongodb
+  # Onboarding Skill
+  onboardingSkillRequestApproval: false
+  onboardingSkillRequestType: false
+  onboardingSkillStatesCollection: car-onboarding-states
+  onboardingSkillRootTopic: i40:registry-semanticProtocol/onboarding.CentralAssetRepository
+  onboardingSkillRole: CentralAssetRepository
+  onboardingSkillURI: sap.com/aas/skills/onboarding/CentralAssetRepository
+  # PostgreSQL
+  endpointRegistryPostgresDB: AAS_REGISTRY
+  # RabbitMQ
+  rabbitmqBrokerTopicEgress: http.client
+  rabbitmqBrokerExchange: amq.topic
+
+
+# If you leave a field empty "" a (randAlphaNum 20) will be generated for it.
+credentials:
+  # Adapter-Registry
+  adapterRegistryAdminUser: admin
+  adapterRegistryAdminPassword: "" 
+  # Endpoint-Registry
+  endpointRegistryAdminUser: admin
+  endpointRegistryAdminPassword: ""
+  # Data-Manager
+  dataManagerUser: admin
+  dataManagerPassword: ""
+  # HTTPS-Endpoint-Ingress
+  httpsEndpointIngressUser: i40aas-user
+  httpsEndpointIngressPassword: ""
+  # MongoDB
+  mongoInitdbRootUsername: mongouser
+  mongoInitdbRootPassword: "" 
+  # PostgreSQL
+  endpointRegistryPostgresUser: postgres
+  endpointRegistryPostgresPassword: ""
+  # PGAdmin
+  endpointRegistryDefaultEmail: admin
+  endpointRegistryDefaultPassword: ""
+  # RabbitMQ
+  rabbitmqBrokerUser: guest
+  rabbitmqBrokerPassword: ""
+
+
+replicaCount: 1
+
+image:
+  repository: sapi40
+  release: latest 
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # Vice versa, if you want to disable setting resources, comment the following lines
+  # and uncomment the curly braces after 'resources'.
+  # limits:
+  #   cpu: 40m
+  #   memory: 350Mi
+  # requests:
+  #   cpu: 25m
+  #   memory: 270Mi
+
+storageClassName: default
+
+
+
+

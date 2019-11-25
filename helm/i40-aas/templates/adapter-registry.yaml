@@ -1,0 +1,115 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-adapter-registry
+  labels: 
+    service: adapter-registry
+    {{- include "i40-aas.labels" . | nindent 4 }}
+data:
+  # Networking
+  ADAPTER_REGISTRY_PROTOCOL: http
+  ADAPTER_REGISTRY_HOST: {{ .Release.Name }}-adapter-registry-api
+  ADAPTER_REGISTRY_PORT: "80"
+  # Exposed Routes 
+  ADAPTER_REGISTRY_URL_SUFFIX: /adapters
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Release.Name }}-adapter-registry
+  labels: 
+    service: adapter-registry
+    {{- include "i40-aas.labels" . | nindent 4 }}
+type: Opaque
+stringData:
+  ADAPTER_REGISTRY_ADMIN_USER: {{ .Values.credentials.adapterRegistryAdminUser | default (randAlphaNum 20) }}
+  ADAPTER_REGISTRY_ADMIN_PASSWORD: {{ .Values.credentials.adapterRegistryAdminPassword | default (randAlphaNum 20) }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-adapter-registry
+  labels: 
+    service: adapter-registry
+    {{- include "i40-aas.labels" . | nindent 4 }}
+spec:
+  clusterIP: None
+  ports:
+  - targetPort: endpoint
+    port: 80
+    protocol: TCP
+  selector:
+    service: adapter-registry
+    {{- include "i40-aas.selectorLabels" . | nindent 4 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-adapter-registry-api
+  labels: 
+    service: adapter-registry
+    {{- include "i40-aas.labels" . | nindent 4 }}
+spec:
+  ports:
+  - targetPort: endpoint
+    port: 80
+    protocol: TCP
+  selector:
+    service: adapter-registry
+    {{- include "i40-aas.selectorLabels" . | nindent 4 }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}-adapter-registry
+  labels: 
+    service: adapter-registry
+    {{- include "i40-aas.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ .Release.Name }}-adapter-registry
+  replicas: 1
+  selector:
+    matchLabels:
+      service: adapter-registry
+      {{- include "i40-aas.selectorLabels" . | nindent 6 }}
+  template: 
+    metadata:
+      labels:
+        service: adapter-registry
+        {{- include "i40-aas.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - name: adapter-registry
+        image: "{{ .Values.image.repository }}/i40-aas-adapter-registry:{{ .Values.image.release }}"
+        ports: 
+        - name: endpoint
+          containerPort: 4500
+        envFrom:
+        - secretRef:
+            name: {{ .Release.Name }}-adapter-registry
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: endpoint
+          initialDelaySeconds: 600
+          periodSeconds: 60
+        volumeMounts:
+        - mountPath: /service/.node-persist
+          name: {{ .Release.Name }}-adapter-registry
+  volumeClaimTemplates:
+  - metadata:
+      name: {{ .Release.Name }}-adapter-registry
+      labels:
+        service: adapter-registry
+        {{- include "i40-aas.labels" . | nindent 8 }}
+    spec:
+      storageClassName: {{ .Values.storageClassName }}
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 100Mi
+---

@@ -1,0 +1,64 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-storage-adapter-mongodb
+  labels: 
+    service: storage-adapter-mongodb
+    {{- include "i40-aas.labels" . | nindent 4 }}
+data:
+  # Networking
+  STORAGE_ADAPTER_MONGODB_PORT: "80"
+  STORAGE_ADAPTER_MONGODB_SUBOMODELS_COLLECTION: storage-adapter-mongodb-submodels
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-storage-adapter-mongodb
+  labels: 
+    service: storage-adapter-mongodb
+    {{- include "i40-aas.labels" . | nindent 4 }}
+spec:
+  ports:
+  - targetPort: endpoint
+    port: 80
+    protocol: TCP
+  selector:
+    service: storage-adapter-mongodb
+    {{- include "i40-aas.selectorLabels" . | nindent 4 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-storage-adapter-mongodb
+  labels: 
+    service: storage-adapter-mongodb
+    {{- include "i40-aas.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      service: storage-adapter-mongodb
+      {{- include "i40-aas.selectorLabels" . | nindent 6 }}
+  template: 
+    metadata:
+      labels:
+        service: storage-adapter-mongodb
+        {{- include "i40-aas.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: storage-adapter-mongodb
+          image: "{{ .Values.image.repository }}/i40-aas-storage-adapter-mongodb:{{ .Values.image.release }}"
+          ports:
+          - name: endpoint
+            containerPort: 3100
+          envFrom:
+            - secretRef:
+                name: {{ .Release.Name }}-mongodb
+            - configMapRef:
+                name: {{ .Release.Name }}-mongodb
+            - configMapRef:
+                name: {{ .Release.Name }}-storage-adapter-mongodb
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+---

@@ -1,0 +1,87 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-endpoint-registry
+  labels: 
+    service: endpoint-registry
+    {{- include "i40-aas.labels" . | nindent 4 }}
+data:
+  # Networking
+  ENDPOINT_REGISTRY_PROTOCOL: http
+  ENDPOINT_REGISTRY_HOST: {{ .Release.Name }}-endpoint-registry
+  ENDPOINT_REGISTRY_PORT: "80"
+  # Exposed Routes 
+  ENDPOINT_REGISTRY_URL_SUFFIX: /endpoints
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Release.Name }}-endpoint-registry
+  labels: 
+    service: endpoint-registry
+    {{- include "i40-aas.labels" . | nindent 4 }}
+type: Opaque
+stringData:
+  ENDPOINT_REGISTRY_ADMIN_USER: {{ .Values.credentials.endpointRegistryAdminUser | default (randAlphaNum 20) }}
+  ENDPOINT_REGISTRY_ADMIN_PASSWORD: {{ .Values.credentials.endpointRegistryAdminPassword | default (randAlphaNum 20) }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-endpoint-registry
+  labels: 
+    service: endpoint-registry
+    {{- include "i40-aas.labels" . | nindent 4 }}
+spec:
+  ports:
+  - targetPort: endpoint
+    port: 80
+    protocol: TCP
+  selector:
+    service: endpoint-registry
+    {{- include "i40-aas.selectorLabels" . | nindent 4 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-endpoint-registry
+  labels: 
+    service: endpoint-registry
+    {{- include "i40-aas.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      service: endpoint-registry
+      {{- include "i40-aas.selectorLabels" . | nindent 6 }}
+  template: 
+    metadata:
+      labels:
+        service: endpoint-registry
+        {{- include "i40-aas.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - name: endpoint-registry
+        image: "{{ .Values.image.repository }}/i40-aas-endpoint-registry:{{ .Values.image.release }}"
+        ports: 
+        - name: endpoint
+          containerPort: 4400
+        envFrom:
+        - secretRef:
+            name: {{ .Release.Name }}-endpoint-registry-postgres
+        - secretRef:
+            name: {{ .Release.Name }}-endpoint-registry
+        - configMapRef:
+            name: {{ .Release.Name }}-endpoint-registry-postgres
+        - configMapRef:
+            name: {{ .Release.Name }}-endpoint-registry
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: endpoint
+          initialDelaySeconds: 600
+          periodSeconds: 60
+---

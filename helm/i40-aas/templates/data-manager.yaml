@@ -1,0 +1,85 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-data-manager
+  labels: 
+    service: data-manager
+    {{- include "i40-aas.labels" . | nindent 4 }}
+data:
+  # Networking
+  DATA_MANAGER_PROTOCOL: http
+  DATA_MANAGER_HOST: {{ .Release.Name }}-data-manager
+  DATA_MANAGER_PORT: "80"
+  # Exposed Routes 
+  DATA_MANAGER_SUBMODELS_ROUTE: /submodels
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Release.Name }}-data-manager
+  labels: 
+    service: data-manager
+    {{- include "i40-aas.labels" . | nindent 4 }}
+type: Opaque
+stringData:
+  DATA_MANAGER_USER: {{ .Values.credentials.dataManagerUser | default (randAlphaNum 20) }}
+  DATA_MANAGER_PASSWORD: {{ .Values.credentials.dataManagerPassword | default (randAlphaNum 20) }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-data-manager
+  labels: 
+    service: data-manager
+    {{- include "i40-aas.labels" . | nindent 4 }}
+spec:
+  ports:
+  - targetPort: endpoint
+    port: 80
+    protocol: TCP
+  selector:
+    service: data-manager
+    {{- include "i40-aas.selectorLabels" . | nindent 4 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-data-manager
+  labels: 
+    service: data-manager
+    {{- include "i40-aas.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      service: data-manager
+      {{- include "i40-aas.selectorLabels" . | nindent 6 }}
+  template: 
+    metadata:
+      labels:
+        service: data-manager
+        {{- include "i40-aas.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - name: data-manager
+        image: "{{ .Values.image.repository }}/i40-aas-data-manager:{{ .Values.image.release }}"
+        ports: 
+        - name: endpoint
+          containerPort: 4000
+        envFrom:
+        - secretRef:
+            name: {{ .Release.Name }}-adapter-registry
+        - secretRef:
+            name: {{ .Release.Name }}-data-manager
+        - configMapRef:
+            name: {{ .Release.Name }}-adapter-registry
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: endpoint
+          initialDelaySeconds: 600
+          periodSeconds: 60
+---

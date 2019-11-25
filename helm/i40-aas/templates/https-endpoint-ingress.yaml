@@ -1,0 +1,85 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-https-endpoint-ingress
+  labels: 
+    service: https-endpoint-ingress
+    {{- include "i40-aas.labels" . | nindent 4 }}
+data:
+  # Networking
+  HTTPS_ENDPOINT_INGRESS_PROTOCOL: http
+  HTTPS_ENDPOINT_INGRESS_HOST: {{ .Release.Name }}-https-endpoint-ingress
+  HTTPS_ENDPOINT_INGRESS_PORT: "80"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Release.Name }}-https-endpoint-ingress
+  labels: 
+    service: https-endpoint-ingress
+    {{- include "i40-aas.labels" . | nindent 4 }}
+type: Opaque
+stringData:
+  HTTPS_ENDPOINT_INGRESS_USER: {{ .Values.credentials.httpsEndpointIngressUser | default (randAlphaNum 20) }}
+  HTTPS_ENDPOINT_INGRESS_PASSWORD: {{ .Values.credentials.httpsEndpointIngressPassword | default (randAlphaNum 20) }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-https-endpoint-ingress
+  labels: 
+    service: https-endpoint-ingress
+    {{- include "i40-aas.labels" . | nindent 4 }}
+spec:
+  ports:
+    - targetPort: endpoint
+      port: 80
+      protocol: TCP
+  selector:
+    service: https-endpoint-ingress
+    {{- include "i40-aas.selectorLabels" . | nindent 4 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-https-endpoint-ingress
+  labels: 
+    service: https-endpoint-ingress
+    {{- include "i40-aas.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      service: https-endpoint-ingress
+      {{- include "i40-aas.selectorLabels" . | nindent 6 }}
+  template: 
+    metadata:
+      labels:
+        service: https-endpoint-ingress
+        {{- include "i40-aas.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: https-endpoint-ingress
+          image: "{{ .Values.image.repository }}/i40-aas-https-endpoint-ingress:{{ .Values.image.release }}"
+          ports:
+            - name: endpoint
+              containerPort: 2000
+          envFrom:
+          - configMapRef:
+              name: {{ .Release.Name }}-https-endpoint-ingress
+          - secretRef:
+              name: {{ .Release.Name }}-https-endpoint-ingress
+          - configMapRef:
+              name: {{ .Release.Name }}-rabbitmq
+          - secretRef:
+              name: {{ .Release.Name }}-rabbitmq
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: endpoint
+            initialDelaySeconds: 600
+            periodSeconds: 60
+---

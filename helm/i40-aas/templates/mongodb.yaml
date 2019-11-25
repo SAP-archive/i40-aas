@@ -1,0 +1,105 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-mongodb
+  labels:
+    service: mongodb
+    {{- include "i40-aas.labels" . | nindent 4 }}
+data:
+  MONGODB_HOST: {{ .Release.Name }}-mongodb-0.{{ .Release.Name }}-mongodb
+  MONGODB_PORT: "27017"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Release.Name }}-mongodb
+  labels:
+    service: mongodb
+    {{- include "i40-aas.labels" . | nindent 4 }}
+type: Opaque
+stringData:
+  MONGO_INITDB_ROOT_USERNAME: {{ .Values.credentials.mongoInitdbRootUsername | default (randAlphaNum 20) }}
+  MONGO_INITDB_ROOT_PASSWORD: {{ .Values.credentials.mongoInitdbRootPassword | default (randAlphaNum 20) }}
+  MONGO_INITDB_DATABASE: {{ .Values.config.mongo_initdb_database }}
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-mongodb
+  labels:
+    service: mongodb
+    {{- include "i40-aas.labels" . | nindent 4 }}
+spec:
+  clusterIP: None
+  ports:
+  - protocol: TCP
+    port: 27017
+    targetPort: database
+  selector:
+    service: mongodb
+    {{- include "i40-aas.selectorLabels" . | nindent 4 }}
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-mongodb-api
+  labels:
+    service: mongodb
+    {{- include "i40-aas.labels" . | nindent 4 }}
+spec:
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: database
+  selector:
+    service: mongodb
+    {{- include "i40-aas.selectorLabels" . | nindent 4 }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}-mongodb
+  labels:
+    service: mongodb
+    {{- include "i40-aas.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ .Release.Name }}-mongodb
+  replicas: 1
+  selector:
+    matchLabels:
+      service: mongodb
+      {{- include "i40-aas.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        service: mongodb
+        {{- include "i40-aas.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: mongodb
+          image: mongo
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - name: database
+              containerPort: 27017
+          envFrom:
+            - secretRef:
+                name: {{ .Release.Name }}-mongodb
+          volumeMounts:
+            - mountPath: /data/db
+              name: {{ .Release.Name }}-mongodb
+  volumeClaimTemplates:
+  - metadata:
+      name: {{ .Release.Name }}-mongodb
+      labels:
+        service: mongodb
+        {{- include "i40-aas.labels" . | nindent 8 }}
+    spec:
+      storageClassName: {{ .Values.storageClassName }}
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 100Mi
+---
