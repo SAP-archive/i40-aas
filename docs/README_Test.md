@@ -1,8 +1,11 @@
 
 ---
 # Test
+- Test using Postman
+- Test from the CLI
 
 
+## Test using Postman
 [postman]: images/Postman_open.png "Open Postman"
 [postmanimp]: images/Postman_import_collection.png "Import collection"
 [postmanselend]: images/Postman_select_endpoint.png "Select Endpoint"
@@ -33,9 +36,7 @@
 |:--:|
 | *Invoke Send to test the interaction* |
 
-
-
-## Test form the CLI
+## Test from the CLI
 
 From the directory root, execute in the CLI:
 ```bash
