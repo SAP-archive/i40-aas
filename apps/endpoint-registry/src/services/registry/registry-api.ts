@@ -20,6 +20,21 @@ async function readRecordByIdentifier(identifier: Identifier): Promise<Array<Reg
     registryDao.release();
   }
 }
+async function deleteRecordByIdentifier(identifier: Identifier): Promise<number> {
+  var registryDao: iRegistry = await RegistryFactory.getRegistry();
+  try {
+    if (!identifier.id) {
+      throw new RegistryError('Missing parameter id', 422);
+    }
+    var result = await registryDao.deleteAasByAasId(identifier);
+    console.log("Deleted rows: " +result);
+    return result;
+  } catch (e) {
+    throw e;
+  } finally {
+    registryDao.release();
+  }
+}
 
 async function readRecordBySemanticProtocolAndRole(sProtocol: string, role: string): Promise<any> {
   console.log(sProtocol);
@@ -95,4 +110,19 @@ async function getEndpointsByFrame(frame: Frame): Promise<Array<IRegistryResultS
     return readRecordBySemanticProtocolAndRole(frame.semanticProtocol, frame.receiver.role.name);
   }
 }
-export { readRecordByIdentifier,assignRolesToAAS, createSemanticProtocol, register, readRecordBySemanticProtocolAndRole, getEndpointsByFrame, createRole };
+async function getAllEndpointsList(): Promise<Array<IRegistryResultSet>> {
+
+  var registryDao: iRegistry = await RegistryFactory.getRegistry();
+  try {
+    var result = await registryDao.listAllEndpoints();
+    console.log(result);
+    return result;
+  } catch (e) {
+    throw e;
+  } finally {
+    registryDao.release();
+  }
+}
+
+
+export { readRecordByIdentifier,deleteRecordByIdentifier, assignRolesToAAS,getAllEndpointsList, createSemanticProtocol, register, readRecordBySemanticProtocolAndRole, getEndpointsByFrame, createRole };

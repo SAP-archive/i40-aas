@@ -7,9 +7,10 @@ interface iRegistry {
   readRecordByAasId(aasId: Identifier): Promise<Array<RegistryResultSet>>;
   registerAas(req: IRegisterAas): Promise<RegistryResultSet>;
   updateAas(req: IRegisterAas): Promise<RegistryResultSet>;
-  deleteAasByAasId(aasId: Identifier): Promise<void>;
+  deleteAasByAasId(aasId: Identifier): Promise<number>;
   listAasByAssetId(assetId: Identifier): Promise<Array<RegistryResultSet>>;
   listAas(): Promise<Array<RegistryResultSet>>;
+  listAllEndpoints(): Promise<Array<RegistryResultSet>>;
   release(): void;
   createSemanticProtocol(req: ICreateSemanticProtocol): void;
   assignRoles(req: IAssignRoles): void;

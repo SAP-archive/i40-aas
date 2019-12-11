@@ -123,10 +123,13 @@ Decide what to do if the message can not be handled (eg. because receiver role i
   }
 
   receive(msg: string) {
-    //logger.info("Got msg: " + msg);
-    let message = this.validateEssentialInteractionElements(msg);
+    
+    let message  = this.validateEssentialInteractionElements(msg);
+    
     if (message && this.validateRequired(message)) {
       //if validation successful, get the AAS receiver endpoint from AAS-registry service
+      logger.info("Received Msg params [" + message.frame.sender.role.name + " , "+ message.frame.receiver.role.name + " , "+ message.frame.type + " , "+ message.frame.conversationId + "]");
+
       this.registryConnector.getReceiverURLFromRegistry(message);
     }
   }

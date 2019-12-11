@@ -42,6 +42,9 @@ GET /read
 |    id     |            ID of the AAS            |
 |  idType   | IDType of the AAS default is Custom |
 
+
+## Endpoints
+
 GET /endpoints
 
 | parameter |      Description      |
@@ -85,6 +88,42 @@ error
 {
   r_statusCode:<error code>
 }
+```
+
+## listAllEndpoints
+GET /listallendpoints
+| parameter |      Description      |
+| :-------: | :-------------------: |
+|   none    |         --            |
+
+response </br>
+NOTE: returns an array of endpoints registered for each aasId 
+
+```javascript
+[
+  {
+    aasId: {
+      id: "<ID of the AAS>",
+      idType: "URI,CUSTOM,IRDI"
+    },
+    endpoints: [
+      {
+        url: "https://myaas.com",
+        protocolVersion: "1.0",
+        protocol: "https"
+      },
+      {
+        url: "192.168.75.12",
+        protocolVersion: "",
+        protocol: "TCP"
+      }
+    ],
+    assetId: {
+      id: "<ID of the Asset>",
+      idType: "URI,CUSTOM,IRDI"
+    }
+  }
+];
 ```
 
 Create Database

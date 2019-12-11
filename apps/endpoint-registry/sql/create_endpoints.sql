@@ -9,8 +9,8 @@ CREATE TABLE public.endpoints
     CONSTRAINT endpoints_pkey PRIMARY KEY ("endpointId"),
     CONSTRAINT "aasId" FOREIGN KEY ("aasId")
         REFERENCES public.asset_administration_shells ("aasId") MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
     CONSTRAINT "endpointId" FOREIGN KEY ("endpointId")
         REFERENCES public.endpoints ("endpointId") MATCH SIMPLE
         ON UPDATE NO ACTION
