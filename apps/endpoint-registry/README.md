@@ -42,6 +42,15 @@ GET /read
 |    id     |            ID of the AAS            |
 |  idType   | IDType of the AAS default is Custom |
 
+DELETE /delete
+
+Deletes the entries given an aasId
+
+| parameter |             Description             |
+| :-------: | :---------------------------------: |
+|    id     |            ID of the AAS            |
+|  idType   | IDType of the AAS default is Custom |
+
 
 ## Endpoints
 
