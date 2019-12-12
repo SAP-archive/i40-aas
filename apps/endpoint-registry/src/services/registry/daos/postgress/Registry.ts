@@ -1,7 +1,6 @@
 import { iRegistry } from "../interfaces/IRegistry";
 import {
   IRegistryResultSet,
-  Protocols,
   IEndpoint,
   Endpoint,
   RegistryResultSet
@@ -198,7 +197,7 @@ class Registry implements iRegistry {
           console.log(endpointRecord);
           var endpoint: IEndpoint = new Endpoint(
             endpointRecord.URL,
-            (<any>Protocols)[endpointRecord.protocol_name],
+            endpointRecord.protocol_name,
             endpointRecord.protocol_version
           );
           console.log(endpoint);
@@ -246,7 +245,7 @@ class Registry implements iRegistry {
             [
               new Endpoint(
                 row.URL,
-                (<any>Protocols)[row.protocol_name],
+                row.protocol_name,
                 row.protocol_version
               )
             ],
@@ -256,7 +255,7 @@ class Registry implements iRegistry {
           recordsByAasId[row.aasId].endpoints.push(
             new Endpoint(
               row.URL,
-              (<any>Protocols)[row.protocol_name],
+            row.protocol_name,
               row.protocol_version
             )
           );
@@ -293,7 +292,7 @@ class Registry implements iRegistry {
             [
               new Endpoint(
                 row.URL,
-                (<any>Protocols)[row.protocol_name],
+                row.protocol_name,
                 row.protocol_version
               )
             ],
@@ -303,7 +302,7 @@ class Registry implements iRegistry {
           recordsByAasId[row.aasId].endpoints.push(
             new Endpoint(
               row.URL,
-              (<any>Protocols)[row.protocol_name],
+              row.protocol_name,
               row.protocol_version
             )
           );

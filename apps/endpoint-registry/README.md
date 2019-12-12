@@ -42,7 +42,7 @@ GET /read
 |    id     |            ID of the AAS            |
 |  idType   | IDType of the AAS default is Custom |
 
-DELETE /delete
+DELETE /assetadministrationshell
 
 Deletes the entries given an aasId
 

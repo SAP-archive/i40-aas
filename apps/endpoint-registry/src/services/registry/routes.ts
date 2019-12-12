@@ -97,7 +97,7 @@ export default [
     }
   },
   {
-    path: "/delete",
+    path: "/assetadministrationshell",
     method: "delete",
     handler: async (req: Request, res: Response) => {
       try {

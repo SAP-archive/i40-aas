@@ -7,8 +7,8 @@ CREATE TABLE public.asset_administration_shells
     CONSTRAINT asset_administration_shells_pkey PRIMARY KEY ("aasId"),
     CONSTRAINT "assetId" FOREIGN KEY ("assetId")
         REFERENCES public.assets ("assetId") MATCH SIMPLE
-        ON UPDATE CASCADE
-        ON DELETE CASCADE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
 )
 WITH (
     OIDS = FALSE

@@ -113,8 +113,15 @@ describe('read endpoints from pg by frame with wrong role', function() {
   });
 });
 
-describe('read endpoints from pg by frame with wrong semanticProtocol', function() {
+describe('delete registered enntries based on the aasId', function() {
   it('returns empty array', async function() {
+
+    let registerEndpointsBody = [{ 
+      "aasId": { "id": "https://i40-test-aas-server.cfapps.eu10.hana.ondemand.com/aas", "idType": "uri" },
+      "endpoints": [{ "url": "https://admin:admin123@i40-test-aas-server.cfapps.eu10.hana.ondemand.com/ingress", "protocol": "httss", "protocolVersion": "1.1" }],
+      "assetId": { "id": "https://i40-test-aas-server.cfapps.eu10.hana.ondemand.com", "idType": "URI" }
+    }];
+
     var x = await getEndpointsByFrame({
       type: 'publishInstance',
       messageId: '',

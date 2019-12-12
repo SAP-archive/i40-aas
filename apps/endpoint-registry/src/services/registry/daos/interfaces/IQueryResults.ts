@@ -1,4 +1,3 @@
-import { Protocols } from './IRegistryResultSet';
 
 interface IJointRecord {
   assetIdType: string;
@@ -13,7 +12,7 @@ interface IJointRecord {
 interface IEndpointRecord {
   endpointId: string;
   URL: string;
-  protocol_name: Protocols;
+  protocol_name: string;
   protocol_version?: string;
   aasId: string;
 }
