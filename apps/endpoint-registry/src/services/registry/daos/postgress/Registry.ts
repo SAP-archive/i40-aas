@@ -96,13 +96,13 @@ class Registry implements iRegistry {
       const deleteRowsCount = await this.client.query(
         'WITH deleted AS (DELETE FROM asset_administration_shells WHERE "aasId" = $1 RETURNING *) SELECT count(*) FROM deleted;', [aasId.id]
       );
-      if (deleteRowsCount<1) {
+      if (deleteRowsCount.rows.length <1) {
         console.log("No entry with this aasId");
-        return deleteRowsCount;
+        return +deleteRowsCount.rows[0].count;
       } else {
         //TODO: parse the json to get the correct rowscount
-        console.log("  Deleted rows "+ deleteRowsCount);
-    return deleteRowsCount;
+        console.log("  Deleted rows "+ deleteRowsCount.rows.length);
+    return +deleteRowsCount.rows[0].count;
       }
     } catch (e) {
         throw e;
