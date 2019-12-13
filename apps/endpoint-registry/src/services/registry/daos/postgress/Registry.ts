@@ -1,7 +1,6 @@
 import { iRegistry } from "../interfaces/IRegistry";
 import {
   IRegistryResultSet,
-  Protocols,
   IEndpoint,
   Endpoint,
   RegistryResultSet
@@ -90,9 +89,26 @@ class Registry implements iRegistry {
   updateAas(record: IRegisterAas): Promise<IRegistryResultSet> {
     throw new Error("Method not implemented.");
   }
-  deleteAasByAasId(aasId: Identifier): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
+  async deleteAasByAasId(aasId: Identifier): Promise<number> {
+    console.log(" ********* AASID "+aasId.id);
+
+    try {
+      const deleteRowsCount = await this.client.query(
+        'WITH deleted AS (DELETE FROM asset_administration_shells WHERE "aasId" = $1 RETURNING *) SELECT count(*) FROM deleted;', [aasId.id]
+      );
+      if (deleteRowsCount.rows.length <1) {
+        console.log("No entry with this aasId");
+        return +deleteRowsCount.rows[0].count;
+      } else {
+        //TODO: parse the json to get the correct rowscount
+        console.log("  Deleted rows "+ deleteRowsCount.rows.length);
+    return +deleteRowsCount.rows[0].count;
+      }
+    } catch (e) {
+        throw e;
+      }
+    }
+
   listAasByAssetId(assetId: Identifier): Promise<IRegistryResultSet[]> {
     throw new Error("Method not implemented.");
   }
@@ -122,13 +138,14 @@ class Registry implements iRegistry {
   async assignRoles(record: IAssignRoles): Promise<RegistryRolesResultSet> {
     try {
       //create endpoint entry
-        console.log("aasId "+record.aasId.id + " with role id "+record.roleId);
+      console.log(
+        "aasId " + record.aasId.id + " with role id " + record.roleId
+      );
 
-        const insertRolesResult = await this.client.query(
-          'INSERT INTO public.aas_role("aasId","roleId")  VALUES ($1, $2);',
-          [record.aasId.id, record.roleId]
-        );
-
+      const insertRolesResult = await this.client.query(
+        'INSERT INTO public.aas_role("aasId","roleId")  VALUES ($1, $2);',
+        [record.aasId.id, record.roleId]
+      );
     } catch (e) {
       if (e.code == 23505) {
         console.log("Role Assignment already exists");
@@ -145,8 +162,7 @@ class Registry implements iRegistry {
     try {
       const insertRolesResult = await this.client.query(
         'INSERT INTO public.roles( "roleId", "protocolId") VALUES ($1, $2);',
-        [record.roleId,
-        record.semanticProtocol]
+        [record.roleId, record.semanticProtocol]
       );
     } catch (e) {
       if (e.code == 23505) {
@@ -181,7 +197,7 @@ class Registry implements iRegistry {
           console.log(endpointRecord);
           var endpoint: IEndpoint = new Endpoint(
             endpointRecord.URL,
-            (<any>Protocols)[endpointRecord.protocol_name],
+            endpointRecord.protocol_name,
             endpointRecord.protocol_version
           );
           console.log(endpoint);
@@ -201,6 +217,7 @@ class Registry implements iRegistry {
       throw new RegistryError(err, 500);
     }
   }
+
   async readEndpointBySemanticProtocolAndRole(
     sProtocol: string,
     role: string
@@ -228,7 +245,7 @@ class Registry implements iRegistry {
             [
               new Endpoint(
                 row.URL,
-                (<any>Protocols)[row.protocol_name],
+                row.protocol_name,
                 row.protocol_version
               )
             ],
@@ -238,7 +255,54 @@ class Registry implements iRegistry {
           recordsByAasId[row.aasId].endpoints.push(
             new Endpoint(
               row.URL,
-              (<any>Protocols)[row.protocol_name],
+            row.protocol_name,
+              row.protocol_version
+            )
+          );
+        }
+      });
+      var result: Array<RegistryResultSet> = [];
+      Object.keys(recordsByAasId).forEach(function(key) {
+        result.push(recordsByAasId[key]);
+      });
+      return result;
+    } catch (err) {
+      throw new RegistryError(err, 500);
+    }
+  }
+
+  async listAllEndpoints(): Promise<Array<RegistryResultSet>> {
+    try {
+      var s = `SELECT "aasId", "URL", "protocol_name", "protocol_version", "roleId"
+      FROM (SELECT *
+          FROM public.aas_role
+              INNER JOIN public.asset_administration_shells
+      USING ("aasId")
+          ) as res
+      INNER JOIN public.endpoints
+      USING
+      ("aasId")`;
+      const queryResult = await this.client.query(s);
+      const queryResultRows: Array<IJointRecord> = queryResult.rows;
+      var recordsByAasId: IData = {};
+      queryResultRows.forEach(function(row: IJointRecord) {
+        if (!recordsByAasId[row.aasId]) {
+          recordsByAasId[row.aasId] = new RegistryResultSet(
+            { id: row.aasId, idType: (<any>IdTypeEnum)[row.aasIdType] },
+            [
+              new Endpoint(
+                row.URL,
+                row.protocol_name,
+                row.protocol_version
+              )
+            ],
+            { id: row.assetId, idType: (<any>IdTypeEnum)[row.assetIdType] }
+          );
+        } else {
+          recordsByAasId[row.aasId].endpoints.push(
+            new Endpoint(
+              row.URL,
+              row.protocol_name,
               row.protocol_version
             )
           );

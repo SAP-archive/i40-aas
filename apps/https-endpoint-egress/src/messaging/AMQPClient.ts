@@ -339,9 +339,9 @@ class AmqpClient implements IMessageBrokerClient {
           this.brokerExchange +
           " with topic " +
           routingKey +
-          " the following message'" +
+          " the following message' ****** " +
           msg +
-          "'"
+          "********"
       );
     } catch (error) {
       logger.error(

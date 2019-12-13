@@ -3,6 +3,7 @@ CREATE TABLE public.aas_role
 (
     "aasId" character varying(1024) COLLATE pg_catalog."default" NOT NULL,
     "roleId" character varying(1024) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT "uniqueAssignment" PRIMARY KEY ("aasId", "roleId"),
     CONSTRAINT "aasId" FOREIGN KEY ("aasId")
         REFERENCES public.asset_administration_shells ("aasId") MATCH SIMPLE
         ON UPDATE CASCADE

@@ -7,7 +7,9 @@ import {
   getEndpointsByFrame,
   createRole,
   createSemanticProtocol,
-  assignRolesToAAS
+  assignRolesToAAS,
+  getAllEndpointsList,
+  deleteRecordByIdentifier
 } from "./registry-api";
 import { IdTypeEnum } from "i40-aas-objects";
 import { RegistryError } from "../../utils/RegistryError";
@@ -95,6 +97,25 @@ export default [
     }
   },
   {
+    path: "/assetadministrationshell",
+    method: "delete",
+    handler: async (req: Request, res: Response) => {
+      try {
+        var idType: IdTypeEnum = IdTypeEnum["Custom"];
+        if (req.query.idType) {
+          idType = (<any>IdTypeEnum)[req.query.idType];
+        }
+        res.json(
+          await deleteRecordByIdentifier({ id: req.query.id, idType: idType })
+        );
+      } catch (e) {
+        console.log(e);
+        res.statusCode = e.r_statusCode || 500;
+        res.end(JSON.stringify(e));
+      }
+    }
+  },
+  {
     path: "/endpoints",
     method: "get",
     handler: async (req: Request, res: Response) => {
@@ -104,6 +125,19 @@ export default [
         }
         var frame: Frame = JSON.parse(req.query.frame);
         res.json(await getEndpointsByFrame(frame));
+      } catch (e) {
+        console.log(e);
+        res.statusCode = e.r_statusCode || 500;
+        res.end(JSON.stringify(e));
+      }
+    }
+  },
+  {
+    path: "/listAllEndpoints",
+    method: "get",
+    handler: async (req: Request, res: Response) => {
+      try {
+        res.json(await getAllEndpointsList());
       } catch (e) {
         console.log(e);
         res.statusCode = e.r_statusCode || 500;

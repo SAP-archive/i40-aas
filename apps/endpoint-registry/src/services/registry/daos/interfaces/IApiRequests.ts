@@ -16,7 +16,6 @@ interface ICreateRole {
   semanticProtocol: string;
 }
 
-
 interface IAssignRoles {
   aasId: Identifier;
   roleId: string;

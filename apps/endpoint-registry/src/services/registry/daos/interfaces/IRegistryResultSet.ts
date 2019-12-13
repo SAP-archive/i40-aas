@@ -17,26 +17,22 @@ class RegistryResultSet implements IRegistryResultSet {
 
 interface IEndpoint {
   url: string;
-  protocol: Protocols;
+  protocol: string;
   protocolVersion?: string;
 }
 
 class Endpoint implements IEndpoint {
   public url: string;
-  public protocol: Protocols;
+  public protocol: string;
   public protocolVersion?: string;
-  constructor(url: string, protocol: Protocols, protocolVersion?: string) {
+  constructor(url: string, protocol: string, protocolVersion?: string) {
+  
     this.url = url;
-    this.protocol = protocol;
+
+  (protocol )? this.protocol = protocol.toLowerCase(): this.protocol = protocol;
+
     this.protocolVersion = protocolVersion;
   }
-}
-
-enum Protocols {
-  https = 'https',
-  http = 'http',
-  ws = 'ws',
-  wss = 'wss'
 }
 
 /*
@@ -45,4 +41,4 @@ var x = {
   endpoints: [{ url: '', protocol: "https", protocolVersion: '1.1' }],
   assetId: { id: '', idType: '' }
 }; */
-export { RegistryResultSet, Endpoint, Protocols, IEndpoint, IRegistryResultSet };
+export { RegistryResultSet, Endpoint, IEndpoint, IRegistryResultSet };
