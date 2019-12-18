@@ -28,7 +28,14 @@ module RoutingController {
       throw new Error(" Internal Server Error");
     }
   }
-
+  export async function getSubmodels(param: { idShort: string }) {
+    let adapter: IStorageAdapter = await registryConn.getAdapterFromRegistry(
+      param.idShort
+    );
+    logger.debug("Adapter " + JSON.stringify(adapter));
+    let result = await adapterConn.getSubmoduleFromAdapter(adapter);
+    return result;
+  }
   export function initController(
     rC: AdapterRegistryConnector,
     aC: AdapterConnector

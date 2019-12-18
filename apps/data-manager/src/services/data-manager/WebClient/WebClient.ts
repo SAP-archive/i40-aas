@@ -1,7 +1,6 @@
 import * as logger from "winston";
 import Axios, { AxiosError, AxiosResponse, AxiosRequestConfig } from "axios";
 
-
 class WebClient {
   constructor() {}
 
@@ -24,24 +23,22 @@ class WebClient {
     return undefined;
   }
 
-  private makeURL(protocol:string,
-    host:string,
-    port:string,
-    suffix?:string){
-
-      return protocol+"://"+host+":"+port+suffix;
-    }
-
-
+  private makeURL(
+    protocol: string,
+    host: string,
+    port: string,
+    suffix?: string
+  ) {
+    return protocol + "://" + host + ":" + port + suffix;
+  }
 
   async getRequest<T>(
-    url:string,
+    url: string,
 
     param: string,
-    username: string,
-    password: string
+    username?: string,
+    password?: string
   ): Promise<AxiosResponse<T>> {
-
     logger.debug("Get request from " + url);
     logger.debug("param " + param);
     // logger.debug(
@@ -49,12 +46,11 @@ class WebClient {
     // JSON.stringify(this.getURLRequestConfig(param, username, password))
     // );
 
-  const response = await Axios.get<T>(
-    url,
-    this.getURLRequestConfig(param, username, password)
-  );
-  return response as AxiosResponse<T>;
-
+    const response = await Axios.get<T>(
+      url,
+      this.getURLRequestConfig(param, username, password)
+    );
+    return response as AxiosResponse<T>;
   }
 
   async postRequest<T>(
@@ -73,7 +69,7 @@ class WebClient {
         password: password as string
       }
     });
-    logger.debug("Adapter response "+ response.statusText)
+    logger.debug("Adapter response " + response.statusText);
     return response as AxiosResponse<T>;
   }
 }

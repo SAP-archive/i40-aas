@@ -48,5 +48,25 @@ export default [
         }
       }
     ]
+  },
+  {
+    path: "/submodels",
+    method: "get",
+    handler: [
+      async (req: Request, res: Response, next: NextFunction) => {
+        /**
+         * receive an array of Submodels and find the respective adapter for each submodel
+         to be forwarded 
+         */
+        if (!req.query.idShort) {
+          next(new HTTP400Error("Missing parameter idShort"));
+        } else {
+          let result = await RoutingController.getSubmodels({
+            idShort: req.query.idShort
+          });
+          res.status(200).end(JSON.stringify(result.data));
+        }
+      }
+    ]
   }
 ];
