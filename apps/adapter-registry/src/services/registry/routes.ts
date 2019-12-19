@@ -48,14 +48,14 @@ export default [
         try {
           logger.debug(" Requested to list adapters by submodelid");
           if (!req.query.submodelidshort) {
-            next(new HTTP422Error("No Submodel IdShort parameter given"));
+                    next(new HTTP422Error("No Submodel IdShort parameter given"));
           }
           var submodelId: string = req.query.submodelidshort;
           logger.debug(" Submodel id : " + submodelId);
 
           let adaptersArray = await readAdapterBySubmodelId(submodelId);
           logger.debug(
-            " Adapter that was found " + JSON.stringify(adaptersArray)
+                    " Adapter that was found " + JSON.stringify(adaptersArray)
           );
 
           res.json(adaptersArray);

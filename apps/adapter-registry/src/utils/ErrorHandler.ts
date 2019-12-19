@@ -22,7 +22,7 @@ export const clientError = (err: Error, res: Response, next: NextFunction) => {
   if (err instanceof HTTPClientError ) {
     logger.error("Client error "+err);
     res.status(err.statusCode).send(err.message);
-  } 
+  }
   else if (err instanceof SyntaxError){
     logger.error("Syntax error" + err);
     res.status(400).send(err.message);

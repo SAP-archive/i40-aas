@@ -7,7 +7,7 @@ class WebClient {
     private baseUrl: string,
     private userName?: string,
     private password?: string,
-    
+
   ) {}
 
   private auth(): AxiosRequestConfig {

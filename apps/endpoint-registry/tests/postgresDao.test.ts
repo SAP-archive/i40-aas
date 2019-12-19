@@ -117,7 +117,7 @@ describe('read endpoints from pg by frame with wrong role', function() {
 describe('delete registered enntries based on the aasId', function() {
   it('returns empty array', async function() {
 
-    let endpointsAssignment: IRegisterAas = { 
+    let endpointsAssignment: IRegisterAas = {
       "aasId": { "id": "https://foo-bar.com/aas", "idType": IdTypeEnum.URI },
       "endpoints": [{ "url": "https://foo-bar/ingress", "protocol": "httss", "protocolVersion": "1.1" }],
       "assetId": { "id": "https://foo-bar.com", "idType": IdTypeEnum.URI }
@@ -133,7 +133,7 @@ describe('delete registered enntries based on the aasId', function() {
 
   it('try to delete a non registered AAS', async function() {
 
-    let endpointsAssignment: IRegisterAas = { 
+    let endpointsAssignment: IRegisterAas = {
       "aasId": { "id": "https://foo-bar.com/aas", "idType": IdTypeEnum.URI },
       "endpoints": [{ "url": "https://foo-bar/ingress", "protocol": "httss", "protocolVersion": "1.1" }],
       "assetId": { "id": "https://foo-bar.com", "idType": IdTypeEnum.URI }

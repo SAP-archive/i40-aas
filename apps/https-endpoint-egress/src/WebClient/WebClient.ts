@@ -5,11 +5,11 @@ class WebClient {
   constructor() {}
 
   /**
-   * The GET Request Config for retrieving the Endpoint URLs from Registry
-   * @param param
-   * @param user
-   * @param pass
-   */
+  * The GET Request Config for retrieving the Endpoint URLs from Registry
+  * @param param
+  * @param user
+  * @param pass
+  */
   private getURLRequestConfig(
     param?: string,
     user?: string,

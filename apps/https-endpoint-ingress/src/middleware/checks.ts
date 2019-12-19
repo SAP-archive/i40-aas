@@ -11,7 +11,7 @@ export const validateInteractionFrame = (
 ) => {
     try {
       let interactionReq:Interaction = new Interaction(req.body);
-      
+
       //the required fields of the frame that should not be empty
       let semanticProtocol:string = interactionReq.frame.semanticProtocol;
       let receiverRole:string = interactionReq.frame.receiver.role.name;

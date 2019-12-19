@@ -122,7 +122,7 @@ class AssetRepositoryOnboardingSkill {
           //respond with not understood
           //apparently the client is trying to access a closed conversation
           logger.debug(
-            "This interaction refers to a previously closed conversation."
+                    "This interaction refers to a previously closed conversation."
           );
           this.messageDispatcher.replyNotUnderstood(message);
           return;
@@ -148,27 +148,27 @@ class AssetRepositoryOnboardingSkill {
         try {
           let stateClone = this.removeNonPersistentPartsOfState(state);
           const result = await this.dbClient.update(
-            {
-              _id: conversationId,
-              version: versionCounter++
-            }, //find by
-            {
-              //update these
-              serializedState: JSON.stringify(stateClone)
-            },
-            true //increment version
+                    {
+                    _id: conversationId,
+                    version: versionCounter++
+                    }, //find by
+                    {
+                    //update these
+                    serializedState: JSON.stringify(stateClone)
+                    },
+                    true //increment version
           );
           logger.debug("db updated:" + JSON.stringify(result));
           deferredMessageDispatcher.commit();
           if (fnOnTransitionDone) fnOnTransitionDone(state);
         } catch (error) {
           logger.error(
-            "The database cannot be written to. More specific:" + error.message
+                    "The database cannot be written to. More specific:" + error.message
           );
           logger.error(error.stack);
           //only respond to external trigger (once)
           if (state.event.type === event)
-            this.messageDispatcher.replyError(message);
+                    this.messageDispatcher.replyError(message);
           if (fnOnTransitionError) fnOnTransitionError(state);
         }
       });

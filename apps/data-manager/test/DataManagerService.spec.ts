@@ -52,7 +52,7 @@ describe("the server", async function() {
         chai.expect(res.text).to.eql("Server Up!");
       });
   });
-  
+
   it("Should return a 401 if basic auth credentials false", done => {
     chai
       .request(app)
@@ -77,20 +77,20 @@ describe("the server", async function() {
         embeddedDataSpecifications: [],
         semanticId: {
           keys: [
-            {
-              idType: "URI",
-              type: "GlobalReference",
-              value:
-                "opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/",
-              local: false
-            }
+                    {
+                    idType: "URI",
+                    type: "GlobalReference",
+                    value:
+                    "opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/",
+                    local: false
+                    }
           ]
         },
         kind: "Instance",
         descriptions: [],
         identification: {
           id:
-            "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22",
+                    "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22",
           idType: "URI"
         },
         modelType: {

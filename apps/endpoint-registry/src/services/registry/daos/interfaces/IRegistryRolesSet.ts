@@ -21,7 +21,7 @@ class RegistryAssignRolesResultSet implements IRegistryAssignRolesResultSet {
   }
 }
 class CreateRoleResultSet implements ICreateRoleResultSet {
-   public roleId: string;
+  public roleId: string;
     public semanticProtocol: string;
 
   constructor(aasId: string, semanticProtocol: string) {

@@ -18,7 +18,7 @@ process.on("uncaughtException", e => {
     logger.error("uncaughtException " +e);
     process.exit(1);
   });
-  
+
   process.on("unhandledRejection", e => {
     logger.error("Unhandled rejection  " +e);
     process.exit(1);
@@ -29,6 +29,3 @@ const PORT = 4500 ;
 const server = http.createServer(router);
 
 server.listen(PORT, () => logger.info(`A St. Adapter Registry Service is running http://localhost:${PORT}...`));
-
-
-

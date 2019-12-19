@@ -73,12 +73,12 @@ class AmqpClient implements IMessageBrokerClient {
           logger.info("reconnecting. Call count:" + AmqpClient.retryCounter++);
           //TODO: recursion, watch out for stack overflow
           AmqpClient.doConnection(
-            cb,
-            user,
-            pass,
-            ampqUrl,
-            myConn,
-            brokerExchange
+                    cb,
+                    user,
+                    pass,
+                    ampqUrl,
+                    myConn,
+                    brokerExchange
           );
           return;
         }
@@ -89,31 +89,31 @@ class AmqpClient implements IMessageBrokerClient {
         //if (myConn.subscription) {
         conn.on("close", async function() {
           logger.error(
-            "[AMQP] connection lost, reconnecting. Time:" +
-              (Date.now() - AmqpClient.start)
+                    "[AMQP] connection lost, reconnecting. Time:" +
+                    (Date.now() - AmqpClient.start)
           );
           myConn.connectionClosed = true;
           AmqpClient.connectAndDoSubscription(
-            brokerExchange,
-            myConn,
-            user,
-            pass,
-            ampqUrl,
-            () => {
-              AmqpClient.doSetupPublishing(
-                user,
-                pass,
-                brokerExchange,
-                ampqUrl,
-                myConn
-              );
-            }
+                    brokerExchange,
+                    myConn,
+                    user,
+                    pass,
+                    ampqUrl,
+                    () => {
+                    AmqpClient.doSetupPublishing(
+                    user,
+                    pass,
+                    brokerExchange,
+                    ampqUrl,
+                    myConn
+                    );
+                    }
           );
           logger.info(
-            "Successfully connected after drop count:" +
-              ++AmqpClient.successCounter +
-              ". Time:" +
-              (Date.now() - AmqpClient.start)
+                    "Successfully connected after drop count:" +
+                    ++AmqpClient.successCounter +
+                    ". Time:" +
+                    (Date.now() - AmqpClient.start)
           );
         });
         //}
@@ -170,39 +170,39 @@ class AmqpClient implements IMessageBrokerClient {
 
         if (myConn.subscription) {
           myConn.subscription.topicsArray.forEach(function(topic) {
-            logger.info(
-              "Listener started. Waiting for messages in " +
-                q.queue +
-                " for topic " +
-                topic +
-                ". Call count: " +
-                ++AmqpClient.listenerCounter
-            );
+                    logger.info(
+                    "Listener started. Waiting for messages in " +
+                    q.queue +
+                    " for topic " +
+                    topic +
+                    ". Call count: " +
+                    ++AmqpClient.listenerCounter
+                    );
 
-            logger.info("[AMQP] Binding with key: " + topic);
+                    logger.info("[AMQP] Binding with key: " + topic);
 
-            ch.bindQueue(q.queue, brokerExchange, topic);
+                    ch.bindQueue(q.queue, brokerExchange, topic);
           });
         } else {
           logger.error(
-            "Attempting to set up a subscription even though none was provided."
+                    "Attempting to set up a subscription even though none was provided."
           );
         }
         ch.consume(
           q.queue,
           function(msg: ConsumeMessage | null) {
-            if (msg === null) {
-              throw Error("Null message received!");
-            }
-            if (myConn.subscription) {
-              myConn.subscription.messageReceiver.receive(
-                msg.content.toString()
-              );
-            } else {
-              logger.error(
-                "Attempting to set up a subscription even though none was provided."
-              );
-            }
+                    if (msg === null) {
+                    throw Error("Null message received!");
+                    }
+                    if (myConn.subscription) {
+                    myConn.subscription.messageReceiver.receive(
+                    msg.content.toString()
+                    );
+                    } else {
+                    logger.error(
+                    "Attempting to set up a subscription even though none was provided."
+                    );
+                    }
           },
           { noAck: true }
         );

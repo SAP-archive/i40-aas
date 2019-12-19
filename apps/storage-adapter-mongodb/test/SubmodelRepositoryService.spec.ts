@@ -36,7 +36,7 @@ function getProperty(idShort: string, value: string | undefined): Property {
           idType: IdTypeEnum.URI,
           type: KeyElementsEnum.Submodel,
           value:
-            "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22",
+                    "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22",
           local: true
         }
       ]
@@ -61,7 +61,7 @@ function getSubmodel(properties: Property[]): Submodel {
           idType: IdTypeEnum.URI,
           type: KeyElementsEnum.GlobalReference,
           value:
-            "opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/",
+                    "opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/",
           local: false
         }
       ]

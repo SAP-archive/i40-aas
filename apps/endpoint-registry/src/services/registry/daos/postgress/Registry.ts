@@ -69,10 +69,10 @@ class Registry implements iRegistry {
         const insertEndpointResult = await this.client.query(
           'INSERT INTO public.endpoints( "URL", protocol_name, protocol_version, "aasId") VALUES ($1, $2, $3, $4);',
           [
-            endpoint.url,
-            endpoint.protocol,
-            endpoint.protocolVersion,
-            record.aasId.id
+                    endpoint.url,
+                    endpoint.protocol,
+                    endpoint.protocolVersion,
+                    record.aasId.id
           ]
         );
       });
@@ -196,18 +196,18 @@ class Registry implements iRegistry {
         endpointRecords.rows.forEach((endpointRecord: IEndpointRecord) => {
           console.log(endpointRecord);
           var endpoint: IEndpoint = new Endpoint(
-            endpointRecord.URL,
-            endpointRecord.protocol_name,
-            endpointRecord.protocol_version
+                    endpointRecord.URL,
+                    endpointRecord.protocol_name,
+                    endpointRecord.protocol_version
           );
           console.log(endpoint);
           endpoints.push(endpoint);
         });
         return [
           new RegistryResultSet(
-            { id: aasRecord.aasId, idType: aasRecord.idType },
-            endpoints,
-            { id: "123", idType: IdTypeEnum.Custom }
+                    { id: aasRecord.aasId, idType: aasRecord.idType },
+                    endpoints,
+                    { id: "123", idType: IdTypeEnum.Custom }
           )
         ];
       } else {
@@ -241,23 +241,23 @@ class Registry implements iRegistry {
       queryResultRows.forEach(function(row: IJointRecord) {
         if (!recordsByAasId[row.aasId]) {
           recordsByAasId[row.aasId] = new RegistryResultSet(
-            { id: row.aasId, idType: (<any>IdTypeEnum)[row.aasIdType] },
-            [
-              new Endpoint(
-                row.URL,
-                row.protocol_name,
-                row.protocol_version
-              )
-            ],
-            { id: row.assetId, idType: (<any>IdTypeEnum)[row.assetIdType] }
+                    { id: row.aasId, idType: (<any>IdTypeEnum)[row.aasIdType] },
+                    [
+                    new Endpoint(
+                    row.URL,
+                    row.protocol_name,
+                    row.protocol_version
+                    )
+                    ],
+                    { id: row.assetId, idType: (<any>IdTypeEnum)[row.assetIdType] }
           );
         } else {
           recordsByAasId[row.aasId].endpoints.push(
-            new Endpoint(
-              row.URL,
-            row.protocol_name,
-              row.protocol_version
-            )
+                    new Endpoint(
+                    row.URL,
+                    row.protocol_name,
+                    row.protocol_version
+                    )
           );
         }
       });
@@ -276,7 +276,7 @@ class Registry implements iRegistry {
       var s = `SELECT "aasId", "URL", "protocol_name", "protocol_version", "roleId"
       FROM (SELECT *
           FROM public.aas_role
-              INNER JOIN public.asset_administration_shells
+                    INNER JOIN public.asset_administration_shells
       USING ("aasId")
           ) as res
       INNER JOIN public.endpoints
@@ -288,23 +288,23 @@ class Registry implements iRegistry {
       queryResultRows.forEach(function(row: IJointRecord) {
         if (!recordsByAasId[row.aasId]) {
           recordsByAasId[row.aasId] = new RegistryResultSet(
-            { id: row.aasId, idType: (<any>IdTypeEnum)[row.aasIdType] },
-            [
-              new Endpoint(
-                row.URL,
-                row.protocol_name,
-                row.protocol_version
-              )
-            ],
-            { id: row.assetId, idType: (<any>IdTypeEnum)[row.assetIdType] }
+                    { id: row.aasId, idType: (<any>IdTypeEnum)[row.aasIdType] },
+                    [
+                    new Endpoint(
+                    row.URL,
+                    row.protocol_name,
+                    row.protocol_version
+                    )
+                    ],
+                    { id: row.assetId, idType: (<any>IdTypeEnum)[row.assetIdType] }
           );
         } else {
           recordsByAasId[row.aasId].endpoints.push(
-            new Endpoint(
-              row.URL,
-              row.protocol_name,
-              row.protocol_version
-            )
+                    new Endpoint(
+                    row.URL,
+                    row.protocol_name,
+                    row.protocol_version
+                    )
           );
         }
       });

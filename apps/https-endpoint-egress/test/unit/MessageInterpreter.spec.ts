@@ -40,21 +40,21 @@ describe("validation process", function() {
         messageId: "messageId",
         receiver: {
           identification: {
-            id: "receiver-id",
-            idType: "idType"
+                    id: "receiver-id",
+                    idType: "idType"
           },
           role: {
-            name: "central-asset-repository"
+                    name: "central-asset-repository"
           }
         },
         semanticProtocol: "semprot",
         sender: {
           identification: {
-            id: "sender-id",
-            idType: "idType"
+                    id: "sender-id",
+                    idType: "idType"
           },
           role: {
-            name: "operator"
+                    name: "operator"
           }
         },
         conversationId: "conversationId"
@@ -83,7 +83,7 @@ describe("validation process", function() {
     sinon.assert.calledOnce(fakeapplyEvent);
   });
 
- 
+
 
   it("handles the situation where the receiver id or role are missing", async function() {
     let message = <InteractionMessage>{
@@ -92,17 +92,17 @@ describe("validation process", function() {
         messageId: "messageId",
         receiver: {
           identification: {
-            id: "receiver-id",
-            idType: "idType"
+                    id: "receiver-id",
+                    idType: "idType"
           },
           role: {
-            name: "central-asset-repository"
+                    name: "central-asset-repository"
           }
         },
         semanticProtocol: "semprot",
         sender: {
           identification: {
-            idType: "idType"
+                    idType: "idType"
           }
         },
         conversationId: "conversationId"

@@ -32,7 +32,7 @@ class SapMqttClient implements IMessageBrokerClient {
       this.client.on("connect", function() {
         that.client.subscribe(subscriptionTopic, function(err) {
           if (err) {
-            throw new Error("Error receiving message");
+                    throw new Error("Error receiving message");
           }
           logger.debug("mqtt client subscribed to " + subscriptionTopic);
         });

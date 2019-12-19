@@ -2,7 +2,7 @@ const { Pool } = require("pg");
 const genericPool = require("generic-pool");
 import { Registry } from "./AdapterRegistryLocal";
 import * as logger from "winston";
- 
+
 
 class RegistryFactory {
 

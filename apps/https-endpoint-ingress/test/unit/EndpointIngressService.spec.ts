@@ -57,26 +57,26 @@ describe('the server', async function() {
     chai.request(app).post('/interaction')
     .auth('foo', 'bar')
     .send({
-       "id": 234242,
-       "data":{
+      "id": 234242,
+      "data":{
         "displayname":"name",
-         "avatar":"displayname"
+        "avatar":"displayname"
         }
       })
     .then((res:any) => {
-      chai.expect(res.status).to.eql(401);// expression which will be true if response status equal to 200 
+      chai.expect(res.status).to.eql(401);// expression which will be true if response status equal to 200
       done();
     });
   });
-  
+
   it('Should return a 200 if no errors are encountered and if interaction message successfully forwarded to broker', (done) => {
       chai.request(app).post('/interaction')
       .auth(INGRESS_ADMIN_USER, INGRESS_ADMIN_PASS)
       .set("content-type", "application/json")
       .send(interaction)
       .then((res:any) => {
-        //chai.assert(res.body.displayname).to.eql('name'); // assertion expression which will be true if "displayname" equal to "name" 
-        chai.expect(res.status).to.eql(200);// expression which will be true if response status equal to 200 
+        //chai.assert(res.body.displayname).to.eql('name'); // assertion expression which will be true if "displayname" equal to "name"
+        chai.expect(res.status).to.eql(200);// expression which will be true if response status equal to 200
         done();
       });
     });
@@ -105,7 +105,7 @@ describe('the server', async function() {
     });
 
     it("will give a 422 response if the receiver role is missing", async function() {
-      
+
       let request = {
         "frame":
         {
@@ -115,16 +115,16 @@ describe('the server', async function() {
           "replyBy": 29993912,
           "receiver": {
           },
-          "sender": { 
-            "identification": {
-            "id":  "https://i40-test-aas-server.cfapps.eu10.hana.ondemand.com/aas",
-            "idType": "URI"
+          "sender": {
+                    "identification": {
+                    "id":  "https://i40-test-aas-server.cfapps.eu10.hana.ondemand.com/aas",
+                    "idType": "URI"
           }
-            ,"role":{"name":"Operator" }
+                    ,"role":{"name":"Operator" }
           },
           "conversationId": "Foo_Conv_ID_000"
         },"interactionElements": [] };
-      
+
       return chai
         .request(app)
         .post("/interaction")

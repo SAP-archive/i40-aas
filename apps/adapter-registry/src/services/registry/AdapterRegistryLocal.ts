@@ -16,7 +16,7 @@ import * as logger from "winston";
 class AdapterRegistryLocal implements IAdapterRegistry {
 
 
-  
+
   async clearAll(): Promise<void> {
     try {
       await this.storage.clear();
