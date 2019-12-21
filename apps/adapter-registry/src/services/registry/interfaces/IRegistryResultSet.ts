@@ -16,32 +16,38 @@ class AdapterAssignmentResultSet implements IAdapterAssignmentResultSet {
 }
 
 class SubmodelEntry implements ISubmodelEntry {
-  submodelIdShort: string;
+  submodelId: string;
+  submodelSemanticId: string;
 
-  constructor(IdShort: string) {
-    this.submodelIdShort = IdShort;
+  constructor(submodelId: string, submodelSemanticId: string ) {
+    this.submodelId = submodelId;
+    this.submodelSemanticId = submodelSemanticId;
   }
 }
 
 class Adapter implements IStorageAdapter {
   //the submodel that the adapter can handle
-  submodelId?: string;
-  public adapterId?: string;
+  submodelId: string;
+  public adapterId: string;
   public name?: string;
   public url?: string;
+  submodelSemanticId?: string;
 
-  constructor();
 
   constructor(
-    adapterId?: string,
+    adapterId: string,
+    submodelId: string,
+    submodelSemanticId?: string,
     url?: string,
     name?: string,
-    submodelId?: string
+
+
   ) {
     this.url = url;
     this.adapterId = adapterId;
     this.name = name;
     this.submodelId = submodelId;
+    this.submodelSemanticId = submodelSemanticId;
   }
 }
 
