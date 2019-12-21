@@ -4,10 +4,11 @@ import { Identifier } from 'i40-aas-objects';
 
 interface IAdapterRegistry {
   readAdapterRecordByID(adapterId: Identifier): Promise<Array<IAdapterAssignmentResultSet>>;
-  registerAdapter(req: ICreateAdapter): Promise<IAdapterAssignmentResultSet>;
+  createAdapter(req: ICreateAdapter): Promise<IAdapterAssignmentResultSet>;
   updateAdapter(req: ICreateAdapter): Promise<IAdapterAssignmentResultSet>;
   deleteAdapterByAdapterID(aasId: Identifier): Promise<void>;
   getAdapterBySubmodelId(submodelId: string): Promise<IStorageAdapter>;
+  getAdapterBySubmodelSemanticId(submodelId: string): Promise<IStorageAdapter>;
   listAllSubmodels(): Promise<Array<IAdapterAssignmentResultSet>>;
   release(): void;
   clearAll(): Promise<void>;

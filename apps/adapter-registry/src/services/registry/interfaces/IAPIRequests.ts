@@ -9,12 +9,16 @@ interface IRegisterAdapterAssignment {
 
 
 interface ICreateAdapter {
-  submodelIdShort?: string;
+  submodelId?: string;
+  submodelSemanticId?: string;
+
   adapter: Adapter;
 }
 
 interface ICreateSubmodelEntry {
   submodelId: Identifier;
+  submodelSemanticId?: string;
+
 }
 
 export { IRegisterAdapterAssignment, ICreateAdapter, ICreateSubmodelEntry };

@@ -1,9 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { Frame } from "i40-aas-objects";
 import {
-  readAdapterBySubmodelId,
-  register,
-  clearAllEntries
+  clearAllEntries,
+  getAdapterBysubmodelSemanticId,
+  getAdapterBySubmodelId,
+  createAdapter
 } from "./registry-api";
 import { IdTypeEnum } from "i40-aas-objects";
 import * as logger from "winston";
@@ -13,10 +14,11 @@ import {
   HTTP422Error
 } from "../../utils/httpErrors";
 import { IRegisterAdapterAssignment } from "./interfaces/IAPIRequests";
+import { create } from "domain";
 
 export default [
   {
-    path: "/register",
+    path: "/adapters",
     method: "post",
     handler: async (req: Request, res: Response) => {
       var adaptersAssignmentArray: IRegisterAdapterAssignment[] = req.body;
@@ -24,12 +26,14 @@ export default [
         " Register request received num of adapters " +
           adaptersAssignmentArray.length
       );
-//store each adapter to registry
+      //store each adapter to registry
       adaptersAssignmentArray.forEach(async aas => {
         try {
-          logger.debug(" initiate register of " + aas.adapter.adapterId);
+          logger.debug(
+            " registering of the adapter with ID: " + aas.adapter.adapterId
+          );
 
-          await register(aas);
+          await createAdapter(aas);
         } catch (e) {
           logger.error(" Error while registering adapter " + e);
 
@@ -47,18 +51,23 @@ export default [
       async (req: Request, res: Response, next: NextFunction) => {
         try {
           logger.debug(" Requested to list adapters by submodelid");
-          if (!req.query.submodelidshort) {
-            next(new HTTP422Error("No Submodel IdShort parameter given"));
+          if (req.query.submodelid) { 
+            var submodelId: string = req.query.submodelid;
+            logger.debug("Submodel id : " + submodelId);
+            let adaptersArray = await getAdapterBySubmodelId(submodelId);
+            res.json(adaptersArray);
           }
-          var submodelId: string = req.query.submodelidshort;
-          logger.debug(" Submodel id : " + submodelId);
+          else if(req.query.submodelSemanticId){
+            var submodelSemanticId: string = req.query.submodelSemanticId;
+            logger.debug("Submodel id : " + submodelSemanticId);
+            let adaptersArray = await getAdapterBysubmodelSemanticId(submodelSemanticId);
+            res.json(adaptersArray);
+          }
+          else{
+            next(new HTTP422Error("No parameter given at request"))
+          }
+         
 
-          let adaptersArray = await readAdapterBySubmodelId(submodelId);
-          logger.debug(
-            " Adapter that was found " + JSON.stringify(adaptersArray)
-          );
-
-          res.json(adaptersArray);
         } catch (e) {
           console.log(e);
           next(Error(" Internal Server Error"));
@@ -68,7 +77,7 @@ export default [
   },
 
   {
-    path: "/clear",
+    path: "/adapters",
     method: "delete",
     handler: async (req: Request, res: Response) => {
       var adaptersAssignmentArray: IRegisterAdapterAssignment[] = req.body;

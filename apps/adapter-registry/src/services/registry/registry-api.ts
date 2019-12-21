@@ -14,19 +14,19 @@ import { IRegisterAdapterAssignment } from "./interfaces/IAPIRequests";
 const dotenv = require("dotenv");
 dotenv.config();
 
-
 /**
  * Register a storage adapter with its submodel assignment
  */
-async function register(
+async function createAdapter(
   req: IRegisterAdapterAssignment
 ): Promise<IAdapterAssignmentResultSet> {
   var registryDao: IAdapterRegistry = await RegistryFactory.getRegistryLocal();
 
   try {
-    var result = await registryDao.registerAdapter(req);
-    console.log('Adapter %s for submodel with ID %s was stored in registry'
-    ,req.adapter.adapterId, req.submodel.submodelIdShort);
+    var result = await registryDao.createAdapter(req);
+    logger.info(
+      `Adapter ${req.adapter.adapterId} for submodel with ID ${req.submodel.submodelId} was stored in registry`
+    );
   } catch (e) {
     throw e;
   }
@@ -34,20 +34,32 @@ async function register(
   return result;
 }
 
-async function readAdapterBySubmodelId(
-  idShort: string
+async function getAdapterBySubmodelId(
+  submodelId: string
 ): Promise<IStorageAdapter> {
   var registryDao: IAdapterRegistry = await RegistryFactory.getRegistryLocal();
   try {
-    var result = await registryDao.getAdapterBySubmodelId(idShort);
+    var result = await registryDao.getAdapterBySubmodelId(submodelId);
+    return result;
+  } catch (e) {
+    throw e;
+  }
+}
+async function getAdapterBysubmodelSemanticId(
+  submodelSemanticId: string
+): Promise<IStorageAdapter> {
+  var registryDao: IAdapterRegistry = await RegistryFactory.getRegistryLocal();
+  try {
+    var result = await registryDao.getAdapterBySubmodelSemanticId(
+      submodelSemanticId
+    );
     return result;
   } catch (e) {
     throw e;
   }
 }
 
-async function clearAllEntries(
-  ): Promise<string> {
+async function clearAllEntries(): Promise<string> {
   var registryDao: IAdapterRegistry = await RegistryFactory.getRegistryLocal();
   try {
     var result = await registryDao.clearAll();
@@ -57,6 +69,8 @@ async function clearAllEntries(
   return "OK";
 }
 
-
-
-export { readAdapterBySubmodelId, register, clearAllEntries };
+export {
+  getAdapterBySubmodelId, getAdapterBysubmodelSemanticId,
+  createAdapter,
+  clearAllEntries
+};
