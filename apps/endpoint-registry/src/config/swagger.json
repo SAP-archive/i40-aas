@@ -1,0 +1,40 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "version": "1.0.0"
+    },
+    "host": "localhost:4000",
+    "basePath": "/",
+    "schemes": ["http"],
+    "produces": ["application/json"],
+    "paths": {
+      "/data-manager/aas": {
+        "post": {
+          "tags": ["Forward AAS request to Storage Adapter"],
+          "summary": "Forward an Submodel of AAS to a storage adapter service for handling",
+          "requestBody": {
+            "description" : "Optional description in *Markdown* ",
+            "required": true,
+            "content":{
+                "application/json" : {
+                    "schema" : {
+                        "$ref": "https://github.wdf.sap.corp/IoTInnovation/aas-objects/blob/master/schema.json#/submodels"
+                    }
+                }
+            } 
+          },
+          
+          "responses": {
+            "200": {
+              "description": "OK"
+            },
+            "400": {
+              "description": "Bad request"
+            }
+          }
+         
+        }
+      }
+    }
+  
+  }

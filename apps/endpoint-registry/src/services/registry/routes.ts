@@ -16,7 +16,7 @@ import { RegistryError } from "../../utils/RegistryError";
 import { ICreateRole, IAssignRoles, IRegisterAas } from "./daos/interfaces/IApiRequests";
 export default [
   {
-    path: "/register",
+    path: "/assetadministrationshells",
     method: "post",
     handler: async (req: Request, res: Response) => {
       console.log("try to register sth.");
@@ -34,7 +34,7 @@ export default [
     }
   },
   {
-    path: "/createroles",
+    path: "/roles",
     method: "post",
     handler: async (req: Request, res: Response) => {
       console.log("try to create a role");
@@ -50,7 +50,7 @@ export default [
     }
   },
   {
-    path: "/assignroles",
+    path: "/roleassignment",
     method: "post",
     handler: async (req: Request, res: Response) => {
       console.log("try to create a role assignment to AAS");
@@ -66,7 +66,7 @@ export default [
     }
   },
   {
-    path: "/createsemanticprotocol",
+    path: "/semanticprotocol",
     method: "post",
     handler: async (req: Request, res: Response) => {
       console.log("try to create a semantic protocol");
@@ -78,26 +78,7 @@ export default [
     }
   },
   {
-    path: "/read",
-    method: "get",
-    handler: async (req: Request, res: Response) => {
-      try {
-        var idType: IdTypeEnum = IdTypeEnum["Custom"];
-        if (req.query.idType) {
-          idType = (<any>IdTypeEnum)[req.query.idType];
-        }
-        res.json(
-          await readRecordByIdentifier({ id: req.query.id, idType: idType })
-        );
-      } catch (e) {
-        console.log(e);
-        res.statusCode = e.r_statusCode || 500;
-        res.end(JSON.stringify(e));
-      }
-    }
-  },
-  {
-    path: "/assetadministrationshell",
+    path: "/assetadministrationshells",
     method: "delete",
     handler: async (req: Request, res: Response) => {
       try {
@@ -116,7 +97,7 @@ export default [
     }
   },
   {
-    path: "/endpoints",
+    path: "/assetadministrationshells",
     method: "get",
     handler: async (req: Request, res: Response) => {
       try {
