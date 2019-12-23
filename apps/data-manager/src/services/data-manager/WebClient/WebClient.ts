@@ -5,14 +5,15 @@ class WebClient {
   constructor() {}
 
   private getURLRequestConfig(
-    param?: string,
+    paramName?:string,
+    paramValue?: string,
     user?: string,
     pass?: string
   ): AxiosRequestConfig | undefined {
-    if (param && user && pass) {
+    if (paramName && user && pass) {
       return {
         params: {
-          submodelidshort: param
+          paramName: paramValue
         },
         auth: {
           username: user,
@@ -23,32 +24,21 @@ class WebClient {
     return undefined;
   }
 
-  private makeURL(
-    protocol: string,
-    host: string,
-    port: string,
-    suffix?: string
-  ) {
-    return protocol + "://" + host + ":" + port + suffix;
-  }
+
 
   async getRequest<T>(
     url: string,
-
+paramName: string,
     param: string,
-    username?: string,
-    password?: string
+    username: string,
+    password: string
   ): Promise<AxiosResponse<T>> {
     logger.debug("Get request from " + url);
     logger.debug("param " + param);
-    // logger.debug(
-    // "req config " +
-    // JSON.stringify(this.getURLRequestConfig(param, username, password))
-    // );
 
     const response = await Axios.get<T>(
       url,
-      this.getURLRequestConfig(param, username, password)
+      this.getURLRequestConfig(paramName, param, username, password)
     );
     return response as AxiosResponse<T>;
   }
