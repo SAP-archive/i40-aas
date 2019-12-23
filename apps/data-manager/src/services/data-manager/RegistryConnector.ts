@@ -24,13 +24,22 @@ class AdapterRegistryConnector {
     this.adapter_reg_pass = adapter_reg_pass;
   }
 
-  //get the URL of the adapter from the Adapter registry
+
+  /**
+   * get the URL of the adapter from the Adapter registry. There are two ways to get the adapter from
+   * Adapter Registry, one using param: ?submodelId= interactionElements.identification.id and one with
+   * semanticId=<submodel.semanticId.keys[0].value
+   * @param regRequestParamName the name of the request parameter (submodelId or semanticId )
+   * @param submodelIdentification the value passed
+   */
   async getAdapterFromRegistry(
-    submodelIdShort: string
+    regRequestParamName: string,
+    submodelIdentification: string
   ): Promise<IStorageAdapter> {
-    var regResponse = await this.webClient.getRequest(
+    var regResponse = await this.webClient.getAdapterFromRegRequest(
       this.registryGETAdaptersURL.href,
-      submodelIdShort,
+      regRequestParamName,
+      submodelIdentification,
       this.adapter_reg_user,
       this.adapter_reg_pass
     );
@@ -40,7 +49,7 @@ class AdapterRegistryConnector {
 
     if(adapter.url){
           logger.debug(
-      `The submodel with id ${submodelIdShort}, will be routed to ${adapter.url}`
+      `The submodel with id ${submodelIdentification}, will be routed to ${adapter.url}`
     );
     return adapter;
     }

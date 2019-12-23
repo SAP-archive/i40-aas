@@ -55,16 +55,25 @@ export default [
     handler: [
       async (req: Request, res: Response, next: NextFunction) => {
         /**
-        * receive an array of Submodels and find the respective adapter for each submodel
-        to be forwarded
-        */
-        if (!req.query.idShort) {
-          next(new HTTP400Error("Missing parameter idShort"));
-        } else {
-          let result = await RoutingController.getSubmodels({
-                    idShort: req.query.idShort
-          });
+         * receive an array of Submodels and find the respective adapter for each submodel
+         to be forwarded
+         */
+	if (req.query.id) {
+	  let result = await RoutingController.getSubmodels(
+	    "submodelid", req.query.id
+	  );
+	  res.status(200).end(JSON.stringify(result.data));
+	}
+	 else if(req.query.semanticId) {
+	  let result = await RoutingController.getSubmodels(
+	    "semanticId", req.query.semanticId
+	  );
           res.status(200).end(JSON.stringify(result.data));
+
+	}
+	else{
+	  next(new HTTP400Error("Missing query parameter"));
+
         }
       }
     ]
