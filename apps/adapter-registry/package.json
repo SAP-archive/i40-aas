@@ -26,7 +26,9 @@
     "dotenv": "^8.1.0",
     "pg": "^7.11.0",
     "swagger-ui-express": "^4.1.2",
-    "winston": "^3.2.1"
+    "winston": "^3.2.1",
+    "@types/sinon": "^7.0.13",
+    "sinon": "^7.5.0"
   },
   "devDependencies": {
     "axios": "^0.19.0",
@@ -34,7 +36,6 @@
     "@types/dotenv": "^6.1.1",
     "@types/mocha": "^5.2.7",
     "@types/compression": "0.0.36",
-    "@types/sinon": "^7.0.13",
     "chai-http": "^4.3.0",
     "@types/chai-as-promised": "^7.1.0",
     "@types/cors": "^2.8.5",

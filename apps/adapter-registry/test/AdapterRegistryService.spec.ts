@@ -1,7 +1,9 @@
-import sinon from "sinon";
 import chaiHttp = require("chai-http");
+import sinon from "sinon";
+
 import Axios, { AxiosError } from "axios";
 
+const registryAPI = require("../src/services/registry/registry-api");
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -21,6 +23,9 @@ chai.should();
 
 describe("the adapter service", async function() {
 
+  afterEach(function() {
+    sinon.restore();
+  });
 
   it("should return a 'Server Up' response on call to /health", () => {
     return chai
@@ -49,15 +54,14 @@ describe("the adapter service", async function() {
       });
   });
 
-  it("will give a 422 response if the submodelId or  is missing", () => {
+  it("will give a 422 response if the adapterId is missing", () => {
     let adapterRequest = [
       {
-          "adapter": {
             "url":"http://i40-aas-storage-adapter-mongodb:3100/submodels",
             "name":"mongo-adapter",
           "submodelId": "opc-ua-devices",
           "submodelSemanticId": "opc-ua-devices-semantic"
-          }
+          
       }
     ];
 
@@ -71,22 +75,53 @@ describe("the adapter service", async function() {
         chai.expect(res).to.have.status(422);
       });
   });
-/*
-  it("will give a 400 response if the input is not parseable", function() {
+  it("will give a 422 response if the submodelId and semanticId are missing", () => {
+    let adapterRequest = [
+      {
+            "adapterId": "AdaptUniqueId",
+            "url":"http://i40-aas-storage-adapter-mongodb:3100/submodels",
+            "name":"mongo-adapter"
+          
+      }
+    ];
+
     return chai
       .request(app)
-      .post("/submodels")
+      .post("/adapters")
       .auth(ADAPTER_REGISTRY_ADMIN_USER, ADAPTER_REGISTRY_ADMIN_PASSWORD)
       .set("content-type", "application/json")
-      .send(submodelsRequest + "xx")
+      .send(adapterRequest)
+      .then(function(res: any) {
+        chai.expect(res).to.have.status(422);
+      });
+  });
+
+  it("will give a 400 response if the input is not parseable", function() {
+    
+    let adapterRequest = [
+      {
+            "url":"http://i40-aas-storage-adapter-mongodb:3100/submodels",
+            "name":"mongo-adapter",
+          "submodelId": "opc-ua-devices",
+          "submodelSemanticId": "opc-ua-devices-semantic"
+      }
+    ];
+    
+    return chai
+      .request(app)
+      .post("/adapters")
+      .auth(ADAPTER_REGISTRY_ADMIN_USER, ADAPTER_REGISTRY_ADMIN_PASSWORD)
+      .set("content-type", "application/json")
+      .send(adapterRequest + "xx")
       .then(function(res: any) {
         chai.expect(res).to.have.status(400);
       });
   });
+  
   it("will give a 400 response if request body empty", () => {
     return chai
       .request(app)
-      .post("/submodels")
+      .post("/adapters")
       .auth(ADAPTER_REGISTRY_ADMIN_USER, ADAPTER_REGISTRY_ADMIN_PASSWORD)
       .set("content-type", "application/json")
       .send("")
@@ -95,26 +130,35 @@ describe("the adapter service", async function() {
       });
   });
 
-  it("Should return a 200 if no errors are encountered and if submodel forwarded to adapter", done => {
-    sinon.replace(
-      RoutingController,
-      "routeSubmodel",
-      sinon.fake.resolves({ status: 200 })
-    );
+  it("Should return a 200 if no errors are encountered and if adapter is created", done => {
+    
+        
+    let adapterRequest = [
+      {
+            "adapterId": "AdaptUniqueId",
+            "url":"http://i40-aas-storage-adapter-mongodb:3100/submodels",
+            "name":"mongo-adapter",
+          "submodelId": "opc-ua-devices",
+          "submodelSemanticId": "opc-ua-devices-semantic"
+          
+      }
+    ];
 
+    sinon.stub(registryAPI, 'createAdapter').resolves({ status: 200 });
+    
     chai
       .request(app)
-      .post("/submodels")
+      .post("/adapters")
       .auth(ADAPTER_REGISTRY_ADMIN_USER, ADAPTER_REGISTRY_ADMIN_PASSWORD)
       .set("content-type", "application/json")
-      .send(submodelsRequest)
+      .send(adapterRequest)
       .then((res: any) => {
-        //chai.assert(res.body.displayname).to.eql('name'); // assertion expression which will be true if "displayname" equal to "name"
         chai.expect(res.status).to.eql(200); // expression which will be true if response status equal to 200
         sinon.restore();
         done();
       });
   });
+  /*
   it("Should return a 500 Error if the router could not forward the submodel to the adapter", done => {
     sinon.replace(
       RoutingController,

@@ -16,6 +16,7 @@ import {
 import { create } from "domain";
 import { ICreateAdapter } from "./interfaces/IAPIRequests";
 import { checkReqBodyEmpty, validateCreateAdaptersRequest } from "../../middleware/checks";
+import { runInNewContext } from "vm";
 
 export default [
   {
@@ -23,7 +24,7 @@ export default [
     method: "post",
     handler:[      checkReqBodyEmpty,
       validateCreateAdaptersRequest,
-       async (req: Request, res: Response) => {
+       async (req: Request, res: Response, next: NextFunction) => {
       var adaptersAssignmentArray: ICreateAdapter[] = req.body;
       logger.info(
         " Register request received num of adapters " +
@@ -33,17 +34,17 @@ export default [
       adaptersAssignmentArray.forEach(async aas => {
         try {
           logger.debug(
-            " registering of the adapter with ID: " + aas.adapter.adapterId
+            " registering of the adapter with ID: " + aas.adapterId
           );
 
           await createAdapter(aas);
         } catch (e) {
           logger.error(" Error while registering adapter " + e);
-
-          res.end(e.message);
+          next(new Error(" Server Error "));
         }
       });
-      res.json(req.body);
+      res.status(200).send(req.body);
+
     }
   ]
   },
