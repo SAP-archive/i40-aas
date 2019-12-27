@@ -1,11 +1,9 @@
 import { IAdapterRegistry } from "./interfaces/IAdapterRegistry";
 import {
-  AdapterAssignmentResultSet,
   Adapter,
   IStorageAdapter
 } from "./interfaces/IRegistryResultSet";
 import { Identifier } from "i40-aas-objects";
-import { IRegisterAdapterAssignment } from "./interfaces/IAPIRequests";
 import * as logger from "winston";
 
 /**
@@ -29,13 +27,13 @@ class AdapterRegistryLocal implements IAdapterRegistry {
 
   async readAdapterRecordByID(
     adapterId: Identifier
-  ): Promise<AdapterAssignmentResultSet[]> {
+  ): Promise<IStorageAdapter[]> {
     throw new Error("Method not implemented.");
   }
 
   async createAdapter(
-    record: import("./interfaces/IAPIRequests").IRegisterAdapterAssignment
-  ): Promise<AdapterAssignmentResultSet> {
+    record: import("./interfaces/IAPIRequests").ICreateAdapter
+  ): Promise<IStorageAdapter> {
     try {
       //the adapter.id is used as key
       if (record.adapter.adapterId) {
@@ -45,16 +43,16 @@ class AdapterRegistryLocal implements IAdapterRegistry {
         );
       }
     } catch (e) {
-      logger.error("Error storing adapter entry " + record.submodel.submodelId);
+      logger.error("Error storing adapter entry " + record.adapter.adapterId);
       throw e;
     }
     logger.info("Registed record: " + JSON.stringify(record));
-    return record;
+    return record.adapter;
   }
 
   updateAdapter(
     req: import("./interfaces/IAPIRequests").ICreateAdapter
-  ): Promise<AdapterAssignmentResultSet> {
+  ): Promise<IStorageAdapter> {
     throw new Error("Method not implemented.");
   }
   deleteAdapterByAdapterID(aasId: Identifier): Promise<void> {
@@ -126,7 +124,7 @@ class AdapterRegistryLocal implements IAdapterRegistry {
     }
   }
 
-  listAllSubmodels(): Promise<AdapterAssignmentResultSet[]> {
+  listAllSubmodels(): Promise<IStorageAdapter[]> {
     throw new Error("Method not implemented.");
   }
   release(): void {
@@ -137,9 +135,11 @@ class AdapterRegistryLocal implements IAdapterRegistry {
   ): void {
     throw new Error("Method not implemented.");
   }
+  /* TODO: consider if we need to have seperate DAOs for adapter and assignment
   registerAdapterAssignment(req: IRegisterAdapterAssignment): void {
     throw new Error("Method not implemented.");
   }
+  */
 }
 
 export { AdapterRegistryLocal as Registry };

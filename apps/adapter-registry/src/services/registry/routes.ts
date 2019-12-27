@@ -13,15 +13,18 @@ import {
   HTTP401Error,
   HTTP422Error
 } from "../../utils/httpErrors";
-import { IRegisterAdapterAssignment } from "./interfaces/IAPIRequests";
 import { create } from "domain";
+import { ICreateAdapter } from "./interfaces/IAPIRequests";
+import { checkReqBodyEmpty, validateCreateAdaptersRequest } from "../../middleware/checks";
 
 export default [
   {
     path: "/adapters",
     method: "post",
-    handler: async (req: Request, res: Response) => {
-      var adaptersAssignmentArray: IRegisterAdapterAssignment[] = req.body;
+    handler:[      checkReqBodyEmpty,
+      validateCreateAdaptersRequest,
+       async (req: Request, res: Response) => {
+      var adaptersAssignmentArray: ICreateAdapter[] = req.body;
       logger.info(
         " Register request received num of adapters " +
           adaptersAssignmentArray.length
@@ -42,6 +45,7 @@ export default [
       });
       res.json(req.body);
     }
+  ]
   },
 
   {
@@ -79,8 +83,12 @@ export default [
   {
     path: "/adapters",
     method: "delete",
-    handler: async (req: Request, res: Response) => {
-      var adaptersAssignmentArray: IRegisterAdapterAssignment[] = req.body;
+    handler: [
+      checkReqBodyEmpty,
+      validateCreateAdaptersRequest,
+
+    async (req: Request, res: Response) => {
+      var adaptersAssignmentArray: ICreateAdapter[] = req.body;
       logger.info(" Clear all registry entries ");
 
       try {
@@ -93,5 +101,7 @@ export default [
 
       res.json("Registry Cleared");
     }
+  ]
   }
+
 ];
