@@ -1,15 +1,12 @@
 import { RegistryFactory } from "./RegistryFactory";
 import { Identifier, Frame, IdTypeEnum } from "i40-aas-objects";
 import {
-  IAdapterAssignmentResultSet,
-  AdapterAssignmentResultSet,
   Adapter,
-  SubmodelEntry,
   IStorageAdapter
 } from "./interfaces/IRegistryResultSet";
 import { IAdapterRegistry } from "./interfaces/IAdapterRegistry";
 import { logger } from "../../utils/log";
-import { IRegisterAdapterAssignment } from "./interfaces/IAPIRequests";
+import { ICreateAdapter } from "./interfaces/IAPIRequests";
 
 const dotenv = require("dotenv");
 dotenv.config();
@@ -18,14 +15,14 @@ dotenv.config();
  * Register a storage adapter with its submodel assignment
  */
 async function createAdapter(
-  req: IRegisterAdapterAssignment
-): Promise<IAdapterAssignmentResultSet> {
+  req: ICreateAdapter
+): Promise<IStorageAdapter> {
   var registryDao: IAdapterRegistry = await RegistryFactory.getRegistryLocal();
 
   try {
     var result = await registryDao.createAdapter(req);
     logger.info(
-      `Adapter ${req.adapter.adapterId} for submodel with ID ${req.submodel.submodelId} was stored in registry`
+      `Adapter ${req.adapter.adapterId} for submodel with ID ${req.adapter.submodelId} was stored in registry`
     );
   } catch (e) {
     throw e;

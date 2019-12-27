@@ -1,12 +1,12 @@
 import sinon from "sinon";
 import chaiHttp = require("chai-http");
-import { RoutingController } from "../src/services/data-manager/RoutingController";
+import Axios, { AxiosError } from "axios";
 
 const dotenv = require("dotenv");
 dotenv.config();
 
-var DATA_MANAGER_USER = process.env.DATA_MANAGER_USER;
-var DATA_MANAGER_PASSWORD = process.env.DATA_MANAGER_PASSWORD;
+var ADAPTER_REGISTRY_ADMIN_USER = process.env.ADAPTER_REGISTRY_ADMIN_USER;
+var ADAPTER_REGISTRY_ADMIN_PASSWORD = process.env.ADAPTER_REGISTRY_ADMIN_PASSWORD;
 
 var chai = require("chai");
 chai.use(chaiHttp);
@@ -17,32 +17,15 @@ const app = require("../src/server").app;
 var expect = chai.expect;
 const assert = chai.assert;
 
-// or:
-//var assert = chai.assert;
-// or:
 chai.should();
 
-describe("the server", async function() {
-  let submodelsRequest: string;
+describe("the adapter service", async function() {
 
-  //read a sample interaction.json to use as body for requests
-  before(function(done) {
-    var fs = require("fs"),
-      path = require("path"),
-      filePath = path.join(__dirname, "opcua-submodel-instance.json");
-
-    fs.readFile(filePath, "utf8", function(err: any, fileContents: string) {
-      if (err) throw err;
-      submodelsRequest = fileContents;
-      done();
-    });
-  });
 
   it("should return a 'Server Up' response on call to /health", () => {
     return chai
       .request(app)
       .get("/health")
-      .auth(DATA_MANAGER_USER, DATA_MANAGER_PASSWORD)
       .then(function(res: any) {
         chai.expect(res.text).to.eql("Server Up!");
       });
@@ -66,51 +49,34 @@ describe("the server", async function() {
       });
   });
 
-  it("will give a 422 response if the submodel IdShort is missing", () => {
-    let submodelRequestNoId = [
+  it("will give a 422 response if the submodelId or  is missing", () => {
+    let adapterRequest = [
       {
-        embeddedDataSpecifications: [],
-        semanticId: {
-          keys: [
-            {
-              idType: "URI",
-              type: "GlobalReference",
-              value:
-                "opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/",
-              local: false
-            }
-          ]
-        },
-        kind: "Instance",
-        descriptions: [],
-        identification: {
-          id:
-            "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22",
-          idType: "URI"
-        },
-        modelType: {
-          name: "Submodel"
-        },
-        submodelElements: []
+          "adapter": {
+            "url":"http://i40-aas-storage-adapter-mongodb:3100/submodels",
+            "name":"mongo-adapter",
+          "submodelId": "opc-ua-devices",
+          "submodelSemanticId": "opc-ua-devices-semantic"
+          }
       }
     ];
 
     return chai
       .request(app)
-      .post("/submodels")
-      .auth(DATA_MANAGER_USER, DATA_MANAGER_PASSWORD)
+      .post("/adapters")
+      .auth(ADAPTER_REGISTRY_ADMIN_USER, ADAPTER_REGISTRY_ADMIN_PASSWORD)
       .set("content-type", "application/json")
-      .send(submodelRequestNoId)
+      .send(adapterRequest)
       .then(function(res: any) {
         chai.expect(res).to.have.status(422);
       });
   });
-
+/*
   it("will give a 400 response if the input is not parseable", function() {
     return chai
       .request(app)
       .post("/submodels")
-      .auth(DATA_MANAGER_USER, DATA_MANAGER_PASSWORD)
+      .auth(ADAPTER_REGISTRY_ADMIN_USER, ADAPTER_REGISTRY_ADMIN_PASSWORD)
       .set("content-type", "application/json")
       .send(submodelsRequest + "xx")
       .then(function(res: any) {
@@ -121,7 +87,7 @@ describe("the server", async function() {
     return chai
       .request(app)
       .post("/submodels")
-      .auth(DATA_MANAGER_USER, DATA_MANAGER_PASSWORD)
+      .auth(ADAPTER_REGISTRY_ADMIN_USER, ADAPTER_REGISTRY_ADMIN_PASSWORD)
       .set("content-type", "application/json")
       .send("")
       .then(function(res: any) {
@@ -139,7 +105,7 @@ describe("the server", async function() {
     chai
       .request(app)
       .post("/submodels")
-      .auth(DATA_MANAGER_USER, DATA_MANAGER_PASSWORD)
+      .auth(ADAPTER_REGISTRY_ADMIN_USER, ADAPTER_REGISTRY_ADMIN_PASSWORD)
       .set("content-type", "application/json")
       .send(submodelsRequest)
       .then((res: any) => {
@@ -159,7 +125,7 @@ describe("the server", async function() {
     chai
       .request(app)
       .post("/submodels")
-      .auth(DATA_MANAGER_USER, DATA_MANAGER_PASSWORD)
+      .auth(ADAPTER_REGISTRY_ADMIN_USER, ADAPTER_REGISTRY_ADMIN_PASSWORD)
       .set("content-type", "application/json")
       .send(submodelsRequest)
       .then((res: any) => {
@@ -168,4 +134,8 @@ describe("the server", async function() {
         done();
       });
   });
+
+
+*/
+
 });

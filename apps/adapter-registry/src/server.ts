@@ -30,5 +30,6 @@ const server = http.createServer(router);
 
 server.listen(PORT, () => logger.info(`A St. Adapter Registry Service is running http://localhost:${PORT}...`));
 
+export {router as app};
 
 
