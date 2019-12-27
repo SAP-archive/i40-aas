@@ -36,18 +36,18 @@ class AdapterRegistryLocal implements IAdapterRegistry {
   ): Promise<IStorageAdapter> {
     try {
       //the adapter.id is used as key
-      if (record.adapter.adapterId) {
+      if (record.adapterId) {
         const insertAdapterResult = await this.storage.setItem(
-          record.adapter.adapterId,
-          record.adapter
+	  record.adapterId,
+	  record
         );
       }
     } catch (e) {
-      logger.error("Error storing adapter entry " + record.adapter.adapterId);
+      logger.error("Error storing adapter entry " + record.adapterId);
       throw e;
     }
     logger.info("Registed record: " + JSON.stringify(record));
-    return record.adapter;
+    return record;
   }
 
   updateAdapter(

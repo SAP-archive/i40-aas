@@ -5,7 +5,11 @@ import { IStorageAdapter } from './IRegistryResultSet';
 
 
 interface ICreateAdapter {
-  adapter: IStorageAdapter;
+  adapterId: string;
+  name?: string;
+  url?: string;
+  submodelId: string;
+  submodelSemanticId?: string;
 }
 
 interface ICreateSubmodelEntry {

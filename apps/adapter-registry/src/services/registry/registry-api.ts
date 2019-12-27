@@ -22,7 +22,7 @@ async function createAdapter(
   try {
     var result = await registryDao.createAdapter(req);
     logger.info(
-      `Adapter ${req.adapter.adapterId} for submodel with ID ${req.adapter.submodelId} was stored in registry`
+      `Adapter ${req.adapterId} for submodel with ID ${req.submodelId} was stored in registry`
     );
   } catch (e) {
     throw e;

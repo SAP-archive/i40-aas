@@ -30,13 +30,19 @@ export const validateCreateAdaptersRequest = (
 ) => {
   let adaptersArray: Adapter[] = req.body;
   adaptersArray.forEach(adapter => {
-	let adapterId:string = adapter.adapterId;
+	let adapterId = adapter.adapterId;
+	let submodelId = adapter.submodelId;
+	let semanticId = adapter.submodelSemanticId;
 	logger.debug("id " + adapterId);
     if(!adapterId) {
 	logger.error("Missing id in adapter ");
 	throw new HTTP422Error("Missing required fields in Request: adapterId");
-
       }
+    if(!submodelId && !semanticId) {
+	logger.error("Missing submodelId or SubmodelSemanticId ");
+	throw new HTTP422Error("Missing submodelId or SubmodelSemanticId");
+      }
+
       next();
 });
 }

@@ -6,12 +6,15 @@ import healthRoute from './services/health/routes';
 import middleware from './middleware';
 //init logger
 import { logger } from "./utils/log";
+import errorHandlers from "./middleware/errorHandlers";
 
 
 const router = express();
 applyRoutes(healthRoute, router);
 applyMiddleware(middleware, router);
 applyRoutes(routes, router);
+//error handling
+applyMiddleware(errorHandlers, router);
 
 //avoid crashing the process when an unhandled Exception occurs
 process.on("uncaughtException", e => {
