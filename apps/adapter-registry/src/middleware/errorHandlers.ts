@@ -23,7 +23,7 @@ const handle404Error = (router: Router) => {
 const handleServerError = (router: Router) => {
 
   router.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-    //logger.debug("Handle Server Error called");
+    logger.debug("Handle Server Error called");
     ErrorHandler.serverError(err, res, next);
   });
 };

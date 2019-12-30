@@ -14,21 +14,23 @@ dotenv.config();
 /**
  * Register a storage adapter with its submodel assignment
  */
-async function createAdapter(
-  req: ICreateAdapter
-): Promise<IStorageAdapter> {
+async function createAdapters(
+  req: ICreateAdapter[]
+): Promise<IStorageAdapter[]> {
   var registryDao: IAdapterRegistry = await RegistryFactory.getRegistryLocal();
-
+  var adaptersArray: IStorageAdapter[]= new Array();
+  req.forEach(async entry => {
   try {
-    var result = await registryDao.createAdapter(req);
+    var adapter = await registryDao.createAdapter(entry);
+    adaptersArray.push(adapter);
     logger.info(
-      `Adapter ${req.adapterId} for submodel with ID ${req.submodelId} was stored in registry`
+      `Adapter ${entry.adapterId} for submodel with ID ${entry.submodelId} was stored in registry`
     );
   } catch (e) {
     throw e;
   }
-
-  return result;
+});
+  return adaptersArray;
 }
 
 async function getAdapterBySubmodelId(
@@ -68,6 +70,6 @@ async function clearAllEntries(): Promise<string> {
 
 export {
   getAdapterBySubmodelId, getAdapterBysubmodelSemanticId,
-  createAdapter,
+  createAdapters,
   clearAllEntries
 };
