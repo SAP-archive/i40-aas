@@ -144,7 +144,7 @@ describe("the adapter service", async function() {
       }
     ];
 
-    sinon.stub(registryAPI, 'createAdapter').resolves({ status: 200 });
+    sinon.stub(registryAPI, 'createAdapters').resolves({ status: 200 });
     
     chai
       .request(app)
@@ -158,28 +158,34 @@ describe("the adapter service", async function() {
         done();
       });
   });
-  /*
-  it("Should return a 500 Error if the router could not forward the submodel to the adapter", done => {
-    sinon.replace(
-      RoutingController,
-      "routeSubmodel",
-      sinon.fake.rejects({ status: 401 }) //eg. auth error when posting to adapter
-    );
+  
+  it("Should return a 500 Error if the router could not store the adapter", done => {
+        
+    let adapterRequest = [
+      {
+            "adapterId": "AdaptUniqueId",
+            "url":"http://i40-aas-storage-adapter-mongodb:3100/submodels",
+            "name":"mongo-adapter",
+          "submodelId": "opc-ua-devices",
+          "submodelSemanticId": "opc-ua-devices-semantic"
+          
+      }
+    ];
+
+    sinon.stub(registryAPI, 'createAdapters').rejects();
+
 
     chai
       .request(app)
-      .post("/submodels")
+      .post("/adapters")
       .auth(ADAPTER_REGISTRY_ADMIN_USER, ADAPTER_REGISTRY_ADMIN_PASSWORD)
       .set("content-type", "application/json")
-      .send(submodelsRequest)
+      .send(adapterRequest)
       .then((res: any) => {
         chai.expect(res.status).to.eql(500); // expression which will be true if response status equal to 200
         sinon.restore();
         done();
       });
   });
-
-
-*/
 
 });
