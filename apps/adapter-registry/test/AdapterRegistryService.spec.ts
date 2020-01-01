@@ -174,7 +174,6 @@ describe("the adapter service", async function() {
 
     sinon.stub(registryAPI, 'createAdapters').rejects();
 
-
     chai
       .request(app)
       .post("/adapters")

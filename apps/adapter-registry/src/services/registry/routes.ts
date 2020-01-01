@@ -38,7 +38,9 @@ export default [
 
 	try {
 	  let result = await createAdapters(adaptersAssignmentArray);
+	  logger.debug("result "+ JSON.stringify(result));
 	  res.status(200).send(result);
+
 	} catch (e) {
 	  logger.error(" Error while registering adapter " + e);
 	  next(new Error(" Server Error "));
