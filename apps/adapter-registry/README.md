@@ -10,22 +10,20 @@ A service component that offers an API for:
 Service configuration is handled via environment variable injection. Within the `env_file:` section of `docker-compose.yml` you find a list of _.env_-files mounted. The corresponding default configurations and explanations are located in: `.compose-envs/<SERVICE-NAME>.env`.
 
 
-## Register
+## Adapters
+Create an Adapter in the Registry 
 
-POST /register
+
+POST /adapters
 
 ```javascript
 [
     {
-        "adapter": {
           "adapterId":"fooAdapterId",
           "url":"fooURL",
           "name":"testAdaptername",
-        "submodelId": "opc-ua-devices"
-        },
-         "submodel": {
-      "submodelIdShort": "opc-ua-devices"
-      }
+        "submodelId": "opc-ua-devices",
+        "submodelSemanticId" : "part-100-device-information-model"
     }
 ]
 ```
@@ -44,11 +42,12 @@ GET /adapters
 response </br>
 NOTE: only one adapter per submodel is assumed
 ```javascript
-    {
-        "url": "http://localhost:3000/submodels",
-        "adapterId": "storage-adapter-ain",
-        "name": "SAP-AIN-Adapter",
-        "submodelId": "opc-ua-devices"
+     {
+          "adapterId":"fooAdapterId",
+          "url":"fooURL",
+          "name":"testAdaptername",
+        "submodelId": "opc-ua-devices",
+        "submodelSemanticId" : "part-100-device-information-model"
     }
 ```
 

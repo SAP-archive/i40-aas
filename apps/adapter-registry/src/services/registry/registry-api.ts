@@ -1,9 +1,6 @@
 import { RegistryFactory } from "./RegistryFactory";
 import { Identifier, Frame, IdTypeEnum } from "i40-aas-objects";
-import {
-  Adapter,
-  IStorageAdapter
-} from "./interfaces/IRegistryResultSet";
+import { Adapter, IStorageAdapter } from "./interfaces/IRegistryResultSet";
 import { IAdapterRegistry } from "./interfaces/IAdapterRegistry";
 import { logger } from "../../utils/log";
 import { ICreateAdapter } from "./interfaces/IAPIRequests";
@@ -18,19 +15,14 @@ async function createAdapters(
   req: ICreateAdapter[]
 ): Promise<IStorageAdapter[]> {
   var registryDao: IAdapterRegistry = await RegistryFactory.getRegistryLocal();
-  var adaptersArray: IStorageAdapter[]= new Array();
-  req.forEach(async entry => {
-  try {
-    var adapter = await registryDao.createAdapter(entry);
-    adaptersArray.push(adapter);
-    logger.info(
-      `Adapter ${entry.adapterId} for submodel with ID ${entry.submodelId} was stored in registry`
-    );
-  } catch (e) {
-    throw e;
-  }
-});
-  return adaptersArray;
+
+  //use map() to async call all the adapters
+  var adaptersArray = req.map(async val => {
+    return await registryDao.createAdapter(val);
+  });
+
+  //resultPromiseArray.then(result => logger.debug(result));
+  return Promise.all(adaptersArray);
 }
 
 async function getAdapterBySubmodelId(
@@ -69,7 +61,8 @@ async function clearAllEntries(): Promise<string> {
 }
 
 export {
-  getAdapterBySubmodelId, getAdapterBysubmodelSemanticId,
+  getAdapterBySubmodelId,
+  getAdapterBysubmodelSemanticId,
   createAdapters,
   clearAllEntries
 };

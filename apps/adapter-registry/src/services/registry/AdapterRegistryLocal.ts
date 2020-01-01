@@ -23,6 +23,7 @@ class AdapterRegistryLocal implements IAdapterRegistry {
 
   constructor(client: any) {
     this.storage = client;
+
   }
 
   async readAdapterRecordByID(
@@ -34,16 +35,18 @@ class AdapterRegistryLocal implements IAdapterRegistry {
   async createAdapter(
     record: import("./interfaces/IAPIRequests").ICreateAdapter
   ): Promise<IStorageAdapter> {
+    logger.debug("Create adapter called "+this.storage);
+
     try {
       //the adapter.id is used as key
-      if (record.adapterId) {
+      if (record.adapterId && this.storage) {
         const insertAdapterResult = await this.storage.setItem(
           record.adapterId,
           record
         );
       }
     } catch (e) {
-      logger.error("Error storing adapter entry " + record.adapterId);
+      logger.error("Error storing adapter entry " + record.adapterId + " Error "+e);
       throw e;
     }
     logger.info("Registed record: " + JSON.stringify(record));
