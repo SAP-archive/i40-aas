@@ -54,26 +54,25 @@ export default [
     method: "get",
     handler: [
       async (req: Request, res: Response, next: NextFunction) => {
-	try {
-	  logger.debug(" Requested to get an adapter by submodelid");
-	  if (req.query.submodelid) {
-	    var submodelId: string = req.query.submodelid;
-	    logger.debug("Submodel id : " + submodelId);
-	    let adaptersArray = await getAdapterBySubmodelId(submodelId);
-	    res.json(adaptersArray);
-	  } else if (req.query.submodelSemanticId) {
-	    var submodelSemanticId: string = req.query.submodelSemanticId;
-	    logger.debug("Submodel id : " + submodelSemanticId);
-	    let adaptersArray = await getAdapterBysubmodelSemanticId(
-	      submodelSemanticId
-	    );
-	    res.json(adaptersArray);
-	  } else {
-	    next(new HTTP422Error("No parameter given at request"));
-	  }
-	} catch (e) {
-	  console.log(e);
-	  next(Error(" Internal Server Error"));
+        try {
+	  if (req.query.submodelId) {
+	    var submodelId: string = req.query.submodelId;
+            logger.debug("Submodel id : " + submodelId);
+            let adaptersArray = await getAdapterBySubmodelId(submodelId);
+            res.json(adaptersArray);
+          } else if (req.query.submodelSemanticId) {
+            var submodelSemanticId: string = req.query.submodelSemanticId;
+            logger.debug("Submodel id : " + submodelSemanticId);
+            let adaptersArray = await getAdapterBysubmodelSemanticId(
+              submodelSemanticId
+            );
+            res.json(adaptersArray);
+          } else {
+            next(new HTTP422Error("No parameter given at request"));
+          }
+        } catch (e) {
+          console.log(e);
+          next(Error(" Internal Server Error"));
         }
       }
     ]

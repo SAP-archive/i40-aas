@@ -10,10 +10,17 @@ class WebClient {
     user?: string,
     pass?: string
   ): AxiosRequestConfig | undefined {
+<<<<<<< HEAD
     if (paramName == "submodelId" && user && pass) {
       return {
         params: {
           submodelId: paramValue
+=======
+    if (paramName=="submodelId" && user && pass) {
+      return {
+        params: {
+	  submodelId: paramValue
+>>>>>>> revised data-manager to work with updated adapter-registry
         },
         auth: {
           username: user,
@@ -38,6 +45,26 @@ class WebClient {
         }
       };
     }
+    else if (paramName=="submodelSemanticId" && user && pass) {
+      return {
+	params: {
+	  submodelSemanticId: paramValue
+	},
+	auth: {
+	  username: user,
+	  password: pass
+	}
+      };
+    }
+
+    else if( !paramName && user && pass) {
+      return {
+	auth: {
+	  username: user,
+	  password: pass
+	}
+      };
+    }
     return undefined;
   }
 
@@ -49,6 +76,7 @@ class WebClient {
     password: string
   ): Promise<AxiosResponse<T>> {
     logger.debug("Get request from " + url);
+<<<<<<< HEAD
     logger.debug("paramname " + paramName + "  value " + param);
     logger.debug(
       " config " +
@@ -56,6 +84,10 @@ class WebClient {
           this.getURLRequestConfig(paramName, param, username, password)
         )
     );
+=======
+    logger.debug("paramname "+ paramName+"  value " + param);
+    logger.debug(" config " + JSON.stringify(this.getURLRequestConfig(paramName, param, username, password)));
+>>>>>>> revised data-manager to work with updated adapter-registry
 
     const response = await Axios.get<T>(
       url,

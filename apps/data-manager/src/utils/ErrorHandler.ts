@@ -1,7 +1,10 @@
 import { Response, NextFunction } from "express";
-import { HTTPClientError, HTTP404Error, HTTP400Error } from "../utils/httpErrors";
+import {
+  HTTPClientError,
+  HTTP404Error,
+  HTTP400Error
+} from "../utils/httpErrors";
 import { logger } from "../utils/log";
-
 
 /**
  * This class offers a dedicated object which encapsulates the logic of how we manage errors
@@ -16,27 +19,34 @@ export const badRequestError = () => {
   throw new HTTP400Error("Bad Request");
 };
 
-
 export const clientError = (err: Error, res: Response, next: NextFunction) => {
-  logger.debug("Error_object "+ err.name )
-  if (err instanceof HTTPClientError ) {
-    logger.error("Client error "+err);
+  logger.debug("Error_object " + err.name);
+  if (err instanceof HTTPClientError) {
+    logger.error("Client error " + err);
     res.status(err.statusCode).send(err.message);
+<<<<<<< HEAD
   }
   else if (err instanceof SyntaxError){
+=======
+  } else if (err instanceof SyntaxError) {
+>>>>>>> revised data-manager to work with updated adapter-registry
     logger.error("Syntax error" + err);
     res.status(400).send(err.message);
-  }
-  else {
+  } else {
     next(err);
   }
 };
 
 export const serverError = (err: Error, res: Response, next: NextFunction) => {
+<<<<<<< HEAD
   logger.error("Server error " +err);
   if (process.env.NODE_ENV === "production") {
     res.status(500).send("Internal Server Error");
   } else {
     res.status(500).send(err);
   }
+=======
+  logger.error("Server error " + err);
+  res.status(500).send("Internal Server Error");
+>>>>>>> revised data-manager to work with updated adapter-registry
 };

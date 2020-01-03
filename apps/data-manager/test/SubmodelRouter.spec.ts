@@ -70,8 +70,13 @@ describe("the routing controller ", function() {
 
     console.log(
       "result " +
+<<<<<<< HEAD
         (await registryConnector.getAdapterFromRegistry("submodelid",
           submodelsRequest[0].idShort
+=======
+	(await registryConnector.getAdapterFromRegistry("submodelid",
+	  submodelsRequest[0].idShort
+>>>>>>> revised data-manager to work with updated adapter-registry
         ))
     );
 
