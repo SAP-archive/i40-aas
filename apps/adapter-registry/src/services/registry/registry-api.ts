@@ -21,7 +21,6 @@ async function createAdapters(
     return await registryDao.createAdapter(val);
   });
 
-  //resultPromiseArray.then(result => logger.debug(result));
   return Promise.all(adaptersArray);
 }
 

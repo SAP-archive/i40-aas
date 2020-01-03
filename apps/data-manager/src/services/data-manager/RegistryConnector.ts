@@ -36,7 +36,7 @@ class AdapterRegistryConnector {
     regRequestParamName: string,
     submodelIdentification: string
   ): Promise<IStorageAdapter> {
-    var regResponse = await this.webClient.getRequest(
+    var regResponse = await this.webClient.getAdapterFromRegRequest(
       this.registryGETAdaptersURL.href,
       regRequestParamName,
       submodelIdentification,

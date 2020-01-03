@@ -25,7 +25,7 @@ var DATA_MANAGER_PASS = process.env.DATA_MANAGER_PASS;
 const app = require("../src/server").app;
 
 describe("the routing controller ", function() {
-  let submodelsRequest: Submodel;
+  let submodelsRequest: Submodel[];
   //read a sample interaction.json to use as body for requests
   before(function(done) {
     var fs = require("fs"),
@@ -70,15 +70,15 @@ describe("the routing controller ", function() {
 
     console.log(
       "result " +
-        (await registryConnector.getAdapterFromRegistry(
-          submodelsRequest.idShort
+        (await registryConnector.getAdapterFromRegistry("submodelid",
+          submodelsRequest[0].idShort
         ))
     );
 
     RoutingController.initController(registryConnector, adapterConnector);
     let actual = await RoutingController.routeSubmodel(submodelsRequest);
 
-    sinon.assert.match(actual, { status: 200 });
+    sinon.assert.match(actual, [{ status: 200 }]);
   });
 
   it("should throw an Error if adapterConn is undefined ", async function() {
@@ -126,7 +126,7 @@ describe("the registry connector ", function() {
       "b",
       "c"
     );
-    let result: IStorageAdapter  = await registryConnector.getAdapterFromRegistry("fooIdShort");
+    let result: IStorageAdapter  = await registryConnector.getAdapterFromRegistry("submodelId","fooIdShort");
 console.log(result);
      expect( isStorageAdapter(result),"should be an adapter object").to.be.true;
   
@@ -150,7 +150,7 @@ console.log(result);
       "c"
     );
     try{
-      await registryConnector.getAdapterFromRegistry("fooIdShort");
+      await registryConnector.getAdapterFromRegistry("submodelId","fooIdShort");
       fail(); //this should not be called when error thrown
     }
     catch{

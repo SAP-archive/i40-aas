@@ -55,9 +55,8 @@ export default [
     handler: [
       async (req: Request, res: Response, next: NextFunction) => {
         try {
-          logger.debug(" Requested to get an adapter by submodelid");
-          if (req.query.submodelid) {
-            var submodelId: string = req.query.submodelid;
+          if (req.query.submodelId) {
+            var submodelId: string = req.query.submodelId;
             logger.debug("Submodel id : " + submodelId);
             let adaptersArray = await getAdapterBySubmodelId(submodelId);
             res.json(adaptersArray);

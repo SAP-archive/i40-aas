@@ -5,16 +5,36 @@ class WebClient {
   constructor() {}
 
   private getURLRequestConfig(
-    paramName?:string,
+    paramName?: string,
     paramValue?: string,
     user?: string,
     pass?: string
   ): AxiosRequestConfig | undefined {
-    if (paramName && user && pass) {
+    if (paramName=="submodelId" && user && pass) {
       return {
         params: {
-          paramName: paramValue
+          submodelId: paramValue
         },
+        auth: {
+          username: user,
+          password: pass
+        }
+      };
+    }
+    else if (paramName=="submodelSemanticId" && user && pass) {
+      return {
+        params: {
+          submodelSemanticId: paramValue
+        },
+        auth: {
+          username: user,
+          password: pass
+        }
+      };
+    }
+    
+    else if( !paramName && user && pass) {
+      return {
         auth: {
           username: user,
           password: pass
@@ -24,17 +44,16 @@ class WebClient {
     return undefined;
   }
 
-
-
-  async getRequest<T>(
+  async getAdapterFromRegRequest<T>(
     url: string,
-paramName: string,
+    paramName: string,
     param: string,
     username: string,
     password: string
   ): Promise<AxiosResponse<T>> {
     logger.debug("Get request from " + url);
-    logger.debug("param " + param);
+    logger.debug("paramname "+ paramName+"  value " + param);
+    logger.debug(" config " + JSON.stringify(this.getURLRequestConfig(paramName, param, username, password)));
 
     const response = await Axios.get<T>(
       url,
@@ -42,8 +61,23 @@ paramName: string,
     );
     return response as AxiosResponse<T>;
   }
+  //TODO: Consider if it would be better to have one GET req. method with optional
+  //parameters to cover both getAdapter from Registry and getSubmodel from Adapter
+  async getSubmodelFromAdapterRequest<T>(
+    url: string,
+    username?: string,
+    password?: string
+  ): Promise<AxiosResponse<T>> {
+    logger.debug("Get request from " + url);
+  
+    const response = await Axios.get<T>(
+      url,
+      this.getURLRequestConfig(username, password)
+    );
+    return response as AxiosResponse<T>;
+  }
 
-  async postRequest<T>(
+  async postSubmodelToAdapterRequest<T>(
     serviceURL: string,
     body: any,
     username?: string,
