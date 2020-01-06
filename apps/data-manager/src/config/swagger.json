@@ -8,9 +8,9 @@
     "schemes": ["http"],
     "produces": ["application/json"],
     "paths": {
-      "/data-manager/aas": {
+      "/submodels": {
         "post": {
-          "tags": ["Forward AAS request to Storage Adapter"],
+	  "tags": ["Forward Submodel to Storage Adapter"],
           "summary": "Forward an Submodel of AAS to a storage adapter service for handling",
           "requestBody": {
             "description" : "Optional description in *Markdown* ",

@@ -4,6 +4,64 @@ The data manager acts as a router that forwards requests to the responsible stor
 
 API available at the server under `/api-docs`
 
+
+## Submodels
+Route a submodel to its respective adapter
+
+
+POST /submodels
+
+```javascript
+[
+   {
+    "embeddedDataSpecifications": [],
+    "semanticId": {
+      "keys": [
+	{
+	  "idType": "URI",
+	  "type": "GlobalReference",
+	  "value": "opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/",
+	  "local": false
+	}
+      ]
+    },
+    "kind": "Instance",
+    "descriptions": [],
+    "idShort": "opc-ua-devices",
+    "identification": {
+      "id": "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22",
+      "idType": "URI"
+    },
+    "modelType": {
+      "name": "Submodel"
+    },
+    "submodelElements": [
+      { .....}
+   }
+]
+```
+
+
+GET /submodels
+
+Retrieve a submodel from its adapter
+
+|   parameter         |      Description                 |
+|   :-------:         | :-------------------:            |
+|   submodelid        |  Submodel.identification.id      |
+
+OR
+
+|   parameter         |      Description                 |
+|   :-------:         | :-------------------:            |
+|  submodelSemanticId |  Submodel.semanticId.value[0]    |
+
+
+
+
+
+
+
 ## Configuration
 Service configuration is handled via environment variable injection. Within the `env_file:` section of `docker-compose.yml` you find a list of _.env_-files mounted. The corresponding default configurations and explanations are located in: `.compose-envs/<SERVICE-NAME>.env`.
 
@@ -14,6 +72,10 @@ Service configuration is handled via environment variable injection. Within the 
 
 
 ### Testing:
+
+To run tests give:
+`npm run test`
+
 Technologies:
 - [Mocha](https://mochajs.org/): Testing Framework
 - [Chai](https://www.chaijs.com/): Assertion library

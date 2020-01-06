@@ -37,7 +37,14 @@ GET /adapters
 
 |   parameter         |      Description                 |
 |   :-------:         | :-------------------:            |
-|   submodelidshort   | i40-aas-objects Submodel.idshort |
+|   submodelid        |  Submodel.identification.id      |
+
+OR
+
+|   parameter         |      Description                 |
+|   :-------:         | :-------------------:            |
+|  submodelSemanticId |  Submodel.semanticId.value[0]    |
+
 
 response </br>
 NOTE: only one adapter per submodel is assumed
