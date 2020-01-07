@@ -11,14 +11,14 @@ The messages after validation are sent to the RegistryConnector that makes a req
 */
 
 class BrokerMessageInterpreter implements IMessageReceiver {
-  
+
 // Import events module
 events = require('events');
 eventEmitter: any;
 // Create an eventEmitter object
- 
 
-  
+
+
   constructor(
     private registryConnector: RegistryConnector,
     private brokerClient: AmqpClient
@@ -27,9 +27,9 @@ eventEmitter: any;
   }
 
   /**
-   * Initiate listening to the broker topic, designated for forwarding responses from skills to clients
-   * @param routingKeys
-   */
+  * Initiate listening to the broker topic, designated for forwarding responses from skills to clients
+  * @param routingKeys
+  */
   start(routingKeys: string[]) {
     this.brokerClient.addSubscriptionData(new Subscription(routingKeys, this));
     this.brokerClient.startListening();
@@ -91,7 +91,7 @@ Decide what to do if the message can not be handled (eg. because receiver role i
   }
 
   /*
-  Check that the message received from the broker are valid. 
+  Check that the message received from the broker are valid.
   With regards to the Frame schema
   */
   private validateEssentialInteractionElements(
@@ -123,9 +123,9 @@ Decide what to do if the message can not be handled (eg. because receiver role i
   }
 
   receive(msg: string) {
-    
+
     let message  = this.validateEssentialInteractionElements(msg);
-    
+
     if (message && this.validateRequired(message)) {
       //if validation successful, get the AAS receiver endpoint from AAS-registry service
       logger.info("Received Msg params [" + message.frame.sender.role.name + " , "+ message.frame.receiver.role.name + " , "+ message.frame.type + " , "+ message.frame.conversationId + "]");

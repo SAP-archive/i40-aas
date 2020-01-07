@@ -14,4 +14,3 @@ export const publishMessageToBrokerTopic = async (brokerClient:AmqpClient,
 
   return requestBody;
 };
-

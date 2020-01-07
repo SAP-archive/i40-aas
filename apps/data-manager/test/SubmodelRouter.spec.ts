@@ -110,41 +110,41 @@ describe("the registry connector ", function() {
   it("should get an IStorageAdapter from the adapter-registry ", async function() {
     let fakeGet = sinon.fake.resolves({
       status: 200,
-      data: 
+      data:
         {
-            url: "http://localhost:3000/submodels",
-            adapterId: "storage-adapter-ain",
-            name: "SAP-AIN-Adapter",
-            submodelId: "opc-ua-devices"
+                    url: "http://localhost:3000/submodels",
+                    adapterId: "storage-adapter-ain",
+                    name: "SAP-AIN-Adapter",
+                    submodelId: "opc-ua-devices"
         }
-      
-    });  
+
+    });
     sinon.replace(Axios,"get",fakeGet);
     let registryConnector: AdapterRegistryConnector = new AdapterRegistryConnector(
-     new WebClient(),
+    new WebClient(),
       new URL("http://www.foobar.com/foo"),
       "b",
       "c"
     );
     let result: IStorageAdapter  = await registryConnector.getAdapterFromRegistry("fooIdShort");
 console.log(result);
-     expect( isStorageAdapter(result),"should be an adapter object").to.be.true;
-  
-     sinon.restore();
+    expect( isStorageAdapter(result),"should be an adapter object").to.be.true;
+
+    sinon.restore();
     });
 
   it("should throw an Error if the registry returns an non-valid Storage adapter ", async function() {
     let fakeGet = sinon.fake.resolves({
       status: 200,
-      data: 
+      data:
         {
         //empty adapter was returned (eg. when no entry for this submodel exists in registry)
         }
-      
-    });  
+
+    });
     sinon.replace(Axios,"get",fakeGet);
     let registryConnector: AdapterRegistryConnector = new AdapterRegistryConnector(
-     new WebClient(),
+    new WebClient(),
       new URL("http://www.foobar.com/foo"),
       "b",
       "c"
@@ -158,7 +158,7 @@ logger.error("[Test] Registry returned no adapter");
     }
     sinon.restore();
   });
- 
+
 });
 
 describe("the adapter connector ", function() {
@@ -197,7 +197,7 @@ it(" Should post a submodel to a storage adapter service", async function(){
   );
   sinon.replace(Axios,"post",fakePost);
 
-let result = await adapterConnector.postSubmoduleToAdapter(submodelsRequest,adapter); 
+let result = await adapterConnector.postSubmoduleToAdapter(submodelsRequest,adapter);
 
 sinon.assert.match(result, { status: 200 });
 sinon.restore();

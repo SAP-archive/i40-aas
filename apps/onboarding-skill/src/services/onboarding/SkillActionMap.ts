@@ -10,9 +10,9 @@ class SkillActionMap {
   private logRequestError(error: any) {
     if (error.response) {
       /*
-       * The request was made and the server responded with a
-       * status code that falls out of the range of 2xx
-       */
+      * The request was made and the server responded with a
+      * status code that falls out of the range of 2xx
+      */
       logger.debug(
         "The request was made and the server responded with a status code that falls out of the range of 2xx"
       );
@@ -20,10 +20,10 @@ class SkillActionMap {
       logger.debug("Headers " + error.response.headers);
     } else if (error.request) {
       /*
-       * The request was made but no response was received, `error.request`
-       * is an instance of XMLHttpRequest in the browser and an instance
-       * of http.ClientRequest in Node.js
-       */
+      * The request was made but no response was received, `error.request`
+      * is an instance of XMLHttpRequest in the browser and an instance
+      * of http.ClientRequest in Node.js
+      */
       logger.debug("The request was made but no response was received");
       logger.debug("Request: " + error.request); //This might print out the password
     } else {

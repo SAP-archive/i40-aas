@@ -11,7 +11,7 @@ import { sendInteractionReplyToAAS } from "./AASConnector";
 
 /*
 Implements the logic of how to handle the messages received from the broker.
-i.e. asks the Registry App for the endpoints to which the message should be 
+i.e. asks the Registry App for the endpoints to which the message should be
 forwarded to, based on the id or role of the receiver
 */
 class RegistryConnector {
@@ -48,7 +48,7 @@ class RegistryConnector {
 
   //TODO: there should be a caching of URLs so that not everytime gets pulled from registry
   /*
-         look up the endpoints based on the id or role of the receiver
+        look up the endpoints based on the id or role of the receiver
     */
   async getReceiverURLFromRegistry(message: IInteractionMessage) {
     //the GET parameter for the request to registry
@@ -87,7 +87,7 @@ class RegistryConnector {
     interaction: IInteractionMessage
   ) {
     let registryEntriesArray: IRegistryEntry[] | undefined;
-  
+
       registryEntriesArray = response.data;
       if (registryEntriesArray) {
         //for every AAS (with AasId,Endpoints[],AssetID set) make a validation if something is missing
@@ -95,26 +95,26 @@ class RegistryConnector {
           let regEntry = this.validateEssentialRegResultSet(RegistryEntry);
 
           if (regEntry && this.validateRequired(regEntry)) {
-            //iterate to send to all array endpoints
-            let receiverURLs = regEntry.endpoints;
-            receiverURLs.forEach(URL => {
-              let receiverURL = (URL as IEndpoint).url;
+                    //iterate to send to all array endpoints
+                    let receiverURLs = regEntry.endpoints;
+                    receiverURLs.forEach(URL => {
+                    let receiverURL = (URL as IEndpoint).url;
 
-              logger.info(
-                "[REGISTRY]: ReceiverURL from Registry is " + receiverURL
-              );
-              try {
-                   sendInteractionReplyToAAS(receiverURL, interaction);
-            } catch (error) {
-              logger.error(
-                "Error when posting to AAS " +
-                  error
-              );
-              throw Error(error);
-            }
-            });
+                    logger.info(
+                    "[REGISTRY]: ReceiverURL from Registry is " + receiverURL
+                    );
+                    try {
+                    sendInteractionReplyToAAS(receiverURL, interaction);
+                    } catch (error) {
+                    logger.error(
+                    "Error when posting to AAS " +
+                    error
+                    );
+                    throw Error(error);
+                    }
+                    });
           } else if (regEntry === undefined) {
-            logger.error("[REGISTRY]: ReceiverURL could not be parsed");
+                    logger.error("[REGISTRY]: ReceiverURL could not be parsed");
           }
         });
 
@@ -124,13 +124,13 @@ class RegistryConnector {
         this.handleUnactionableMessage(response.data.toString());
         return undefined;
       }
-   
+
   }
 
   /**
-   * Validation of the Registry Entry
-   * @param registryEntry
-   */
+  * Validation of the Registry Entry
+  * @param registryEntry
+  */
   private validateEssentialRegResultSet(
     registryEntry: IRegistryEntry
   ): IRegistryEntry | undefined {

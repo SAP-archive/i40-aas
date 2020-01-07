@@ -24,32 +24,32 @@ export default [
           let type = interactionReq.frame.type;
 
           /**
-           * Build the topic name that follows the schema
-           * Topic -> protocol:receiver_role:message_type
-           * */
+          * Build the topic name that follows the schema
+          * Topic -> protocol:receiver_role:message_type
+          * */
 
           let topicName = new BrokerInteractionTopic(
-            semanticProtocol,
-            receiverRole,
-            type
+                    semanticProtocol,
+                    receiverRole,
+                    type
           ).getTopic();
 
           logger.debug("[AMQP] topic name " + topicName);
 
           try {
-            const result = await publishInteractionToBroker(
-              topicName,
-              req.body
-            );
-            res.status(200).send(result);
+                    const result = await publishInteractionToBroker(
+                    topicName,
+                    req.body
+                    );
+                    res.status(200).send(result);
           } catch (error) {
-            next(new Error("Internal Server Error"));
+                    next(new Error("Internal Server Error"));
           }
         } catch (e) {
           if (!e.isBoom) {
-            next(new Error("Unspecified Error Occured"));
+                    next(new Error("Unspecified Error Occured"));
           } else {
-            next(e);
+                    next(e);
           }
         }
       }

@@ -11,9 +11,9 @@ let brokerClient:AmqpClient;
 
   export const publishInteractionToBroker = async (topic:string, req: string) => {
 
-    
+
     //if the client is not connected to broker return a 500 Error
-    if(!brokerClient.isConnected()){ 
+    if(!brokerClient.isConnected()){
       logger.error("Broker client was not initiated or connected, check connection");
       return new Error("Broker connection error. Message was not published");
     }

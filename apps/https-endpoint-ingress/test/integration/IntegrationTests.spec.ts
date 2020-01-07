@@ -41,7 +41,7 @@ describe("AmpqClient", function() {
   });
 
   it("can connect to the broker",  function(done) {
-   
+
 
     try {
       var connection =  amqpClientSender.setupPublishing(() => {

@@ -51,7 +51,7 @@ class AdapterRegistryConnector {
       throw new Error("Server Error");
     }
 
-    
+
   }
 }
 

@@ -85,7 +85,7 @@ class AmqpClient implements IMessageBrokerClient {
           logger.info("Waiting to reconnect");
           let timeout: number;
           if (that.reconnectAfterMilliSecs)
-            timeout = that.reconnectAfterMilliSecs;
+                    timeout = that.reconnectAfterMilliSecs;
           else timeout = 6000;
           await AmqpClient.sleep(timeout);
           logger.info("reconnecting. Call count:" + that.retryCounter++);
@@ -99,19 +99,19 @@ class AmqpClient implements IMessageBrokerClient {
         conn.on("close", async function() {
           if (that.destroyed) return;
           logger.error(
-            "[AMQP] connection lost, reconnecting. Time:" +
-              (Date.now() - that.start)
+                    "[AMQP] connection lost, reconnecting. Time:" +
+                    (Date.now() - that.start)
           );
           that.myConn.connectionClosed = true;
           that.connectAndDoSubscription(() => {
-            that.setupPublishing(() =>
-              logger.info(
-                "Successfully connected after drop count:" +
-                  ++that.successCounter +
-                  ". Time:" +
-                  (Date.now() - that.start)
-              )
-            );
+                    that.setupPublishing(() =>
+                    logger.info(
+                    "Successfully connected after drop count:" +
+                    ++that.successCounter +
+                    ". Time:" +
+                    (Date.now() - that.start)
+                    )
+                    );
           });
         });
         //}
@@ -167,50 +167,50 @@ class AmqpClient implements IMessageBrokerClient {
 
         if (that.myConn.subscription) {
           logger.info(
-            "Listener started. Waiting for messages in " +
-              q.queue +
-              " for topic " +
-              that.myConn.subscription.topic +
-              ". Call count: " +
-              ++that.listenerCounter
+                    "Listener started. Waiting for messages in " +
+                    q.queue +
+                    " for topic " +
+                    that.myConn.subscription.topic +
+                    ". Call count: " +
+                    ++that.listenerCounter
           );
           logger.debug(
-            "Binding " +
-              q.queue +
-              " to exchange " +
-              that.brokerExchange +
-              " for topic " +
-              that.myConn.subscription.topic
+                    "Binding " +
+                    q.queue +
+                    " to exchange " +
+                    that.brokerExchange +
+                    " for topic " +
+                    that.myConn.subscription.topic
           );
           ch.bindQueue(
-            q.queue,
-            that.brokerExchange,
-            that.myConn.subscription.topic
+                    q.queue,
+                    that.brokerExchange,
+                    that.myConn.subscription.topic
           );
         } else {
           logger.error(
-            "Attempting to set up a subscription even though none was provided."
+                    "Attempting to set up a subscription even though none was provided."
           );
         }
         ch.consume(
           q.queue,
           function(msg: Message | null) {
-            if (msg === null) {
-              throw Error("Null message received!");
-            }
-            logger.debug(
-              that.uniqueListenerId + " received message on queue " + q.queue
-            );
+                    if (msg === null) {
+                    throw Error("Null message received!");
+                    }
+                    logger.debug(
+                    that.uniqueListenerId + " received message on queue " + q.queue
+                    );
 
-            if (that.myConn.subscription) {
-              that.myConn.subscription.messageReceiver.receive(
-                msg.content.toString()
-              );
-            } else {
-              logger.error(
-                "Attempting to set up a subscription even though none was provided."
-              );
-            }
+                    if (that.myConn.subscription) {
+                    that.myConn.subscription.messageReceiver.receive(
+                    msg.content.toString()
+                    );
+                    } else {
+                    logger.error(
+                    "Attempting to set up a subscription even though none was provided."
+                    );
+                    }
           },
           { noAck: true }
         );
@@ -263,25 +263,25 @@ class AmqpClient implements IMessageBrokerClient {
 
         if (that.useMqtt) {
           that.myConn.pubChannel.assertExchange(
-            AmqpClient.MQTT_EXCHANGE,
-            "topic",
-            {
-              durable: true
-            }
+                    AmqpClient.MQTT_EXCHANGE,
+                    "topic",
+                    {
+                    durable: true
+                    }
           );
 
           that.myConn.pubChannel.bindExchange(
-            AmqpClient.MQTT_EXCHANGE, //destination
-            that.brokerExchange, //source
-            "#",
-            {}
+                    AmqpClient.MQTT_EXCHANGE, //destination
+                    that.brokerExchange, //source
+                    "#",
+                    {}
           );
 
           logger.debug(
-            "bound exchange. All messages arriving at " +
-              that.brokerExchange +
-              " will be forwarded to " +
-              AmqpClient.MQTT_EXCHANGE
+                    "bound exchange. All messages arriving at " +
+                    that.brokerExchange +
+                    " will be forwarded to " +
+                    AmqpClient.MQTT_EXCHANGE
           );
         }
 

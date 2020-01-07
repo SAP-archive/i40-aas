@@ -87,7 +87,7 @@ class AmqpClient implements IMessageBrokerClient {
           logger.info("Waiting to reconnect");
           let timeout: number;
           if (that.reconnectAfterMilliSecs)
-            timeout = that.reconnectAfterMilliSecs;
+                    timeout = that.reconnectAfterMilliSecs;
           else timeout = 6000;
           await AmqpClient.sleep(timeout);
           logger.info("reconnecting. Call count:" + that.retryCounter++);
@@ -101,19 +101,19 @@ class AmqpClient implements IMessageBrokerClient {
         conn.on("close", async function() {
           if (that.destroyed) return;
           logger.error(
-            "[AMQP] connection lost, reconnecting. Time:" +
-              (Date.now() - that.start)
+                    "[AMQP] connection lost, reconnecting. Time:" +
+                    (Date.now() - that.start)
           );
           that.myConn.connectionClosed = true;
           that.connectAndDoSubscription(() => {
-            that.setupPublishing(() =>
-              logger.info(
-                "Successfully connected after drop count:" +
-                  ++that.successCounter +
-                  ". Time:" +
-                  (Date.now() - that.start)
-              )
-            );
+                    that.setupPublishing(() =>
+                    logger.info(
+                    "Successfully connected after drop count:" +
+                    ++that.successCounter +
+                    ". Time:" +
+                    (Date.now() - that.start)
+                    )
+                    );
           });
         });
         //}

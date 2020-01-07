@@ -19,34 +19,34 @@ class SkillStateMachineSpecification {
       WaitingForOnboardingRequest: {
         on: {
           PUBLISHINSTANCE_FROM_OPERATOR: [
-            {
-              cond: "notRequestApproval",
-              target: "CreatingInstance"
-            },
-            {
-              cond: "requestApproval",
-              target: "WaitingForApproval",
-              actions: ["requestApprovalFromApprover"]
-            }
+                    {
+                    cond: "notRequestApproval",
+                    target: "CreatingInstance"
+                    },
+                    {
+                    cond: "requestApproval",
+                    target: "WaitingForApproval",
+                    actions: ["requestApprovalFromApprover"]
+                    }
           ]
         }
       },
       WaitingForApproval: {
         on: {
           APPROVED_FROM_APPROVER: {
-            target: "CreatingInstance"
+                    target: "CreatingInstance"
           },
           REQUESTREFUSED_FROM_APPROVER: {
-            target: "OperationFailed",
-            actions: ["sendRequestRefusedToOperator"]
+                    target: "OperationFailed",
+                    actions: ["sendRequestRefusedToOperator"]
           },
           NOTUNDERSTOOD_FROM_APPROVER: {
-            target: "OperationFailed",
-            actions: ["sendRequestRefusedToOperator"]
+                    target: "OperationFailed",
+                    actions: ["sendRequestRefusedToOperator"]
           },
           ERROR_FROM_APPROVER: {
-            target: "OperationFailed",
-            actions: ["sendRequestRefusedToOperator"]
+                    target: "OperationFailed",
+                    actions: ["sendRequestRefusedToOperator"]
           }
         }
       },
@@ -55,20 +55,20 @@ class SkillStateMachineSpecification {
           id: "create-instance-promise",
           src: "createInstance",
           onDone: [
-            {
-              target: "InstancePublished",
-              cond: "notRequestType",
-              actions: "sendResponseInstanceToOperator"
-            },
-            {
-              target: "WaitingForType",
-              cond: "requestType",
-              actions: "sendResponseToOperatorAndRequestType"
-            }
+                    {
+                    target: "InstancePublished",
+                    cond: "notRequestType",
+                    actions: "sendResponseInstanceToOperator"
+                    },
+                    {
+                    target: "WaitingForType",
+                    cond: "requestType",
+                    actions: "sendResponseToOperatorAndRequestType"
+                    }
           ],
           onError: {
-            target: "OperationFailed",
-            actions: "sendCreationErrorToOperator"
+                    target: "OperationFailed",
+                    actions: "sendCreationErrorToOperator"
           }
         }
       },
@@ -84,17 +84,17 @@ class SkillStateMachineSpecification {
       WaitingForType: {
         on: {
           RESPONSETYPE_FROM_MANUFACTURER: {
-            target: "InstanceAndTypePublished",
-            actions: ["sendResponseTypeToOperator"]
+                    target: "InstanceAndTypePublished",
+                    actions: ["sendResponseTypeToOperator"]
           },
           NOTUNDERSTOOD_FROM_MANUFACTURER: {
-            target: "InstancePublished"
+                    target: "InstancePublished"
           },
           ERROR_FROM_MANUFACTURER: {
-            target: "InstancePublished"
+                    target: "InstancePublished"
           },
           REQUESTREFUSED_FROM_MANUFACTURER: {
-            target: "InstancePublished"
+                    target: "InstancePublished"
           }
         }
       }

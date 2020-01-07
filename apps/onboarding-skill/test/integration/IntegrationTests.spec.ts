@@ -51,10 +51,10 @@ describe("AmpqClient", function() {
         "test1.*",
         new (class MyMessageReceiver implements IMessageReceiver {
           receive(cm: string) {
-            logger.debug(listenerId + " got message:" + cm);
-            expect(cm).to.include("ping");
-            logger.debug("Test 1 done");
-            done();
+                    logger.debug(listenerId + " got message:" + cm);
+                    expect(cm).to.include("ping");
+                    logger.debug("Test 1 done");
+                    done();
           }
         })()
       )
@@ -92,10 +92,10 @@ describe("AmpqClient", function() {
         "test1b.*",
         new (class MyMessageReceiver implements IMessageReceiver {
           receive(cm: string) {
-            logger.debug(listenerId + " got message:" + cm);
-            expect(cm).to.include("ping");
-            logger.debug("Test 1b done");
-            done();
+                    logger.debug(listenerId + " got message:" + cm);
+                    expect(cm).to.include("ping");
+                    logger.debug("Test 1b done");
+                    done();
           }
         })()
       )
@@ -129,10 +129,10 @@ describe("AmpqClient", function() {
         "test1c/x",
         new (class MyMessageReceiver implements IMessageReceiver {
           receive(cm: string) {
-            logger.debug("mqtt listener got message:" + cm);
-            expect(cm).to.include("ping");
-            logger.debug("Test 1c done");
-            done();
+                    logger.debug("mqtt listener got message:" + cm);
+                    expect(cm).to.include("ping");
+                    logger.debug("Test 1c done");
+                    done();
           }
         })()
       )
@@ -183,12 +183,12 @@ describe("AmpqClient", function() {
         "test2.*",
         new (class MyMessageReceiver implements IMessageReceiver {
           receive(cm: string) {
-            testRunning = false;
-            logger.debug(listenerId + " got message:" + cm);
-            expect(cm).to.include("ping");
-            sinon.assert.called(fakeConnect);
-            logger.debug("Test 2 done");
-            done();
+                    testRunning = false;
+                    logger.debug(listenerId + " got message:" + cm);
+                    expect(cm).to.include("ping");
+                    sinon.assert.called(fakeConnect);
+                    logger.debug("Test 2 done");
+                    done();
           }
         })()
       )
@@ -198,9 +198,9 @@ describe("AmpqClient", function() {
       amqpClientSender.setupPublishing(async () => {
         while (testRunning) {
           try {
-            amqpClientSender.publish("test2.x", "ping");
+                    amqpClientSender.publish("test2.x", "ping");
           } catch (error) {
-            logger.debug("Could not publish:" + error);
+                    logger.debug("Could not publish:" + error);
           }
           await AmqpClient.sleep(50);
         }
@@ -246,13 +246,13 @@ describe("AmpqClient", function() {
         "test3.*",
         new (class MyMessageReceiver implements IMessageReceiver {
           receive(numberAsString: string) {
-            logger.debug(listenerId + " got message:" + numberAsString);
-            if (!connectionKilled) return;
-            if (testRunning) {
-              testRunning = false;
-              logger.debug("Test 3 done");
-              done();
-            }
+                    logger.debug(listenerId + " got message:" + numberAsString);
+                    if (!connectionKilled) return;
+                    if (testRunning) {
+                    testRunning = false;
+                    logger.debug("Test 3 done");
+                    done();
+                    }
           }
         })()
       )
@@ -264,9 +264,9 @@ describe("AmpqClient", function() {
         logger.debug("Listening for messages");
         while (testRunning) {
           try {
-            amqpClientSender.publish("test3.x", String(counter++));
+                    amqpClientSender.publish("test3.x", String(counter++));
           } catch (error) {
-            logger.debug("Could not publish:" + error);
+                    logger.debug("Could not publish:" + error);
           }
           await AmqpClient.sleep(50);
         }

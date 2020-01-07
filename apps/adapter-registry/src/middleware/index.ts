@@ -3,6 +3,5 @@ import { handleCors, handleBodyRequestParsing, handleCompression, handleBasicAut
 import { handleAPIDocs } from "./apiDocs";
 
 
-export default [handleCors, handleBodyRequestParsing, 
+export default [handleCors, handleBodyRequestParsing,
     handleCompression, handleBasicAuth, handleAPIDocs];
-  
