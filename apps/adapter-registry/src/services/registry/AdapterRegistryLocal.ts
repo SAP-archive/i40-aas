@@ -40,10 +40,10 @@ class AdapterRegistryLocal implements IAdapterRegistry {
     try {
       //the adapter.id is used as key
       if (record.adapterId && this.storage) {
-	const insertAdapterResult = await this.storage.setItem(
-	  record.adapterId,
-	  record
-	);
+  const insertAdapterResult = await this.storage.setItem(
+    record.adapterId,
+    record
+  );
       }
     } catch (e) {
       logger.error("Error storing adapter entry " + record.adapterId + " Error "+e);

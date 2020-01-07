@@ -71,9 +71,9 @@ describe("the routing controller ", function() {
 
     console.log(
       "result " +
-	(await registryConnector.getAdapterFromRegistry(
-	  submodelsRequest.idShort
-	))
+  (await registryConnector.getAdapterFromRegistry(
+    submodelsRequest.idShort
+  ))
     );
 
     RoutingController.initController(registryConnector, adapterConnector);
@@ -112,40 +112,40 @@ describe("the registry connector ", function() {
     let fakeGet = sinon.fake.resolves({
       status: 200,
       data:
-	{
-	    url: "http://localhost:3000/submodels",
-	    adapterId: "storage-adapter-ain",
-	    name: "SAP-AIN-Adapter",
-	    submodelId: "opc-ua-devices"
-	}
+  {
+      url: "http://localhost:3000/submodels",
+      adapterId: "storage-adapter-ain",
+      name: "SAP-AIN-Adapter",
+      submodelId: "opc-ua-devices"
+  }
 
     });
     sinon.replace(Axios,"get",fakeGet);
     let registryConnector: AdapterRegistryConnector = new AdapterRegistryConnector(
-     new WebClient(),
+    new WebClient(),
       new URL("http://www.foobar.com/foo"),
       "b",
       "c"
     );
     let result: IStorageAdapter  = await registryConnector.getAdapterFromRegistry("fooIdShort");
 console.log(result);
-     expect( isStorageAdapter(result),"should be an adapter object").to.be.true;
+    expect( isStorageAdapter(result),"should be an adapter object").to.be.true;
 
-     sinon.restore();
+    sinon.restore();
     });
 
   it("should throw an Error if the registry returns an non-valid Storage adapter ", async function() {
     let fakeGet = sinon.fake.resolves({
       status: 200,
       data:
-	{
-	//empty adapter was returned (eg. when no entry for this submodel exists in registry)
-	}
+  {
+  //empty adapter was returned (eg. when no entry for this submodel exists in registry)
+  }
 
     });
     sinon.replace(Axios,"get",fakeGet);
     let registryConnector: AdapterRegistryConnector = new AdapterRegistryConnector(
-     new WebClient(),
+    new WebClient(),
       new URL("http://www.foobar.com/foo"),
       "b",
       "c"

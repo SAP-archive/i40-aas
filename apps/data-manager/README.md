@@ -13,16 +13,16 @@ POST /submodels
 
 ```javascript
 [
-   {
+  {
     "embeddedDataSpecifications": [],
     "semanticId": {
       "keys": [
-	{
-	  "idType": "URI",
-	  "type": "GlobalReference",
-	  "value": "opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/",
-	  "local": false
-	}
+  {
+    "idType": "URI",
+    "type": "GlobalReference",
+    "value": "opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/",
+    "local": false
+  }
       ]
     },
     "kind": "Instance",
@@ -37,7 +37,7 @@ POST /submodels
     },
     "submodelElements": [
       { .....}
-   }
+  }
 ]
 ```
 

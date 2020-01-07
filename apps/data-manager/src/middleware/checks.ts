@@ -37,13 +37,8 @@ export const validateSubmodelsRequest = (
         logger.error("Missing id in submodel "+submodel.identification.id);
         throw new HTTP422Error("Missing required fields in Request: idShort");
 
-<<<<<<< HEAD
       }
-      next();
-=======
-      }  
 
->>>>>>> revised data-manager to work with updated adapter-registry
 });
 //all clear move to next
 next();

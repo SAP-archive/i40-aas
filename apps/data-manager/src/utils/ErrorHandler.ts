@@ -24,12 +24,7 @@ export const clientError = (err: Error, res: Response, next: NextFunction) => {
   if (err instanceof HTTPClientError) {
     logger.error("Client error " + err);
     res.status(err.statusCode).send(err.message);
-<<<<<<< HEAD
-  }
-  else if (err instanceof SyntaxError){
-=======
   } else if (err instanceof SyntaxError) {
->>>>>>> revised data-manager to work with updated adapter-registry
     logger.error("Syntax error" + err);
     res.status(400).send(err.message);
   } else {
@@ -38,15 +33,6 @@ export const clientError = (err: Error, res: Response, next: NextFunction) => {
 };
 
 export const serverError = (err: Error, res: Response, next: NextFunction) => {
-<<<<<<< HEAD
-  logger.error("Server error " +err);
-  if (process.env.NODE_ENV === "production") {
-    res.status(500).send("Internal Server Error");
-  } else {
-    res.status(500).send(err);
-  }
-=======
   logger.error("Server error " + err);
   res.status(500).send("Internal Server Error");
->>>>>>> revised data-manager to work with updated adapter-registry
 };

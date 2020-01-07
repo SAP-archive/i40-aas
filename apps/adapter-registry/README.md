@@ -22,8 +22,8 @@ POST /adapters
           "adapterId":"fooAdapterId",
           "url":"fooURL",
           "name":"testAdaptername",
-	"submodelId": "opc-ua-devices",
-	"submodelSemanticId" : "part-100-device-information-model"
+  "submodelId": "opc-ua-devices",
+  "submodelSemanticId" : "part-100-device-information-model"
     }
 ]
 ```
@@ -49,12 +49,12 @@ OR
 response </br>
 NOTE: only one adapter per submodel is assumed
 ```javascript
-     {
-	  "adapterId":"fooAdapterId",
-	  "url":"fooURL",
-	  "name":"testAdaptername",
-	"submodelId": "opc-ua-devices",
-	"submodelSemanticId" : "part-100-device-information-model"
+    {
+    "adapterId":"fooAdapterId",
+    "url":"fooURL",
+    "name":"testAdaptername",
+  "submodelId": "opc-ua-devices",
+  "submodelSemanticId" : "part-100-device-information-model"
     }
 ```
 

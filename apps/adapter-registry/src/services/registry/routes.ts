@@ -30,21 +30,21 @@ export default [
       checkReqBodyEmpty,
       validateCreateAdaptersRequest,
       async (req: Request, res: Response, next: NextFunction) => {
-	var adaptersAssignmentArray: ICreateAdapter[] = req.body;
-	logger.info(
-	  " Register request received num of adapters " +
-	    adaptersAssignmentArray.length
-	);
+  var adaptersAssignmentArray: ICreateAdapter[] = req.body;
+  logger.info(
+    " Register request received num of adapters " +
+      adaptersAssignmentArray.length
+  );
 
-	try {
-	  let result = await createAdapters(adaptersAssignmentArray);
-	  logger.debug("result "+ JSON.stringify(result));
-	  res.status(200).send(result);
+  try {
+    let result = await createAdapters(adaptersAssignmentArray);
+    logger.debug("result "+ JSON.stringify(result));
+    res.status(200).send(result);
 
-	} catch (e) {
-	  logger.error(" Error while registering adapter " + e);
-	  next(new Error(" Server Error "));
-	}
+  } catch (e) {
+    logger.error(" Error while registering adapter " + e);
+    next(new Error(" Server Error "));
+  }
       }
     ]
   },
@@ -55,8 +55,8 @@ export default [
     handler: [
       async (req: Request, res: Response, next: NextFunction) => {
         try {
-	  if (req.query.submodelId) {
-	    var submodelId: string = req.query.submodelId;
+    if (req.query.submodelId) {
+      var submodelId: string = req.query.submodelId;
             logger.debug("Submodel id : " + submodelId);
             let adaptersArray = await getAdapterBySubmodelId(submodelId);
             res.json(adaptersArray);
@@ -86,18 +86,18 @@ export default [
       validateCreateAdaptersRequest,
 
       async (req: Request, res: Response) => {
-	var adaptersAssignmentArray: ICreateAdapter[] = req.body;
-	logger.info(" Clear all registry entries ");
+  var adaptersAssignmentArray: ICreateAdapter[] = req.body;
+  logger.info(" Clear all registry entries ");
 
-	try {
-	  await clearAllEntries();
-	} catch (e) {
-	  logger.error(" Error while clearing registry " + e);
+  try {
+    await clearAllEntries();
+  } catch (e) {
+    logger.error(" Error while clearing registry " + e);
 
-	  res.end(e.message);
-	}
+    res.end(e.message);
+  }
 
-	res.json("Registry Cleared");
+  res.json("Registry Cleared");
       }
     ]
   }

@@ -32,7 +32,7 @@ describe("the adapter service", async function() {
       .request(app)
       .get("/health")
       .then(function(res: any) {
-	chai.expect(res.text).to.eql("Server Up!");
+  chai.expect(res.text).to.eql("Server Up!");
       });
   });
 
@@ -42,25 +42,25 @@ describe("the adapter service", async function() {
       .post("/submodels")
       .auth("foo", "bar")
       .send({
-	id: 234242,
-	data: {
-	  displayname: "name",
-	  avatar: "displayname"
-	}
+  id: 234242,
+  data: {
+    displayname: "name",
+    avatar: "displayname"
+  }
       })
       .then((res: any) => {
-	chai.expect(res.status).to.eql(401); // expression which will be true if response status equal to 200
-	done();
+  chai.expect(res.status).to.eql(401); // expression which will be true if response status equal to 200
+  done();
       });
   });
 
   it("will give a 422 response if the adapterId is missing", () => {
     let adapterRequest = [
       {
-	    "url":"http://i40-aas-storage-adapter-mongodb:3100/submodels",
-	    "name":"mongo-adapter",
-	  "submodelId": "opc-ua-devices",
-	  "submodelSemanticId": "opc-ua-devices-semantic"
+      "url":"http://i40-aas-storage-adapter-mongodb:3100/submodels",
+      "name":"mongo-adapter",
+    "submodelId": "opc-ua-devices",
+    "submodelSemanticId": "opc-ua-devices-semantic"
 
       }
     ];
@@ -72,15 +72,15 @@ describe("the adapter service", async function() {
       .set("content-type", "application/json")
       .send(adapterRequest)
       .then(function(res: any) {
-	chai.expect(res).to.have.status(422);
+  chai.expect(res).to.have.status(422);
       });
   });
   it("will give a 422 response if the submodelId and semanticId are missing", () => {
     let adapterRequest = [
       {
-	    "adapterId": "AdaptUniqueId",
-	    "url":"http://i40-aas-storage-adapter-mongodb:3100/submodels",
-	    "name":"mongo-adapter"
+      "adapterId": "AdaptUniqueId",
+      "url":"http://i40-aas-storage-adapter-mongodb:3100/submodels",
+      "name":"mongo-adapter"
 
       }
     ];
@@ -92,7 +92,7 @@ describe("the adapter service", async function() {
       .set("content-type", "application/json")
       .send(adapterRequest)
       .then(function(res: any) {
-	chai.expect(res).to.have.status(422);
+  chai.expect(res).to.have.status(422);
       });
   });
 
@@ -100,10 +100,10 @@ describe("the adapter service", async function() {
 
     let adapterRequest = [
       {
-	    "url":"http://i40-aas-storage-adapter-mongodb:3100/submodels",
-	    "name":"mongo-adapter",
-	  "submodelId": "opc-ua-devices",
-	  "submodelSemanticId": "opc-ua-devices-semantic"
+      "url":"http://i40-aas-storage-adapter-mongodb:3100/submodels",
+      "name":"mongo-adapter",
+    "submodelId": "opc-ua-devices",
+    "submodelSemanticId": "opc-ua-devices-semantic"
       }
     ];
 
@@ -114,7 +114,7 @@ describe("the adapter service", async function() {
       .set("content-type", "application/json")
       .send(adapterRequest + "xx")
       .then(function(res: any) {
-	chai.expect(res).to.have.status(400);
+  chai.expect(res).to.have.status(400);
       });
   });
 
@@ -126,7 +126,7 @@ describe("the adapter service", async function() {
       .set("content-type", "application/json")
       .send("")
       .then(function(res: any) {
-	chai.expect(res).to.have.status(400);
+  chai.expect(res).to.have.status(400);
       });
   });
 
@@ -135,11 +135,11 @@ describe("the adapter service", async function() {
 
     let adapterRequest = [
       {
-	    "adapterId": "AdaptUniqueId",
-	    "url":"http://i40-aas-storage-adapter-mongodb:3100/submodels",
-	    "name":"mongo-adapter",
-	  "submodelId": "opc-ua-devices",
-	  "submodelSemanticId": "opc-ua-devices-semantic"
+      "adapterId": "AdaptUniqueId",
+      "url":"http://i40-aas-storage-adapter-mongodb:3100/submodels",
+      "name":"mongo-adapter",
+    "submodelId": "opc-ua-devices",
+    "submodelSemanticId": "opc-ua-devices-semantic"
 
       }
     ];
@@ -153,9 +153,9 @@ describe("the adapter service", async function() {
       .set("content-type", "application/json")
       .send(adapterRequest)
       .then((res: any) => {
-	chai.expect(res.status).to.eql(200); // expression which will be true if response status equal to 200
-	sinon.restore();
-	done();
+  chai.expect(res.status).to.eql(200); // expression which will be true if response status equal to 200
+  sinon.restore();
+  done();
       });
   });
 
@@ -163,11 +163,11 @@ describe("the adapter service", async function() {
 
     let adapterRequest = [
       {
-	    "adapterId": "AdaptUniqueId",
-	    "url":"http://i40-aas-storage-adapter-mongodb:3100/submodels",
-	    "name":"mongo-adapter",
-	  "submodelId": "opc-ua-devices",
-	  "submodelSemanticId": "opc-ua-devices-semantic"
+      "adapterId": "AdaptUniqueId",
+      "url":"http://i40-aas-storage-adapter-mongodb:3100/submodels",
+      "name":"mongo-adapter",
+    "submodelId": "opc-ua-devices",
+    "submodelSemanticId": "opc-ua-devices-semantic"
 
       }
     ];
@@ -181,9 +181,9 @@ describe("the adapter service", async function() {
       .set("content-type", "application/json")
       .send(adapterRequest)
       .then((res: any) => {
-	chai.expect(res.status).to.eql(500); // expression which will be true if response status equal to 200
-	sinon.restore();
-	done();
+  chai.expect(res.status).to.eql(500); // expression which will be true if response status equal to 200
+  sinon.restore();
+  done();
       });
   });
 

@@ -70,13 +70,8 @@ describe("the routing controller ", function() {
 
     console.log(
       "result " +
-<<<<<<< HEAD
-        (await registryConnector.getAdapterFromRegistry("submodelid",
-          submodelsRequest[0].idShort
-=======
-	(await registryConnector.getAdapterFromRegistry("submodelid",
-	  submodelsRequest[0].idShort
->>>>>>> revised data-manager to work with updated adapter-registry
+  (await registryConnector.getAdapterFromRegistry("submodelid",
+    submodelsRequest[0].idShort
         ))
     );
 
@@ -126,16 +121,16 @@ describe("the registry connector ", function() {
     });
     sinon.replace(Axios,"get",fakeGet);
     let registryConnector: AdapterRegistryConnector = new AdapterRegistryConnector(
-     new WebClient(),
+    new WebClient(),
       new URL("http://www.foobar.com/foo"),
       "b",
       "c"
     );
     let result: IStorageAdapter  = await registryConnector.getAdapterFromRegistry("submodelId","fooIdShort");
 console.log(result);
-     expect( isStorageAdapter(result),"should be an adapter object").to.be.true;
+    expect( isStorageAdapter(result),"should be an adapter object").to.be.true;
 
-     sinon.restore();
+    sinon.restore();
     });
 
   it("should throw an Error if the registry returns an non-valid Storage adapter ", async function() {
@@ -149,7 +144,7 @@ console.log(result);
     });
     sinon.replace(Axios,"get",fakeGet);
     let registryConnector: AdapterRegistryConnector = new AdapterRegistryConnector(
-     new WebClient(),
+    new WebClient(),
       new URL("http://www.foobar.com/foo"),
       "b",
       "c"
