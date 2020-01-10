@@ -43,7 +43,6 @@ class AdapterRegistryConnector {
       this.adapter_reg_user,
       this.adapter_reg_pass
     );
-    logger.debug("adapter "+JSON.stringify(regResponse.data));
 
     let adapter = regResponse.data as IStorageAdapter;
 

@@ -22,8 +22,8 @@ POST /adapters
           "adapterId":"fooAdapterId",
           "url":"fooURL",
           "name":"testAdaptername",
-  "submodelId": "opc-ua-devices",
-  "submodelSemanticId" : "part-100-device-information-model"
+  "submodelid": "opc-ua-devices",
+  "submodelsemanticid" : "part-100-device-information-model"
     }
 ]
 ```
@@ -43,7 +43,7 @@ OR
 
 |   parameter         |      Description                 |
 |   :-------:         | :-------------------:            |
-|  submodelSemanticId |  Submodel.semanticId.value[0]    |
+|  submodelsemanticid |  Submodel.semanticId.value[0]    |
 
 
 response </br>
@@ -53,8 +53,8 @@ NOTE: only one adapter per submodel is assumed
     "adapterId":"fooAdapterId",
     "url":"fooURL",
     "name":"testAdaptername",
-  "submodelId": "opc-ua-devices",
-  "submodelSemanticId" : "part-100-device-information-model"
+  "submodelid": "opc-ua-devices",
+  "submodelsemanticid" : "part-100-device-information-model"
     }
 ```
 

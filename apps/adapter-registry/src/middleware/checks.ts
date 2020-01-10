@@ -29,9 +29,9 @@ export const validateCreateAdaptersRequest = (
 ) => {
   let adaptersArray: Adapter[] = req.body;
   adaptersArray.forEach(adapter => {
-    let adapterId = adapter.adapterId;
-    let submodelId = adapter.submodelId;
-    let semanticId = adapter.submodelSemanticId;
+    let adapterId = adapter.adapterid;
+    let submodelId = adapter.submodelid;
+    let semanticId = adapter.submodelsemanticid;
     logger.debug("id " + adapterId);
     if (!adapterId) {
       logger.error("Missing id in adapter ");

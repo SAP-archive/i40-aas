@@ -54,13 +54,13 @@ describe("the adapter service", async function() {
       });
   });
 
-  it("will give a 422 response if the adapterId is missing", () => {
+  it("will give a 422 response if the adapterid is missing", () => {
     let adapterRequest = [
       {
       "url":"http://i40-aas-storage-adapter-mongodb:3100/submodels",
       "name":"mongo-adapter",
-    "submodelId": "opc-ua-devices",
-    "submodelSemanticId": "opc-ua-devices-semantic"
+    "submodelid": "opc-ua-devices",
+    "submodelsemanticid": "opc-ua-devices-semantic"
 
       }
     ];
@@ -78,7 +78,7 @@ describe("the adapter service", async function() {
   it("will give a 422 response if the submodelId and semanticId are missing", () => {
     let adapterRequest = [
       {
-      "adapterId": "AdaptUniqueId",
+      "adapterid": "AdaptUniqueId",
       "url":"http://i40-aas-storage-adapter-mongodb:3100/submodels",
       "name":"mongo-adapter"
 
@@ -102,8 +102,8 @@ describe("the adapter service", async function() {
       {
       "url":"http://i40-aas-storage-adapter-mongodb:3100/submodels",
       "name":"mongo-adapter",
-    "submodelId": "opc-ua-devices",
-    "submodelSemanticId": "opc-ua-devices-semantic"
+    "submodelid": "opc-ua-devices",
+    "submodelsemanticid": "opc-ua-devices-semantic"
       }
     ];
 
@@ -135,11 +135,11 @@ describe("the adapter service", async function() {
 
     let adapterRequest = [
       {
-      "adapterId": "AdaptUniqueId",
+      "adapterid": "AdaptUniqueId",
       "url":"http://i40-aas-storage-adapter-mongodb:3100/submodels",
       "name":"mongo-adapter",
-    "submodelId": "opc-ua-devices",
-    "submodelSemanticId": "opc-ua-devices-semantic"
+    "submodelid": "opc-ua-devices",
+    "submodelsemanticid": "opc-ua-devices-semantic"
 
       }
     ];
@@ -163,11 +163,11 @@ describe("the adapter service", async function() {
 
     let adapterRequest = [
       {
-      "adapterId": "AdaptUniqueId",
+      "adapterid": "AdaptUniqueId",
       "url":"http://i40-aas-storage-adapter-mongodb:3100/submodels",
       "name":"mongo-adapter",
-    "submodelId": "opc-ua-devices",
-    "submodelSemanticId": "opc-ua-devices-semantic"
+    "submodelid": "opc-ua-devices",
+    "submodelsemanticid": "opc-ua-devices-semantic"
 
       }
     ];

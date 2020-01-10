@@ -3,27 +3,27 @@ import Axios, { AxiosError, AxiosResponse, AxiosRequestConfig } from "axios";
 
 class WebClient {
   constructor() {}
-
+//TODO: remove the hardcoding of params, its also case sensitive!
   private getURLRequestConfig(
     paramName?: string,
     paramValue?: string,
     user?: string,
     pass?: string
   ): AxiosRequestConfig | undefined {
-    if (paramName=="submodelId" && user && pass) {
+    if (paramName=="submodelid" && user && pass) {
       return {
         params: {
-    submodelId: paramValue
+    submodelid: paramValue
         },
         auth: {
           username: user,
           password: pass
         }
       };
-    } else if (paramName == "submodelSemanticId" && user && pass) {
+    } else if (paramName == "submodelsemanticid" && user && pass) {
       return {
         params: {
-          submodelSemanticId: paramValue
+          submodelsemanticid: paramValue
         },
         auth: {
           username: user,
@@ -38,10 +38,10 @@ class WebClient {
         }
       };
     }
-    else if (paramName=="submodelSemanticId" && user && pass) {
+    else if (paramName=="submodelsemanticid" && user && pass) {
       return {
   params: {
-    submodelSemanticId: paramValue
+    submodelsemanticid: paramValue
   },
   auth: {
     username: user,
@@ -68,9 +68,9 @@ class WebClient {
     username: string,
     password: string
   ): Promise<AxiosResponse<T>> {
-    logger.debug("Get request from " + url);
+    logger.debug("Get request from Registry" + url);
     logger.debug("paramname "+ paramName+"  value " + param);
-    logger.debug(" config " + JSON.stringify(this.getURLRequestConfig(paramName, param, username, password)));
+    logger.debug("Config " + JSON.stringify(this.getURLRequestConfig(paramName, param, username, password)));
 
     const response = await Axios.get<T>(
       url,
@@ -78,6 +78,8 @@ class WebClient {
     );
     return response as AxiosResponse<T>;
   }
+
+
   //TODO: Consider if it would be better to have one GET req. method with optional
   //parameters to cover both getAdapter from Registry and getSubmodel from Adapter
   async getSubmodelFromAdapterRequest<T>(
@@ -85,7 +87,7 @@ class WebClient {
     username?: string,
     password?: string
   ): Promise<AxiosResponse<T>> {
-    logger.debug("Get request from " + url);
+    logger.debug("Get submodels request from adapter: " + url);
 
     const response = await Axios.get<T>(
       url,

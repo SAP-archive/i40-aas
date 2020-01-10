@@ -2,9 +2,9 @@ import { Identifier } from "i40-aas-objects";
 
 
 export interface IStorageAdapter {
-  adapterId: string;
+  adapterid: string;
   name?: string;
   url?: string;
-  submodelId: string;
-  submodelSemanticId?: string;
+  submodelid: string;
+  submodelsemanticid?: string;
 }

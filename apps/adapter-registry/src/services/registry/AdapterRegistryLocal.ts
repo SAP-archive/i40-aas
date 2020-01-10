@@ -39,14 +39,14 @@ class AdapterRegistryLocal implements IAdapterRegistry {
 
     try {
       //the adapter.id is used as key
-      if (record.adapterId && this.storage) {
+      if (record.adapterid && this.storage) {
   const insertAdapterResult = await this.storage.setItem(
-    record.adapterId,
+    record.adapterid,
     record
   );
       }
     } catch (e) {
-      logger.error("Error storing adapter entry " + record.adapterId + " Error "+e);
+      logger.error("Error storing adapter entry " + record.adapterid + " Error "+e);
       throw e;
     }
     logger.info("Registed record: " + JSON.stringify(record));
@@ -73,7 +73,7 @@ class AdapterRegistryLocal implements IAdapterRegistry {
 
       values.forEach(Adapter => {
         logger.debug("Adapter found : " + JSON.stringify(Adapter));
-        if (Adapter.submodelId === submodelId) {
+        if (Adapter.submodelid === submodelId) {
           adapter = Adapter;
           //TODO: check for singularity. Submodel is an 1..1 to Adapter
         }
@@ -105,7 +105,7 @@ class AdapterRegistryLocal implements IAdapterRegistry {
       let values: Adapter[] = await this.storage.values();
       values.forEach(Adapter => {
         logger.debug("Adapter found : " + JSON.stringify(Adapter));
-        if (Adapter.submodelSemanticId === submodelSemanticId) {
+        if (Adapter.submodelsemanticid === submodelSemanticId) {
           adapter = Adapter;
           //TODO: check for singularity. Submodel is an 1..1 to Adapter
         }

@@ -22,27 +22,27 @@ class SubmodelEntry implements ISubmodelEntry {
 */
 class Adapter implements IStorageAdapter {
   //the submodel that the adapter can handle
-  submodelId: string;
-  public adapterId: string;
+  submodelid: string;
+  public adapterid: string;
   public name?: string;
   public url?: string;
-  submodelSemanticId?: string;
+  submodelsemanticid?: string;
 
 
   constructor(
-    adapterId: string,
-    submodelId: string,
-    submodelSemanticId?: string,
+    adapterid: string,
+    submodelid: string,
+    submodelsemanticid?: string,
     url?: string,
     name?: string,
 
 
   ) {
     this.url = url;
-    this.adapterId = adapterId;
+    this.adapterid = adapterid;
     this.name = name;
-    this.submodelId = submodelId;
-    this.submodelSemanticId = submodelSemanticId;
+    this.submodelid = submodelid;
+    this.submodelsemanticid = submodelsemanticid;
   }
 }
 

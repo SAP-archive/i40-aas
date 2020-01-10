@@ -55,16 +55,17 @@ export default [
     handler: [
       async (req: Request, res: Response, next: NextFunction) => {
         try {
-    if (req.query.submodelId) {
-      var submodelId: string = req.query.submodelId;
-            logger.debug("Submodel id : " + submodelId);
-            let adaptersArray = await getAdapterBySubmodelId(submodelId);
+    var submodelid = req.query.submodelid;
+    var submodelsemanticid = req.query.submodelsemanticid;
+
+    if (submodelid) {
+            logger.debug("Submodel id : " + submodelid);
+            let adaptersArray = await getAdapterBySubmodelId(submodelid);
             res.json(adaptersArray);
-          } else if (req.query.submodelSemanticId) {
-            var submodelSemanticId: string = req.query.submodelSemanticId;
-            logger.debug("Submodel id : " + submodelSemanticId);
+          } else if (submodelsemanticid) {
+            logger.debug("Submodel id : " + submodelsemanticid);
             let adaptersArray = await getAdapterBysubmodelSemanticId(
-              submodelSemanticId
+              submodelsemanticid
             );
             res.json(adaptersArray);
           } else {

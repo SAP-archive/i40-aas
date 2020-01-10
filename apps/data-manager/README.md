@@ -54,7 +54,7 @@ OR
 
 |   parameter         |      Description                 |
 |   :-------:         | :-------------------:            |
-|  submodelSemanticId |  Submodel.semanticId.value[0]    |
+|  submodelSemanticid |  Submodel.semanticId.value[0]    |
 
 
 
