@@ -51,7 +51,7 @@ export default [
         * receive an array of Submodels and find the respective adapter for each submodel
         to be forwarded
         */
-        if (req.query.id) {
+        if (req.query.submodelid) {
           let result = await RoutingController.getSubmodels(
       "submodelid",
       req.query.id
