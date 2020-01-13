@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { HTTP400Error, HTTP422Error } from "../utils/httpErrors";
+import { HTTP400Error, HTTP422Error, HTTP404Error } from "../utils/httpErrors";
 import { Submodel } from "i40-aas-objects";
 import { logger } from "../utils/log";
 
@@ -27,7 +27,8 @@ export const validateSubmodelsRequest = (
   res: Response,
   next: NextFunction
 ) => {
-  let submodelsArray: Submodel[] = req.body;
+  let submodelsArray: Submodel[]| undefined = req.body;
+  if (submodelsArray && submodelsArray.length > 0) {
     submodelsArray.forEach(submodel => {
       //based on this id the routing towards the storage adapter takes place
         let submodelID:string = submodel.idShort;
@@ -37,6 +38,12 @@ export const validateSubmodelsRequest = (
         throw new HTTP422Error("Missing required fields in Request: idShort");
 
       }
-      next();
+
 });
+//all clear move to next
+next();
+}
+else {
+  throw new HTTP404Error("Client Error on submodels request")
+}
 }

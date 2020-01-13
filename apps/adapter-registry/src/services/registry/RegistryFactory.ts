@@ -10,7 +10,7 @@ class RegistryFactory {
     var storage = require("node-persist");
 
     await storage.init( /* options ... */ );
-    logger.debug("Local storage initialized ");
+    //logger.debug("Local storage initialized ");
 
     return new Registry(storage);
   }

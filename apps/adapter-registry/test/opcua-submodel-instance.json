@@ -1,0 +1,592 @@
+[
+  {
+    "embeddedDataSpecifications": [],
+    "semanticId": {
+      "keys": [
+  {
+    "idType": "URI",
+    "type": "GlobalReference",
+    "value": "opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/",
+    "local": false
+  }
+      ]
+    },
+    "kind": "Instance",
+    "descriptions": [],
+    "idShort": "opc-ua-devices",
+    "identification": {
+      "id": "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22",
+      "idType": "URI"
+    },
+    "modelType": {
+      "name": "Submodel"
+    },
+    "submodelElements": [
+      {
+  "embeddedDataSpecifications": [],
+  "semanticId": {
+    "keys": [
+      {
+        "idType": "URI",
+        "type": "GlobalReference",
+        "value": "opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/deviceHealth",
+        "local": false
+      }
+    ]
+  },
+  "kind": "Instance",
+  "descriptions": [
+    {
+      "language": "EN",
+      "text": "NORMAL_0 ;FAILURE_1 ;CHECK_FUNCTION_2 ;OFF_SPEC_3 ;MAINTENANCE_REQUIRED_4 "
+    }
+  ],
+  "idShort": "devicehealth",
+  "parent": {
+    "keys": [
+      {
+        "idType": "URI",
+        "type": "Submodel",
+        "value": "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22"
+      }
+    ]
+  },
+  "modelType": {
+    "name": "Property"
+  },
+  "value": "NORMAL_0",
+  "valueType": {
+    "dataObjectType": {
+      "name": "String"
+    }
+  }
+      },
+      {
+  "embeddedDataSpecifications": [],
+  "semanticId": {
+    "keys": [
+      {
+        "idType": "IRDI",
+        "type": "GlobalReference",
+        "value": "0112/2///61987#ABA565",
+        "local": false
+      }
+    ]
+  },
+  "kind": "Instance",
+  "descriptions": [],
+  "idShort": "manufacturer",
+  "parent": {
+    "keys": [
+      {
+        "idType": "URI",
+        "type": "Submodel",
+        "value": "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22"
+      }
+    ]
+  },
+  "modelType": {
+    "name": "Property"
+  },
+  "value": "foobar",
+  "valueType": {
+    "dataObjectType": {
+      "name": "String"
+    }
+  }
+      },
+      {
+  "embeddedDataSpecifications": [],
+  "kind": "Instance",
+  "descriptions": [],
+  "idShort": "manufactureruri ",
+  "parent": {
+    "keys": [
+      {
+        "idType": "URI",
+        "type": "Submodel",
+        "value": "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22"
+      }
+    ]
+  },
+  "modelType": {
+    "name": "Property"
+  },
+  "value": "foobar.com",
+  "valueType": {
+    "dataObjectType": {
+      "name": "String"
+    }
+  }
+      },
+      {
+  "embeddedDataSpecifications": [],
+  "semanticId": {
+    "keys": [
+      {
+        "idType": "IRDI",
+        "type": "GlobalReference",
+        "value": "0112/2///61987#ABA567",
+        "local": false
+      }
+    ]
+  },
+  "kind": "Instance",
+  "descriptions": [],
+  "idShort": "model",
+  "parent": {
+    "keys": [
+      {
+        "idType": "URI",
+        "type": "Submodel",
+        "value": "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22"
+      }
+    ]
+  },
+  "modelType": {
+    "name": "Property"
+  },
+  "value": "NIOT-E-TIJCX-GB-RE",
+  "valueType": {
+    "dataObjectType": {
+      "name": "String"
+    }
+  }
+      },
+      {
+  "embeddedDataSpecifications": [],
+  "semanticId": {
+    "keys": [
+      {
+        "idType": "IRDI",
+        "type": "GlobalReference",
+        "value": "0112/2///61987#ABA951",
+        "local": false
+      }
+    ]
+  },
+  "kind": "Instance",
+  "descriptions": [],
+  "idShort": "serialnumber",
+  "parent": {
+    "keys": [
+      {
+        "idType": "URI",
+        "type": "Submodel",
+        "value": "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22"
+      }
+    ]
+  },
+  "modelType": {
+    "name": "Property"
+  },
+  "value": "6534235",
+  "valueType": {
+    "dataObjectType": {
+      "name": "String"
+    }
+  }
+      },
+      {
+  "embeddedDataSpecifications": [],
+  "semanticId": {
+    "keys": [
+      {
+        "idType": "IRDI",
+        "type": "GlobalReference",
+        "value": "0112/2///61987#ABA926",
+        "local": false
+      }
+    ]
+  },
+  "kind": "Instance",
+  "descriptions": [],
+  "idShort": "hardwarerevision ",
+  "parent": {
+    "keys": [
+      {
+        "idType": "URI",
+        "type": "Submodel",
+        "value": "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22"
+      }
+    ]
+  },
+  "modelType": {
+    "name": "Property"
+  },
+  "value": "1.0",
+  "valueType": {
+    "dataObjectType": {
+      "name": "String"
+    }
+  }
+      },
+      {
+  "embeddedDataSpecifications": [],
+  "semanticId": {
+    "keys": [
+      {
+        "idType": "IRDI",
+        "type": "GlobalReference",
+        "value": "0112/2///61987#ABA601",
+        "local": false
+      }
+    ]
+  },
+  "kind": "Instance",
+  "descriptions": [],
+  "idShort": "softwarerevision ",
+  "parent": {
+    "keys": [
+      {
+        "idType": "URI",
+        "type": "Submodel",
+        "value": "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22"
+      }
+    ]
+  },
+  "modelType": {
+    "name": "Property"
+  },
+  "value": "1.0",
+  "valueType": {
+    "dataObjectType": {
+      "name": "String"
+    }
+  }
+      },
+      {
+  "embeddedDataSpecifications": [],
+  "kind": "Instance",
+  "descriptions": [],
+  "idShort": "devicerevision ",
+  "parent": {
+    "keys": [
+      {
+        "idType": "URI",
+        "type": "Submodel",
+        "value": "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22"
+      }
+    ]
+  },
+  "modelType": {
+    "name": "Property"
+  },
+  "value": "1.0",
+  "valueType": {
+    "dataObjectType": {
+      "name": "String"
+    }
+  }
+      },
+      {
+  "embeddedDataSpecifications": [],
+  "kind": "Instance",
+  "descriptions": [],
+  "idShort": "revisioncounter ",
+  "parent": {
+    "keys": [
+      {
+        "idType": "URI",
+        "type": "Submodel",
+        "value": "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22"
+      }
+    ]
+  },
+  "modelType": {
+    "name": "Property"
+  },
+  "valueType": {
+    "dataObjectType": {
+      "name": "Integer"
+    }
+  }
+      },
+      {
+  "embeddedDataSpecifications": [],
+  "semanticId": {
+    "keys": [
+      {
+        "idType": "IRDI",
+        "type": "GlobalReference",
+        "value": "0112/2///61987#ABA300",
+        "local": false
+      }
+    ]
+  },
+  "kind": "Instance",
+  "descriptions": [],
+  "idShort": "productcode ",
+  "parent": {
+    "keys": [
+      {
+        "idType": "URI",
+        "type": "Submodel",
+        "value": "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22"
+      }
+    ]
+  },
+  "modelType": {
+    "name": "Property"
+  },
+  "value": "1321.300",
+  "valueType": {
+    "dataObjectType": {
+      "name": "String"
+    }
+  }
+      },
+      {
+  "embeddedDataSpecifications": [],
+  "kind": "Instance",
+  "descriptions": [
+    {
+      "language": "EN",
+      "text": "OI4 identifier is used"
+    }
+  ],
+  "idShort": "productinstanceuri",
+  "parent": {
+    "keys": [
+      {
+        "idType": "URI",
+        "type": "Submodel",
+        "value": "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22"
+      }
+    ]
+  },
+  "modelType": {
+    "name": "Property"
+  },
+  "value": "foobar.com",
+  "valueType": {
+    "dataObjectType": {
+      "name": "String"
+    }
+  }
+      },
+      {
+  "embeddedDataSpecifications": [],
+  "kind": "Instance",
+  "descriptions": [],
+  "idShort": "devicemanual ",
+  "parent": {
+    "keys": [
+      {
+        "idType": "URI",
+        "type": "Submodel",
+        "value": "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22"
+      }
+    ]
+  },
+  "modelType": {
+    "name": "Property"
+  },
+  "value": "https://www.foobar.com",
+  "valueType": {
+    "dataObjectType": {
+      "name": "String"
+    }
+  }
+      },
+      {
+  "embeddedDataSpecifications": [],
+  "kind": "Instance",
+  "descriptions": [],
+  "idShort": "deviceclass",
+  "parent": {
+    "keys": [
+      {
+        "idType": "URI",
+        "type": "Submodel",
+        "value": "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22"
+      }
+    ]
+  },
+  "modelType": {
+    "name": "Property"
+  },
+  "value": "Gateway",
+  "valueType": {
+    "dataObjectType": {
+      "name": "String"
+    }
+  }
+      },
+      {
+  "embeddedDataSpecifications": [],
+  "semanticId": {
+    "keys": [
+      {
+        "idType": "IRDI",
+        "type": "GlobalReference",
+        "value": "opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/parameterSet",
+        "local": false
+      }
+    ]
+  },
+  "kind": "Instance",
+  "descriptions": [],
+  "idShort": "parameterset",
+  "parent": {
+    "keys": [
+      {
+        "idType": "URI",
+        "type": "Submodel",
+        "value": "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22"
+      }
+    ]
+  },
+  "modelType": {
+    "name": "SubmodelElementCollection"
+  },
+  "ordered": false,
+  "allowDuplicates": true,
+  "value": [
+    {
+      "embeddedDataSpecifications": [],
+      "semanticId": {
+        "keys": [
+    {
+      "idType": "IRDI",
+      "type": "GlobalReference",
+      "value": "0173-1#02-AAB911#007",
+      "local": false
+    }
+        ]
+      },
+      "kind": "Instance",
+      "descriptions": [],
+      "idShort": "versorgungsspannung",
+      "parent": {
+        "keys": [
+    {
+      "idType": "IdShort",
+      "type": "SubmodelElementCollection",
+      "value": "parameterset"
+    },
+    {
+      "index": 1,
+      "idType": "URI",
+      "type": "Submodel",
+      "value": "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22"
+    }
+        ]
+      },
+      "modelType": {
+        "name": "Property"
+      },
+      "value": "24 V DC ± 4,8 V DC",
+      "valueType": {
+        "dataObjectType": {
+    "name": "String"
+        }
+      }
+    },
+    {
+      "embeddedDataSpecifications": [],
+      "semanticId": {
+        "keys": [
+    {
+      "idType": "IRDI",
+      "type": "GlobalReference",
+      "value": "0173-1#02-AAG004#0037",
+      "local": false
+    }
+        ]
+      },
+      "kind": "Instance",
+      "descriptions": [],
+      "idShort": "abmessung",
+      "parent": {
+        "keys": [
+    {
+      "idType": "IdShort",
+      "type": "SubmodelElementCollection",
+      "value": "parameterset"
+    },
+    {
+      "index": 1,
+      "idType": "URI",
+      "type": "Submodel",
+      "value": "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22"
+    }
+        ]
+      },
+      "modelType": {
+        "name": "Property"
+      },
+      "value": "214 mm (H) x 85 mm (B) x 157 mm (T)",
+      "valueType": {
+        "dataObjectType": {
+    "name": "String"
+        }
+      }
+    }
+  ]
+      },
+      {
+  "embeddedDataSpecifications": [],
+  "semanticId": {
+    "keys": [
+      {
+        "idType": "IRDI",
+        "type": "GlobalReference",
+        "value": "opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/methodSet",
+        "local": false
+      }
+    ]
+  },
+  "kind": "Instance",
+  "descriptions": [],
+  "idShort": "methodset",
+  "parent": {
+    "keys": [
+      {
+        "idType": "URI",
+        "type": "Submodel",
+        "value": "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22"
+      }
+    ]
+  },
+  "modelType": {
+    "name": "SubmodelElementCollection"
+  },
+  "ordered": false,
+  "allowDuplicates": true,
+  "value": []
+      },
+      {
+  "embeddedDataSpecifications": [],
+  "semanticId": {
+    "keys": [
+      {
+        "idType": "IRDI",
+        "type": "GlobalReference",
+        "value": "opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/functionalGroups",
+        "local": false
+      }
+    ]
+  },
+  "kind": "Instance",
+  "descriptions": [],
+  "idShort": "functionalgroups",
+  "parent": {
+    "keys": [
+      {
+        "idType": "URI",
+        "type": "Submodel",
+        "value": "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22"
+      }
+    ]
+  },
+  "modelType": {
+    "name": "SubmodelElementCollection"
+  },
+  "ordered": false,
+  "allowDuplicates": true,
+  "value": []
+      }
+    ]
+  }
+]

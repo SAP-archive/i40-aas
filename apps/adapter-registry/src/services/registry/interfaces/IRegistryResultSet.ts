@@ -1,6 +1,7 @@
 import { IStorageAdapter } from "./IStorageAdapter";
-import { ISubmodelEntry } from "./ISubmodelEntry";
 
+//TODO: Consider adaptations to DAOs
+/*
 interface IAdapterAssignmentResultSet {
   submodel: SubmodelEntry;
   adapter: Adapter;
@@ -16,39 +17,39 @@ class AdapterAssignmentResultSet implements IAdapterAssignmentResultSet {
 }
 
 class SubmodelEntry implements ISubmodelEntry {
-  submodelIdShort: string;
-
-  constructor(IdShort: string) {
-    this.submodelIdShort = IdShort;
-  }
-}
-
+  submodelId: string;
+  submodelSemanticId: string;
+*/
 class Adapter implements IStorageAdapter {
   //the submodel that the adapter can handle
-  submodelId?: string;
-  public adapterId?: string;
+  submodelid: string;
+  public adapterid: string;
   public name?: string;
   public url?: string;
+  submodelsemanticid?: string;
 
-  constructor();
 
   constructor(
-    adapterId?: string,
+    adapterid: string,
+    submodelid: string,
+    submodelsemanticid?: string,
     url?: string,
     name?: string,
-    submodelId?: string
+
+
   ) {
     this.url = url;
-    this.adapterId = adapterId;
+    this.adapterid = adapterid;
     this.name = name;
-    this.submodelId = submodelId;
+    this.submodelid = submodelid;
+    this.submodelsemanticid = submodelsemanticid;
   }
 }
 
 export {
-  AdapterAssignmentResultSet,
+  //AdapterAssignmentResultSet,
   Adapter,
-  SubmodelEntry,
+  //SubmodelEntry,
   IStorageAdapter,
-  IAdapterAssignmentResultSet
+ // IAdapterAssignmentResultSet
 };

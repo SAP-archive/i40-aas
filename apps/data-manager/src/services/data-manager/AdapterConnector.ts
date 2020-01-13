@@ -19,13 +19,13 @@ class AdapterConnector {
     //get the url of the storage adapter from the object
     let adapter_url: string = adapter.url;
 
-    return await this.webClient.postRequest(adapter_url, sm);
+    return await this.webClient.postSubmodelToAdapterRequest(adapter_url, sm);
   }
   async getSubmoduleFromAdapter(adapter: IStorageAdapter) {
     //get the url of the storage adapter from the object
     let adapter_url: string = adapter.url;
 
-    return await this.webClient.getRequest(adapter_url, "");
+    return await this.webClient.getSubmodelFromAdapterRequest(adapter_url);
   }
 }
 

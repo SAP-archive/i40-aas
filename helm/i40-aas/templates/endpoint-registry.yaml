@@ -3,7 +3,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-endpoint-registry
-  labels: 
+  labels:
     service: endpoint-registry
     {{- include "i40-aas.labels" . | nindent 4 }}
 data:
@@ -11,14 +11,14 @@ data:
   ENDPOINT_REGISTRY_PROTOCOL: http
   ENDPOINT_REGISTRY_HOST: {{ .Release.Name }}-endpoint-registry
   ENDPOINT_REGISTRY_PORT: "80"
-  # Exposed Routes 
-  ENDPOINT_REGISTRY_URL_SUFFIX: /endpoints
+  # Exposed Routes
+  ENDPOINT_REGISTRY_URL_SUFFIX: /assetadministrationshells
 ---
 apiVersion: v1
 kind: Secret
 metadata:
   name: {{ .Release.Name }}-endpoint-registry
-  labels: 
+  labels:
     service: endpoint-registry
     {{- include "i40-aas.labels" . | nindent 4 }}
 type: Opaque
@@ -30,7 +30,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Release.Name }}-endpoint-registry
-  labels: 
+  labels:
     service: endpoint-registry
     {{- include "i40-aas.labels" . | nindent 4 }}
 spec:
@@ -46,7 +46,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}-endpoint-registry
-  labels: 
+  labels:
     service: endpoint-registry
     {{- include "i40-aas.labels" . | nindent 4 }}
 spec:
@@ -55,7 +55,7 @@ spec:
     matchLabels:
       service: endpoint-registry
       {{- include "i40-aas.selectorLabels" . | nindent 6 }}
-  template: 
+  template:
     metadata:
       labels:
         service: endpoint-registry
@@ -64,7 +64,7 @@ spec:
       containers:
       - name: endpoint-registry
         image: "{{ .Values.image.repository }}/i40-aas-endpoint-registry:{{ .Values.image.release }}"
-        ports: 
+        ports:
         - name: endpoint
           containerPort: 4400
         envFrom:

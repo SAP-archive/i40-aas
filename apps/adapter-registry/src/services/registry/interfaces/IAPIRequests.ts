@@ -1,20 +1,21 @@
 import { Identifier } from 'i40-aas-objects';
 
-import { Adapter, SubmodelEntry } from './IRegistryResultSet';
+import { IStorageAdapter } from './IRegistryResultSet';
 
-interface IRegisterAdapterAssignment {
-  submodel: SubmodelEntry;
-  adapter: Adapter;
-}
 
 
 interface ICreateAdapter {
-  submodelIdShort?: string;
-  adapter: Adapter;
+  adapterid: string;
+  name?: string;
+  url?: string;
+  submodelid: string;
+  submodelsemanticid?: string;
 }
 
 interface ICreateSubmodelEntry {
-  submodelId: Identifier;
+  submodelid: Identifier;
+  submodelsemanticid?: string;
+
 }
 
-export { IRegisterAdapterAssignment, ICreateAdapter, ICreateSubmodelEntry };
+export { ICreateAdapter, ICreateSubmodelEntry };

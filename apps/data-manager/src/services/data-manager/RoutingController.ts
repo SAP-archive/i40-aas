@@ -11,30 +11,54 @@ module RoutingController {
   var registryConn: AdapterRegistryConnector;
 
   export async function routeSubmodel(
-    submodel: Submodel
-  ): Promise<AxiosResponse> {
-    let sM = submodel;
-    //get the storage adapter responsible for this model from adapter-registry
+    submodelsArray: Submodel[]
+  ): Promise<AxiosResponse[]> {
+    var submodels = submodelsArray.map(async submodel => {
+      //get the storage adapter responsible for this model from adapter-registry
+      //try first with submodelId === interactionElements.identification.id as parameter
+      if (adapterConn && registryConn) {
+        let adapter: IStorageAdapter = await registryConn.getAdapterFromRegistry(
+          "submodelid",
+          submodel.identification.id
+        );
+        logger.debug("Adapter " + JSON.stringify(adapter));
+
+        //if no mapping for adapter using the identification.id was found in the registry, try getting an adapter using semanticId
+        if (!adapter.url && submodel.semanticId) {
+          if (submodel.semanticId.keys[0].value) {
+            let adapter: IStorageAdapter = await registryConn.getAdapterFromRegistry(
+              "submodelsemanticid",
+              submodel.semanticId.keys[0].value
+            );
+          }
+        }
+        let result = await adapterConn.postSubmoduleToAdapter(
+          submodel,
+          adapter
+        );
+        return result;
+      } else {
+        logger.error(" Adapter or Registry connector not initialised");
+        throw new Error(" Internal Server Error");
+      }
+    });
+
+    return Promise.all(submodels);
+  }
+  export async function getSubmodels(paramName: string, paramValue: string) {
     if (adapterConn && registryConn) {
       let adapter: IStorageAdapter = await registryConn.getAdapterFromRegistry(
-        sM.idShort
+        paramName,
+        paramValue
       );
-      logger.debug("Adapter " + JSON.stringify(adapter));
 
-      let result = await adapterConn.postSubmoduleToAdapter(submodel, adapter);
+      logger.debug("Adapter to the submodel from: " + JSON.stringify(adapter));
+      let result = await adapterConn.getSubmoduleFromAdapter(adapter);
       return result;
     } else {
       logger.error(" Adapter or Registry connector not initialised");
       throw new Error(" Internal Server Error");
     }
-  }
-  export async function getSubmodels(param: { idShort: string }) {
-    let adapter: IStorageAdapter = await registryConn.getAdapterFromRegistry(
-      param.idShort
-    );
-    logger.debug("Adapter " + JSON.stringify(adapter));
-    let result = await adapterConn.getSubmoduleFromAdapter(adapter);
-    return result;
   }
   export function initController(
     rC: AdapterRegistryConnector,

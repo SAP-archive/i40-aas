@@ -1,9 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { Frame } from "i40-aas-objects";
 import {
-  readAdapterBySubmodelId,
-  register,
-  clearAllEntries
+  clearAllEntries,
+  getAdapterBysubmodelSemanticId,
+  getAdapterBySubmodelId,
+  createAdapters
 } from "./registry-api";
 import { IdTypeEnum } from "i40-aas-objects";
 import * as logger from "winston";
@@ -12,32 +13,40 @@ import {
   HTTP401Error,
   HTTP422Error
 } from "../../utils/httpErrors";
-import { IRegisterAdapterAssignment } from "./interfaces/IAPIRequests";
+import { create } from "domain";
+import { ICreateAdapter } from "./interfaces/IAPIRequests";
+import {
+  checkReqBodyEmpty,
+  validateCreateAdaptersRequest
+} from "../../middleware/checks";
+import { runInNewContext } from "vm";
+import { Adapter } from "./interfaces/IRegistryResultSet";
 
 export default [
   {
-    path: "/register",
+    path: "/adapters",
     method: "post",
-    handler: async (req: Request, res: Response) => {
-      var adaptersAssignmentArray: IRegisterAdapterAssignment[] = req.body;
-      logger.info(
-        " Register request received num of adapters " +
-          adaptersAssignmentArray.length
-      );
-//store each adapter to registry
-      adaptersAssignmentArray.forEach(async aas => {
-        try {
-          logger.debug(" initiate register of " + aas.adapter.adapterId);
+    handler: [
+      checkReqBodyEmpty,
+      validateCreateAdaptersRequest,
+      async (req: Request, res: Response, next: NextFunction) => {
+  var adaptersAssignmentArray: ICreateAdapter[] = req.body;
+  logger.info(
+    " Register request received num of adapters " +
+      adaptersAssignmentArray.length
+  );
 
-          await register(aas);
-        } catch (e) {
-          logger.error(" Error while registering adapter " + e);
+  try {
+    let result = await createAdapters(adaptersAssignmentArray);
+    logger.debug("result "+ JSON.stringify(result));
+    res.status(200).send(result);
 
-          res.end(e.message);
-        }
-      });
-      res.json(req.body);
-    }
+  } catch (e) {
+    logger.error(" Error while registering adapter " + e);
+    next(new Error(" Server Error "));
+  }
+      }
+    ]
   },
 
   {
@@ -46,19 +55,22 @@ export default [
     handler: [
       async (req: Request, res: Response, next: NextFunction) => {
         try {
-          logger.debug(" Requested to list adapters by submodelid");
-          if (!req.query.submodelidshort) {
-                    next(new HTTP422Error("No Submodel IdShort parameter given"));
+    var submodelid = req.query.submodelid;
+    var submodelsemanticid = req.query.submodelsemanticid;
+
+    if (submodelid) {
+            logger.debug("Submodel id : " + submodelid);
+            let adaptersArray = await getAdapterBySubmodelId(submodelid);
+            res.json(adaptersArray);
+          } else if (submodelsemanticid) {
+            logger.debug("Submodel id : " + submodelsemanticid);
+            let adaptersArray = await getAdapterBysubmodelSemanticId(
+              submodelsemanticid
+            );
+            res.json(adaptersArray);
+          } else {
+            next(new HTTP422Error("No parameter given at request"));
           }
-          var submodelId: string = req.query.submodelidshort;
-          logger.debug(" Submodel id : " + submodelId);
-
-          let adaptersArray = await readAdapterBySubmodelId(submodelId);
-          logger.debug(
-                    " Adapter that was found " + JSON.stringify(adaptersArray)
-          );
-
-          res.json(adaptersArray);
         } catch (e) {
           console.log(e);
           next(Error(" Internal Server Error"));
@@ -68,21 +80,26 @@ export default [
   },
 
   {
-    path: "/clear",
+    path: "/adapters",
     method: "delete",
-    handler: async (req: Request, res: Response) => {
-      var adaptersAssignmentArray: IRegisterAdapterAssignment[] = req.body;
-      logger.info(" Clear all registry entries ");
+    handler: [
+      checkReqBodyEmpty,
+      validateCreateAdaptersRequest,
 
-      try {
-        await clearAllEntries();
-      } catch (e) {
-        logger.error(" Error while clearing registry " + e);
+      async (req: Request, res: Response) => {
+  var adaptersAssignmentArray: ICreateAdapter[] = req.body;
+  logger.info(" Clear all registry entries ");
 
-        res.end(e.message);
+  try {
+    await clearAllEntries();
+  } catch (e) {
+    logger.error(" Error while clearing registry " + e);
+
+    res.end(e.message);
+  }
+
+  res.json("Registry Cleared");
       }
-
-      res.json("Registry Cleared");
-    }
+    ]
   }
 ];

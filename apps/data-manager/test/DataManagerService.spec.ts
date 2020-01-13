@@ -1,10 +1,5 @@
 import sinon from "sinon";
 import chaiHttp = require("chai-http");
-import Axios, { AxiosError } from "axios";
-import { AdapterRegistryConnector } from "../src/services/data-manager/RegistryConnector";
-import { WebClient } from "../src/services/data-manager/WebClient/WebClient";
-import { IStorageAdapter } from "../src/services/data-manager/interfaces/IStorageAdapter";
-import { AdapterConnector } from "../src/services/data-manager/AdapterConnector";
 import { RoutingController } from "../src/services/data-manager/RoutingController";
 
 const dotenv = require("dotenv");

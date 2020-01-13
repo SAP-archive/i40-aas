@@ -51,9 +51,9 @@
     "i40-aas-objects": "0.0.1-alpha",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
-    "sinon": "^7.5.0",
     "swagger-ui-express": "^4.0.6",
-    "winston": "^3.2.1"
+    "winston": "^3.2.1",
+    "sinon": "^7.5.0"
   },
   "devDependencies": {
     "@hapi/boom": "^7.4.11",

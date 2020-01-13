@@ -3,57 +3,100 @@ import Axios, { AxiosError, AxiosResponse, AxiosRequestConfig } from "axios";
 
 class WebClient {
   constructor() {}
-
+//TODO: remove the hardcoding of params, its also case sensitive!
   private getURLRequestConfig(
-    param?: string,
+    paramName?: string,
+    paramValue?: string,
     user?: string,
     pass?: string
   ): AxiosRequestConfig | undefined {
-    if (param && user && pass) {
+    if (paramName=="submodelid" && user && pass) {
       return {
         params: {
-          submodelidshort: param
+    submodelid: paramValue
         },
         auth: {
           username: user,
           password: pass
         }
       };
+    } else if (paramName == "submodelsemanticid" && user && pass) {
+      return {
+        params: {
+          submodelsemanticid: paramValue
+        },
+        auth: {
+          username: user,
+          password: pass
+        }
+      };
+    } else if (!paramName && user && pass) {
+      return {
+        auth: {
+          username: user,
+          password: pass
+        }
+      };
+    }
+    else if (paramName=="submodelsemanticid" && user && pass) {
+      return {
+  params: {
+    submodelsemanticid: paramValue
+  },
+  auth: {
+    username: user,
+    password: pass
+  }
+      };
+    }
+
+    else if( !paramName && user && pass) {
+      return {
+  auth: {
+    username: user,
+    password: pass
+  }
+      };
     }
     return undefined;
   }
 
-  private makeURL(
-    protocol: string,
-    host: string,
-    port: string,
-    suffix?: string
-  ) {
-    return protocol + "://" + host + ":" + port + suffix;
-  }
-
-  async getRequest<T>(
+  async getAdapterFromRegRequest<T>(
     url: string,
-
+    paramName: string,
     param: string,
-    username?: string,
-    password?: string
+    username: string,
+    password: string
   ): Promise<AxiosResponse<T>> {
-    logger.debug("Get request from " + url);
-    logger.debug("param " + param);
-    // logger.debug(
-    // "req config " +
-    // JSON.stringify(this.getURLRequestConfig(param, username, password))
-    // );
+    logger.debug("Get request from Registry" + url);
+    logger.debug("paramname "+ paramName+"  value " + param);
+    logger.debug("Config " + JSON.stringify(this.getURLRequestConfig(paramName, param, username, password)));
 
     const response = await Axios.get<T>(
       url,
-      this.getURLRequestConfig(param, username, password)
+      this.getURLRequestConfig(paramName, param, username, password)
     );
     return response as AxiosResponse<T>;
   }
 
-  async postRequest<T>(
+
+  //TODO: Consider if it would be better to have one GET req. method with optional
+  //parameters to cover both getAdapter from Registry and getSubmodel from Adapter
+  async getSubmodelFromAdapterRequest<T>(
+    url: string,
+    username?: string,
+    password?: string
+  ): Promise<AxiosResponse<T>> {
+    logger.debug("Get submodels request from adapter: " + url);
+
+    const response = await Axios.get<T>(
+      url,
+      this.getURLRequestConfig(username, password)
+    );
+    return response as AxiosResponse<T>;
+  }
+
+  async postSubmodelToAdapterRequest<T>(
     serviceURL: string,
     body: any,
     username?: string,
