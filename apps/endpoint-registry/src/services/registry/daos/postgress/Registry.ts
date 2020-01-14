@@ -291,7 +291,7 @@ class Registry implements iRegistry {
       INNER JOIN public.endpoints
       USING
       ("aasId"))as res2 INNER JOIN public.assets
-	  USING ("assetId")`;
+    USING ("assetId")`;
       const queryResult = await this.client.query(s);
       const queryResultRows: Array<IJointRecord> = queryResult.rows;
       var recordsByAasId: IData = {};
