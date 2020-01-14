@@ -9,11 +9,17 @@ import {
   createSemanticProtocol,
   assignRolesToAAS,
   getAllEndpointsList,
-  deleteRecordByIdentifier
+  deleteRecordByIdentifier,
+  createAsset
 } from "./registry-api";
 import { IdTypeEnum } from "i40-aas-objects";
 import { RegistryError } from "../../utils/RegistryError";
-import { ICreateRole, IAssignRoles, IRegisterAas } from "./daos/interfaces/IApiRequests";
+import {
+  ICreateRole,
+  IAssignRoles,
+  IRegisterAas,
+  ICreateAsset
+} from "./daos/interfaces/IApiRequests";
 export default [
   {
     path: "/assetadministrationshells",
@@ -72,6 +78,19 @@ export default [
       console.log("try to create a semantic protocol");
       try {
         res.json(await createSemanticProtocol(req.body));
+      } catch (e) {
+        res.end(e.message);
+      }
+    }
+  },
+  {
+    path: "/asset",
+    method: "post",
+    handler: async (req: Request, res: Response) => {
+      console.log("try to create a asset");
+      try {
+        var asset: ICreateAsset = req.body;
+        res.json(await createAsset(asset));
       } catch (e) {
         res.end(e.message);
       }
