@@ -58,9 +58,6 @@ POST /assetadministrationshells
 ## listAllEndpoints
 
 GET /listallendpoints
-| parameter | Description |
-| :-------: | :-------------------: |
-| none | -- |
 
 response </br>
 NOTE: returns an array of endpoints registered for each aasId
