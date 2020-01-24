@@ -1,19 +1,19 @@
-import { RegistryFactory } from "./daos/postgress/RegistryFactory";
-import { Identifier, IdTypeEnum } from "i40-aas-objects";
-import { RegistryError } from "../../utils/RegistryError";
+import { RegistryFactory } from './daos/postgress/RegistryFactory';
+import { Identifier, IdTypeEnum } from 'i40-aas-objects';
+import { RegistryError } from '../../utils/RegistryError';
 import {
   RegistryResultSet,
   IRegistryResultSet
-} from "./daos/interfaces/IRegistryResultSet";
-import { iRegistry } from "./daos/interfaces/IRegistry";
+} from './daos/interfaces/IRegistryResultSet';
+import { iRegistry } from './daos/interfaces/IRegistry';
 import {
   IRegisterAas,
   ICreateRole,
   ICreateSemanticProtocol,
   IAssignRoles,
   ICreateAsset
-} from "./daos/interfaces/IApiRequests";
-import { ConversationMember } from "i40-aas-objects";
+} from './daos/interfaces/IApiRequests';
+import { ConversationMember } from 'i40-aas-objects';
 
 async function readRecordByIdentifier(
   identifier: Identifier
@@ -21,7 +21,7 @@ async function readRecordByIdentifier(
   var registryDao: iRegistry = await RegistryFactory.getRegistry();
   try {
     if (!identifier.id) {
-      throw new RegistryError("Missing parameter id", 422);
+      throw new RegistryError('Missing parameter id', 422);
     }
     var result = await registryDao.readRecordByAasId(identifier);
     console.log(result);
@@ -38,10 +38,10 @@ async function deleteRecordByIdentifier(
   var registryDao: iRegistry = await RegistryFactory.getRegistry();
   try {
     if (!identifier.id) {
-      throw new RegistryError("Missing parameter id", 422);
+      throw new RegistryError('Missing parameter id', 422);
     }
     var result = await registryDao.deleteAasByAasId(identifier);
-    console.log("Deleted rows: " + result);
+    console.log('Deleted rows: ' + result);
     return result;
   } catch (e) {
     throw e;
@@ -138,7 +138,7 @@ async function getEndpointsByRole(
   semanticProtocol: string
 ): Promise<Array<IRegistryResultSet>> {
   if (!receiver) {
-    throw new RegistryError("Missing parameter receiver", 422);
+    throw new RegistryError('Missing parameter receiver', 422);
   }
   if (receiver.identification) {
     return readRecordByIdentifier({
@@ -147,7 +147,7 @@ async function getEndpointsByRole(
     });
   } else {
     if (!semanticProtocol) {
-      throw new RegistryError("Missing parameter semanticProtocol", 422);
+      throw new RegistryError('Missing parameter semanticProtocol', 422);
     }
     return readRecordBySemanticProtocolAndRole(
       semanticProtocol,

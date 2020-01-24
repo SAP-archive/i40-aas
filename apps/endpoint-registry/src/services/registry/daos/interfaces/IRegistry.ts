@@ -1,13 +1,13 @@
-import { Identifier } from "i40-aas-objects";
-import { RegistryResultSet, IRegistryResultSet } from "./IRegistryResultSet";
+import { Identifier } from 'i40-aas-objects';
+import { RegistryResultSet, IRegistryResultSet } from './IRegistryResultSet';
 import {
   IRegisterAas,
   ICreateSemanticProtocol,
   ICreateRole,
   IAssignRoles,
   ICreateAsset
-} from "./IApiRequests";
-import { ICreateRoleResultSet } from "./IRegistryRolesSet";
+} from './IApiRequests';
+import { ICreateRoleResultSet } from './IRegistryRolesSet';
 
 interface iRegistry {
   readRecordByAasId(aasId: Identifier): Promise<Array<RegistryResultSet>>;

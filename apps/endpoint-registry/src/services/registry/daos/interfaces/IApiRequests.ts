@@ -1,6 +1,6 @@
-import { Identifier } from "i40-aas-objects";
+import { Identifier } from 'i40-aas-objects';
 
-import { Endpoint } from "./IRegistryResultSet";
+import { Endpoint } from './IRegistryResultSet';
 
 interface IRegisterAas {
   aasId: Identifier;

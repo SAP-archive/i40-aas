@@ -1,5 +1,4 @@
-import { Request, Response } from "express";
-import { Frame } from "i40-aas-objects";
+import { Request, Response } from 'express';
 import {
   register,
   createRole,
@@ -9,25 +8,25 @@ import {
   deleteRecordByIdentifier,
   createAsset,
   getEndpointsByRole
-} from "./registry-api";
-import { IdTypeEnum } from "i40-aas-objects";
-import { RegistryError } from "../../utils/RegistryError";
+} from './registry-api';
+import { IdTypeEnum } from 'i40-aas-objects';
+import { RegistryError } from '../../utils/RegistryError';
 import {
   ICreateRole,
   IAssignRoles,
   IRegisterAas,
   ICreateAsset
-} from "./daos/interfaces/IApiRequests";
+} from './daos/interfaces/IApiRequests';
 import {
   Role,
   ConversationMember
-} from "i40-aas-objects/dist/src/interaction/ConversationMember";
+} from 'i40-aas-objects/dist/src/interaction/ConversationMember';
 export default [
   {
-    path: "/assetadministrationshells",
-    method: "post",
+    path: '/assetadministrationshells',
+    method: 'post',
     handler: async (req: Request, res: Response) => {
-      console.log("try to register sth.");
+      console.log('try to register sth.');
       var endpointsAssignmentArray: IRegisterAas[] = req.body;
 
       //TODO: revise the array endpoints, the for loop should go to registry-api
@@ -42,10 +41,10 @@ export default [
     }
   },
   {
-    path: "/roles",
-    method: "post",
+    path: '/roles',
+    method: 'post',
     handler: async (req: Request, res: Response) => {
-      console.log("try to create a role");
+      console.log('try to create a role');
       var rolesArray: ICreateRole[] = req.body;
       rolesArray.forEach(async role => {
         try {
@@ -58,10 +57,10 @@ export default [
     }
   },
   {
-    path: "/roleassignment",
-    method: "post",
+    path: '/roleassignment',
+    method: 'post',
     handler: async (req: Request, res: Response) => {
-      console.log("try to create a role assignment to AAS");
+      console.log('try to create a role assignment to AAS');
       var assignmentArray: IAssignRoles[] = req.body;
       assignmentArray.forEach(async assignment => {
         try {
@@ -74,10 +73,10 @@ export default [
     }
   },
   {
-    path: "/semanticprotocol",
-    method: "post",
+    path: '/semanticprotocol',
+    method: 'post',
     handler: async (req: Request, res: Response) => {
-      console.log("try to create a semantic protocol");
+      console.log('try to create a semantic protocol');
       try {
         res.json(await createSemanticProtocol(req.body));
       } catch (e) {
@@ -86,10 +85,10 @@ export default [
     }
   },
   {
-    path: "/asset",
-    method: "post",
+    path: '/asset',
+    method: 'post',
     handler: async (req: Request, res: Response) => {
-      console.log("try to create a asset");
+      console.log('try to create a asset');
       try {
         var asset: ICreateAsset = req.body;
         res.json(await createAsset(asset));
@@ -99,11 +98,11 @@ export default [
     }
   },
   {
-    path: "/assetadministrationshells",
-    method: "delete",
+    path: '/assetadministrationshells',
+    method: 'delete',
     handler: async (req: Request, res: Response) => {
       try {
-        var idType: IdTypeEnum = IdTypeEnum["Custom"];
+        var idType: IdTypeEnum = IdTypeEnum['Custom'];
         if (req.query.idType) {
           idType = (<any>IdTypeEnum)[req.query.idType];
         }
@@ -118,12 +117,12 @@ export default [
     }
   },
   {
-    path: "/assetadministrationshells",
-    method: "get",
+    path: '/assetadministrationshells',
+    method: 'get',
     handler: async (req: Request, res: Response) => {
       try {
         if (!req.query.receiver) {
-          throw new RegistryError("Missing parameter receiver", 422);
+          throw new RegistryError('Missing parameter receiver', 422);
         }
         var receiver: ConversationMember = JSON.parse(req.query.receiver);
         res.json(
@@ -137,8 +136,8 @@ export default [
     }
   },
   {
-    path: "/listAllEndpoints",
-    method: "get",
+    path: '/listAllEndpoints',
+    method: 'get',
     handler: async (req: Request, res: Response) => {
       try {
         res.json(await getAllEndpointsList());
