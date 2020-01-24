@@ -13,7 +13,7 @@ import {
   IAssignRoles,
   ICreateAsset
 } from "./daos/interfaces/IApiRequests";
-import { ConversationMember } from "i40-aas-objects/dist/src/interaction/ConversationMember";
+import { ConversationMember } from "i40-aas-objects";
 
 async function readRecordByIdentifier(
   identifier: Identifier
