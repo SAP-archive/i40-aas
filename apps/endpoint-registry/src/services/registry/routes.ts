@@ -1,16 +1,14 @@
 import { Request, Response } from "express";
 import { Frame } from "i40-aas-objects";
 import {
-  readRecordByIdentifier,
   register,
-  readRecordBySemanticProtocolAndRole,
-  getEndpointsByFrame,
   createRole,
   createSemanticProtocol,
   assignRolesToAAS,
   getAllEndpointsList,
   deleteRecordByIdentifier,
-  createAsset
+  createAsset,
+  getEndpointsByRole
 } from "./registry-api";
 import { IdTypeEnum } from "i40-aas-objects";
 import { RegistryError } from "../../utils/RegistryError";
@@ -20,6 +18,10 @@ import {
   IRegisterAas,
   ICreateAsset
 } from "./daos/interfaces/IApiRequests";
+import {
+  Role,
+  ConversationMember
+} from "i40-aas-objects/dist/src/interaction/ConversationMember";
 export default [
   {
     path: "/assetadministrationshells",
@@ -120,11 +122,13 @@ export default [
     method: "get",
     handler: async (req: Request, res: Response) => {
       try {
-        if (!req.query.frame) {
-          throw new RegistryError("Missing parameter frame", 422);
+        if (!req.query.receiver) {
+          throw new RegistryError("Missing parameter receiver", 422);
         }
-        var frame: Frame = JSON.parse(req.query.frame);
-        res.json(await getEndpointsByFrame(frame));
+        var receiver: ConversationMember = JSON.parse(req.query.receiver);
+        res.json(
+          await getEndpointsByRole(receiver, req.query.semanticprotocol)
+        );
       } catch (e) {
         console.log(e);
         res.statusCode = e.r_statusCode || 500;

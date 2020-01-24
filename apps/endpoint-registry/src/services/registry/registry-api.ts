@@ -1,5 +1,5 @@
 import { RegistryFactory } from "./daos/postgress/RegistryFactory";
-import { Identifier, Frame, IdTypeEnum } from "i40-aas-objects";
+import { Identifier, IdTypeEnum } from "i40-aas-objects";
 import { RegistryError } from "../../utils/RegistryError";
 import {
   RegistryResultSet,
@@ -13,6 +13,7 @@ import {
   IAssignRoles,
   ICreateAsset
 } from "./daos/interfaces/IApiRequests";
+import { ConversationMember } from "i40-aas-objects/dist/src/interaction/ConversationMember";
 
 async function readRecordByIdentifier(
   identifier: Identifier
@@ -132,21 +133,25 @@ async function createSemanticProtocol(req: ICreateSemanticProtocol) {
   }
 }
 
-async function getEndpointsByFrame(
-  frame: Frame
+async function getEndpointsByRole(
+  receiver: ConversationMember,
+  semanticProtocol: string
 ): Promise<Array<IRegistryResultSet>> {
-  if (!frame) {
-    throw new RegistryError("Missing parameter frame", 422);
+  if (!receiver) {
+    throw new RegistryError("Missing parameter receiver", 422);
   }
-  if (frame.receiver.identification) {
+  if (receiver.identification) {
     return readRecordByIdentifier({
-      id: frame.receiver.identification.id,
-      idType: (<any>IdTypeEnum)[frame.receiver.identification.idType]
+      id: receiver.identification.id,
+      idType: (<any>IdTypeEnum)[receiver.identification.idType]
     });
   } else {
+    if (!semanticProtocol) {
+      throw new RegistryError("Missing parameter semanticProtocol", 422);
+    }
     return readRecordBySemanticProtocolAndRole(
-      frame.semanticProtocol,
-      frame.receiver.role.name
+      semanticProtocol,
+      receiver.role.name
     );
   }
 }
@@ -171,7 +176,7 @@ export {
   createSemanticProtocol,
   register,
   readRecordBySemanticProtocolAndRole,
-  getEndpointsByFrame,
+  getEndpointsByRole,
   createRole,
   createAsset
 };
