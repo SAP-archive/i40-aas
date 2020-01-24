@@ -13,7 +13,19 @@ POST /semanticprotocol
   "semanticProtocol":"<id of the semantic protocol>"
 }
 ```
+## Create an asset
 
+POST /asset
+
+```javascript
+{
+  "assetId":
+  {
+    "id":"<Asset ID>",
+    "idType":"<Asset ID Type>"
+  }
+}
+```
 ## Create roles
 
 POST /roles
@@ -91,13 +103,16 @@ NOTE: returns an array of endpoints registered for each aasId
 
 GET /assetadministrationshells
 
-| parameter |      Description      |
-| :-------: | :-------------------: |
-|   frame   | i40-aas-objects frame |
+|    parameter     |            Description             |
+| :--------------: | :--------------------------------: |
+|     receiver     | i40-aas-objects conversationMember |
+| semanticProtocol |     id of the semanticProtocol     |
+
+
 
 response </br>
 NOTE: if there are multiple aas registerd to an role then there is more then one object in the result list. </br>
-If receiver.identification.id is in the frame, only the endpoints for this receiver is part of the response.
+If receiver.identification.id is in the receiver object, only the endpoints for this receiver is part of the response.
 
 ```javascript
 [
