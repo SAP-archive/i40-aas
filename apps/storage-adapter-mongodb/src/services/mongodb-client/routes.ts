@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { Submodel, Property, SubmodelInterface } from "i40-aas-objects";
+import { Submodel } from "i40-aas-objects";
 import boom = require("@hapi/boom");
 import { logger } from "../../log";
 import { IDatabaseClient } from "./operations/IDatabaseClient";
@@ -43,7 +43,7 @@ export default [
     method: "post",
     handler: async (req: Request, res: Response, next: NextFunction) => {
       try {
-        let sm: Submodel = new Submodel(req.body);
+        let sm: Submodel = Submodel.fromJSON(req.body);
         await repositoryService.createEquipmentAndSetInitialValues(sm);
         res.end();
       } catch (e) {
