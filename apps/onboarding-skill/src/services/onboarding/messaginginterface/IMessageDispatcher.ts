@@ -2,10 +2,9 @@ import { Submodel } from "i40-aas-objects";
 
 import { AxiosResponse } from "axios";
 import { InteractionMessage } from "i40-aas-objects";
-import { SubmodelInterface } from "i40-aas-objects/dist/src/identifiables/Submodel";
 
 interface IMessageDispatcher {
-  createInstanceOnCAR(submodels: SubmodelInterface[]): Promise<AxiosResponse>;
+  createInstanceOnCAR(submodels: object[]): Promise<AxiosResponse>;
 
   replyRequestRefused(message: InteractionMessage): void;
 
@@ -13,7 +12,7 @@ interface IMessageDispatcher {
 
   sendResponseInstanceToOperator(
     message: InteractionMessage,
-    submodel: SubmodelInterface
+    submodel: object
   ): void;
 
   sendResponseTypeToOperator(message: InteractionMessage, type: any): void;
