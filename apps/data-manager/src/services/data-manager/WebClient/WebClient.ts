@@ -22,61 +22,7 @@ class WebClient {
     }
     return config;
   }
-  /**
-  private getURLRequestConfig(
-    paramName?: string,
-    paramValue?: string,
-    user?: string,
-    pass?: string
-  ): AxiosRequestConfig | undefined {
-    if (paramName == 'submodelid' && user && pass) {
-      return {
-        params: {
-          submodelid: paramValue
-        },
-        auth: {
-          username: user,
-          password: pass
-        }
-      };
-    } else if (paramName == 'submodelsemanticid' && user && pass) {
-      return {
-        params: {
-          submodelsemanticid: paramValue
-        },
-        auth: {
-          username: user,
-          password: pass
-        }
-      };
-    } else if (!paramName && user && pass) {
-      return {
-        auth: {
-          username: user,
-          password: pass
-        }
-      };
-    } else if (paramName == 'submodelsemanticid' && user && pass) {
-      return {
-        params: {
-          submodelsemanticid: paramValue
-        },
-        auth: {
-          username: user,
-          password: pass
-        }
-      };
-    } else if (!paramName && user && pass) {
-      return {
-        auth: {
-          username: user,
-          password: pass
-        }
-      };
-    }
-    return undefined;
-  }
-*/
+
   async getAdapterFromRegRequest<T>(
     url: string,
     params: object,

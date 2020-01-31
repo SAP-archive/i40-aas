@@ -52,19 +52,20 @@ class RegistryConnector {
     */
   async getReceiverURLFromRegistry(message: IInteractionMessage) {
     //the GET parameter for the request to registry
-    var reqParam: string;
+    var reqParams: object;
     var response;
 
-    //get the Frame from the interaction message. This should be send as parameter.
-    //TODO: Add unit test here. Should be fine as previously validated
-    reqParam = JSON.stringify(message.frame);
+    reqParams = {
+      receiver: message.frame.receiver,
+      semanticprotocol: message.frame.semanticProtocol
+    }
 
     response = await this.webClient.getRequest(
       this.endpoint_reg_protocol,
       this.endpoint_reg_host,
       this.endpoint_reg_port,
       this.regURL_GET_SUFFIX,
-      reqParam,
+      reqParams,
       this.regAdminUser,
       this.regAdminPass
     );
