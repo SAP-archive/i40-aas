@@ -120,7 +120,9 @@ class AdapterRegistryLocal implements IAdapterRegistry {
       throw new Error('internal storage error');
     }
   }
-
+  listAllAdapters(): Promise<Array<IStorageAdapter>> {
+    return this.storage.values();
+  }
   listAllSubmodels(): Promise<IStorageAdapter[]> {
     throw new Error('Method not implemented.');
   }

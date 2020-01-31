@@ -4,7 +4,8 @@ import {
   clearAllEntries,
   getAdapterBysubmodelSemanticId,
   getAdapterBySubmodelId,
-  createAdapters
+  createAdapters,
+  listAllAdapters
 } from './registry-api';
 import { IdTypeEnum } from 'i40-aas-objects';
 import * as logger from 'winston';
@@ -57,7 +58,7 @@ export default [
           var submodelid = req.query.submodelid;
           var submodelsemanticid = req.query.submodelsemanticid;
           if (!submodelid && !submodelsemanticid) {
-            next(new HTTP422Error('No parameter given at request'));
+            res.json(await listAllAdapters());
           } else {
             let adapter = undefined;
             logger.debug('Submodel id : ' + submodelid);

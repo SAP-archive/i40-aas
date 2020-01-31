@@ -11,7 +11,8 @@ interface IAdapterRegistry {
   release(): void;
   clearAll(): Promise<void>;
   //regsiter a new submodel that can be handled from an adapter
+  listAllAdapters(): Promise<Array<IStorageAdapter>>;
   createSubmodel(req: ICreateSubmodelEntry): void;
-  }
+}
 
 export { IAdapterRegistry };
