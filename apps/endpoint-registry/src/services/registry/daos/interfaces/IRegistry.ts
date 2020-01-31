@@ -1,6 +1,12 @@
 import { Identifier } from 'i40-aas-objects';
 import { RegistryResultSet, IRegistryResultSet } from './IRegistryResultSet';
-import { IRegisterAas, ICreateSemanticProtocol , ICreateRole, IAssignRoles } from './IApiRequests';
+import {
+  IRegisterAas,
+  ICreateSemanticProtocol,
+  ICreateRole,
+  IAssignRoles,
+  ICreateAsset
+} from './IApiRequests';
 import { ICreateRoleResultSet } from './IRegistryRolesSet';
 
 interface iRegistry {
@@ -14,8 +20,12 @@ interface iRegistry {
   release(): void;
   createSemanticProtocol(req: ICreateSemanticProtocol): void;
   assignRoles(req: IAssignRoles): void;
-  createRole(req:ICreateRole):Promise<ICreateRoleResultSet>;
-  readEndpointBySemanticProtocolAndRole(sProtocol: string, role: string): Promise<any>;
+  createRole(req: ICreateRole): Promise<ICreateRoleResultSet>;
+  readEndpointBySemanticProtocolAndRole(
+    sProtocol: string,
+    role: string
+  ): Promise<any>;
+  createAsset(req: ICreateAsset): Promise<ICreateAsset>;
 }
 
 export { iRegistry };

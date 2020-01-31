@@ -21,4 +21,14 @@ interface IAssignRoles {
   roleId: string;
 }
 
-export { IRegisterAas, ICreateSemanticProtocol, IAssignRoles, ICreateRole };
+interface ICreateAsset {
+  assetId: Identifier;
+}
+
+export {
+  IRegisterAas,
+  ICreateSemanticProtocol,
+  IAssignRoles,
+  ICreateRole,
+  ICreateAsset
+};

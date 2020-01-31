@@ -8,7 +8,11 @@ class RegistryResultSet implements IRegistryResultSet {
   public aasId: Identifier;
   public endpoints: Array<Endpoint>;
   public assetId: Identifier;
-  constructor(aasId: Identifier, endpoints: Array<Endpoint>, assetId: Identifier) {
+  constructor(
+    aasId: Identifier,
+    endpoints: Array<Endpoint>,
+    assetId: Identifier
+  ) {
     this.aasId = aasId;
     this.endpoints = endpoints;
     this.assetId = assetId;
@@ -26,10 +30,11 @@ class Endpoint implements IEndpoint {
   public protocol: string;
   public protocolVersion?: string;
   constructor(url: string, protocol: string, protocolVersion?: string) {
-
     this.url = url;
 
-  (protocol )? this.protocol = protocol.toLowerCase(): this.protocol = protocol;
+    protocol
+      ? (this.protocol = protocol.toLowerCase())
+      : (this.protocol = protocol);
 
     this.protocolVersion = protocolVersion;
   }
