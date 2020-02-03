@@ -34,7 +34,7 @@ describe("replyTo", function() {
       {
         identification: {
           id: MY_URI,
-          idType: "URI"
+          idType: "Custom"
         },
         role: {
           name: MY_ROLE
@@ -63,7 +63,7 @@ describe("replyTo", function() {
       sinon.match(
         '"sender":{"identification":{"id":"' +
           MY_URI +
-          '","idType":"URI"},"role":{"name":"' +
+          '","idType":"Custom"},"role":{"name":"' +
           MY_ROLE +
           '"}}'
       )
@@ -106,7 +106,7 @@ describe("start", function() {
       {
         identification: {
           id: MY_URI,
-          idType: "URI"
+          idType: "Custom"
         },
         role: {
           name: MY_ROLE
