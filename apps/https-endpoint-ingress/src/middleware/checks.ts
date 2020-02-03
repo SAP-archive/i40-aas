@@ -1,7 +1,7 @@
 
 import { Request, Response, NextFunction } from "express";
 import { HTTP404Error, HTTP400Error, HTTP422Error } from "../utils/httpErrors";
-import {  Interaction } from "i40-aas-objects";
+import { IInteractionMessage, InteractionMessage } from "i40-aas-objects";
 
 
 export const validateInteractionFrame = (
@@ -10,7 +10,7 @@ export const validateInteractionFrame = (
   next: NextFunction
 ) => {
     try {
-      let interactionReq:Interaction = new Interaction(req.body);
+      let interactionReq:IInteractionMessage = new InteractionMessage(req.body);
 
       //the required fields of the frame that should not be empty
       let semanticProtocol:string = interactionReq.frame.semanticProtocol;

@@ -3,7 +3,7 @@ import {
   Adapter,
   IStorageAdapter
 } from "./interfaces/IRegistryResultSet";
-import { Identifier } from "i40-aas-objects";
+import { IIdentifier } from "i40-aas-objects";
 import * as logger from "winston";
 
 /**
@@ -27,7 +27,7 @@ class AdapterRegistryLocal implements IAdapterRegistry {
   }
 
   async readAdapterRecordByID(
-    adapterId: Identifier
+    adapterId: IIdentifier
   ): Promise<IStorageAdapter[]> {
     throw new Error("Method not implemented.");
   }
@@ -58,7 +58,7 @@ class AdapterRegistryLocal implements IAdapterRegistry {
   ): Promise<IStorageAdapter> {
     throw new Error("Method not implemented.");
   }
-  deleteAdapterByAdapterID(aasId: Identifier): Promise<void> {
+  deleteAdapterByAdapterID(aasId: IIdentifier): Promise<void> {
     throw new Error("Method not implemented.");
   }
   async getAdapterBySubmodelId(submodelId: string): Promise<IStorageAdapter> {

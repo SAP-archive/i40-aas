@@ -48,7 +48,7 @@
     "express": "^5.0.0-alpha.7",
     "express-basic-auth": "^1.2.0",
     "express-validation": "^1.0.2",
-    "i40-aas-objects": "0.0.1-alpha",
+    "i40-aas-objects": "0.2.6",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
     "swagger-ui-express": "^4.0.6",

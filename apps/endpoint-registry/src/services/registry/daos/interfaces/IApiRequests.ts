@@ -1,11 +1,11 @@
-import { Identifier } from 'i40-aas-objects';
+import { IIdentifier } from 'i40-aas-objects';
 
 import { Endpoint } from './IRegistryResultSet';
 
 interface IRegisterAas {
-  aasId: Identifier;
+  aasId: IIdentifier;
   endpoints: Array<Endpoint>;
-  assetId: Identifier;
+  assetId: IIdentifier;
 }
 
 interface ICreateSemanticProtocol {
@@ -17,7 +17,7 @@ interface ICreateRole {
 }
 
 interface IAssignRoles {
-  aasId: Identifier;
+  aasId: IIdentifier;
   roleId: string;
 }
 

@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from "express";
-import { Interaction } from "i40-aas-objects";
 import { publishInteractionToBroker } from "./RoutingController";
 import { validateInteractionFrame } from "../../middleware/checks";
 import { BrokerInteractionTopic } from "./messaging/BrokerInteractionTopic";
 import * as logger from "winston";
 import { HTTP404Error, HTTP401Error } from "../../utils/httpErrors";
+import { IInteractionMessage, InteractionMessage } from "i40-aas-objects";
 
 export default [
   {
@@ -18,7 +18,7 @@ export default [
         try {
           //TODO: consider if we need confirmation of publishing the request to broker
 
-          let interactionReq: Interaction = new Interaction(req.body);
+          let interactionReq: IInteractionMessage = new InteractionMessage(req.body);
           let semanticProtocol = interactionReq.frame.semanticProtocol;
           let receiverRole: string = interactionReq.frame.receiver.role.name;
           let type = interactionReq.frame.type;
