@@ -21,6 +21,7 @@ import {
   CreateRoleResultSet,
   ICreateRoleResultSet
 } from "../interfaces/IRegistryRolesSet";
+import { convertToIdTypeEnum } from "../../../../utils/Utils";
 class Registry implements iRegistry {
   private client: any;
 
@@ -205,7 +206,7 @@ class Registry implements iRegistry {
         });
         return [
           new RegistryResultSet(
-                    { id: aasRecord.aasId, idType: aasRecord.idType },
+                    { id: aasRecord.aasId, idType: convertToIdTypeEnum(aasRecord.idType) },
                     endpoints,
                     { id: "123", idType: IdTypeEnum.Custom }
           )
@@ -241,7 +242,7 @@ class Registry implements iRegistry {
       queryResultRows.forEach(function(row: IJointRecord) {
         if (!recordsByAasId[row.aasId]) {
           recordsByAasId[row.aasId] = new RegistryResultSet(
-                    { id: row.aasId, idType: <any>[row.aasIdType] },
+                    { id: row.aasId, idType: convertToIdTypeEnum(row.aasIdType)  },
                     [
                     new Endpoint(
                     row.URL,
@@ -249,7 +250,7 @@ class Registry implements iRegistry {
                     row.protocol_version
                     )
                     ],
-                    { id: row.assetId, idType: <any>[row.assetIdType] }
+                    { id: row.assetId, idType: convertToIdTypeEnum(row.aasIdType)   }
           );
         } else {
           recordsByAasId[row.aasId].endpoints.push(
@@ -288,7 +289,7 @@ class Registry implements iRegistry {
       queryResultRows.forEach(function(row: IJointRecord) {
         if (!recordsByAasId[row.aasId]) {
           recordsByAasId[row.aasId] = new RegistryResultSet(
-                    { id: row.aasId, idType: <any>[row.aasIdType] },
+                    { id: row.aasId, idType: convertToIdTypeEnum(row.aasIdType)  },
                     [
                     new Endpoint(
                     row.URL,
@@ -296,7 +297,7 @@ class Registry implements iRegistry {
                     row.protocol_version
                     )
                     ],
-                    { id: row.assetId, idType: <any>[row.assetIdType] }
+                    { id: row.assetId, idType:  convertToIdTypeEnum(row.aasIdType) }
           );
         } else {
           recordsByAasId[row.aasId].endpoints.push(
