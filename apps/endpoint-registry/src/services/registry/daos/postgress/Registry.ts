@@ -6,7 +6,7 @@ import {
   RegistryResultSet
 } from "../interfaces/IRegistryResultSet";
 import { IdTypeEnum } from "i40-aas-objects";
-import { Identifier } from "i40-aas-objects";
+import { IIdentifier } from "i40-aas-objects";
 import { RegistryError } from "../../../../utils/RegistryError";
 import { IData } from "../../../../utils/IData";
 import { IJointRecord, IEndpointRecord } from "../interfaces/IQueryResults";
@@ -89,7 +89,7 @@ class Registry implements iRegistry {
   updateAas(record: IRegisterAas): Promise<IRegistryResultSet> {
     throw new Error("Method not implemented.");
   }
-  async deleteAasByAasId(aasId: Identifier): Promise<number> {
+  async deleteAasByAasId(aasId: IIdentifier): Promise<number> {
     console.log(" ********* AASID "+aasId.id);
 
     try {
@@ -109,7 +109,7 @@ class Registry implements iRegistry {
       }
     }
 
-  listAasByAssetId(assetId: Identifier): Promise<IRegistryResultSet[]> {
+  listAasByAssetId(assetId: IIdentifier): Promise<IRegistryResultSet[]> {
     throw new Error("Method not implemented.");
   }
   listAas(): Promise<IRegistryResultSet[]> {
@@ -177,7 +177,7 @@ class Registry implements iRegistry {
   }
 
   async readRecordByAasId(
-    aasId: Identifier
+    aasId: IIdentifier
   ): Promise<Array<IRegistryResultSet>> {
     try {
       console.log(aasId);
@@ -241,7 +241,7 @@ class Registry implements iRegistry {
       queryResultRows.forEach(function(row: IJointRecord) {
         if (!recordsByAasId[row.aasId]) {
           recordsByAasId[row.aasId] = new RegistryResultSet(
-                    { id: row.aasId, idType: (<any>IdTypeEnum)[row.aasIdType] },
+                    { id: row.aasId, idType: <any>[row.aasIdType] },
                     [
                     new Endpoint(
                     row.URL,
@@ -249,7 +249,7 @@ class Registry implements iRegistry {
                     row.protocol_version
                     )
                     ],
-                    { id: row.assetId, idType: (<any>IdTypeEnum)[row.assetIdType] }
+                    { id: row.assetId, idType: <any>[row.assetIdType] }
           );
         } else {
           recordsByAasId[row.aasId].endpoints.push(
@@ -288,7 +288,7 @@ class Registry implements iRegistry {
       queryResultRows.forEach(function(row: IJointRecord) {
         if (!recordsByAasId[row.aasId]) {
           recordsByAasId[row.aasId] = new RegistryResultSet(
-                    { id: row.aasId, idType: (<any>IdTypeEnum)[row.aasIdType] },
+                    { id: row.aasId, idType: <any>[row.aasIdType] },
                     [
                     new Endpoint(
                     row.URL,
@@ -296,7 +296,7 @@ class Registry implements iRegistry {
                     row.protocol_version
                     )
                     ],
-                    { id: row.assetId, idType: (<any>IdTypeEnum)[row.assetIdType] }
+                    { id: row.assetId, idType: <any>[row.assetIdType] }
           );
         } else {
           recordsByAasId[row.aasId].endpoints.push(

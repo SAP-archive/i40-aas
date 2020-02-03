@@ -1,14 +1,14 @@
-import { Identifier } from 'i40-aas-objects';
+import { IIdentifier } from 'i40-aas-objects';
 interface IRegistryResultSet {
-  aasId: Identifier;
+  aasId: IIdentifier;
   endpoints: Array<Endpoint>;
-  assetId: Identifier;
+  assetId: IIdentifier;
 }
 class RegistryResultSet implements IRegistryResultSet {
-  public aasId: Identifier;
+  public aasId: IIdentifier;
   public endpoints: Array<Endpoint>;
-  public assetId: Identifier;
-  constructor(aasId: Identifier, endpoints: Array<Endpoint>, assetId: Identifier) {
+  public assetId: IIdentifier;
+  constructor(aasId: IIdentifier, endpoints: Array<Endpoint>, assetId: IIdentifier) {
     this.aasId = aasId;
     this.endpoints = endpoints;
     this.assetId = assetId;

@@ -4,12 +4,12 @@ import {
   readRecordByIdentifier,
   register,
   readRecordBySemanticProtocolAndRole,
-  getEndpointsByFrame,
   createRole,
   createSemanticProtocol,
   assignRolesToAAS,
   getAllEndpointsList,
-  deleteRecordByIdentifier
+  deleteRecordByIdentifier,
+  getEndpointsByFrame
 } from "./registry-api";
 import { IdTypeEnum } from "i40-aas-objects";
 import { RegistryError } from "../../utils/RegistryError";
@@ -84,7 +84,7 @@ export default [
       try {
         var idType: IdTypeEnum = IdTypeEnum["Custom"];
         if (req.query.idType) {
-          idType = (<any>IdTypeEnum)[req.query.idType];
+          idType = <IdTypeEnum>[][req.query.idType];
         }
         res.json(
           await deleteRecordByIdentifier({ id: req.query.id, idType: idType })

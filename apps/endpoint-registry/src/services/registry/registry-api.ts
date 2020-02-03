@@ -1,11 +1,12 @@
 import { RegistryFactory } from './daos/postgress/RegistryFactory';
-import { Identifier, Frame, IdTypeEnum } from 'i40-aas-objects';
+import {  Frame, IdTypeEnum, IIdentifier } from 'i40-aas-objects';
 import { RegistryError } from '../../utils/RegistryError';
 import { RegistryResultSet, IRegistryResultSet } from './daos/interfaces/IRegistryResultSet';
 import { iRegistry } from './daos/interfaces/IRegistry';
 import { IRegisterAas, ICreateRole, ICreateSemanticProtocol, IAssignRoles } from './daos/interfaces/IApiRequests';
+import { TIdType } from 'i40-aas-objects/dist/src/types/IdTypeEnum';
 
-async function readRecordByIdentifier(identifier: Identifier): Promise<Array<RegistryResultSet>> {
+async function readRecordByIdentifier(identifier: IIdentifier): Promise<Array<RegistryResultSet>> {
   var registryDao: iRegistry = await RegistryFactory.getRegistry();
   try {
     if (!identifier.id) {
@@ -20,7 +21,7 @@ async function readRecordByIdentifier(identifier: Identifier): Promise<Array<Reg
     registryDao.release();
   }
 }
-async function deleteRecordByIdentifier(identifier: Identifier): Promise<number> {
+async function deleteRecordByIdentifier(identifier: IIdentifier): Promise<number> {
   var registryDao: iRegistry = await RegistryFactory.getRegistry();
   try {
     if (!identifier.id) {
@@ -105,7 +106,8 @@ async function getEndpointsByFrame(frame: Frame): Promise<Array<IRegistryResultS
     throw new RegistryError('Missing parameter frame', 422);
   }
   if (frame.receiver.identification) {
-    return readRecordByIdentifier({ id: frame.receiver.identification.id, idType: (<any>IdTypeEnum)[frame.receiver.identification.idType] });
+    //TODO: check if any type too weak here
+    return readRecordByIdentifier({ id: frame.receiver.identification.id, idType: <any>[frame.receiver.identification.idType] });
   } else {
     return readRecordBySemanticProtocolAndRole(frame.semanticProtocol, frame.receiver.role.name);
   }

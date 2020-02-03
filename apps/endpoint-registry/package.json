@@ -17,7 +17,7 @@
     "url": "https://github.com/SAP/i40-aas.git"
   },
   "dependencies": {
-    "i40-aas-objects": "0.0.1-alpha",
+    "i40-aas-objects": "0.2.6",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "express": "^4.17.1",
