@@ -26,10 +26,11 @@ class Endpoint implements IEndpoint {
   public protocol: string;
   public protocolVersion?: string;
   constructor(url: string, protocol: string, protocolVersion?: string) {
-
     this.url = url;
 
-  (protocol )? this.protocol = protocol.toLowerCase(): this.protocol = protocol;
+    protocol
+      ? (this.protocol = protocol.toLowerCase())
+      : (this.protocol = protocol);
 
     this.protocolVersion = protocolVersion;
   }

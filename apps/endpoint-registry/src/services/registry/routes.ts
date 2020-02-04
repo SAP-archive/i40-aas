@@ -1,25 +1,32 @@
-import { Request, Response } from "express";
-import { Frame } from "i40-aas-objects";
+import { Request, Response } from 'express';
 import {
-  readRecordByIdentifier,
   register,
-  readRecordBySemanticProtocolAndRole,
   createRole,
   createSemanticProtocol,
   assignRolesToAAS,
   getAllEndpointsList,
   deleteRecordByIdentifier,
-  getEndpointsByFrame
-} from "./registry-api";
-import { IdTypeEnum } from "i40-aas-objects";
-import { RegistryError } from "../../utils/RegistryError";
-import { ICreateRole, IAssignRoles, IRegisterAas } from "./daos/interfaces/IApiRequests";
+  createAsset,
+  getEndpointsByRole
+} from './registry-api';
+import { IdTypeEnum } from 'i40-aas-objects';
+import { RegistryError } from '../../utils/RegistryError';
+import {
+  ICreateRole,
+  IAssignRoles,
+  IRegisterAas,
+  ICreateAsset
+} from './daos/interfaces/IApiRequests';
+import {
+  Role,
+  ConversationMember
+} from 'i40-aas-objects/dist/src/interaction/ConversationMember';
 export default [
   {
-    path: "/assetadministrationshells",
-    method: "post",
+    path: '/assetadministrationshells',
+    method: 'post',
     handler: async (req: Request, res: Response) => {
-      console.log("try to register sth.");
+      console.log('try to register sth.');
       var endpointsAssignmentArray: IRegisterAas[] = req.body;
 
       //TODO: revise the array endpoints, the for loop should go to registry-api
@@ -34,10 +41,10 @@ export default [
     }
   },
   {
-    path: "/roles",
-    method: "post",
+    path: '/roles',
+    method: 'post',
     handler: async (req: Request, res: Response) => {
-      console.log("try to create a role");
+      console.log('try to create a role');
       var rolesArray: ICreateRole[] = req.body;
       rolesArray.forEach(async role => {
         try {
@@ -50,10 +57,10 @@ export default [
     }
   },
   {
-    path: "/roleassignment",
-    method: "post",
+    path: '/roleassignment',
+    method: 'post',
     handler: async (req: Request, res: Response) => {
-      console.log("try to create a role assignment to AAS");
+      console.log('try to create a role assignment to AAS');
       var assignmentArray: IAssignRoles[] = req.body;
       assignmentArray.forEach(async assignment => {
         try {
@@ -66,10 +73,10 @@ export default [
     }
   },
   {
-    path: "/semanticprotocol",
-    method: "post",
+    path: '/semanticprotocol',
+    method: 'post',
     handler: async (req: Request, res: Response) => {
-      console.log("try to create a semantic protocol");
+      console.log('try to create a semantic protocol');
       try {
         res.json(await createSemanticProtocol(req.body));
       } catch (e) {
@@ -78,11 +85,24 @@ export default [
     }
   },
   {
-    path: "/assetadministrationshells",
-    method: "delete",
+    path: '/asset',
+    method: 'post',
+    handler: async (req: Request, res: Response) => {
+      console.log('try to create a asset');
+      try {
+        var asset: ICreateAsset = req.body;
+        res.json(await createAsset(asset));
+      } catch (e) {
+        res.end(e.message);
+      }
+    }
+  },
+  {
+    path: '/assetadministrationshells',
+    method: 'delete',
     handler: async (req: Request, res: Response) => {
       try {
-        var idType: IdTypeEnum = IdTypeEnum["Custom"];
+        var idType: IdTypeEnum = IdTypeEnum['Custom'];
         if (req.query.idType) {
           idType = <IdTypeEnum>[][req.query.idType];
         }
@@ -97,15 +117,17 @@ export default [
     }
   },
   {
-    path: "/assetadministrationshells",
-    method: "get",
+    path: '/assetadministrationshells',
+    method: 'get',
     handler: async (req: Request, res: Response) => {
       try {
-        if (!req.query.frame) {
-          throw new RegistryError("Missing parameter frame", 422);
+        if (!req.query.receiver) {
+          throw new RegistryError('Missing parameter receiver', 422);
         }
-        var frame: Frame = JSON.parse(req.query.frame);
-        res.json(await getEndpointsByFrame(frame));
+        var receiver: ConversationMember = JSON.parse(req.query.receiver);
+        res.json(
+          await getEndpointsByRole(receiver, req.query.semanticprotocol)
+        );
       } catch (e) {
         console.log(e);
         res.statusCode = e.r_statusCode || 500;
@@ -114,8 +136,8 @@ export default [
     }
   },
   {
-    path: "/listAllEndpoints",
-    method: "get",
+    path: '/listAllEndpoints',
+    method: 'get',
     handler: async (req: Request, res: Response) => {
       try {
         res.json(await getAllEndpointsList());

@@ -1,4 +1,3 @@
-
 interface IJointRecord {
   assetIdType: string;
   assetId: string;
