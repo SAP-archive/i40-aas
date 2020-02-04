@@ -53,32 +53,29 @@ class RegistryConnector {
   async getReceiverURLFromRegistry(message: IInteractionMessage) {
     //the GET parameter for the request to registry
     var reqParam: string;
-    var response;
+    var response:AxiosResponse;
 
     //get the Frame from the interaction message. This should be send as parameter.
     //TODO: Add unit test here. Should be fine as previously validated
     reqParam = JSON.stringify(message.frame);
 
-    response = await this.webClient.getRequest(
-      this.endpoint_reg_protocol,
-      this.endpoint_reg_host,
-      this.endpoint_reg_port,
-      this.regURL_GET_SUFFIX,
-      reqParam,
-      this.regAdminUser,
-      this.regAdminPass
-    );
-
-    if (response && "data" in response) {
-      logger.debug(
-        "Registry Response is " + JSON.stringify(response.data, null, 3)
+    try{
+      response = await this.webClient.getRequest(
+        this.endpoint_reg_protocol,
+        this.endpoint_reg_host,
+        this.endpoint_reg_port,
+        this.regURL_GET_SUFFIX,
+        reqParam,
+        this.regAdminUser,
+        this.regAdminPass
       );
-
+      logger.debug(
+        "Endpoint-Registry Response is " + JSON.stringify(response.data, null, 3)
+      );
       this.handleResponseFromRegistry(response, message);
-    } else {
-      logger.debug("Cannot get a valid response from Registry");
-      logger.debug(response);
-      throw new Error("Cannot get a valid response from Registry");
+
+    }catch(error){
+      logger.debug("Cannot get a valid response from Registry "+error);
     }
   }
 
