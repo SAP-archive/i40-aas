@@ -1,11 +1,11 @@
-import { RegistryFactory } from "./RegistryFactory";
-import { Identifier, Frame, IdTypeEnum } from "i40-aas-objects";
-import { Adapter, IStorageAdapter } from "./interfaces/IRegistryResultSet";
-import { IAdapterRegistry } from "./interfaces/IAdapterRegistry";
-import { logger } from "../../utils/log";
-import { ICreateAdapter } from "./interfaces/IAPIRequests";
+import { RegistryFactory } from './RegistryFactory';
+import { Identifier, Frame, IdTypeEnum } from 'i40-aas-objects';
+import { Adapter, IStorageAdapter } from './interfaces/IRegistryResultSet';
+import { IAdapterRegistry } from './interfaces/IAdapterRegistry';
+import { logger } from '../../utils/log';
+import { ICreateAdapter } from './interfaces/IAPIRequests';
 
-const dotenv = require("dotenv");
+const dotenv = require('dotenv');
 dotenv.config();
 
 /**
@@ -48,7 +48,10 @@ async function getAdapterBysubmodelSemanticId(
     throw e;
   }
 }
-
+async function listAllAdapters(): Promise<Array<IStorageAdapter>> {
+  var registryDao: IAdapterRegistry = await RegistryFactory.getRegistryLocal();
+  return registryDao.listAllAdapters();
+}
 async function clearAllEntries(): Promise<string> {
   var registryDao: IAdapterRegistry = await RegistryFactory.getRegistryLocal();
   try {
@@ -56,12 +59,13 @@ async function clearAllEntries(): Promise<string> {
   } catch (e) {
     throw e;
   }
-  return "OK";
+  return 'OK';
 }
 
 export {
   getAdapterBySubmodelId,
   getAdapterBysubmodelSemanticId,
   createAdapters,
-  clearAllEntries
+  clearAllEntries,
+  listAllAdapters
 };

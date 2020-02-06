@@ -1,5 +1,5 @@
 CREATE DATABASE "AAS_REGISTRY"
-    WITH 
+    WITH
     OWNER = postgres
     ENCODING = 'UTF8'
     LC_COLLATE = 'en_US.utf8'
