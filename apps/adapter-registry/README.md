@@ -22,13 +22,11 @@ POST /adapters
           "adapterId":"fooAdapterId",
           "url":"fooURL",
           "name":"testAdaptername",
-  "submodelid": "opc-ua-devices",
-  "submodelsemanticid" : "part-100-device-information-model"
+          "submodelid": "opc-ua-devices",
+          "submodelsemanticid" : "part-100-device-information-model"
     }
 ]
 ```
-
-
 
 ## Read
 
@@ -53,20 +51,26 @@ NOTE: only one adapter per submodel is assumed
     "adapterId":"fooAdapterId",
     "url":"fooURL",
     "name":"testAdaptername",
-  "submodelid": "opc-ua-devices",
-  "submodelsemanticid" : "part-100-device-information-model"
+    "submodelid": "opc-ua-devices",
+    "submodelsemanticid" : "part-100-device-information-model"
     }
 ```
 
-error
+## Delete All Adapters
+
+
+DELETE /deleteall
+
+
+response </br>
+NOTE: only one adapter per submodel is assumed
 ```javascript
-{
-  r_statusCode:<error code>
-}
+    {
+    "Registry Cleared"
+    }
 ```
 
-## Database Connection
 
-Not yet implemented
+## Persistency
 
 [node-persist](https://www.npmjs.com/package/node-persist) as Local storage is used

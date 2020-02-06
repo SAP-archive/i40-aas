@@ -80,7 +80,7 @@ export default [
   },
 
   {
-    path: "/adapters",
+    path: "/deleteall",
     method: "delete",
     handler: [
       checkReqBodyEmpty,
