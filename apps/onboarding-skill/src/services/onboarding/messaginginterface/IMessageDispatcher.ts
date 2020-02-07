@@ -1,8 +1,7 @@
-import { Submodel } from "i40-aas-objects";
+import { Submodel } from 'i40-aas-objects';
 
-import { AxiosResponse } from "axios";
-import { InteractionMessage } from "i40-aas-objects";
-import { SubmodelInterface } from "i40-aas-objects/dist/src/identifiables/Submodel";
+import { AxiosResponse } from 'axios';
+import { InteractionMessage, SubmodelInterface } from 'i40-aas-objects';
 
 interface IMessageDispatcher {
   createInstanceOnCAR(submodels: SubmodelInterface[]): Promise<AxiosResponse>;
