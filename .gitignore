@@ -68,3 +68,11 @@ typings/
 
 # next.js build output
 .next
+
+
+
+#######################
+# exclude all initializer scripts
+.compose/volumes/initializer/*
+# except for
+!.compose/volumes/initializer/sample_config.sh

@@ -20,6 +20,31 @@ services:
     env_file:
       - .compose/envs/rabbitmq.env
       - .compose/envs/endpoint-registry.env
+  ##
+  # i40-aas-grpc-endpoint-ingress:
+  #   image: sapi40/i40-aas-grpc-endpoint-ingress
+  #   build:
+  #     context: apps
+  #     dockerfile: ../docker/grpc-endpoint-ingress/Dockerfile
+  #   ports:
+  #     - "8384:8384"
+  #   env_file:
+  #     - .compose/envs/rabbitmq.env
+  #     - .compose/envs/grpc-endpoint-ingress.env
+  #   volumes:
+  #     - .compose/volumes/grpc-endpoint-ingress:/grpc-endpoint-ingress
+  # i40-aas-grpc-endpoint-egress:
+  #   image: sapi40/i40-aas-grpc-endpoint-egress
+  #   build:
+  #     context: apps
+  #     dockerfile: ../docker/grpc-endpoint-egress/Dockerfile
+  #   env_file:
+  #     - .compose/envs/rabbitmq.env
+  #     - .compose/envs/grpc-endpoint-egress.env
+  #     - .compose/envs/endpoint-registry.env
+  #   volumes:
+  #     - .compose/volumes/grpc-endpoint-egress:/grpc-endpoint-egress
+  ##
   i40-aas-data-manager:
     image: sapi40/i40-aas-data-manager
     env_file:
@@ -47,8 +72,24 @@ services:
     env_file:
       - .compose/envs/mongodb.env
       - .compose/envs/storage-adapter-mongodb.env
+  i40-aas-initializer:
+    image: sapi40/i40-aas-initializer
+    build:
+      context: docker/initializer
+      dockerfile: Dockerfile
+    env_file:
+      - .compose/envs/postgres.env
+      - .compose/envs/rabbitmq.env
+      - .compose/envs/mongodb.env
+      - .compose/envs/data-manager.env
+      - .compose/envs/adapter-registry.env
+      - .compose/envs/endpoint-registry.env
+      - .compose/envs/https-endpoint-ingress.env
+    volumes:
+      - .compose/volumes/initializer/:/initializer
 
-  ## used services
+
+  # ## used services
   mongodb:
     image: mongo
     ports:
@@ -69,4 +110,3 @@ services:
       - "1883:1883"
     volumes:
       - .compose/volumes/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
-
