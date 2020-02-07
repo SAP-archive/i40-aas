@@ -15,7 +15,7 @@ class AdapterRegistryLocal implements IAdapterRegistry {
     try {
       await this.storage.clear();
     } catch (e) {
-      logger.error("Error clearing the registry local storage ");
+      logger.error('Error clearing the registry local storage ');
       throw e;
     }
   }
@@ -23,40 +23,41 @@ class AdapterRegistryLocal implements IAdapterRegistry {
 
   constructor(client: any) {
     this.storage = client;
-
   }
 
   async readAdapterRecordByID(
     adapterId: IIdentifier
   ): Promise<IStorageAdapter[]> {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   async createAdapter(
-    record: import("./interfaces/IAPIRequests").ICreateAdapter
+    record: import('./interfaces/IAPIRequests').ICreateAdapter
   ): Promise<IStorageAdapter> {
-    logger.debug("Create adapter called "+this.storage);
+    logger.debug('Create adapter called ' + this.storage);
 
     try {
       //the adapter.id is used as key
       if (record.adapterid && this.storage) {
-  const insertAdapterResult = await this.storage.setItem(
-    record.adapterid,
-    record
-  );
+        const insertAdapterResult = await this.storage.setItem(
+          record.adapterid,
+          record
+        );
       }
     } catch (e) {
-      logger.error("Error storing adapter entry " + record.adapterid + " Error "+e);
+      logger.error(
+        'Error storing adapter entry ' + record.adapterid + ' Error ' + e
+      );
       throw e;
     }
-    logger.info("Registed record: " + JSON.stringify(record));
+    logger.info('Registed record: ' + JSON.stringify(record));
     return record;
   }
 
   updateAdapter(
-    req: import("./interfaces/IAPIRequests").ICreateAdapter
+    req: import('./interfaces/IAPIRequests').ICreateAdapter
   ): Promise<IStorageAdapter> {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
   deleteAdapterByAdapterID(aasId: IIdentifier): Promise<void> {
     throw new Error("Method not implemented.");
@@ -72,7 +73,7 @@ class AdapterRegistryLocal implements IAdapterRegistry {
       let values: Adapter[] = await this.storage.values();
 
       values.forEach(Adapter => {
-        logger.debug("Adapter found : " + JSON.stringify(Adapter));
+        logger.debug('Adapter found : ' + JSON.stringify(Adapter));
         if (Adapter.submodelid === submodelId) {
           adapter = Adapter;
           //TODO: check for singularity. Submodel is an 1..1 to Adapter
@@ -80,16 +81,14 @@ class AdapterRegistryLocal implements IAdapterRegistry {
       });
 
       if (adapter) {
-        logger.debug("Adapter found : " + JSON.stringify(adapter));
+        logger.debug('Adapter found : ' + JSON.stringify(adapter));
 
         return adapter;
       } else {
-        logger.debug("No adapter for submodel : " + submodelId);
-
-        return Adapter.prototype;
+        throw new Error('no adapter found');
       }
     } catch (e) {
-      throw new Error("internal storage error");
+      throw new Error('internal storage error');
     }
   }
 
@@ -104,7 +103,7 @@ class AdapterRegistryLocal implements IAdapterRegistry {
 
       let values: Adapter[] = await this.storage.values();
       values.forEach(Adapter => {
-        logger.debug("Adapter found : " + JSON.stringify(Adapter));
+        logger.debug('Adapter found : ' + JSON.stringify(Adapter));
         if (Adapter.submodelsemanticid === submodelSemanticId) {
           adapter = Adapter;
           //TODO: check for singularity. Submodel is an 1..1 to Adapter
@@ -112,31 +111,31 @@ class AdapterRegistryLocal implements IAdapterRegistry {
       });
 
       if (adapter) {
-        logger.debug("Adapter found : " + JSON.stringify(adapter));
+        logger.debug('Adapter found : ' + JSON.stringify(adapter));
 
         return adapter;
       } else {
-        logger.debug(
-          "No adapter for submodelSemanticId : " + submodelSemanticId
+        throw new Error(
+          'No adapter for submodelSemanticId : ' + submodelSemanticId
         );
-
-        return Adapter.prototype;
       }
     } catch (e) {
-      throw new Error("internal storage error");
+      throw new Error('internal storage error');
     }
   }
-
+  listAllAdapters(): Promise<Array<IStorageAdapter>> {
+    return this.storage.values();
+  }
   listAllSubmodels(): Promise<IStorageAdapter[]> {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
   release(): void {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
   createSubmodel(
-    req: import("./interfaces/IAPIRequests").ICreateSubmodelEntry
+    req: import('./interfaces/IAPIRequests').ICreateSubmodelEntry
   ): void {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
   /* TODO: consider if we need to have seperate DAOs for adapter and assignment
   registerAdapterAssignment(req: IRegisterAdapterAssignment): void {

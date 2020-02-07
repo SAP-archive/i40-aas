@@ -15,4 +15,3 @@ The message should contain an interaction form.
 
 ## Configuration
 Service configuration is handled via environment variable injection. Within the `env_file:` section of `docker-compose.yml` you find a list of _.env_-files mounted. The corresponding default configurations and explanations are located in: `.compose-envs/<SERVICE-NAME>.env`.
-

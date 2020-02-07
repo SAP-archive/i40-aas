@@ -17,4 +17,3 @@ TABLESPACE pg_default;
 
 ALTER TABLE public.asset_administration_shells
     OWNER to postgres;
-

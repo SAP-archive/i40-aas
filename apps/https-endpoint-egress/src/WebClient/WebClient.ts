@@ -6,28 +6,28 @@ class WebClient {
 
   /**
   * The GET Request Config for retrieving the Endpoint URLs from Registry
-  * @param param
+  * @param params
   * @param user
   * @param pass
   */
-  private getURLRequestConfig(
-    param?: string,
-    user?: string,
-    pass?: string
-  ): AxiosRequestConfig | undefined {
-    if (param && user && pass) {
-      return {
-        params: {
-          frame: param
-        },
-        auth: {
-          username: user,
-          password: pass
-        }
-      };
-    }
-    return undefined;
+ private getURLRequestConfig(
+  params?: object,
+  user?: string,
+  pass?: string
+): AxiosRequestConfig {
+  let config: AxiosRequestConfig = {};
+
+  if (params) {
+    config.params = params;
   }
+  if (user && pass) {
+    config.auth = {
+      username: user,
+      password: pass
+    };
+  }
+  return config;
+}
 
   private buildUrl(
     protocol: string,
@@ -43,13 +43,13 @@ class WebClient {
     host: string,
     port: string,
     urlSuffix: string,
-    param: string,
+    params: object,
     username: string,
     password: string
   ): Promise<AxiosResponse<T>> {
     let url: string = this.buildUrl(protocol, host, port, urlSuffix);
     logger.debug("Get request from " + url);
-    logger.debug("param " + param);
+    logger.debug("param " + JSON.stringify(params));
     // logger.debug(
     // "req config " +
     // JSON.stringify(this.getURLRequestConfig(param, username, password))
@@ -57,7 +57,7 @@ class WebClient {
 
     const response = await Axios.get<T>(
       url,
-      this.getURLRequestConfig(param, username, password)
+      this.getURLRequestConfig(params, username, password)
     );
     return response as AxiosResponse<T>;
   }

@@ -1,20 +1,20 @@
-import * as logger from "winston";
-import { Submodel } from "i40-aas-objects";
-import { IStorageAdapter } from "./interfaces/IStorageAdapter";
-import { WebClient } from "./WebClient/WebClient";
+import * as logger from 'winston';
+import { Submodel } from 'i40-aas-objects';
+import { IStorageAdapter } from './interfaces/IStorageAdapter';
+import { WebClient } from './WebClient/WebClient';
 
-const dotenv = require("dotenv");
+const dotenv = require('dotenv');
 dotenv.config();
 
 class AdapterRegistryConnector {
   private webClient: WebClient;
-  private registryGETAdaptersURL:URL;
+  private registryGETAdaptersURL: URL;
   private adapter_reg_user: string;
   private adapter_reg_pass: string;
 
   constructor(
     wC: WebClient,
-    registryGETAdaptersURL:URL,
+    registryGETAdaptersURL: URL,
     adapter_reg_user: string,
     adapter_reg_pass: string
   ) {
@@ -24,43 +24,33 @@ class AdapterRegistryConnector {
     this.adapter_reg_pass = adapter_reg_pass;
   }
 
-
   /**
-  * get the URL of the adapter from the Adapter registry. There are two ways to get the adapter from
-  * Adapter Registry, one using param: ?submodelId= interactionElements.identification.id and one with
-  * semanticId=<submodel.semanticId.keys[0].value
-  * @param regRequestParamName the name of the request parameter (submodelId or semanticId )
-  * @param submodelIdentification the value passed
-  */
-  async getAdapterFromRegistry(
-    regRequestParamName: string,
-    submodelIdentification: string
-  ): Promise<IStorageAdapter> {
+   * get the URL of the adapter from the Adapter registry. There are two ways to get the adapter from
+   * Adapter Registry, one using param: ?submodelId= interactionElements.identification.id and one with
+   * semanticId=<submodel.semanticId.keys[0].value
+   * @param regRequestParamName the name of the request parameter (submodelId or semanticId )
+   * @param submodelIdentification the value passed
+   */
+  async getAdapterFromRegistry(params: object): Promise<IStorageAdapter> {
     var regResponse = await this.webClient.getAdapterFromRegRequest(
       this.registryGETAdaptersURL.href,
-      regRequestParamName,
-      submodelIdentification,
+      params,
       this.adapter_reg_user,
       this.adapter_reg_pass
     );
 
     let adapter = regResponse.data as IStorageAdapter;
 
-    if(adapter.url){
-          logger.debug(
-      `The submodel with id ${submodelIdentification}, will be routed to ${adapter.url}`
-    );
-    return adapter;
-    }
-    else{
-      logger.error(
-        `The registry did not return a valid url for the adapter `
+    if (adapter.url) {
+      logger.debug(
+        `The submodel with params ${params}, will be routed to ${adapter.url}`
       );
-      throw new Error("Server Error");
+      return adapter;
+    } else {
+      logger.error(`The registry did not return a valid url for the adapter `);
+      throw new Error('Server Error');
     }
-
-
   }
 }
 
-export {AdapterRegistryConnector}
+export { AdapterRegistryConnector };

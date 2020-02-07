@@ -11,5 +11,5 @@ TABLESPACE pg_default;
 
 ALTER TABLE public.semantic_protocols
     OWNER to postgres;
-    
-  
+
+
