@@ -1,6 +1,5 @@
-import { WriteOpResult } from "mongodb";
-import { SubmodelInterface } from "i40-aas-objects";
-import { ISubmodelRecord } from "../model/ISubmodelRecord";
+import { WriteOpResult } from 'mongodb';
+import { ISubmodelRecord } from '../model/ISubmodelRecord';
 
 interface IDatabaseClient {
   connect: () => void;
