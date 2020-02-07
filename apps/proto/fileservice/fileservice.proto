@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package fileservice;
+
+service AASFileService {
+  rpc Upload(stream Chunk) returns (UploadStatus) {}
+  rpc Download(DownloadRequest) returns (stream Chunk) {}
+}
+
+message DownloadRequest {
+  string FileName = 1;
+}
+
+message Chunk {
+  bytes Content = 1;
+  string FileName = 2;
+}
+
+enum UploadStatusCode {
+  Unknown = 0;
+  Ok = 1;
+  Failed = 2;
+}
+
+message UploadStatus {
+  string Message = 1;
+  UploadStatusCode Code = 2;
+}
