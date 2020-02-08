@@ -14,7 +14,6 @@ import {
   ICreateAsset
 } from './daos/interfaces/IApiRequests';
 import { ConversationMember } from 'i40-aas-objects';
-import { convertToIdTypeEnum } from '../../utils/Utils';
 
 async function readRecordByIdentifier(
   identifier: IIdentifier
@@ -144,7 +143,7 @@ async function getEndpointsByRole(
   if (receiver.identification) {
     return readRecordByIdentifier({
       id: receiver.identification.id,
-      idType: convertToIdTypeEnum(receiver.identification.idType)
+      idType: receiver.identification.idType
     });
   } else {
     if (!semanticProtocol) {
