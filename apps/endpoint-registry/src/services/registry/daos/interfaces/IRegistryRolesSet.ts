@@ -1,8 +1,8 @@
-import { Identifier } from 'i40-aas-objects';
+import { IIdentifier } from 'i40-aas-objects';
 
 
 interface IRegistryAssignRolesResultSet {
-  aasId: Identifier;
+  aasId: IIdentifier;
   roleId: string;
 }
 
@@ -12,10 +12,10 @@ interface ICreateRoleResultSet{
 }
 
 class RegistryAssignRolesResultSet implements IRegistryAssignRolesResultSet {
-  public aasId: Identifier;
+  public aasId: IIdentifier;
   public roleId: string;
 
-  constructor(aasId: Identifier, roleId: string) {
+  constructor(aasId: IIdentifier, roleId: string) {
     this.aasId = aasId;
     this.roleId = roleId;
   }

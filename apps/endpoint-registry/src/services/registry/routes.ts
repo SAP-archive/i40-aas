@@ -104,7 +104,7 @@ export default [
       try {
         var idType: IdTypeEnum = IdTypeEnum['Custom'];
         if (req.query.idType) {
-          idType = (<any>IdTypeEnum)[req.query.idType];
+          idType = <IdTypeEnum>[][req.query.idType];
         }
         res.json(
           await deleteRecordByIdentifier({ id: req.query.id, idType: idType })

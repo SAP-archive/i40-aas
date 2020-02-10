@@ -1,14 +1,14 @@
 {
-	"frame":
+  "frame":
   {
     "semanticProtocol": "i40:registry-semanticProtocol/onboarding",
     "type": "publishInstance",
     "messageId": "Sample_Msg_ID_000",
     "replyBy": 29993912,
-    "receiver": { 
+    "receiver": {
       "role":{"name":"CentralAssetRepository" }
     },
-    "sender": { 
+    "sender": {
       "identification": {
       "id":  "https://i40-test-aas-server.cfapps.eu10.hana.ondemand.com/aas",
       "idType": "URI"
@@ -608,7 +608,7 @@
         }
       ]
     }
-    
-      
+
+
   ]
 }

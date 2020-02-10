@@ -1,9 +1,7 @@
-import { RegistryFactory } from './RegistryFactory';
-import { Identifier, Frame, IdTypeEnum } from 'i40-aas-objects';
-import { Adapter, IStorageAdapter } from './interfaces/IRegistryResultSet';
-import { IAdapterRegistry } from './interfaces/IAdapterRegistry';
-import { logger } from '../../utils/log';
-import { ICreateAdapter } from './interfaces/IAPIRequests';
+import { RegistryFactory } from "./RegistryFactory";
+import { IStorageAdapter } from "./interfaces/IRegistryResultSet";
+import { IAdapterRegistry } from "./interfaces/IAdapterRegistry";
+import { ICreateAdapter } from "./interfaces/IAPIRequests";
 
 const dotenv = require('dotenv');
 dotenv.config();

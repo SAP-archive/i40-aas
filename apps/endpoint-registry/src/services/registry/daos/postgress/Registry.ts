@@ -6,7 +6,7 @@ import {
   RegistryResultSet
 } from "../interfaces/IRegistryResultSet";
 import { IdTypeEnum } from "i40-aas-objects";
-import { Identifier } from "i40-aas-objects";
+import { IIdentifier } from "i40-aas-objects";
 import { RegistryError } from "../../../../utils/RegistryError";
 import { IData } from "../../../../utils/IData";
 import { IJointRecord, IEndpointRecord } from "../interfaces/IQueryResults";
@@ -19,7 +19,6 @@ import {
 } from "../interfaces/IApiRequests";
 import {
   RegistryRolesResultSet,
-  CreateRoleResultSet,
   ICreateRoleResultSet
 } from "../interfaces/IRegistryRolesSet";
 class Registry implements iRegistry {
@@ -35,10 +34,6 @@ class Registry implements iRegistry {
 
   async createAsset(asset: ICreateAsset): Promise<ICreateAsset> {
     try {
-      const insertAssetResult = await this.client.query(
-        ' INSERT INTO public.assets( "assetId", "idType") VALUES ($1, $2);',
-        [asset.assetId.id, asset.assetId.idType]
-      );
       return asset;
     } catch (e) {
       if (e.code == 23505) {
@@ -52,10 +47,6 @@ class Registry implements iRegistry {
   async registerAas(record: IRegisterAas): Promise<IRegistryResultSet> {
     //create asset entry
     try {
-      const insertAssetResult = await this.client.query(
-        ' INSERT INTO public.assets( "assetId", "idType") VALUES ($1, $2);',
-        [record.assetId.id, record.assetId.idType]
-      );
     } catch (e) {
       if (e.code == 23505) {
         console.log("Asset already exist");
@@ -64,11 +55,6 @@ class Registry implements iRegistry {
       }
     }
     try {
-      //create aas entry
-      const insertAasResult = await this.client.query(
-        'INSERT INTO public.asset_administration_shells("aasId", "idType", "assetId") VALUES ($1, $2, $3);',
-        [record.aasId.id, record.aasId.idType, record.assetId.id]
-      );
     } catch (e) {
       if (e.code == 23505) {
         console.log("AAS already exist");
@@ -77,22 +63,8 @@ class Registry implements iRegistry {
       }
     }
     try {
-      //delete existig
-      const deleteEndpointResult = await this.client.query(
-        'DELETE FROM public.endpoints WHERE "aasId" = $1;',
-        [record.aasId.id]
-      );
       //create endpoint entry
       record.endpoints.forEach(async (endpoint: IEndpoint) => {
-        const insertEndpointResult = await this.client.query(
-          'INSERT INTO public.endpoints( "URL", protocol_name, protocol_version, "aasId") VALUES ($1, $2, $3, $4);',
-          [
-            endpoint.url,
-            endpoint.protocol,
-            endpoint.protocolVersion,
-            record.aasId.id
-          ]
-        );
       });
     } catch (e) {
       if (e.code == 23505) {
@@ -107,7 +79,7 @@ class Registry implements iRegistry {
   updateAas(record: IRegisterAas): Promise<IRegistryResultSet> {
     throw new Error("Method not implemented.");
   }
-  async deleteAasByAasId(aasId: Identifier): Promise<number> {
+  async deleteAasByAasId(aasId: IIdentifier): Promise<number> {
     console.log(" ********* AASID " + aasId.id);
 
     try {
@@ -128,7 +100,7 @@ class Registry implements iRegistry {
     }
   }
 
-  listAasByAssetId(assetId: Identifier): Promise<IRegistryResultSet[]> {
+  listAasByAssetId(assetId: IIdentifier): Promise<IRegistryResultSet[]> {
     throw new Error("Method not implemented.");
   }
   listAas(): Promise<IRegistryResultSet[]> {
@@ -139,10 +111,6 @@ class Registry implements iRegistry {
     record: import("../interfaces/IApiRequests").ICreateSemanticProtocol
   ): Promise<ICreateSemanticProtocol> {
     try {
-      const insertRolesResult = await this.client.query(
-        'INSERT INTO public.semantic_protocols("protocolId") VALUES ($1);',
-        [record.semanticProtocol]
-      );
     } catch (e) {
       if (e.code == 23505) {
         console.log("Role already exist");
@@ -161,10 +129,6 @@ class Registry implements iRegistry {
         "aasId " + record.aasId.id + " with role id " + record.roleId
       );
 
-      const insertRolesResult = await this.client.query(
-        'INSERT INTO public.aas_role("aasId","roleId")  VALUES ($1, $2);',
-        [record.aasId.id, record.roleId]
-      );
     } catch (e) {
       if (e.code == 23505) {
         console.log("Role Assignment already exists");
@@ -179,10 +143,6 @@ class Registry implements iRegistry {
 
   async createRole(record: ICreateRole): Promise<ICreateRoleResultSet> {
     try {
-      const insertRolesResult = await this.client.query(
-        'INSERT INTO public.roles( "roleId", "protocolId") VALUES ($1, $2);',
-        [record.roleId, record.semanticProtocol]
-      );
     } catch (e) {
       if (e.code == 23505) {
         console.log("Role already exist");
@@ -196,7 +156,7 @@ class Registry implements iRegistry {
   }
 
   async readRecordByAasId(
-    aasId: Identifier
+    aasId: IIdentifier
   ): Promise<Array<IRegistryResultSet>> {
     try {
       console.log(aasId);
@@ -224,9 +184,9 @@ class Registry implements iRegistry {
         });
         return [
           new RegistryResultSet(
-            { id: aasRecord.aasId, idType: aasRecord.idType },
-            endpoints,
-            { id: "123", idType: IdTypeEnum.Custom }
+                    { id: aasRecord.aasId, idType: aasRecord.idType },
+                    endpoints,
+                    { id: "123", idType: IdTypeEnum.Custom }
           )
         ];
       } else {
@@ -260,9 +220,15 @@ class Registry implements iRegistry {
       queryResultRows.forEach(function(row: IJointRecord) {
         if (!recordsByAasId[row.aasId]) {
           recordsByAasId[row.aasId] = new RegistryResultSet(
-            { id: row.aasId, idType: (<any>IdTypeEnum)[row.aasIdType] },
-            [new Endpoint(row.URL, row.protocol_name, row.protocol_version)],
-            { id: row.assetId, idType: (<any>IdTypeEnum)[row.assetIdType] }
+                    { id: row.aasId, idType: row.aasIdType  },
+                    [
+                    new Endpoint(
+                    row.URL,
+                    row.protocol_name,
+                    row.protocol_version
+                    )
+                    ],
+                    { id: row.assetId, idType: row.aasIdType   }
           );
         } else {
           recordsByAasId[row.aasId].endpoints.push(
@@ -297,10 +263,18 @@ class Registry implements iRegistry {
       var recordsByAasId: IData = {};
       queryResultRows.forEach(function(row: IJointRecord) {
         if (!recordsByAasId[row.aasId]) {
+
           recordsByAasId[row.aasId] = new RegistryResultSet(
-            { id: row.aasId, idType: (<any>IdTypeEnum)[row.aasIdType] },
-            [new Endpoint(row.URL, row.protocol_name, row.protocol_version)],
-            { id: row.assetId, idType: (<any>IdTypeEnum)[row.assetIdType] }
+
+                    { id: row.aasId, idType: row.aasIdType  },
+                    [
+                    new Endpoint(
+                    row.URL,
+                    row.protocol_name,
+                    row.protocol_version
+                    )
+                    ],
+                    { id: row.assetId, idType:  row.aasIdType }
           );
         } else {
           recordsByAasId[row.aasId].endpoints.push(

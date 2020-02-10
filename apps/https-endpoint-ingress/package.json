@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "dev": "tsc-watch --onSuccess \"node ./dist/server.js\"",
-    "test": "mocha -r ts-node/register test/**/*.spec.ts",
+    "test": "mocha -r ts-node/register test/unit/**/*.spec.ts",
     "coverage": "nyc --reporter html --reporter text npm test",
     "build": "tsc",
     "clean": "rm -rf ./dist/* ",
@@ -27,7 +27,7 @@
     "dotenv": "^8.0.0",
     "express-basic-auth": "^1.2.0",
     "express-validation": "^1.0.2",
-    "i40-aas-objects": "0.0.1-alpha",
+    "i40-aas-objects": "0.2.6",
     "request": "^2.88.0",
     "axios": "^0.19.0",
     "request-promise": "^4.2.4",

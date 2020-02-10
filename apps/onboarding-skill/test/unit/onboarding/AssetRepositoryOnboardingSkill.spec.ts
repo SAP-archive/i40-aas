@@ -33,6 +33,9 @@ function makeRequestError(statusCode: number): AxiosError<any> {
       statusText: "",
       headers: {},
       config: {}
+    },
+    toJSON: () => {
+      throw new Error("Not implemented in mock");
     }
   };
   Object.assign(error, axiosProps);
@@ -50,7 +53,7 @@ describe("applyEvent", function() {
       receiver: {
         identification: {
           id: "receiver-id",
-          idType: "idType"
+          idType: "Custom"
         },
         role: {
           name: "central-asset-repository"
@@ -60,7 +63,7 @@ describe("applyEvent", function() {
       sender: {
         identification: {
           id: "sender-id",
-          idType: "idType"
+          idType: "Custom"
         },
         role: {
           name: "sender"
@@ -118,26 +121,26 @@ describe("applyEvent", function() {
         message,
         state => {
           if (state.value === "InstancePublished") {
-                    sinon.assert.calledWith(
-                    fakeStoreInDb,
-                    sinon.match.has("version", 0),
-                    sinon.match.has(
-                    "serializedState",
-                    sinon.match("CreatingInstance")
-                    ),
-                    sinon.match.any
-                    );
-                    sinon.assert.calledWith(
-                    fakeStoreInDb,
-                    sinon.match.has("version", 1),
-                    sinon.match.has(
-                    "serializedState",
-                    sinon.match("InstancePublished")
-                    ),
-                    sinon.match.any
-                    );
-                    sinon.assert.calledOnce(fakesendResponseInstanceToOperator);
-                    done();
+            sinon.assert.calledWith(
+              fakeStoreInDb,
+              sinon.match.has("version", 0),
+              sinon.match.has(
+                "serializedState",
+                sinon.match("CreatingInstance")
+              ),
+              sinon.match.any
+            );
+            sinon.assert.calledWith(
+              fakeStoreInDb,
+              sinon.match.has("version", 1),
+              sinon.match.has(
+                "serializedState",
+                sinon.match("InstancePublished")
+              ),
+              sinon.match.any
+            );
+            sinon.assert.calledOnce(fakesendResponseInstanceToOperator);
+            done();
           }
         }
       );
@@ -182,13 +185,13 @@ describe("applyEvent", function() {
       state => {
         if (state.value === "WaitingForApproval") {
           sinon.assert.calledWith(
-                    fakesendTo,
-                    sinon.match.hasNested("receiver.role.name", "approver") &&
-                    sinon.match.has("type", "requestApproval") &&
-                    sinon.match.hasNested(
-                    "sender.role.name",
-                    "central-asset-repository"
-                    )
+            fakesendTo,
+            sinon.match.hasNested("receiver.role.name", "approver") &&
+              sinon.match.has("type", "requestApproval") &&
+              sinon.match.hasNested(
+                "sender.role.name",
+                "central-asset-repository"
+              )
           );
           process.env["ONBOARDING_SKILL_REQUEST_APPROVAL"] = "false";
           done();
@@ -206,21 +209,21 @@ describe("applyEvent", function() {
         messageId: "messageId",
         receiver: {
           identification: {
-                    id: "receiver-id",
-                    idType: "idType"
+            id: "receiver-id",
+            idType: "Custom"
           },
           role: {
-                    name: "central-asset-repository"
+            name: "central-asset-repository"
           }
         },
         semanticProtocol: "semprot",
         sender: {
           identification: {
-                    id: "sender-id",
-                    idType: "idType"
+            id: "sender-id",
+            idType: "Custom"
           },
           role: {
-                    name: "approver"
+            name: "approver"
           }
         },
         conversationId: "conversationId"
@@ -286,11 +289,11 @@ describe("applyEvent", function() {
           sinon.assert.notCalled(fakeReplyTo);
           sinon.assert.calledOnce(fakecreateInstanceOnCAR);
           sinon.assert.calledWith(
-                    fakeSendTo,
-                    sinon.match
-                    .hasNested("type", "responseInstance")
-                    .and(sinon.match.hasNested("receiver.role.name", "Operator")),
-                    sinon.match.any
+            fakeSendTo,
+            sinon.match
+              .hasNested("type", "responseInstance")
+              .and(sinon.match.hasNested("receiver.role.name", "Operator")),
+            sinon.match.any
           );
           process.env["ONBOARDING_SKILL_REQUEST_APPROVAL"] = "false";
           done();
@@ -308,21 +311,21 @@ describe("applyEvent", function() {
         messageId: "messageId",
         receiver: {
           identification: {
-                    id: "receiver-id",
-                    idType: "idType"
+            id: "receiver-id",
+            idType: "Custom"
           },
           role: {
-                    name: "central-asset-repository"
+            name: "central-asset-repository"
           }
         },
         semanticProtocol: "semprot",
         sender: {
           identification: {
-                    id: "sender-id",
-                    idType: "idType"
+            id: "sender-id",
+            idType: "Custom"
           },
           role: {
-                    name: "approver"
+            name: "approver"
           }
         },
         conversationId: "conversationId"
@@ -376,11 +379,11 @@ describe("applyEvent", function() {
       state => {
         if (state.value === "OperationFailed") {
           sinon.assert.calledWith(
-                    fakeSendTo,
-                    sinon.match
-                    .hasNested("type", "requestRefused")
-                    .and(sinon.match.hasNested("receiver.role.name", "Operator")),
-                    sinon.match.any
+            fakeSendTo,
+            sinon.match
+              .hasNested("type", "requestRefused")
+              .and(sinon.match.hasNested("receiver.role.name", "Operator")),
+            sinon.match.any
           );
           process.env["ONBOARDING_SKILL_REQUEST_APPROVAL"] = "false";
           done();
@@ -398,21 +401,21 @@ describe("applyEvent", function() {
         messageId: "messageId",
         receiver: {
           identification: {
-                    id: "receiver-id",
-                    idType: "idType"
+            id: "receiver-id",
+            idType: "Custom"
           },
           role: {
-                    name: "central-asset-repository"
+            name: "central-asset-repository"
           }
         },
         semanticProtocol: "semprot",
         sender: {
           identification: {
-                    id: "sender-id",
-                    idType: "idType"
+            id: "sender-id",
+            idType: "Custom"
           },
           role: {
-                    name: "Approver"
+            name: "Approver"
           }
         },
         conversationId: "conversationId"
@@ -478,11 +481,11 @@ describe("applyEvent", function() {
           sinon.assert.notCalled(fakeReplyTo);
           sinon.assert.calledOnce(fakecreateInstanceOnCAR);
           sinon.assert.calledWith(
-                    fakeSendTo,
-                    sinon.match
-                    .hasNested("type", "error")
-                    .and(sinon.match.hasNested("receiver.role.name", "Operator")),
-                    sinon.match.any
+            fakeSendTo,
+            sinon.match
+              .hasNested("type", "error")
+              .and(sinon.match.hasNested("receiver.role.name", "Operator")),
+            sinon.match.any
           );
           process.env["ONBOARDING_SKILL_REQUEST_APPROVAL"] = "false";
           done();
@@ -500,21 +503,21 @@ describe("applyEvent", function() {
         messageId: "messageId",
         receiver: {
           identification: {
-                    id: "receiver-id",
-                    idType: "idType"
+            id: "receiver-id",
+            idType: "Custom"
           },
           role: {
-                    name: "central-asset-repository"
+            name: "central-asset-repository"
           }
         },
         semanticProtocol: "semprot",
         sender: {
           identification: {
-                    id: "sender-id",
-                    idType: "idType"
+            id: "sender-id",
+            idType: "Custom"
           },
           role: {
-                    name: "approver"
+            name: "approver"
           }
         },
         conversationId: "conversationId"
@@ -568,11 +571,11 @@ describe("applyEvent", function() {
       state => {
         if (state.value === "OperationFailed") {
           sinon.assert.calledWith(
-                    fakeSendTo,
-                    sinon.match
-                    .hasNested("type", "requestRefused")
-                    .and(sinon.match.hasNested("receiver.role.name", "Operator")),
-                    sinon.match.any
+            fakeSendTo,
+            sinon.match
+              .hasNested("type", "requestRefused")
+              .and(sinon.match.hasNested("receiver.role.name", "Operator")),
+            sinon.match.any
           );
           process.env["ONBOARDING_SKILL_REQUEST_APPROVAL"] = "false";
           done();
@@ -589,21 +592,21 @@ describe("applyEvent", function() {
         messageId: "messageId",
         receiver: {
           identification: {
-                    id: "receiver-id",
-                    idType: "idType"
+            id: "receiver-id",
+            idType: "Custom"
           },
           role: {
-                    name: "central-asset-repository"
+            name: "central-asset-repository"
           }
         },
         semanticProtocol: "semprot",
         sender: {
           identification: {
-                    id: "sender-id",
-                    idType: "idType"
+            id: "sender-id",
+            idType: "Custom"
           },
           role: {
-                    name: "approver"
+            name: "approver"
           }
         },
         conversationId: "conversationId"
@@ -657,11 +660,11 @@ describe("applyEvent", function() {
       state => {
         if (state.value === "OperationFailed") {
           sinon.assert.calledWith(
-                    fakeSendTo,
-                    sinon.match
-                    .hasNested("type", "requestRefused")
-                    .and(sinon.match.hasNested("receiver.role.name", "Operator")),
-                    sinon.match.any
+            fakeSendTo,
+            sinon.match
+              .hasNested("type", "requestRefused")
+              .and(sinon.match.hasNested("receiver.role.name", "Operator")),
+            sinon.match.any
           );
           process.env["ONBOARDING_SKILL_REQUEST_APPROVAL"] = "false";
           done();
@@ -679,21 +682,21 @@ describe("applyEvent", function() {
         messageId: "messageId",
         receiver: {
           identification: {
-                    id: "receiver-id",
-                    idType: "idType"
+            id: "receiver-id",
+            idType: "Custom"
           },
           role: {
-                    name: "central-asset-repository"
+            name: "central-asset-repository"
           }
         },
         semanticProtocol: "semprot",
         sender: {
           identification: {
-                    id: "sender-id",
-                    idType: "idType"
+            id: "sender-id",
+            idType: "Custom"
           },
           role: {
-                    name: "Approver"
+            name: "Approver"
           }
         },
         conversationId: "conversationId"
@@ -759,11 +762,11 @@ describe("applyEvent", function() {
           sinon.assert.notCalled(fakeReplyTo);
           sinon.assert.calledOnce(fakecreateInstanceOnCAR);
           sinon.assert.calledWith(
-                    fakeSendTo,
-                    sinon.match
-                    .hasNested("type", "notUnderstood")
-                    .and(sinon.match.hasNested("receiver.role.name", "Operator")),
-                    sinon.match.any
+            fakeSendTo,
+            sinon.match
+              .hasNested("type", "notUnderstood")
+              .and(sinon.match.hasNested("receiver.role.name", "Operator")),
+            sinon.match.any
           );
           process.env["ONBOARDING_SKILL_REQUEST_APPROVAL"] = "false";
           done();
@@ -781,21 +784,21 @@ describe("applyEvent", function() {
         messageId: "messageId",
         receiver: {
           identification: {
-                    id: "receiver-id",
-                    idType: "idType"
+            id: "receiver-id",
+            idType: "Custom"
           },
           role: {
-                    name: "central-asset-repository"
+            name: "central-asset-repository"
           }
         },
         semanticProtocol: "semprot",
         sender: {
           identification: {
-                    id: "sender-id",
-                    idType: "idType"
+            id: "sender-id",
+            idType: "Custom"
           },
           role: {
-                    name: "Approver"
+            name: "Approver"
           }
         },
         conversationId: "conversationId"
@@ -861,11 +864,11 @@ describe("applyEvent", function() {
           sinon.assert.notCalled(fakeReplyTo);
           sinon.assert.calledOnce(fakecreateInstanceOnCAR);
           sinon.assert.calledWith(
-                    fakeSendTo,
-                    sinon.match
-                    .hasNested("type", "requestRefused")
-                    .and(sinon.match.hasNested("receiver.role.name", "Operator")),
-                    sinon.match.any
+            fakeSendTo,
+            sinon.match
+              .hasNested("type", "requestRefused")
+              .and(sinon.match.hasNested("receiver.role.name", "Operator")),
+            sinon.match.any
           );
           process.env["ONBOARDING_SKILL_REQUEST_APPROVAL"] = "false";
           done();
@@ -883,21 +886,21 @@ describe("applyEvent", function() {
         messageId: "messageId",
         receiver: {
           identification: {
-                    id: "receiver-id",
-                    idType: "idType"
+            id: "receiver-id",
+            idType: "Custom"
           },
           role: {
-                    name: "central-asset-repository"
+            name: "central-asset-repository"
           }
         },
         semanticProtocol: "semprot",
         sender: {
           identification: {
-                    id: "sender-id",
-                    idType: "idType"
+            id: "sender-id",
+            idType: "Custom"
           },
           role: {
-                    name: "Approver"
+            name: "Approver"
           }
         },
         conversationId: "conversationId"
@@ -963,11 +966,11 @@ describe("applyEvent", function() {
           sinon.assert.notCalled(fakeReplyTo);
           sinon.assert.calledOnce(fakecreateInstanceOnCAR);
           sinon.assert.calledWith(
-                    fakeSendTo,
-                    sinon.match
-                    .hasNested("type", "error")
-                    .and(sinon.match.hasNested("receiver.role.name", "Operator")),
-                    sinon.match.any
+            fakeSendTo,
+            sinon.match
+              .hasNested("type", "error")
+              .and(sinon.match.hasNested("receiver.role.name", "Operator")),
+            sinon.match.any
           );
           process.env["ONBOARDING_SKILL_REQUEST_APPROVAL"] = "false";
           done();
@@ -1042,11 +1045,11 @@ describe("applyEvent", function() {
         amqpClient,
         {
           identification: {
-                    id: "myUri",
-                    idType: "URI"
+            id: "myUri",
+            idType: "Custom"
           },
           role: {
-                    name: "myRole"
+            name: "myRole"
           }
         },
         "routingKey"
@@ -1219,9 +1222,9 @@ describe("applyEvent", function() {
         if (state.value === "InstanceAndTypePublished") {
           expect(fakeSendTo.called).to.be.true;
           sinon.assert.calledWith(
-                    fakeSendTo,
-                    sinon.match.hasNested("type", "responseType"),
-                    sinon.match.any
+            fakeSendTo,
+            sinon.match.hasNested("type", "responseType"),
+            sinon.match.any
           );
           done();
         }
@@ -1327,9 +1330,9 @@ describe("applyEvent", function() {
         if (state.value === "OperationFailed") {
           sinon.assert.notCalled(fakesendResponseInstanceToOperator);
           sinon.assert.calledWith(
-                    sendTo,
-                    sinon.match.hasNested("type", "notUnderstood"),
-                    sinon.match.any
+            sendTo,
+            sinon.match.hasNested("type", "notUnderstood"),
+            sinon.match.any
           );
           done();
         }
@@ -1385,9 +1388,9 @@ describe("applyEvent", function() {
       state => {
         if (state.value === "OperationFailed") {
           sinon.assert.calledWith(
-                    sendTo,
-                    sinon.match.hasNested("type", "requestRefused"),
-                    sinon.match.any
+            sendTo,
+            sinon.match.hasNested("type", "requestRefused"),
+            sinon.match.any
           );
           sinon.assert.notCalled(fakesendResponseInstanceToOperator);
           done();
@@ -1437,9 +1440,9 @@ describe("applyEvent", function() {
       state => {
         if (state.value === "OperationFailed") {
           sinon.assert.calledWith(
-                    sendTo,
-                    sinon.match.hasNested("type", "error"),
-                    sinon.match.any
+            sendTo,
+            sinon.match.hasNested("type", "error"),
+            sinon.match.any
           );
           done();
         }
