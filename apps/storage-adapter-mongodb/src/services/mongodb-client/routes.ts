@@ -1,10 +1,12 @@
-import { Request, Response, NextFunction } from 'express';
-import { Submodel } from 'i40-aas-objects';
-import boom = require('@hapi/boom');
-import { logger } from '../../log';
-import { IDatabaseClient } from './operations/IDatabaseClient';
-import { SimpleMongoDbClient } from './operations/SimpleMongoDbClient';
-import { SubmodelRepositoryService } from './operations/SubmodelRepositoryService';
+
+import { Request, Response, NextFunction } from "express";
+import { Submodel } from "i40-aas-objects";
+import boom = require("@hapi/boom");
+import { logger } from "../../log";
+import { IDatabaseClient } from "./operations/IDatabaseClient";
+import { SimpleMongoDbClient } from "./operations/SimpleMongoDbClient";
+import { SubmodelRepositoryService } from "./operations/SubmodelRepositoryService";
+
 
 function checkEnvVar(variableName: string): string {
   let retVal: string | undefined = process.env[variableName];
@@ -43,7 +45,7 @@ export default [
     method: 'post',
     handler: async (req: Request, res: Response, next: NextFunction) => {
       try {
-        let sm: Submodel = new Submodel(req.body);
+        let sm: Submodel = Submodel.fromJSON(req.body);
         await repositoryService.createEquipmentAndSetInitialValues(sm);
         res.end();
       } catch (e) {

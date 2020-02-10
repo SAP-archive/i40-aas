@@ -2,7 +2,7 @@ import { config } from 'dotenv';
 console.log(config({ path: 'tests/.env' }));
 import { expect } from 'chai';
 import { readRecordBySemanticProtocolAndRole, getEndpointsByFrame, register, deleteRecordByIdentifier } from '../src/services/registry/registry-api';
-import { ConversationMember, IdTypeEnum, Identifier } from 'i40-aas-objects';
+import { ConversationMember, IdTypeEnum } from 'i40-aas-objects';
 import { IRegisterAas } from '../src/services/registry/daos/interfaces/IApiRequests';
 
 describe('read endpoints from pg', function() {
@@ -118,9 +118,9 @@ describe('delete registered enntries based on the aasId', function() {
   it('returns empty array', async function() {
 
     let endpointsAssignment: IRegisterAas = {
-      "aasId": { "id": "https://foo-bar.com/aas", "idType": IdTypeEnum.URI },
+      "aasId": { "id": "https://foo-bar.com/aas", "idType": IdTypeEnum.Custom },
       "endpoints": [{ "url": "https://foo-bar/ingress", "protocol": "httss", "protocolVersion": "1.1" }],
-      "assetId": { "id": "https://foo-bar.com", "idType": IdTypeEnum.URI }
+      "assetId": { "id": "https://foo-bar.com", "idType": IdTypeEnum.Custom }
     };
 
     var x = await register(endpointsAssignment);
@@ -134,14 +134,14 @@ describe('delete registered enntries based on the aasId', function() {
   it('try to delete a non registered AAS', async function() {
 
     let endpointsAssignment: IRegisterAas = {
-      "aasId": { "id": "https://foo-bar.com/aas", "idType": IdTypeEnum.URI },
+      "aasId": { "id": "https://foo-bar.com/aas", "idType": IdTypeEnum.Custom },
       "endpoints": [{ "url": "https://foo-bar/ingress", "protocol": "httss", "protocolVersion": "1.1" }],
-      "assetId": { "id": "https://foo-bar.com", "idType": IdTypeEnum.URI }
+      "assetId": { "id": "https://foo-bar.com", "idType": IdTypeEnum.Custom }
     };
 
     var x = await register(endpointsAssignment);
 
-let fakeId:Identifier = { "id": "https://not-there.com/aas", "idType": IdTypeEnum.URI };
+let fakeId = { "id": "https://not-there.com/aas", "idType": IdTypeEnum.Custom };
 
     var d = await deleteRecordByIdentifier(fakeId);
 

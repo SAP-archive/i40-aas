@@ -1,8 +1,8 @@
-import { InteractionMessage, SubmodelInterface } from "i40-aas-objects";
+import { InteractionMessage, ISubmodel } from "i40-aas-objects";
 import { SkillActionMap } from "../SkillActionMap";
 
 interface ISkillContext {
-  responseInstance?: SubmodelInterface;
+  responseInstance?: ISubmodel;
   message: InteractionMessage;
   actionMap: SkillActionMap;
   askForType: boolean;

@@ -7,6 +7,7 @@ import { WebClient } from "./web/WebClient";
 import { SimpleMongoDbClient } from "./persistence/SimpleMongoDbClient";
 import { IDatabaseClient } from "./services/onboarding/persistenceinterface/IDatabaseClient";
 import { logger } from "./log";
+import { TIdType, IdTypeEnum } from "i40-aas-objects/dist/src/types/IdTypeEnum";
 
 function checkEnvVar(variableName: string): string {
   let retVal: string | undefined = process.env[variableName];
@@ -65,7 +66,7 @@ let messageDispatcher: MessageDispatcher = new MessageDispatcher(
     {
       identification: {
         id: MY_URI,
-        idType: "URI"
+        idType: IdTypeEnum.IRI
       },
       role: {
         name: MY_ROLE

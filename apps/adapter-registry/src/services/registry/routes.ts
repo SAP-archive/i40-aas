@@ -90,8 +90,8 @@ export default [
   },
 
   {
-    path: '/adapters',
-    method: 'delete',
+    path: "/deleteall",
+    method: "delete",
     handler: [
       checkReqBodyEmpty,
       validateCreateAdaptersRequest,

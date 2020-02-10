@@ -55,21 +55,21 @@ describe("validation process", function() {
         messageId: "messageId",
         receiver: {
           identification: {
-                    id: "receiver-id",
-                    idType: "idType"
+            id: "receiver-id",
+            idType: "Custom"
           },
           role: {
-                    name: "central-asset-repository"
+            name: "central-asset-repository"
           }
         },
         semanticProtocol: "semprot",
         sender: {
           identification: {
-                    id: "sender-id",
-                    idType: "idType"
+            id: "sender-id",
+            idType: "Custom"
           },
           role: {
-                    name: "sender"
+            name: "sender"
           }
         },
         conversationId: "conversationId"
@@ -107,21 +107,21 @@ describe("validation process", function() {
         messageId: "messageId",
         receiver: {
           identification: {
-                    id: "receiver-id",
-                    idType: "idType"
+            id: "receiver-id",
+            idType: "Custom"
           },
           role: {
-                    name: "central-asset-repository"
+            name: "central-asset-repository"
           }
         },
         semanticProtocol: "semprot",
         sender: {
           identification: {
-                    id: "sender-id",
-                    idType: "idType"
+            id: "sender-id",
+            idType: "Custom"
           },
           role: {
-                    name: "operator"
+            name: "operator"
           }
         },
         conversationId: "conversationId"
@@ -157,21 +157,21 @@ describe("validation process", function() {
         messageId: "messageId",
         receiver: {
           identification: {
-                    id: "receiver-id",
-                    idType: "idType"
+            id: "receiver-id",
+            idType: "Custom"
           },
           role: {
-                    name: "central-asset-repository"
+            name: "central-asset-repository"
           }
         },
         semanticProtocol: "semprot",
         sender: {
           identification: {
-                    id: "",
-                    idType: "idType"
+            id: "",
+            idType: "Custom"
           },
           role: {
-                    name: "operator"
+            name: "operator"
           }
         },
         conversationId: "conversationId"
@@ -206,20 +206,20 @@ describe("validation process", function() {
         messageId: "messageId",
         receiver: {
           identification: {
-                    id: "receiver-id",
-                    idType: "idType"
+            id: "receiver-id",
+            idType: "Custom"
           },
           role: {
-                    name: "central-asset-repository"
+            name: "central-asset-repository"
           }
         },
         semanticProtocol: "semprot",
         sender: {
           identification: {
-                    idType: "idType"
+            idType: "Custom"
           },
           role: {
-                    name: "operator"
+            name: "operator"
           }
         },
         conversationId: "conversationId"
@@ -255,21 +255,21 @@ describe("validation process", function() {
         messageId: "messageId",
         receiver: {
           identification: {
-                    id: "receiver-id",
-                    idType: "idType"
+            id: "receiver-id",
+            idType: "Custom"
           },
           role: {
-                    name: "central-asset-repository"
+            name: "central-asset-repository"
           }
         },
         semanticProtocol: "semprot",
         sender: {
           identification: {
-                    id: "sender-id",
-                    idType: "idType"
+            id: "sender-id",
+            idType: "Custom"
           },
           role: {
-                    name: ""
+            name: ""
           }
         },
         conversationId: "conversationId"
@@ -307,21 +307,21 @@ describe("validation process", function() {
         messageId: "messageId",
         receiver: {
           identification: {
-                    id: "receiver-id",
-                    idType: "idType"
+            id: "receiver-id",
+            idType: "Custom"
           },
           role: {
-                    name: "central-asset-repository"
+            name: "central-asset-repository"
           }
         },
         semanticProtocol: "semprot",
         sender: {
           identification: {
-                    id: "sender-id",
-                    idType: "idType"
+            id: "sender-id",
+            idType: "Custom"
           },
           role: {
-                    name: "sender-role"
+            name: "sender-role"
           }
         },
         conversationId: ""
@@ -359,21 +359,21 @@ describe("validation process", function() {
         messageId: "messageId",
         receiver: {
           identification: {
-                    id: "receiver-id",
-                    idType: "idType"
+            id: "receiver-id",
+            idType: "Custom"
           },
           role: {
-                    name: "central-asset-repository"
+            name: "central-asset-repository"
           }
         },
         semanticProtocol: "semprot",
         sender: {
           identification: {
-                    id: "sender-id",
-                    idType: "idType"
+            id: "sender-id",
+            idType: "Custom"
           },
           role: {
-                    name: "sender-role"
+            name: "sender-role"
           }
         }
       },
@@ -410,18 +410,18 @@ describe("validation process", function() {
         messageId: "messageId",
         receiver: {
           identification: {
-                    id: "receiver-id",
-                    idType: "idType"
+            id: "receiver-id",
+            idType: "Custom"
           },
           role: {
-                    name: "central-asset-repository"
+            name: "central-asset-repository"
           }
         },
         semanticProtocol: "semprot",
         sender: {
           identification: {
-                    id: "sender-id",
-                    idType: "idType"
+            id: "sender-id",
+            idType: "Custom"
           }
         },
         conversationId: "conversationId"
@@ -455,11 +455,11 @@ describe("validation process", function() {
         messageId: "messageId",
         receiver: {
           identification: {
-                    id: "receiver-id",
-                    idType: "idType"
+            id: "receiver-id",
+            idType: "Custom"
           },
           role: {
-                    name: "central-asset-repository"
+            name: "central-asset-repository"
           }
         },
         semanticProtocol: "semprot",
@@ -497,17 +497,17 @@ describe("validation process", function() {
         messageId: "messageId",
         receiver: {
           identification: {
-                    id: "receiver-id",
-                    idType: "idType"
+            id: "receiver-id",
+            idType: "Custom"
           },
           role: {
-                    name: "central-asset-repository"
+            name: "central-asset-repository"
           }
         },
         semanticProtocol: "semprot",
         sender: {
           identification: {
-                    idType: "idType"
+            idType: "Custom"
           }
         },
         conversationId: "conversationId"

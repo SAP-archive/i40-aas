@@ -25,10 +25,17 @@ class SubmodelRepositoryService {
     });
     return stateRecord;
   }
-
+  /*
   async getSubmodels(): Promise<ISubmodelRecord[]> {
     await this.dbClient.connect();
     return await this.dbClient.getAll();
+  }
+*/
+  async getSubmodels(): Promise<Submodel[]> {
+    await this.dbClient.connect();
+    return (await this.dbClient.getAll())
+      .filter(x => x.serializedSubmodel)
+      .map(x => JSON.parse(x.serializedSubmodel));
   }
 
   async createEquipmentAndSetInitialValues(
@@ -64,7 +71,7 @@ class SubmodelRepositoryService {
       }, //find by
       {
         //update these
-        serializedState: JSON.stringify(submodel)
+        serializedSubmodel: JSON.stringify(submodel)
       },
       true //increment version
     );

@@ -16,5 +16,3 @@ TABLESPACE pg_default;
 
 ALTER TABLE public.roles
     OWNER to postgres;
-
-

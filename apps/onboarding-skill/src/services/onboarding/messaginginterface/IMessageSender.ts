@@ -1,8 +1,8 @@
-import { IFrame, SubmodelInterface } from "i40-aas-objects";
+import { IFrame } from "i40-aas-objects";
 
 interface IMessageSender {
-  replyTo(frame: IFrame, type: string, submodels?: SubmodelInterface[]): void;
-  sendTo(frame: IFrame, submodels?: SubmodelInterface[]): void;
+  replyTo(frame: IFrame, type: string, submodels?: object[]): void;
+  sendTo(frame: IFrame, submodels?: object[]): void;
   start(notifyReady?: () => void): void;
 }
 export { IMessageSender };

@@ -3,12 +3,7 @@ import * as logger from "winston";
 
 import { WebClient } from "../web/WebClient";
 import { AxiosResponse } from "axios";
-import {
-  Submodel,
-  InteractionMessage,
-  IFrame,
-  SubmodelInterface
-} from "i40-aas-objects";
+import { Submodel, InteractionMessage, IFrame } from "i40-aas-objects";
 import { IMessageDispatcher } from "../services/onboarding/messaginginterface/IMessageDispatcher";
 import { Roles } from "../services/onboarding/messaginginterface/Roles";
 import { MessageTypes } from "../services/onboarding/messaginginterface/MessageTypes";
@@ -18,7 +13,7 @@ class MessageDispatcher implements IMessageDispatcher {
     receiverRoleName: string,
     messageType: string,
     lastReceivedFrameInConversation: IFrame,
-    interactionElements?: SubmodelInterface[]
+    interactionElements?: object[]
   ) {
     const uuidv1 = require("uuid/v1");
     var _ = require("lodash");

@@ -59,27 +59,25 @@ class RegistryConnector {
       receiver: message.frame.receiver,
       semanticprotocol: message.frame.semanticProtocol
     }
-
-    response = await this.webClient.getRequest(
-      this.endpoint_reg_protocol,
-      this.endpoint_reg_host,
-      this.endpoint_reg_port,
-      this.regURL_GET_SUFFIX,
-      reqParams,
-      this.regAdminUser,
-      this.regAdminPass
-    );
-
-    if (response && "data" in response) {
-      logger.debug(
-        "Registry Response is " + JSON.stringify(response.data, null, 3)
+    try {
+      response = await this.webClient.getRequest(
+        this.endpoint_reg_protocol,
+        this.endpoint_reg_host,
+        this.endpoint_reg_port,
+        this.regURL_GET_SUFFIX,
+        reqParams,
+        this.regAdminUser,
+        this.regAdminPass
       );
 
+
+      logger.debug(
+        "Endpoint-Registry Response is " + JSON.stringify(response.data, null, 3));
+
       this.handleResponseFromRegistry(response, message);
-    } else {
-      logger.debug("Cannot get a valid response from Registry");
-      logger.debug(response);
-      throw new Error("Cannot get a valid response from Registry");
+
+    } catch (error) {
+      logger.debug("Cannot get a valid response from Registry " + error);
     }
   }
 
@@ -89,42 +87,42 @@ class RegistryConnector {
   ) {
     let registryEntriesArray: IRegistryEntry[] | undefined;
 
-      registryEntriesArray = response.data;
-      if (registryEntriesArray) {
-        //for every AAS (with AasId,Endpoints[],AssetID set) make a validation if something is missing
-        registryEntriesArray.forEach(RegistryEntry => {
-          let regEntry = this.validateEssentialRegResultSet(RegistryEntry);
+    registryEntriesArray = response.data;
+    if (registryEntriesArray) {
+      //for every AAS (with AasId,Endpoints[],AssetID set) make a validation if something is missing
+      registryEntriesArray.forEach(RegistryEntry => {
+        let regEntry = this.validateEssentialRegResultSet(RegistryEntry);
 
-          if (regEntry && this.validateRequired(regEntry)) {
-                    //iterate to send to all array endpoints
-                    let receiverURLs = regEntry.endpoints;
-                    receiverURLs.forEach(URL => {
-                    let receiverURL = (URL as IEndpoint).url;
+        if (regEntry && this.validateRequired(regEntry)) {
+          //iterate to send to all array endpoints
+          let receiverURLs = regEntry.endpoints;
+          receiverURLs.forEach(URL => {
+            let receiverURL = (URL as IEndpoint).url;
 
-                    logger.info(
-                    "[REGISTRY]: ReceiverURL from Registry is " + receiverURL
-                    );
-                    try {
-                    sendInteractionReplyToAAS(receiverURL, interaction);
-                    } catch (error) {
-                    logger.error(
-                    "Error when posting to AAS " +
-                    error
-                    );
-                    throw Error(error);
-                    }
-                    });
-          } else if (regEntry === undefined) {
-                    logger.error("[REGISTRY]: ReceiverURL could not be parsed");
-          }
-        });
+            logger.info(
+              "[REGISTRY]: ReceiverURL from Registry is " + receiverURL
+            );
+            try {
+              sendInteractionReplyToAAS(receiverURL, interaction);
+            } catch (error) {
+              logger.error(
+                "Error when posting to AAS " +
+                error
+              );
+              throw Error(error);
+            }
+          });
+        } else if (regEntry === undefined) {
+          logger.error("[REGISTRY]: ReceiverURL could not be parsed");
+        }
+      });
 
-        //if response not there
-      } else {
-        logger.error("[REGISTRY]: Error querring the REGISTRY service");
-        this.handleUnactionableMessage(response.data.toString());
-        return undefined;
-      }
+      //if response not there
+    } else {
+      logger.error("[REGISTRY]: Error querring the REGISTRY service");
+      this.handleUnactionableMessage(response.data.toString());
+      return undefined;
+    }
 
   }
 
@@ -185,9 +183,9 @@ class RegistryConnector {
   ) {
     logger.error(
       "Missing necessary data, " +
-        missingData.toString() +
-        ", in incoming message:" +
-        message
+      missingData.toString() +
+      ", in incoming message:" +
+      message
     );
     //TODO: implement error handling method this.msgHandler.receivedUnintelligibleMessage(message);
   }
@@ -196,9 +194,9 @@ class RegistryConnector {
     if (missingData) {
       logger.error(
         "Cannot react to this message as the following data, " +
-          missingData.toString() +
-          ", is missing: " +
-          message
+        missingData.toString() +
+        ", is missing: " +
+        message
       );
     } else {
       logger.error("Cannot react to this unparsable message:" + message);

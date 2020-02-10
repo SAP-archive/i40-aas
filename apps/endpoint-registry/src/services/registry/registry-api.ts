@@ -1,5 +1,5 @@
 import { RegistryFactory } from './daos/postgress/RegistryFactory';
-import { Identifier, IdTypeEnum } from 'i40-aas-objects';
+import { IdTypeEnum, IIdentifier } from 'i40-aas-objects';
 import { RegistryError } from '../../utils/RegistryError';
 import {
   RegistryResultSet,
@@ -16,7 +16,7 @@ import {
 import { ConversationMember } from 'i40-aas-objects';
 
 async function readRecordByIdentifier(
-  identifier: Identifier
+  identifier: IIdentifier
 ): Promise<Array<RegistryResultSet>> {
   var registryDao: iRegistry = await RegistryFactory.getRegistry();
   try {
@@ -33,7 +33,7 @@ async function readRecordByIdentifier(
   }
 }
 async function deleteRecordByIdentifier(
-  identifier: Identifier
+  identifier: IIdentifier
 ): Promise<number> {
   var registryDao: iRegistry = await RegistryFactory.getRegistry();
   try {
@@ -143,7 +143,7 @@ async function getEndpointsByRole(
   if (receiver.identification) {
     return readRecordByIdentifier({
       id: receiver.identification.id,
-      idType: (<any>IdTypeEnum)[receiver.identification.idType]
+      idType: receiver.identification.idType
     });
   } else {
     if (!semanticProtocol) {

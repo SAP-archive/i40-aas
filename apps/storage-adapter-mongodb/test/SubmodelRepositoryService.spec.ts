@@ -1,8 +1,11 @@
-import { Submodel, Property } from "i40-aas-objects";
-import { KindEnum } from "i40-aas-objects/dist/src/types/KindEnum";
-import { IdTypeEnum } from "i40-aas-objects/dist/src/types/IdTypeEnum";
-import { KeyElementsEnum } from "i40-aas-objects/dist/src/types/KeyElementsEnum";
-import { ValueTypeEnum } from "i40-aas-objects/dist/src/types/ValueTypeEnum";
+import {
+  Submodel,
+  Property,
+  KeyElementsEnum,
+  IdTypeEnum,
+  AnyAtomicTypeEnum
+} from "i40-aas-objects";
+
 import { SubmodelRepositoryService } from "../src/services/mongodb-client/operations/SubmodelRepositoryService";
 import { SimpleMongoDbClient } from "../src/services/mongodb-client/operations/SimpleMongoDbClient";
 import { ISubmodelRecord } from "../src/services/mongodb-client/model/ISubmodelRecord";
@@ -10,6 +13,8 @@ import { logger } from "../src/log";
 import sinon from "sinon";
 import { fail } from "assert";
 import { expect } from "chai";
+import { KindEnum } from "i40-aas-objects/dist/src/types/KindEnum";
+import { IKey } from "i40-aas-objects/dist/src/baseClasses/Key";
 var chai = require("chai");
 chai.should();
 let md5 = require("md5");
@@ -25,18 +30,19 @@ function checkEnvVar(variableName: string): string {
   }
 }
 function getProperty(idShort: string, value: string | undefined): Property {
-  return new Property({
+  return Property.fromJSON({
     embeddedDataSpecifications: [],
     kind: KindEnum.Instance,
-    descriptions: [],
+    semanticId: { keys: [] as Array<IKey> },
+    description: [],
     idShort: idShort,
     parent: {
       keys: [
         {
-          idType: IdTypeEnum.URI,
+          idType: IdTypeEnum.IRI,
           type: KeyElementsEnum.Submodel,
           value:
-                    "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22",
+            "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22",
           local: true
         }
       ]
@@ -45,34 +51,30 @@ function getProperty(idShort: string, value: string | undefined): Property {
       name: KeyElementsEnum.Property
     },
     value: value,
-    valueType: {
-      dataObjectType: {
-        name: ValueTypeEnum.string
-      }
-    }
+    valueType: AnyAtomicTypeEnum.string
   });
 }
 function getSubmodel(properties: Property[]): Submodel {
-  let retVal: Submodel = new Submodel({
+  let retVal: Submodel = Submodel.fromJSON({
     embeddedDataSpecifications: [],
     semanticId: {
       keys: [
         {
-          idType: IdTypeEnum.URI,
+          idType: IdTypeEnum.IRI,
           type: KeyElementsEnum.GlobalReference,
           value:
-                    "opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/",
+            "opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/",
           local: false
         }
       ]
     },
     kind: KindEnum.Instance,
-    descriptions: [],
+    description: [],
     idShort: "opc-ua-devices",
     identification: {
       id:
         "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22",
-      idType: IdTypeEnum.URI
+      idType: IdTypeEnum.IRI
     },
     modelType: {
       name: KeyElementsEnum.Submodel
