@@ -1,5 +1,5 @@
-import { WriteOpResult } from "mongodb";
-import { ISubmodelRecord } from "../model/ISubmodelRecord";
+import { WriteOpResult } from 'mongodb';
+import { ISubmodelRecord } from '../model/ISubmodelRecord';
 
 interface IDatabaseClient {
   connect: () => void;
