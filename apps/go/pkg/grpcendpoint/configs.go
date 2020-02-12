@@ -50,4 +50,5 @@ type AMQPClientConfig struct {
 	User     string
 	Password string
 	Exchange string
+	Queue    string
 }

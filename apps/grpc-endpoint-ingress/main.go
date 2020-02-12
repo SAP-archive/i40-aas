@@ -4,14 +4,13 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"net"
 	"os"
 	"os/signal"
 	"strconv"
-	"sync"
 	"syscall"
 	"time"
 
+	"../go/pkg/amenityutils"
 	"../go/pkg/grpcendpoint"
 )
 
@@ -34,6 +33,7 @@ func main() {
 		User:     "guest",     //os.Getenv("RABBITMQ_BROKER_USER"),
 		Password: "guest",     //os.Getenv("RABBITMQ_BROKER_PASSWORD"),
 		Exchange: "amq.topic", //os.Getenv("RABBITMQ_BROKER_EXCHANGE"),
+		Queue:    "",
 	}
 
 	// grpcPort, _ := strconv.Atoi(os.Getenv("GRPC_ENDPOINT_INGRESS_PORT"))
@@ -52,7 +52,7 @@ func main() {
 	}
 
 	services := []string{fmt.Sprintf("%s:%s", AMQPCfg.Host, strconv.Itoa(amqpPort))}
-	waitForServices(services, time.Duration(60)*time.Second)
+	amenityutils.WaitForServices(services, time.Duration(60)*time.Second)
 
 	GRPCIngress = grpcendpoint.NewGRPCIngress(GRPCIngressCfg)
 
@@ -76,35 +76,4 @@ func waitForShutdown(ingress grpcendpoint.GRPCIngress) {
 	ingress.Shutdown(ctx)
 
 	log.Printf("Graceful shutdown.")
-}
-
-// ref.: https://github.com/alioygur/wait-for/blob/master/main.go
-// waitForServices tests and waits on the availability of a TCP host and port
-func waitForServices(services []string, timeOut time.Duration) error {
-	var depChan = make(chan struct{})
-	var wg sync.WaitGroup
-	wg.Add(len(services))
-	go func() {
-		for _, s := range services {
-			go func(s string) {
-				defer wg.Done()
-				for {
-					_, err := net.Dial("tcp", s)
-					if err == nil {
-						return
-					}
-					time.Sleep(1 * time.Second)
-				}
-			}(s)
-		}
-		wg.Wait()
-		close(depChan)
-	}()
-
-	select {
-	case <-depChan: // services are ready
-		return nil
-	case <-time.After(timeOut):
-		return fmt.Errorf("services aren't ready in %s", timeOut)
-	}
 }

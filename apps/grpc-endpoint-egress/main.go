@@ -4,14 +4,13 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"net"
 	"os"
 	"os/signal"
 	"strconv"
-	"sync"
 	"syscall"
 	"time"
 
+	"../go/pkg/amenityutils"
 	"../go/pkg/grpcendpoint"
 )
 
@@ -31,9 +30,10 @@ func main() {
 	AMQPCfg = grpcendpoint.AMQPClientConfig{
 		Host:     "localhost", //os.Getenv("RABBITMQ_AMQP_HOST"),
 		Port:     amqpPort,
-		User:     "guest",     //os.Getenv("RABBITMQ_BROKER_USER"),
-		Password: "guest",     //os.Getenv("RABBITMQ_BROKER_PASSWORD"),
-		Exchange: "amq.topic", //os.Getenv("RABBITMQ_BROKER_EXCHANGE"),
+		User:     "guest",                //os.Getenv("RABBITMQ_BROKER_USER"),
+		Password: "guest",                //os.Getenv("RABBITMQ_BROKER_PASSWORD"),
+		Exchange: "amq.topic",            //os.Getenv("RABBITMQ_BROKER_EXCHANGE"),
+		Queue:    "grpc-endpoint-egress", //os.Getenv("GRPC_ENDPOINT_EGRESS_BROKER_QUEUE"),
 	}
 
 	// registryPort, _ := strconv.Atoi(os.Getenv("ENDPOINT_REGISTRY_PORT"))
@@ -42,9 +42,9 @@ func main() {
 		Protocol: "http",      // os.Getenv("ENDPOINT_REGISTRY_PROTOCOL"),
 		Host:     "localhost", // os.Getenv("ENDPOINT_REGISTRY_HOST"),
 		Port:     registryPort,
-		Route:    "/endpoints", // os.Getenv("ENDPOINT_REGISTRY_URL_SUFFIX"),
-		User:     "admin",      // os.Getenv("ENDPOINT_REGISTRY_ADMIN_USER),
-		Password: "admin",      // os.Getenv("ENDPOINT_REGISTRY_ADMIN_PASSWORD"),
+		Route:    "/assetadministrationshells", // os.Getenv("ENDPOINT_REGISTRY_URL_SUFFIX"),
+		User:     "admin",                      // os.Getenv("ENDPOINT_REGISTRY_ADMIN_USER),
+		Password: "admin",                      // os.Getenv("ENDPOINT_REGISTRY_ADMIN_PASSWORD"),
 	}
 
 	GRPCEgressCfg = grpcendpoint.GRPCEgressConfig{
@@ -53,7 +53,7 @@ func main() {
 	}
 
 	services := []string{fmt.Sprintf("%s:%s", AMQPCfg.Host, strconv.Itoa(amqpPort))}
-	waitForServices(services, time.Duration(60)*time.Second)
+	amenityutils.WaitForServices(services, time.Duration(60)*time.Second)
 
 	GRPCEgress = grpcendpoint.NewGRPCEgress(GRPCEgressCfg)
 
@@ -77,35 +77,4 @@ func waitForShutdown(GRPCEgress grpcendpoint.GRPCEgress) {
 	GRPCEgress.Shutdown(ctx)
 
 	log.Printf("Graceful shutdown.")
-}
-
-// ref.: https://github.com/alioygur/wait-for/blob/master/main.go
-// waitForServices tests and waits on the availability of a TCP host and port
-func waitForServices(services []string, timeOut time.Duration) error {
-	var depChan = make(chan struct{})
-	var wg sync.WaitGroup
-	wg.Add(len(services))
-	go func() {
-		for _, s := range services {
-			go func(s string) {
-				defer wg.Done()
-				for {
-					_, err := net.Dial("tcp", s)
-					if err == nil {
-						return
-					}
-					time.Sleep(1 * time.Second)
-				}
-			}(s)
-		}
-		wg.Wait()
-		close(depChan)
-	}()
-
-	select {
-	case <-depChan: // services are ready
-		return nil
-	case <-time.After(timeOut):
-		return fmt.Errorf("services aren't ready in %s", timeOut)
-	}
 }

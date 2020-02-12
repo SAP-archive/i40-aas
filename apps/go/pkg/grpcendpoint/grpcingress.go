@@ -28,7 +28,7 @@ func (i *GRPCIngress) Init() {
 	i.amqpClient = newAMQPClient(i.config.AMQPConfig)
 	i.grpcServer = newGRPCServer(i.config.GRPCConfig)
 
-	go i.amqpClient.init()
+	i.amqpClient.init()
 	go i.grpcServer.init()
 }
 
