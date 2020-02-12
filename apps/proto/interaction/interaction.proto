@@ -41,14 +41,7 @@ message Role {
   string name = 1;
 }
 
-enum IdType {
-  IRDI = 0;
-  IRI = 1;
-  Custom = 2;
-  IdShort = 3;
-}
-
 message Identifier {
   string id = 1;
-  IdType idType = 2;
+  string idType = 2;
 }

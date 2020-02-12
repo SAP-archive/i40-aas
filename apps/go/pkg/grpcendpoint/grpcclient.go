@@ -57,29 +57,29 @@ func newGRPCClient(cfg GRPCClientConfig) (c grpcClient) {
 
 	switch {
 	case cfg.ChunkSize == 0:
-		errors.Errorf("ChunkSize must be specified")
-	case cfg.ChunkSize > (1 << 22):
-		errors.Errorf("ChunkSize must be < than 4MB")
-	default:
 		c.config.ChunkSize = 8
+		log.Printf("ChunkSize cannot be 0, defaulting to %d", c.config.ChunkSize)
+	case cfg.ChunkSize > (1 << 22):
+		c.config.ChunkSize = 8
+		log.Printf("ChunkSize cannot be > (1 << 22), defaulting to %d", c.config.ChunkSize)
+	default:
+		log.Printf("ChunkSize is set to %d", c.config.ChunkSize)
 	}
 	return c
 }
 
 func (c *grpcClient) init() {
-	conn, err := grpc.Dial(c.config.Host+":"+strconv.Itoa(c.config.Port), c.config.GrpcOpts...)
+	grpcHost := c.config.Host + ":" + strconv.Itoa(c.config.Port)
+	conn, err := grpc.Dial(grpcHost, c.config.GrpcOpts...)
 	if err != nil {
-		c.conn = conn
+		log.Printf("failed to start grpc connection with address %s", grpcHost)
 	}
-	if err != nil {
-		err = errors.Wrapf(err,
-			"failed to start grpc connection with address %s",
-			c.config.Host+":"+strconv.Itoa(c.config.Port))
-		return
-	}
+	c.conn = conn
 
 	c.fileClient = fileservice.NewAASFileServiceClient(c.conn)
 	c.interactionClient = interaction.NewInteractionServiceClient(c.conn)
+
+	log.Printf("GRPC connection to %s initiated and in state %s", grpcHost, c.conn.GetState().String())
 }
 
 func (c *grpcClient) close(ctx context.Context) {

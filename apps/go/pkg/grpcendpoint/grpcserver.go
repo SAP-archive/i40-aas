@@ -14,9 +14,9 @@ import (
 
 // grpcServer struct
 type grpcServer struct {
-	config                  GRPCServerConfig
-	server                  *grpc.Server
-	interactionMessageQueue <-chan *interaction.InteractionMessage
+	config        GRPCServerConfig
+	server        *grpc.Server
+	iMessageQueue chan *interaction.InteractionMessage
 }
 
 func newGRPCServer(cfg GRPCServerConfig) (s grpcServer) {
@@ -25,6 +25,8 @@ func newGRPCServer(cfg GRPCServerConfig) (s grpcServer) {
 	}
 
 	s.config = cfg
+
+	s.iMessageQueue = make(chan *interaction.InteractionMessage)
 
 	return s
 }
@@ -86,9 +88,14 @@ func (s *grpcServer) Download(dlreg *fileservice.DownloadRequest, stream fileser
 }
 
 // UploadInteractionMessage capability
-func (s *grpcServer) UploadInteractionMessage(context.Context, *interaction.InteractionMessage) (*interaction.InteractionStatus, error) {
-	// TODO
-	return nil, nil
+func (s *grpcServer) UploadInteractionMessage(ctx context.Context, iMsg *interaction.InteractionMessage) (*interaction.InteractionStatus, error) {
+	log.Printf("received InteractionMessage")
+	log.Print(iMsg)
+
+	s.iMessageQueue <- iMsg
+
+	iStatus := &interaction.InteractionStatus{}
+	return iStatus, nil
 }
 
 // UploadInteractionMessageStream capability

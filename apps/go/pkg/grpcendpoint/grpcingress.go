@@ -11,9 +11,6 @@ type GRPCIngress struct {
 	config     GRPCIngressConfig
 	grpcServer grpcServer
 	amqpClient amqpClient
-
-	// TODO
-	// <-chan handler grpcServer (interactionMessage) -> AMQP (JSON)
 }
 
 // NewGRPCIngress instance
@@ -30,6 +27,12 @@ func (i *GRPCIngress) Init() {
 
 	i.amqpClient.init()
 	go i.grpcServer.init()
+
+	// TODO
+	// loop over range of grpcserver iMsg channel
+	// convert InteractionMessages to JSON
+	// Publish JSON to AMQP Exchange
+	// Return proper InteractionStatus
 }
 
 // Shutdown the Ingress

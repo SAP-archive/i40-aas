@@ -1,5 +1,4 @@
 version: '3.7'
-version: '3.7'
 services:
   ## Provide build instructions for all i40-aas images
   i40-aas-onboarding-skill:
@@ -14,7 +13,7 @@ services:
     build:
       context: apps/https-endpoint-egress
       dockerfile: ../../docker/https-endpoint-egress/Dockerfile
-  # ##
+  ##
   # i40-aas-grpc-endpoint-ingress:
   #   build:
   #     context: apps
@@ -23,7 +22,7 @@ services:
   #   build:
   #     context: apps
   #     dockerfile: ../docker/grpc-endpoint-egress/Dockerfile
-  # ##
+  ##
   i40-aas-data-manager:
     build:
       context: apps/data-manager

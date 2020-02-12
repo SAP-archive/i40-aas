@@ -9,6 +9,9 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
+
+	interaction "../../../proto/interaction"
 )
 
 // GRPCEgress struct
@@ -43,18 +46,17 @@ func (e *GRPCEgress) Init() {
 
 			role := dat["frame"].(map[string]interface{})["receiver"].(map[string]interface{})["role"].(map[string]interface{})["name"]
 			receiver := "{\"role\":{\"name\":\"" + fmt.Sprintf("%v", role) + "\"}}"
-			semanticprotocol := "i40:registry-semanticProtocol/onboarding"
-			grpcCfg := obtainGRPCClientConfig(receiver, semanticprotocol, e.config.EndpointReg)
+			semanticprotocol := fmt.Sprint(dat["frame"].(map[string]interface{})["semanticProtocol"])
+			grpcCfgs := obtainGRPCClientConfigs(receiver, semanticprotocol, e.config.EndpointReg)
 
-			log.Printf("%v", grpcCfg)
-			// TODO:
-			// filter result from endpoint registry
-			// check whether GRPC client already exists
-			// if no: create one with TTL and store in e.grpcClients
-			// if yes: retrieve existing client
+			var c grpcClient
+			for _, cfg := range grpcCfgs {
+				c = obtainGRPCClient(cfg)
+			}
 
-			// TODO:
-			// send msg via GRPC using the client from above
+			iMsg := constructInteractionMessage(dat)
+			log.Print(iMsg)
+			c.interactionClient.UploadInteractionMessage(context.Background(), &iMsg)
 		}
 	}()
 }
@@ -67,10 +69,100 @@ func (e *GRPCEgress) Shutdown(ctx context.Context) {
 	e.amqpClient.close()
 }
 
-func obtainGRPCClientConfig(receiver string, semanticprotocol string, reg EndpointRegistryConfig) GRPCClientConfig {
-	queryEndpointRegistry(receiver, semanticprotocol, reg)
+func constructInteractionMessage(dat map[string]interface{}) interaction.InteractionMessage {
+	receiver := dat["frame"].(map[string]interface{})["receiver"]
+	iReceiverID := &interaction.Identifier{
+		Id:     fmt.Sprint(receiver.(map[string]interface{})["identification"].(map[string]interface{})["id"]),
+		IdType: fmt.Sprint(receiver.(map[string]interface{})["identification"].(map[string]interface{})["idType"]),
+	}
+	iReceiverRole := &interaction.Role{
+		Name: fmt.Sprint(receiver.(map[string]interface{})["role"].(map[string]interface{})["name"]),
+	}
+	iReceiver := &interaction.ConversationMember{
+		Identifier: iReceiverID,
+		Role:       iReceiverRole,
+	}
 
-	return GRPCClientConfig{}
+	sender := dat["frame"].(map[string]interface{})["sender"]
+	iSenderID := &interaction.Identifier{
+		Id:     fmt.Sprint(sender.(map[string]interface{})["identification"].(map[string]interface{})["id"]),
+		IdType: fmt.Sprint(sender.(map[string]interface{})["identification"].(map[string]interface{})["idType"]),
+	}
+	iSenderRole := &interaction.Role{
+		Name: fmt.Sprint(sender.(map[string]interface{})["role"].(map[string]interface{})["name"]),
+	}
+	iSender := &interaction.ConversationMember{
+		Identifier: iSenderID,
+		Role:       iSenderRole,
+	}
+
+	iFrame := &interaction.Frame{
+		SemanticProtocol: fmt.Sprint(dat["frame"].(map[string]interface{})["semanticProtocol"]),
+		Type:             fmt.Sprint(dat["frame"].(map[string]interface{})["type"]),
+		MessageId:        fmt.Sprint(dat["frame"].(map[string]interface{})["messageId"]),
+		ReplyBy:          uint32(dat["frame"].(map[string]interface{})["replyBy"].(float64)),
+		Receiver:         iReceiver,
+		Sender:           iSender,
+		ConversationId:   fmt.Sprint(dat["frame"].(map[string]interface{})["conversationId"]),
+	}
+
+	interactionElements, err := json.Marshal(dat["interactionElements"])
+	if err != nil {
+		log.Printf("unable to marshal interactionElements: %s", err)
+	}
+	return interaction.InteractionMessage{
+		Frame:               iFrame,
+		InteractionElements: interactionElements,
+	}
+}
+
+func obtainGRPCClient(cfg GRPCClientConfig) grpcClient {
+	// TODO:
+	// filter result from endpoint registry
+	// check whether GRPC client already exists
+	// if no: create one with TTL and store in e.grpcClients
+	// if yes: retrieve existing client
+	var c grpcClient
+
+	if false {
+		// TODO
+		// Check whether matching GRPC connection is already open
+	} else {
+		// TODO
+		// Store GRPC connection in corresponding map within egress
+		c = newGRPCClient(cfg)
+		c.init()
+	}
+
+	return c
+}
+
+func obtainGRPCClientConfigs(receiver string, semanticprotocol string, reg EndpointRegistryConfig) []GRPCClientConfig {
+	registryResp := queryEndpointRegistry(receiver, semanticprotocol, reg)
+
+	var dat []interface{}
+	if err := json.Unmarshal(registryResp, &dat); err != nil {
+		log.Printf("unable to unmarshal msg: %s", err)
+	}
+
+	clientConfigs := []GRPCClientConfig{}
+	// loop over all AAS
+	for _, aas := range dat {
+		for _, endpoint := range aas.(map[string]interface{})["endpoints"].([]interface{}) {
+			if endpoint.(map[string]interface{})["protocol"] == "grpc" {
+				grpcHost := fmt.Sprintf("%v", endpoint.(map[string]interface{})["url"])
+				host := strings.Split(grpcHost, ":")[0]
+				port, _ := strconv.Atoi(strings.Split(grpcHost, ":")[1])
+
+				clientConfigs = append(clientConfigs, GRPCClientConfig{
+					Host: host,
+					Port: port,
+				})
+			}
+		}
+	}
+
+	return clientConfigs
 }
 
 func queryEndpointRegistry(receiver string, semanticprotocol string, reg EndpointRegistryConfig) []byte {
@@ -98,11 +190,6 @@ func queryEndpointRegistry(receiver string, semanticprotocol string, reg Endpoin
 	}
 
 	bodyText, err := ioutil.ReadAll(resp.Body)
-	log.Printf(string(bodyText))
 
 	return bodyText
-}
-
-func updateClients() {
-	// TODO
 }
