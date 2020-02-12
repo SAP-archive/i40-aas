@@ -13,7 +13,7 @@ let RABBITMQ_AMQP_PORT: string | undefined = process.env.RABBITMQ_AMQP_PORT;
 let RABBITMQ_BROKER_EXCHANGE: string | undefined = process.env.RABBITMQ_BROKER_EXCHANGE;
 let RABBITMQ_BROKER_USER: string | undefined = process.env.RABBITMQ_BROKER_USER;
 let RABBITMQ_BROKER_PASSWORD: string | undefined = process.env.RABBITMQ_BROKER_PASSWORD;
-let BROCKER_QUEUE = "endpoint-egress"; //TODO: here also from env variable??
+let BROKER_QUEUE = "endpoint-egress"; //TODO: here also from env variable??
 let RABBITMQ_BROKER_TOPIC_EGRESS: string | undefined = process.env.RABBITMQ_BROKER_TOPIC_EGRESS;
 
 //Endpoint-registry Config
@@ -38,7 +38,7 @@ if (
   RABBITMQ_AMQP_PORT&&
   RABBITMQ_BROKER_EXCHANGE &&
   RABBITMQ_BROKER_TOPIC_EGRESS &&
-  BROCKER_QUEUE&&
+  BROKER_QUEUE&&
   ENDPOINT_REGISTRY_PROTOCOL &&
   ENDPOINT_REGISTRY_HOST &&
   ENDPOINT_REGISTRY_PORT &&
@@ -54,7 +54,7 @@ if (
     RABBITMQ_BROKER_EXCHANGE,
     RABBITMQ_BROKER_USER,
     RABBITMQ_BROKER_PASSWORD,
-    BROCKER_QUEUE
+    BROKER_QUEUE
   );
   var messageDispatcher = new RegistryConnector(
     ENDPOINT_REGISTRY_PROTOCOL,

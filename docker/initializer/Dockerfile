@@ -1,6 +1,7 @@
 FROM alpine
 
-RUN apk add curl
+RUN apk add --no-cache bash && \
+    apk add --no-cache curl
 
 COPY main.sh /
 

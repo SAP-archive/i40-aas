@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 waitfor() {
   printf "Waiting for $1:$2...\n"
@@ -8,19 +8,28 @@ waitfor() {
   printf "$1:$2 is available!\n"
 }
 
+filtertarget() {
+  if [ -z "${!1}" ]
+  then
+    printf "Skipping $1 (env not set)\n"
+  else
+    waitfor "${!1}" "${!2}"
+  fi
+}
+
 printf "STARTED INITIALIZATION\n"
 
-waitfor $ENDPOINT_REGISTRY_POSTGRES_HOST $ENDPOINT_REGISTRY_POSTGRES_PORT &
-waitfor $RABBITMQ_AMQP_HOST $RABBITMQ_AMQP_PORT &
-waitfor $MONGODB_HOST $MONGODB_PORT &
-waitfor $DATA_MANAGER_HOST $DATA_MANAGER_PORT &
-waitfor $ADAPTER_REGISTRY_HOST $ADAPTER_REGISTRY_PORT &
-waitfor $ENDPOINT_REGISTRY_HOST $ENDPOINT_REGISTRY_PORT &
-waitfor $HTTPS_ENDPOINT_INGRESS_HOST $HTTPS_ENDPOINT_INGRESS_PORT &
+filtertarget ENDPOINT_REGISTRY_POSTGRES_HOST ENDPOINT_REGISTRY_POSTGRES_PORT &
+filtertarget RABBITMQ_AMQP_HOST RABBITMQ_AMQP_PORT &
+filtertarget MONGODB_HOST MONGODB_PORT &
+filtertarget DATA_MANAGER_HOST DATA_MANAGER_PORT &
+filtertarget ADAPTER_REGISTRY_HOST ADAPTER_REGISTRY_PORT &
+filtertarget ENDPOINT_REGISTRY_HOST ENDPOINT_REGISTRY_PORT &
+filtertarget HTTPS_ENDPOINT_INGRESS_HOST HTTPS_ENDPOINT_INGRESS_PORT &
 
 ## TODO: Required addition once ready checks are implemented
-# waitfor ONBOARDING
-# waitfor EGRESS
+# filtertarget ONBOARDING
+# filtertarget EGRESS
 
 wait
 
