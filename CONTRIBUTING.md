@@ -72,7 +72,7 @@ which can be [found here](https://gist.github.com/CLAassistant/bd1ea8ec8aa035741
 
 If employees of a company contribute code, in **addition** to the individual agreement mentioned above, one company agreement must be submitted. This is mainly for the protection of the contributing employees.
 
-A company representative authorized to do so needs to download, fill in, and print the [Corporate Contributor License Agreement](/SAP%20CCLA.pdf) form and then proceed with one of the following options:
+A company representative authorized to do so needs to download, fill in, and print the [Corporate Contributor License Agreement](/docs/SAP/SAP%20CCLA.pdf) form and then proceed with one of the following options:
 
 - Scan and e-mail it to [opensource@sap.com](mailto:opensource@sap.com)
 - Fax it to: +49 6227 78-45813
