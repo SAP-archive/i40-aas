@@ -2,8 +2,10 @@ package grpcendpoint
 
 import (
 	"context"
+	"log"
 
 	interaction "../../../proto/interaction"
+	"github.com/golang/protobuf/jsonpb"
 )
 
 // GRPCIngress struct
@@ -28,11 +30,16 @@ func (i *GRPCIngress) Init() {
 	i.amqpClient.init()
 	go i.grpcServer.init()
 
-	// TODO
-	// loop over range of grpcserver iMsg channel
-	// convert InteractionMessages to JSON
-	// Publish JSON to AMQP Exchange
-	// Return proper InteractionStatus
+	go func() {
+		for iMsg := range i.grpcServer.iMessageQueue {
+			jsonMessage := convertInteractionMessageToRawJSON(iMsg)
+
+			f := iMsg.Frame
+			routingKey := f.SemanticProtocol + "." + f.Receiver.Role.Name + "." + f.Type
+
+			i.amqpClient.publish(routingKey, jsonMessage)
+		}
+	}()
 }
 
 // Shutdown the Ingress
@@ -41,6 +48,18 @@ func (i *GRPCIngress) Shutdown(ctx context.Context) {
 	i.amqpClient.close()
 }
 
-func interactionMessageToJSON(interaction.InteractionMessage) {
-	// TODO: return JSON
+func convertInteractionMessageToRawJSON(protoMessage *interaction.InteractionMessage) []byte {
+	protoFrame := protoMessage.Frame
+	marshaler := jsonpb.Marshaler{}
+	jsonFrame, err := marshaler.MarshalToString(protoFrame)
+	if err != nil {
+		log.Printf("unable to MarshalToString protoFrame: %s", err)
+	}
+
+	interactionElementsRaw := protoMessage.InteractionElements
+
+	jsonString := "{\"frame\":" + jsonFrame + ",\"interactionElements\":" + string(interactionElementsRaw) + "}"
+	jsonRaw := []byte(jsonString)
+
+	return jsonRaw
 }

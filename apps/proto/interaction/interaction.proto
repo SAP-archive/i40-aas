@@ -20,6 +20,9 @@ enum InteractionStatusCode {
 message InteractionMessage {
   Frame frame = 1;
   bytes interactionElements = 2;
+  // TODO: Consider: https://github.com/i9/bar
+  // If it is found to be suitable, convert to:
+  // repeated google.protobuf.Any interactionElements = 2;
 }
 
 message Frame {
@@ -33,7 +36,7 @@ message Frame {
 }
 
 message ConversationMember {
-  Identifier identifier = 1;
+  Identification identification = 1;
   Role role = 2;
 }
 
@@ -41,7 +44,11 @@ message Role {
   string name = 1;
 }
 
-message Identifier {
+message Identification {
   string id = 1;
   string idType = 2;
+}
+
+message InteractionElement {
+
 }

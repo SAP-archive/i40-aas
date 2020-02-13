@@ -132,7 +132,9 @@ func (c *amqpClient) close() {
 	}
 }
 
-func (c *amqpClient) publish(routingKey string, body string) {
+func (c *amqpClient) publish(routingKey string, payload []byte) {
+	routingKey = "http.client"
+
 	err := c.amqpChan.Publish(
 		c.config.Exchange,
 		routingKey, // routing key
@@ -142,11 +144,12 @@ func (c *amqpClient) publish(routingKey string, body string) {
 			Headers:         amqp.Table{},
 			ContentType:     "application/json",
 			ContentEncoding: "utf8",
-			Body:            []byte(body),
+			Body:            payload,
 			DeliveryMode:    amqp.Transient, // 1=non-persistent, 2=persistent
 			Priority:        0,              // 0-9
 		})
 	if err != nil {
-		log.Printf("Publishing message to Exchange %s failed: %s", c.config.Exchange, err)
+		log.Printf("Publishing message with key %s to Exchange %s failed: %s", routingKey, c.config.Exchange, err)
 	}
+	log.Printf("Published %dB with key %s to Exchange %s", len(payload), routingKey, c.config.Exchange)
 }

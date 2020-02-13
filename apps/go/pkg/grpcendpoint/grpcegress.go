@@ -12,6 +12,7 @@ import (
 	"strings"
 
 	interaction "../../../proto/interaction"
+	"github.com/golang/protobuf/jsonpb"
 )
 
 // GRPCEgress struct
@@ -38,25 +39,23 @@ func (e *GRPCEgress) Init() {
 
 	go func() {
 		for msg := range e.amqpClient.msgChan {
-			// log.Printf("egress received %s", string(msg))
-			dat := make(map[string]interface{})
-			if err := json.Unmarshal(msg, &dat); err != nil {
-				log.Printf("unable to unmarshal msg: %s", err)
-			}
+			iMsg := convertRawJSONToInteractionMessage(msg)
 
-			role := dat["frame"].(map[string]interface{})["receiver"].(map[string]interface{})["role"].(map[string]interface{})["name"]
+			role := iMsg.Frame.Receiver.Role.Name
 			receiver := "{\"role\":{\"name\":\"" + fmt.Sprintf("%v", role) + "\"}}"
-			semanticprotocol := fmt.Sprint(dat["frame"].(map[string]interface{})["semanticProtocol"])
-			grpcCfgs := obtainGRPCClientConfigs(receiver, semanticprotocol, e.config.EndpointReg)
+			semanticprotocol := iMsg.Frame.SemanticProtocol
 
-			var c grpcClient
+			registryResp := queryEndpointRegistry(receiver, semanticprotocol, e.config.EndpointReg)
+			grpcCfgs := grpcClientConfigsFromRegistryResponse(registryResp)
+
 			for _, cfg := range grpcCfgs {
+				var c grpcClient
 				c = obtainGRPCClient(cfg)
+				c.interactionClient.UploadInteractionMessage(context.Background(), iMsg)
+				// TODO:
+				// Remove once client maps is implemented correctly
+				c.close(context.Background())
 			}
-
-			iMsg := constructInteractionMessage(dat)
-			log.Print(iMsg)
-			c.interactionClient.UploadInteractionMessage(context.Background(), &iMsg)
 		}
 	}()
 }
@@ -69,51 +68,33 @@ func (e *GRPCEgress) Shutdown(ctx context.Context) {
 	e.amqpClient.close()
 }
 
-func constructInteractionMessage(dat map[string]interface{}) interaction.InteractionMessage {
-	receiver := dat["frame"].(map[string]interface{})["receiver"]
-	iReceiverID := &interaction.Identifier{
-		Id:     fmt.Sprint(receiver.(map[string]interface{})["identification"].(map[string]interface{})["id"]),
-		IdType: fmt.Sprint(receiver.(map[string]interface{})["identification"].(map[string]interface{})["idType"]),
-	}
-	iReceiverRole := &interaction.Role{
-		Name: fmt.Sprint(receiver.(map[string]interface{})["role"].(map[string]interface{})["name"]),
-	}
-	iReceiver := &interaction.ConversationMember{
-		Identifier: iReceiverID,
-		Role:       iReceiverRole,
+func convertRawJSONToInteractionMessage(jsonRaw []byte) *interaction.InteractionMessage {
+	dat := make(map[string]interface{})
+	if err := json.Unmarshal(jsonRaw, &dat); err != nil {
+		log.Printf("unable to Unmarshal jsonRaw: %s", err)
 	}
 
-	sender := dat["frame"].(map[string]interface{})["sender"]
-	iSenderID := &interaction.Identifier{
-		Id:     fmt.Sprint(sender.(map[string]interface{})["identification"].(map[string]interface{})["id"]),
-		IdType: fmt.Sprint(sender.(map[string]interface{})["identification"].(map[string]interface{})["idType"]),
-	}
-	iSenderRole := &interaction.Role{
-		Name: fmt.Sprint(sender.(map[string]interface{})["role"].(map[string]interface{})["name"]),
-	}
-	iSender := &interaction.ConversationMember{
-		Identifier: iSenderID,
-		Role:       iSenderRole,
-	}
-
-	iFrame := &interaction.Frame{
-		SemanticProtocol: fmt.Sprint(dat["frame"].(map[string]interface{})["semanticProtocol"]),
-		Type:             fmt.Sprint(dat["frame"].(map[string]interface{})["type"]),
-		MessageId:        fmt.Sprint(dat["frame"].(map[string]interface{})["messageId"]),
-		ReplyBy:          uint32(dat["frame"].(map[string]interface{})["replyBy"].(float64)),
-		Receiver:         iReceiver,
-		Sender:           iSender,
-		ConversationId:   fmt.Sprint(dat["frame"].(map[string]interface{})["conversationId"]),
-	}
-
-	interactionElements, err := json.Marshal(dat["interactionElements"])
+	jsonFrameRaw, err := json.Marshal(dat["frame"])
 	if err != nil {
-		log.Printf("unable to marshal interactionElements: %s", err)
+		log.Printf("unable to Marshal dat[\"frame\"]: %s", err)
 	}
-	return interaction.InteractionMessage{
-		Frame:               iFrame,
-		InteractionElements: interactionElements,
+
+	jsonFrame := string(jsonFrameRaw)
+
+	protoFrame := &interaction.Frame{}
+	jsonpb.UnmarshalString(jsonFrame, protoFrame)
+
+	interactionElementsRaw, err := json.Marshal(dat["interactionElements"])
+	if err != nil {
+		log.Printf("unable to Marshal dat[\"interactionElements\"]: %s", err)
 	}
+
+	protoMessage := &interaction.InteractionMessage{
+		Frame:               protoFrame,
+		InteractionElements: interactionElementsRaw,
+	}
+
+	return protoMessage
 }
 
 func obtainGRPCClient(cfg GRPCClientConfig) grpcClient {
@@ -137,13 +118,14 @@ func obtainGRPCClient(cfg GRPCClientConfig) grpcClient {
 	return c
 }
 
-func obtainGRPCClientConfigs(receiver string, semanticprotocol string, reg EndpointRegistryConfig) []GRPCClientConfig {
-	registryResp := queryEndpointRegistry(receiver, semanticprotocol, reg)
+func grpcClientConfigsFromRegistryResponse(registryResp []byte) []GRPCClientConfig {
 
 	var dat []interface{}
 	if err := json.Unmarshal(registryResp, &dat); err != nil {
 		log.Printf("unable to unmarshal msg: %s", err)
 	}
+
+	log.Printf("dat: %T : %v", dat, dat)
 
 	clientConfigs := []GRPCClientConfig{}
 	// loop over all AAS

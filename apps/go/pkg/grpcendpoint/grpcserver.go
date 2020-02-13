@@ -89,11 +89,10 @@ func (s *grpcServer) Download(dlreg *fileservice.DownloadRequest, stream fileser
 
 // UploadInteractionMessage capability
 func (s *grpcServer) UploadInteractionMessage(ctx context.Context, iMsg *interaction.InteractionMessage) (*interaction.InteractionStatus, error) {
-	log.Printf("received InteractionMessage")
-	log.Print(iMsg)
-
 	s.iMessageQueue <- iMsg
 
+	// TODO
+	// Return proper InteractionStatus
 	iStatus := &interaction.InteractionStatus{}
 	return iStatus, nil
 }
