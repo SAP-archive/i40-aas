@@ -1,5 +1,5 @@
 import { RegistryFactory } from './daos/postgress/RegistryFactory';
-import { IdTypeEnum, IIdentifier } from 'i40-aas-objects';
+import { IIdentifier } from 'i40-aas-objects';
 import { RegistryError } from '../../utils/RegistryError';
 import {
   RegistryResultSet,
