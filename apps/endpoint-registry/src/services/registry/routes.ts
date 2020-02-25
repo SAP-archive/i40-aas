@@ -7,7 +7,8 @@ import {
   getAllEndpointsList,
   deleteRecordByIdentifier,
   createAsset,
-  getEndpointsByRole
+  getEndpointsByReceiverRole,
+  getEndpointsByReceiverId
 } from './registry-api';
 import { IdTypeEnum } from 'i40-aas-objects';
 import { RegistryError } from '../../utils/RegistryError';
@@ -21,6 +22,7 @@ import {
   Role,
   ConversationMember
 } from 'i40-aas-objects/dist/src/interaction/ConversationMember';
+import { TIdType } from 'i40-aas-objects/src/types/IdTypeEnum';
 export default [
   {
     path: '/assetadministrationshells',
@@ -117,16 +119,30 @@ export default [
     }
   },
   {
+    //throw new RegistryError('Missing parameter receiver', 422);
     path: '/assetadministrationshells',
     method: 'get',
     handler: async (req: Request, res: Response) => {
       try {
-        if (!req.query.receiver) {
-          throw new RegistryError('Missing parameter receiver', 422);
+        if (req.query.receiverId && req.query.receiverIdType) {
+          res.json(
+            await getEndpointsByReceiverId(
+              req.query.receiverId,
+              req.query.receiverIdType
+            )
+          );
         }
-        var receiver: ConversationMember = JSON.parse(req.query.receiver);
-        res.json(
-          await getEndpointsByRole(receiver, req.query.semanticprotocol)
+        if (req.query.receiverRole && req.query.protocolName) {
+          res.json(
+            await getEndpointsByReceiverRole(
+              req.query.receiverRole,
+              req.query.protocolName
+            )
+          );
+        }
+        throw new RegistryError(
+          'Mandatory query parameters: receiverId and receiverIdType, or receiverRole and protocolName',
+          422
         );
       } catch (e) {
         console.log(e);

@@ -10,7 +10,7 @@ try {
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 2000
   };
-  console.log("Pgconfig is :" + pgConfig);
+  console.log('Pgconfig is :' + JSON.stringify(pgConfig));
 } catch (e) {
   throw new Error('Can not read PG environment variables.');
 }
