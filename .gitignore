@@ -78,3 +78,16 @@ typings/
 .compose/volumes/initializer/*
 # except for
 !.compose/volumes/initializer/sample_config.sh
+
+
+#######################
+# ignore everything that is likely encryption-related
+*.pem
+*.key
+*.crt
+*.priv
+
+# exclude the whole .compose/cert* directory
+.compose/volumes/certs/*
+# except for
+!.compose/volumes/certs/.gitkeep
