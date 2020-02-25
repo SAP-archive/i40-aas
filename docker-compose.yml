@@ -193,9 +193,16 @@ services:
     image: sapi40/i40-aas-storage-adapter-mongodb
     ports:
       - "3100:3100"
-    env_file:
-      - .compose/envs/mongodb.env
-      - .compose/envs/storage-adapter-mongodb.env
+    environment:
+      ## mongodb
+      - MONGODB_HOST=${MONGODB_HOST}
+      - MONGODB_PORT=${MONGODB_PORT}
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
+      ## storage-adapter-mongodb
+      - STORAGE_ADAPTER_MONGODB_PORT=${STORAGE_ADAPTER_MONGODB_PORT}
+      - STORAGE_ADAPTER_MONGODB_SUBOMODELS_COLLECTION=${STORAGE_ADAPTER_MONGODB_SUBOMODELS_COLLECTION}
   ##########################################
   i40-aas-initializer:
     image: sapi40/i40-aas-initializer

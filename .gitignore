@@ -65,9 +65,6 @@ typings/
 # Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variables file
-.env
-
 # next.js build output
 .next
 
@@ -91,3 +88,9 @@ typings/
 .compose/volumes/certs/*
 # except for
 !.compose/volumes/certs/.gitkeep
+
+#######################
+# # ignore all .env files
+# *.env
+# except for the one in root
+!.env
