@@ -2,17 +2,22 @@ package grpcendpoint
 
 import (
 	"context"
-	"log"
 
-	interaction "../../../proto/interaction"
-	"github.com/golang/protobuf/jsonpb"
+	amqpclient "../amqpclient"
+	utils "../utils"
 )
+
+// GRPCIngressConfig struct
+type GRPCIngressConfig struct {
+	AMQPConfig amqpclient.Config
+	GRPCConfig GRPCServerConfig
+}
 
 // GRPCIngress struct
 type GRPCIngress struct {
 	config     GRPCIngressConfig
 	grpcServer grpcServer
-	amqpClient amqpClient
+	amqpClient amqpclient.AMQPClient
 }
 
 // NewGRPCIngress instance
@@ -24,20 +29,20 @@ func NewGRPCIngress(cfg GRPCIngressConfig) (ingress GRPCIngress) {
 
 // Init GRPC server and AMQP client
 func (i *GRPCIngress) Init() {
-	i.amqpClient = newAMQPClient(i.config.AMQPConfig)
+	i.amqpClient = amqpclient.NewAMQPClient(i.config.AMQPConfig)
 	i.grpcServer = newGRPCServer(i.config.GRPCConfig)
 
-	i.amqpClient.init()
+	i.amqpClient.Init()
 	go i.grpcServer.init()
 
 	go func() {
 		for iMsg := range i.grpcServer.iMessageQueue {
-			jsonMessage := convertInteractionMessageToRawJSON(iMsg)
+			jsonMessage := utils.ConvertInteractionMessageToRawJSON(iMsg)
 
 			f := iMsg.Frame
 			routingKey := f.SemanticProtocol + "." + f.Receiver.Role.Name + "." + f.Type
 
-			i.amqpClient.publish(routingKey, jsonMessage)
+			i.amqpClient.Publish(routingKey, jsonMessage)
 		}
 	}()
 }
@@ -45,21 +50,5 @@ func (i *GRPCIngress) Init() {
 // Shutdown the Ingress
 func (i *GRPCIngress) Shutdown(ctx context.Context) {
 	i.grpcServer.close()
-	i.amqpClient.close()
-}
-
-func convertInteractionMessageToRawJSON(protoMessage *interaction.InteractionMessage) []byte {
-	protoFrame := protoMessage.Frame
-	marshaler := jsonpb.Marshaler{}
-	jsonFrame, err := marshaler.MarshalToString(protoFrame)
-	if err != nil {
-		log.Printf("unable to MarshalToString protoFrame: %s", err)
-	}
-
-	interactionElementsRaw := protoMessage.InteractionElements
-
-	jsonString := "{\"frame\":" + jsonFrame + ",\"interactionElements\":" + string(interactionElementsRaw) + "}"
-	jsonRaw := []byte(jsonString)
-
-	return jsonRaw
+	i.amqpClient.Close()
 }

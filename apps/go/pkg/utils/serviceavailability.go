@@ -1,4 +1,4 @@
-package amenityutils
+package utils
 
 import (
 	"fmt"

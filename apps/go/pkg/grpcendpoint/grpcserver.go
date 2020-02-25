@@ -12,6 +12,15 @@ import (
 	"google.golang.org/grpc/credentials"
 )
 
+// GRPCServerConfig struct
+type GRPCServerConfig struct {
+	Port        int
+	Certificate string
+	Key         string
+	ChunkSize   int
+	Compress    bool
+}
+
 // grpcServer struct
 type grpcServer struct {
 	config        GRPCServerConfig
@@ -52,6 +61,8 @@ func (s *grpcServer) init() (err error) {
 
 		grpcOpts = append(grpcOpts, grpc.Creds(grpcCreds))
 	}
+
+	// TODO: Keepalive options
 
 	s.server = grpc.NewServer(grpcOpts...)
 

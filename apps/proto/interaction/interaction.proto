@@ -2,11 +2,13 @@ syntax = "proto3";
 
 package interaction;
 
+// TODO: Change to AAS Service?
 service InteractionService {
   rpc UploadInteractionMessageStream(stream InteractionMessage) returns (InteractionStatus) {}
   rpc UploadInteractionMessage(InteractionMessage) returns (InteractionStatus) {}
 }
 
+// TODO: Change to StatusCode ?
 message InteractionStatus {
   InteractionStatusCode Code = 1;
 }
@@ -20,9 +22,6 @@ enum InteractionStatusCode {
 message InteractionMessage {
   Frame frame = 1;
   bytes interactionElements = 2;
-  // TODO: Consider: https://github.com/i9/bar
-  // If it is found to be suitable, convert to:
-  // repeated google.protobuf.Any interactionElements = 2;
 }
 
 message Frame {

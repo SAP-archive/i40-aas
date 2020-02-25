@@ -1,4 +1,4 @@
-package grpcendpoint
+package amqpclient
 
 import (
 	"fmt"
@@ -8,14 +8,26 @@ import (
 	"github.com/streadway/amqp"
 )
 
-type amqpClient struct {
-	config   AMQPClientConfig
-	amqpConn *amqp.Connection
-	amqpChan *amqp.Channel
-	msgChan  chan []byte
+// Config struct
+type Config struct {
+	Host     string
+	Port     int
+	User     string
+	Password string
+	Exchange string
+	Queue    string
 }
 
-func newAMQPClient(cfg AMQPClientConfig) (c amqpClient) {
+// AMQPClient struct
+type AMQPClient struct {
+	config   Config
+	amqpConn *amqp.Connection
+	amqpChan *amqp.Channel
+	MsgChan  chan []byte
+}
+
+// NewAMQPClient TODO
+func NewAMQPClient(cfg Config) (c AMQPClient) {
 	if cfg.Host == "" {
 		log.Fatal("AMQP host not specified, defaulting to 'localhost'")
 		cfg.Host = "localhost"
@@ -32,12 +44,13 @@ func newAMQPClient(cfg AMQPClientConfig) (c amqpClient) {
 
 	c.config = cfg
 
-	c.msgChan = make(chan []byte)
+	c.MsgChan = make(chan []byte)
 
 	return c
 }
 
-func (c *amqpClient) init() {
+// Init TODO
+func (c *AMQPClient) Init() {
 	amqpConn, err := amqp.Dial(fmt.Sprintf("amqp://%s:%s@%s:%s/", c.config.User, c.config.Password, c.config.Host, strconv.Itoa(c.config.Port)))
 	if err != nil {
 		log.Fatalf("failed AMQP dial to RabbitMQ: %s", err)
@@ -69,7 +82,8 @@ func (c *amqpClient) init() {
 	log.Printf("connected to AMQP Broker at 'amqp://%s:%s@%s:%s/'", c.config.User, c.config.Password, c.config.Host, strconv.Itoa(c.config.Port))
 }
 
-func (c *amqpClient) listen(bindingKey string, ctag string) {
+// Listen TODO
+func (c *AMQPClient) Listen(bindingKey string, ctag string) {
 	log.Printf("declaring Queue %q", c.config.Queue)
 	queue, err := c.amqpChan.QueueDeclare(
 		c.config.Queue, // name of the queue
@@ -111,19 +125,20 @@ func (c *amqpClient) listen(bindingKey string, ctag string) {
 	}
 
 	for d := range deliveries {
-		log.Printf(
-			"got %dB delivery: [%v]",
-			len(d.Body),
-			d.DeliveryTag,
-		)
-		c.msgChan <- d.Body
+		// log.Printf(
+		// 	"got %dB delivery: [%v]",
+		// 	len(d.Body),
+		// 	d.DeliveryTag,
+		// )
+		c.MsgChan <- d.Body
 		d.Ack(false)
 	}
 
 	log.Printf("deliveries channel closed")
 }
 
-func (c *amqpClient) close() {
+// Close TODO
+func (c *AMQPClient) Close() {
 	if c.amqpChan != nil {
 		c.amqpChan.Close()
 	}
@@ -132,9 +147,8 @@ func (c *amqpClient) close() {
 	}
 }
 
-func (c *amqpClient) publish(routingKey string, payload []byte) {
-	routingKey = "http.client"
-
+// Publish TODO
+func (c *AMQPClient) Publish(routingKey string, payload []byte) {
 	err := c.amqpChan.Publish(
 		c.config.Exchange,
 		routingKey, // routing key
@@ -151,5 +165,5 @@ func (c *amqpClient) publish(routingKey string, payload []byte) {
 	if err != nil {
 		log.Printf("Publishing message with key %s to Exchange %s failed: %s", routingKey, c.config.Exchange, err)
 	}
-	log.Printf("Published %dB with key %s to Exchange %s", len(payload), routingKey, c.config.Exchange)
+	// log.Printf("Published %dB with key %s to Exchange %s", len(payload), routingKey, c.config.Exchange)
 }

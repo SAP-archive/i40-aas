@@ -12,6 +12,16 @@ import (
 	"google.golang.org/grpc/credentials"
 )
 
+// GRPCClientConfig struct
+type GRPCClientConfig struct {
+	Host            string
+	Port            int
+	RootCertificate string
+	ChunkSize       int
+	Compress        bool
+	GrpcOpts        []grpc.DialOption
+}
+
 // grpcClient struct
 type grpcClient struct {
 	config            GRPCClientConfig
@@ -23,6 +33,8 @@ type grpcClient struct {
 	// grpc Methods: (interaction)
 	// - UploadInteractionMessageStream(stream InteractionMessage) returns (InteractionStatus) {}
 	// - UploadInteractionMessage(InteractionMessage) returns (InteractionStatus) {}
+
+	// TODO: KeepAlive & Retry
 }
 
 func newGRPCClient(cfg GRPCClientConfig) (c grpcClient) {

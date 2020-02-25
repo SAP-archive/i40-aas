@@ -10,8 +10,9 @@ import (
 	"syscall"
 	"time"
 
-	"../go/pkg/amenityutils"
+	"../go/pkg/amqpclient"
 	"../go/pkg/grpcendpoint"
+	"../go/pkg/utils"
 )
 
 func main() {
@@ -19,41 +20,28 @@ func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	var (
-		AMQPCfg        grpcendpoint.AMQPClientConfig
-		EndpointRegCfg grpcendpoint.EndpointRegistryConfig
-		GRPCEgressCfg  grpcendpoint.GRPCEgressConfig
-		GRPCEgress     grpcendpoint.GRPCEgress
+		AMQPCfg       amqpclient.Config
+		GRPCEgressCfg grpcendpoint.GRPCEgressConfig
+		GRPCEgress    grpcendpoint.GRPCEgress
 	)
 
 	// amqpPort, _ := strconv.Atoi(os.Getenv("RABBITMQ_AMQP_PORT"))
 	amqpPort := 5672
-	AMQPCfg = grpcendpoint.AMQPClientConfig{
+	AMQPCfg = amqpclient.Config{
 		Host:     "localhost", //os.Getenv("RABBITMQ_AMQP_HOST"),
 		Port:     amqpPort,
-		User:     "guest",                //os.Getenv("RABBITMQ_BROKER_USER"),
-		Password: "guest",                //os.Getenv("RABBITMQ_BROKER_PASSWORD"),
-		Exchange: "amq.topic",            //os.Getenv("RABBITMQ_BROKER_EXCHANGE"),
-		Queue:    "grpc-endpoint-egress", //os.Getenv("GRPC_ENDPOINT_EGRESS_BROKER_QUEUE"),
-	}
-
-	// registryPort, _ := strconv.Atoi(os.Getenv("ENDPOINT_REGISTRY_PORT"))
-	registryPort := 4400
-	EndpointRegCfg = grpcendpoint.EndpointRegistryConfig{
-		Protocol: "http",      // os.Getenv("ENDPOINT_REGISTRY_PROTOCOL"),
-		Host:     "localhost", // os.Getenv("ENDPOINT_REGISTRY_HOST"),
-		Port:     registryPort,
-		Route:    "/assetadministrationshells", // os.Getenv("ENDPOINT_REGISTRY_URL_SUFFIX"),
-		User:     "admin",                      // os.Getenv("ENDPOINT_REGISTRY_ADMIN_USER),
-		Password: "admin",                      // os.Getenv("ENDPOINT_REGISTRY_ADMIN_PASSWORD"),
+		User:     "guest",  //os.Getenv("RABBITMQ_BROKER_USER"),
+		Password: "guest",  //os.Getenv("RABBITMQ_BROKER_PASSWORD"),
+		Exchange: "egress", //os.Getenv("RABBITMQ_BROKER_EXCHANGE"),
+		Queue:    "grpc",   //os.Getenv("GRPC_ENDPOINT_EGRESS_BROKER_QUEUE"),
 	}
 
 	GRPCEgressCfg = grpcendpoint.GRPCEgressConfig{
-		AMQPConfig:  AMQPCfg,
-		EndpointReg: EndpointRegCfg,
+		AMQPConfig: AMQPCfg,
 	}
 
 	services := []string{fmt.Sprintf("%s:%s", AMQPCfg.Host, strconv.Itoa(amqpPort))}
-	amenityutils.WaitForServices(services, time.Duration(60)*time.Second)
+	utils.WaitForServices(services, time.Duration(60)*time.Second)
 
 	GRPCEgress = grpcendpoint.NewGRPCEgress(GRPCEgressCfg)
 

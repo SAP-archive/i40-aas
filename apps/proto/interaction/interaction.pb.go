@@ -52,6 +52,7 @@ func (InteractionStatusCode) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_43fb9bc5eb13a2f0, []int{0}
 }
 
+// TODO: Change to StatusCode ?
 type InteractionStatus struct {
 	Code                 InteractionStatusCode `protobuf:"varint,1,opt,name=Code,proto3,enum=interaction.InteractionStatusCode" json:"Code,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`

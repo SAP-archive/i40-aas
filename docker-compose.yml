@@ -1,64 +1,194 @@
 version: '3.7'
 services:
-  ## i40-aas containers
+  ########################################################
+  #### i40-aas containers
+  ##########################################
   i40-aas-onboarding-skill:
     image: sapi40/i40-aas-onboarding-skill
-    env_file:
-      - .compose/envs/mongodb.env
-      - .compose/envs/rabbitmq.env
-      - .compose/envs/onboarding-skill.env
-      - .compose/envs/data-manager.env
+    environment:
+      ## mongodb
+      - MONGODB_HOST=${MONGODB_HOST}
+      - MONGODB_PORT=${MONGODB_PORT}
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
+      ## rabbitmq
+      - RABBITMQ_AMQP_HOST=${RABBITMQ_AMQP_HOST}
+      - RABBITMQ_AMQP_PORT=${RABBITMQ_AMQP_PORT}
+      - RABBITMQ_BROKER_USER=${RABBITMQ_BROKER_USER}
+      - RABBITMQ_BROKER_PASSWORD=${RABBITMQ_BROKER_PASSWORD}
+      - RABBITMQ_INGRESS_ADMIN_USER=${RABBITMQ_INGRESS_ADMIN_USER}
+      - RABBITMQ_INGRESS_ADMIN_PASSWORD=${RABBITMQ_INGRESS_ADMIN_PASSWORD}
+      - RABBITMQ_BROKER_EXCHANGE=${RABBITMQ_BROKER_EXCHANGE}
+      - RABBITMQ_BROKER_TOPIC_EGRESS=${RABBITMQ_BROKER_TOPIC_EGRESS}
+      ## onboarding-skill
+      - ONBOARDING_SKILL_REQUEST_APPROVAL=${ONBOARDING_SKILL_REQUEST_APPROVAL}
+      - ONBOARDING_SKILL_REQUEST_TYPE=${ONBOARDING_SKILL_REQUEST_TYPE}
+      - ONBOARDING_SKILL_STATES_COLLECTION=${ONBOARDING_SKILL_STATES_COLLECTION}
+      - ONBOARDING_SKILL_ROOT_TOPIC=${ONBOARDING_SKILL_ROOT_TOPIC}
+      - ONBOARDING_SKILL_ROLE=${ONBOARDING_SKILL_ROLE}
+      - ONBOARDING_SKILL_URI=${ONBOARDING_SKILL_URI}
+      ## data-manager
+      - DATA_MANAGER_PROTOCOL=${DATA_MANAGER_PROTOCOL}
+      - DATA_MANAGER_HOST=${DATA_MANAGER_HOST}
+      - DATA_MANAGER_PORT=${DATA_MANAGER_PORT}
+      - DATA_MANAGER_SUBMODELS_ROUTE=${DATA_MANAGER_SUBMODELS_ROUTE}
+      - DATA_MANAGER_USER=${DATA_MANAGER_USER}
+      - DATA_MANAGER_PASSWORD=${DATA_MANAGER_PASSWORD}
+  ##########################################
   i40-aas-https-endpoint-ingress:
     image: sapi40/i40-aas-https-endpoint-ingress
     ports:
       - "2000:2000"
-    env_file:
-      - .compose/envs/rabbitmq.env
-      - .compose/envs/https-endpoint-ingress.env
+    environment:
+      ## rabbitmq
+      - RABBITMQ_AMQP_HOST=${RABBITMQ_AMQP_HOST}
+      - RABBITMQ_AMQP_PORT=${RABBITMQ_AMQP_PORT}
+      - RABBITMQ_BROKER_USER=${RABBITMQ_BROKER_USER}
+      - RABBITMQ_BROKER_PASSWORD=${RABBITMQ_BROKER_PASSWORD}
+      - RABBITMQ_INGRESS_ADMIN_USER=${RABBITMQ_INGRESS_ADMIN_USER}
+      - RABBITMQ_INGRESS_ADMIN_PASSWORD=${RABBITMQ_INGRESS_ADMIN_PASSWORD}
+      - RABBITMQ_BROKER_EXCHANGE=${RABBITMQ_BROKER_EXCHANGE}
+      - RABBITMQ_BROKER_TOPIC_EGRESS=${RABBITMQ_BROKER_TOPIC_EGRESS}
+      ## https-endpoint-ingress
+      - HTTPS_ENDPOINT_INGRESS_PROTOCOL=${HTTPS_ENDPOINT_INGRESS_PROTOCOL}
+      - HTTPS_ENDPOINT_INGRESS_HOST=${HTTPS_ENDPOINT_INGRESS_HOST}
+      - HTTPS_ENDPOINT_INGRESS_PORT=${HTTPS_ENDPOINT_INGRESS_PORT}
+      - HTTPS_ENDPOINT_INGRESS_USER=${HTTPS_ENDPOINT_INGRESS_USER}
+      - HTTPS_ENDPOINT_INGRESS_PASSWORD=${HTTPS_ENDPOINT_INGRESS_PASSWORD}
+  ##########################################
   i40-aas-https-endpoint-egress:
     image: sapi40/i40-aas-https-endpoint-egress
-    env_file:
-      - .compose/envs/rabbitmq.env
-      - .compose/envs/endpoint-registry.env
-  ##
+    environment:
+      ## rabbitmq
+      - RABBITMQ_AMQP_HOST=${RABBITMQ_AMQP_HOST}
+      - RABBITMQ_AMQP_PORT=${RABBITMQ_AMQP_PORT}
+      - RABBITMQ_BROKER_USER=${RABBITMQ_BROKER_USER}
+      - RABBITMQ_BROKER_PASSWORD=${RABBITMQ_BROKER_PASSWORD}
+      - RABBITMQ_INGRESS_ADMIN_USER=${RABBITMQ_INGRESS_ADMIN_USER}
+      - RABBITMQ_INGRESS_ADMIN_PASSWORD=${RABBITMQ_INGRESS_ADMIN_PASSWORD}
+      - RABBITMQ_BROKER_EXCHANGE=${RABBITMQ_BROKER_EXCHANGE}
+      - RABBITMQ_BROKER_TOPIC_EGRESS=${RABBITMQ_BROKER_TOPIC_EGRESS}
+      ## endpoint-registry
+      - ENDPOINT_REGISTRY_PROTOCOL=${ENDPOINT_REGISTRY_PROTOCOL}
+      - ENDPOINT_REGISTRY_HOST=${ENDPOINT_REGISTRY_HOST}
+      - ENDPOINT_REGISTRY_PORT=${ENDPOINT_REGISTRY_PORT}
+      - ENDPOINT_REGISTRY_URL_SUFFIX=${ENDPOINT_REGISTRY_URL_SUFFIX}
+      - ENDPOINT_REGISTRY_ADMIN_USER=${ENDPOINT_REGISTRY_ADMIN_USER}
+      - ENDPOINT_REGISTRY_ADMIN_PASSWORD=${ENDPOINT_REGISTRY_ADMIN_PASSWORD}
+      - ENDPOINT_REGISTRY_BROKER_QUEUE=${ENDPOINT_REGISTRY_BROKER_QUEUE}
+  ##########################################
   # i40-aas-grpc-endpoint-ingress:
   #   image: sapi40/i40-aas-grpc-endpoint-ingress
   #   ports:
   #     - "8384:8384"
-  #   env_file:
-  #     - .compose/envs/rabbitmq.env
-  #     - .compose/envs/grpc-endpoint-ingress.env
   #   volumes:
   #     - .compose/volumes/grpc-endpoint-ingress:/grpc-endpoint-ingress
+  #   environment:
+  #     ## rabbitmq
+  #     - RABBITMQ_AMQP_HOST=${RABBITMQ_AMQP_HOST}
+  #     - RABBITMQ_AMQP_PORT=${RABBITMQ_AMQP_PORT}
+  #     - RABBITMQ_BROKER_USER=${RABBITMQ_BROKER_USER}
+  #     - RABBITMQ_BROKER_PASSWORD=${RABBITMQ_BROKER_PASSWORD}
+  #     - RABBITMQ_INGRESS_ADMIN_USER=${RABBITMQ_INGRESS_ADMIN_USER}
+  #     - RABBITMQ_INGRESS_ADMIN_PASSWORD=${RABBITMQ_INGRESS_ADMIN_PASSWORD}
+  #     - RABBITMQ_BROKER_EXCHANGE=${RABBITMQ_BROKER_EXCHANGE}
+  #     - RABBITMQ_BROKER_TOPIC_EGRESS=${RABBITMQ_BROKER_TOPIC_EGRESS}
+  #     ## grpc-endpoint-ingress
+  #     - GRPC_ENDPOINT_INGRESS_HOST=${GRPC_ENDPOINT_INGRESS_HOST}
+  #     - GRPC_ENDPOINT_INGRESS_PORT=${GRPC_ENDPOINT_INGRESS_PORT}
+  # ##########################################
   # i40-aas-grpc-endpoint-egress:
   #   image: sapi40/i40-aas-grpc-endpoint-egress
-  #   env_file:
-  #     - .compose/envs/rabbitmq.env
-  #     - .compose/envs/grpc-endpoint-egress.env
-  #     - .compose/envs/endpoint-registry.env
   #   volumes:
   #     - .compose/volumes/grpc-endpoint-egress:/grpc-endpoint-egress
-  ##
+  #   environment:
+  #     ## rabbitmq
+  #     - RABBITMQ_AMQP_HOST=${RABBITMQ_AMQP_HOST}
+  #     - RABBITMQ_AMQP_PORT=${RABBITMQ_AMQP_PORT}
+  #     - RABBITMQ_BROKER_USER=${RABBITMQ_BROKER_USER}
+  #     - RABBITMQ_BROKER_PASSWORD=${RABBITMQ_BROKER_PASSWORD}
+  #     - RABBITMQ_INGRESS_ADMIN_USER=${RABBITMQ_INGRESS_ADMIN_USER}
+  #     - RABBITMQ_INGRESS_ADMIN_PASSWORD=${RABBITMQ_INGRESS_ADMIN_PASSWORD}
+  #     - RABBITMQ_BROKER_EXCHANGE=${RABBITMQ_BROKER_EXCHANGE}
+  #     - RABBITMQ_BROKER_TOPIC_EGRESS=${RABBITMQ_BROKER_TOPIC_EGRESS}
+  #     ## grpc-endpoint-egress
+  #     - GRPC_ENDPOINT_EGRESS_BROKER_QUEUE=${GRPC_ENDPOINT_EGRESS_BROKER_QUEUE}
+  # ##########################################
+  # i40-aas-endpoint-resolver:
+  #   image: sapi40/i40-aas-endpoint-resolver
+  #   environment:
+  #     ## rabbitmq
+  #     - RABBITMQ_AMQP_HOST=${RABBITMQ_AMQP_HOST}
+  #     - RABBITMQ_AMQP_PORT=${RABBITMQ_AMQP_PORT}
+  #     - RABBITMQ_BROKER_USER=${RABBITMQ_BROKER_USER}
+  #     - RABBITMQ_BROKER_PASSWORD=${RABBITMQ_BROKER_PASSWORD}
+  #     - RABBITMQ_INGRESS_ADMIN_USER=${RABBITMQ_INGRESS_ADMIN_USER}
+  #     - RABBITMQ_INGRESS_ADMIN_PASSWORD=${RABBITMQ_INGRESS_ADMIN_PASSWORD}
+  #     - RABBITMQ_BROKER_EXCHANGE=${RABBITMQ_BROKER_EXCHANGE}
+  #     - RABBITMQ_BROKER_TOPIC_EGRESS=${RABBITMQ_BROKER_TOPIC_EGRESS}
+  #     ## endpoint-registry
+  #     - ENDPOINT_REGISTRY_PROTOCOL=${ENDPOINT_REGISTRY_PROTOCOL}
+  #     - ENDPOINT_REGISTRY_HOST=${ENDPOINT_REGISTRY_HOST}
+  #     - ENDPOINT_REGISTRY_PORT=${ENDPOINT_REGISTRY_PORT}
+  #     - ENDPOINT_REGISTRY_URL_SUFFIX=${ENDPOINT_REGISTRY_URL_SUFFIX}
+  #     - ENDPOINT_REGISTRY_ADMIN_USER=${ENDPOINT_REGISTRY_ADMIN_USER}
+  #     - ENDPOINT_REGISTRY_ADMIN_PASSWORD=${ENDPOINT_REGISTRY_ADMIN_PASSWORD}
+  #     - ENDPOINT_REGISTRY_BROKER_QUEUE=${ENDPOINT_REGISTRY_BROKER_QUEUE}
+  ##########################################
   i40-aas-data-manager:
     image: sapi40/i40-aas-data-manager
-    env_file:
-      - .compose/envs/adapter-registry.env
-      - .compose/envs/data-manager.env
     ports:
       - "4000:4000"
+    environment:
+      ## adapter-registry
+      - ADAPTER_REGISTRY_PROTOCOL=${ADAPTER_REGISTRY_PROTOCOL}
+      - ADAPTER_REGISTRY_HOST=${ADAPTER_REGISTRY_HOST}
+      - ADAPTER_REGISTRY_PORT=${ADAPTER_REGISTRY_PORT}
+      - ADAPTER_REGISTRY_URL_SUFFIX=${ADAPTER_REGISTRY_URL_SUFFIX}
+      - ADAPTER_REGISTRY_ADMIN_USER=${ADAPTER_REGISTRY_ADMIN_USER}
+      - ADAPTER_REGISTRY_ADMIN_PASSWORD=${ADAPTER_REGISTRY_ADMIN_PASSWORD}
+      ## data-manager
+      - DATA_MANAGER_PROTOCOL=${DATA_MANAGER_PROTOCOL}
+      - DATA_MANAGER_HOST=${DATA_MANAGER_HOST}
+      - DATA_MANAGER_PORT=${DATA_MANAGER_PORT}
+      - DATA_MANAGER_SUBMODELS_ROUTE=${DATA_MANAGER_SUBMODELS_ROUTE}
+      - DATA_MANAGER_USER=${DATA_MANAGER_USER}
+      - DATA_MANAGER_PASSWORD=${DATA_MANAGER_PASSWORD}
+  ##########################################
   i40-aas-endpoint-registry:
     image: sapi40/i40-aas-endpoint-registry
-    env_file:
-      - .compose/envs/postgres.env
-      - .compose/envs/endpoint-registry.env
     ports:
       - "4400:4400"
+    environment:
+      ## postgres
+      - ENDPOINT_REGISTRY_POSTGRES_HOST=${ENDPOINT_REGISTRY_POSTGRES_HOST}
+      - ENDPOINT_REGISTRY_POSTGRES_PORT=${ENDPOINT_REGISTRY_POSTGRES_PORT}
+      - ENDPOINT_REGISTRY_POSTGRES_USER=${ENDPOINT_REGISTRY_POSTGRES_USER}
+      - ENDPOINT_REGISTRY_POSTGRES_PASSWORD=${ENDPOINT_REGISTRY_POSTGRES_PASSWORD}
+      - ENDPOINT_REGISTRY_POSTGRES_DB=${ENDPOINT_REGISTRY_POSTGRES_DB}
+      ## endpoint-registry
+      - ENDPOINT_REGISTRY_PROTOCOL=${ENDPOINT_REGISTRY_PROTOCOL}
+      - ENDPOINT_REGISTRY_HOST=${ENDPOINT_REGISTRY_HOST}
+      - ENDPOINT_REGISTRY_PORT=${ENDPOINT_REGISTRY_PORT}
+      - ENDPOINT_REGISTRY_URL_SUFFIX=${ENDPOINT_REGISTRY_URL_SUFFIX}
+      - ENDPOINT_REGISTRY_ADMIN_USER=${ENDPOINT_REGISTRY_ADMIN_USER}
+      - ENDPOINT_REGISTRY_ADMIN_PASSWORD=${ENDPOINT_REGISTRY_ADMIN_PASSWORD}
+      - ENDPOINT_REGISTRY_BROKER_QUEUE=${ENDPOINT_REGISTRY_BROKER_QUEUE}
+  ##########################################
   i40-aas-adapter-registry:
     image: sapi40/i40-aas-adapter-registry
     ports:
       - "4500:4500"
-    env_file:
-      - .compose/envs/adapter-registry.env
+    environment:
+      ## adapter-registry
+      - ADAPTER_REGISTRY_PROTOCOL=${ADAPTER_REGISTRY_PROTOCOL}
+      - ADAPTER_REGISTRY_HOST=${ADAPTER_REGISTRY_HOST}
+      - ADAPTER_REGISTRY_PORT=${ADAPTER_REGISTRY_PORT}
+      - ADAPTER_REGISTRY_URL_SUFFIX=${ADAPTER_REGISTRY_URL_SUFFIX}
+      - ADAPTER_REGISTRY_ADMIN_USER=${ADAPTER_REGISTRY_ADMIN_USER}
+      - ADAPTER_REGISTRY_ADMIN_PASSWORD=${ADAPTER_REGISTRY_ADMIN_PASSWORD}
+  ##########################################
   i40-aas-storage-adapter-mongodb:
     image: sapi40/i40-aas-storage-adapter-mongodb
     ports:
@@ -66,36 +196,68 @@ services:
     env_file:
       - .compose/envs/mongodb.env
       - .compose/envs/storage-adapter-mongodb.env
+  ##########################################
   i40-aas-initializer:
     image: sapi40/i40-aas-initializer
-    build:
-      context: docker/initializer
-      dockerfile: Dockerfile
-    env_file:
-      - .compose/envs/postgres.env
-      - .compose/envs/rabbitmq.env
-      - .compose/envs/mongodb.env
-      - .compose/envs/data-manager.env
-      - .compose/envs/adapter-registry.env
-      - .compose/envs/endpoint-registry.env
-      - .compose/envs/https-endpoint-ingress.env
     volumes:
       - .compose/volumes/initializer/:/initializer
+    environment:
+      ## postgres
+      - ENDPOINT_REGISTRY_POSTGRES_HOST=${ENDPOINT_REGISTRY_POSTGRES_HOST}
+      - ENDPOINT_REGISTRY_POSTGRES_PORT=${ENDPOINT_REGISTRY_POSTGRES_PORT}
+      ## rabbitmq
+      - RABBITMQ_AMQP_HOST=${RABBITMQ_AMQP_HOST}
+      - RABBITMQ_AMQP_PORT=${RABBITMQ_AMQP_PORT}
+      ## mongodb
+      - MONGODB_HOST=${MONGODB_HOST}
+      - MONGODB_PORT=${MONGODB_PORT}
+      ## data-manager
+      - DATA_MANAGER_HOST=${DATA_MANAGER_HOST}
+      - DATA_MANAGER_PORT=${DATA_MANAGER_PORT}
+      ## adapter-registry
+      - ADAPTER_REGISTRY_HOST=${ADAPTER_REGISTRY_HOST}
+      - ADAPTER_REGISTRY_PORT=${ADAPTER_REGISTRY_PORT}
+      ## endpoint-registry
+      - ENDPOINT_REGISTRY_HOST=${ENDPOINT_REGISTRY_HOST}
+      - ENDPOINT_REGISTRY_PORT=${ENDPOINT_REGISTRY_PORT}
+      ## endpoint-resolver
+      # - =${}
+      ## https-endpoint-ingress
+      - HTTPS_ENDPOINT_INGRESS_PROTOCOL=${HTTPS_ENDPOINT_INGRESS_PROTOCOL}
+      - HTTPS_ENDPOINT_INGRESS_HOST=${HTTPS_ENDPOINT_INGRESS_HOST}
+      ## grpc-endpoint-ingress
+      - GRPC_ENDPOINT_INGRESS_HOST=${GRPC_ENDPOINT_INGRESS_HOST}
+      - GRPC_ENDPOINT_INGRESS_PORT=${GRPC_ENDPOINT_INGRESS_PORT}
+      ## grpc-endpoint-egress
+      # - =${}
 
-
-  ## used services
+  ########################################################
+  #### third party services
+  ##########################################
   mongodb:
     image: mongo
     ports:
       - "27017:27017"
-    env_file:
-      - .compose/envs/mongodb.env
+    environment:
+      ## mongodb
+      - MONGODB_HOST=${MONGODB_HOST}
+      - MONGODB_PORT=${MONGODB_PORT}
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
+  ##########################################
   postgres:
     image: postgres:alpine
     ports:
       - "5432:5432"
-    env_file:
-      - .compose/envs/postgres.env
+    environment:
+      ## postgres
+      - ENDPOINT_REGISTRY_POSTGRES_HOST=${ENDPOINT_REGISTRY_POSTGRES_HOST}
+      - ENDPOINT_REGISTRY_POSTGRES_PORT=${ENDPOINT_REGISTRY_POSTGRES_PORT}
+      - ENDPOINT_REGISTRY_POSTGRES_USER=${ENDPOINT_REGISTRY_POSTGRES_USER}
+      - ENDPOINT_REGISTRY_POSTGRES_PASSWORD=${ENDPOINT_REGISTRY_POSTGRES_PASSWORD}
+      - ENDPOINT_REGISTRY_POSTGRES_DB=${ENDPOINT_REGISTRY_POSTGRES_DB}
+  ##########################################
   rabbitmq:
     image: rabbitmq:3-management
     ports:

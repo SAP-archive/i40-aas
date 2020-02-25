@@ -1,50 +1,131 @@
 version: '3.7'
 services:
-  ## Provide build instructions for all i40-aas images
+  ########################################################
+  #### Provide build instructions for all i40-aas images
+  ##########################################
   i40-aas-onboarding-skill:
     build:
       context: apps/onboarding-skill
       dockerfile: ../../docker/onboarding-skill/Dockerfile
+  ##########################################
   i40-aas-https-endpoint-ingress:
     build:
       context: apps/https-endpoint-ingress
       dockerfile: ../../docker/https-endpoint-ingress/Dockerfile
+  ##########################################
   i40-aas-https-endpoint-egress:
     build:
       context: apps/https-endpoint-egress
       dockerfile: ../../docker/https-endpoint-egress/Dockerfile
-  ##
+  ##########################################
   # i40-aas-grpc-endpoint-ingress:
   #   build:
   #     context: apps
   #     dockerfile: ../docker/grpc-endpoint-ingress/Dockerfile
+  ##########################################
   # i40-aas-grpc-endpoint-egress:
   #   build:
   #     context: apps
   #     dockerfile: ../docker/grpc-endpoint-egress/Dockerfile
-  ##
+  ##########################################
+  # i40-aas-endpoint-resolver:
+  #   build:
+  #     context: apps
+  #     dockerfile: ../docker/endpoint-resolver/Dockerfile
+  ##########################################
+  i40-aas-initializer:
+    build:
+      context: docker/initializer
+      dockerfile: Dockerfile
+  ##########################################
   i40-aas-data-manager:
     build:
       context: apps/data-manager
       dockerfile: ../../docker/data-manager/Dockerfile
+  ##########################################
   i40-aas-endpoint-registry:
     build:
       context: apps/endpoint-registry
       dockerfile: ../../docker/endpoint-registry/Dockerfile
+    ## TODO
+    # logging:
+    #   driver: "fluentd"
+    #   options:
+    #     fluentd-address: localhost:24224
+    #     fluentd-async-connect: 'true'
+    #     fluentd-retry-wait: '1s'
+    #     fluentd-max-retries: '100'
+    #     tag: i40-aas-initializer
+  ##########################################
   i40-aas-adapter-registry:
     build:
       context: apps/adapter-registry
       dockerfile: ../../docker/adapter-registry/Dockerfile
+  ##########################################
   i40-aas-storage-adapter-mongodb:
     build:
       context: apps/storage-adapter-mongodb
       dockerfile: ../../docker/storage-adapter-mongodb/Dockerfile
 
-  ## Additional services:
+
+  ########################################################
+  #### Additional services:
+  ##########################################
   ## Monitor Postgres DB
   pgadmin:
     image: dpage/pgadmin4
     ports:
       - "8080:80"
-    env_file:
-      - .compose/envs/pgadmin.env
+    environment:
+      - ENDPOINT_REGISTRY_PGADMIN_HOST=${ENDPOINT_REGISTRY_PGADMIN_HOST}
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+
+
+  ########################################################
+  #### Logging (TODO)
+  ##########################################
+  # fluentd:
+  #   build:
+  #     context: docker/fluentd
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - .compose/volumes/fluentd/conf:/fluentd/etc/conf
+  #   links:
+  #     - "elasticsearch"
+  #   ports:
+  #     - "24224:24224"
+  #     - "24224:24224/udp"
+  # ##########################################
+  # elasticsearch:
+  #   image: elasticsearch:7.6.0
+  #   ports:
+  #     - "9200:9200"
+  #     - "9300:9300"
+  #   environment:
+  #     - discovery.type=single-node
+  #   logging:
+  #     driver: fluentd
+  #     options:
+  #         fluentd-address: localhost:24224
+  #         fluentd-async-connect: 'true'
+  #         fluentd-retry-wait: '1s'
+  #         fluentd-max-retries: '100'
+  # ##########################################
+  # kibana:
+  #   image: kibana:7.6.0
+  #   links:
+  #     - "elasticsearch"
+  #   ports:
+  #     - "5601:5601"
+  #   logging:
+  #     driver: fluentd
+  #     options:
+  #         fluentd-address: localhost:24224
+  #         fluentd-async-connect: 'true'
+  #         fluentd-retry-wait: '1s'
+  #         fluentd-max-retries: '30'
+
+  ########################################################
+  #### Utilization monitoring (TODO)
+  ##########################################

@@ -10,8 +10,9 @@ import (
 	"syscall"
 	"time"
 
-	"../go/pkg/amenityutils"
+	"../go/pkg/amqpclient"
 	"../go/pkg/grpcendpoint"
+	"../go/pkg/utils"
 )
 
 func main() {
@@ -19,7 +20,7 @@ func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	var (
-		AMQPCfg        grpcendpoint.AMQPClientConfig
+		AMQPCfg        amqpclient.Config
 		GRPCSrvCfg     grpcendpoint.GRPCServerConfig
 		GRPCIngressCfg grpcendpoint.GRPCIngressConfig
 		GRPCIngress    grpcendpoint.GRPCIngress
@@ -27,12 +28,12 @@ func main() {
 
 	// amqpPort, _ := strconv.Atoi(os.Getenv("RABBITMQ_AMQP_PORT"))
 	amqpPort := 5672
-	AMQPCfg = grpcendpoint.AMQPClientConfig{
+	AMQPCfg = amqpclient.Config{
 		Host:     "localhost", //os.Getenv("RABBITMQ_AMQP_HOST"),
 		Port:     amqpPort,
-		User:     "guest",     //os.Getenv("RABBITMQ_BROKER_USER"),
-		Password: "guest",     //os.Getenv("RABBITMQ_BROKER_PASSWORD"),
-		Exchange: "amq.topic", //os.Getenv("RABBITMQ_BROKER_EXCHANGE"),
+		User:     "guest",  //os.Getenv("RABBITMQ_BROKER_USER"),
+		Password: "guest",  //os.Getenv("RABBITMQ_BROKER_PASSWORD"),
+		Exchange: "egress", //os.Getenv("RABBITMQ_BROKER_EXCHANGE"),
 		Queue:    "",
 	}
 
@@ -52,7 +53,7 @@ func main() {
 	}
 
 	services := []string{fmt.Sprintf("%s:%s", AMQPCfg.Host, strconv.Itoa(amqpPort))}
-	amenityutils.WaitForServices(services, time.Duration(60)*time.Second)
+	utils.WaitForServices(services, time.Duration(60)*time.Second)
 
 	GRPCIngress = grpcendpoint.NewGRPCIngress(GRPCIngressCfg)
 
