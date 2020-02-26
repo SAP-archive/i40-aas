@@ -1,4 +1,5 @@
 require('dotenv').config({ path: 'tests/.env' });
+
 import { expect } from 'chai';
 import {
   readRecordBySemanticProtocolAndRole,
@@ -10,7 +11,6 @@ import {
 import { ConversationMember, IdTypeEnum } from 'i40-aas-objects';
 import { IRegisterAas } from '../src/services/registry/daos/interfaces/IApiRequests';
 import { TTarget } from '../src/services/registry/daos/interfaces/IRegistryResultSet';
-import fs from 'fs';
 
 function execShellCommand(cmd: any) {
   const exec = require('child_process').exec;
@@ -18,18 +18,36 @@ function execShellCommand(cmd: any) {
     exec(cmd, (error: any, stdout: any, stderr: any) => {
       if (error) {
         console.warn(error);
+      } else {
+        console.log('command executed correctly');
       }
+      //console.log(`stdout: ${stdout}`);
       resolve(stdout ? stdout : stderr);
     });
   });
 }
 
+describe('listAllEndpoints', function() {
+  before(async () => {
+    console.log(await execShellCommand('sh ./prepareDB.sh'));
+  });
+
+  it('returns all properties and values for a single endpoint', async function() {
+    console.log('DB:' + process.env['ENDPOINT_REGISTRY_POSTGRES_DB']);
+
+    var x = await readRecordBySemanticProtocolAndRole(
+      'i40:registry-semanticProtocol/onboarding',
+      'Approver'
+    );
+    expect(x)
+      .to.be.an('array')
+      .with.length.greaterThan(0);
+  });
+});
+
 describe('read endpoints from pg', function() {
   it('returns endpoints by role', async function() {
-    console.log(
-      'Password:' + process.env['ENDPOINT_REGISTRY_POSTGRES_PASSWORD']
-    );
-    await execShellCommand('sh ./prepareDB.sh');
+    console.log(await execShellCommand('sh ./prepareDB.sh'));
     var x = await readRecordBySemanticProtocolAndRole(
       'i40:registry-semanticProtocol/onboarding',
       'Approver'

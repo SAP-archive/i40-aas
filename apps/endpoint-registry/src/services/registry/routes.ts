@@ -132,16 +132,16 @@ export default [
             )
           );
         }
-        if (req.query.receiverRole && req.query.protocolName) {
+        if (req.query.receiverRole && req.query.semanticProtocol) {
           res.json(
             await getEndpointsByReceiverRole(
               req.query.receiverRole,
-              req.query.protocolName
+              req.query.semanticProtocol
             )
           );
         }
         throw new RegistryError(
-          'Mandatory query parameters: receiverId and receiverIdType, or receiverRole and protocolName',
+          'Mandatory query parameters: receiverId and receiverIdType, or receiverRole and semanticProtocol',
           422
         );
       } catch (e) {
