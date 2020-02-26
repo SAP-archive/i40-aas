@@ -27,13 +27,34 @@ function execShellCommand(cmd: any) {
   });
 }
 
+async function insertIntoAasRole(aasId: string, roleId: string) {
+  await this.client.query(
+    ' INSERT INTO public.aas_role( "aasId", "roleId") VALUES ($1, $2);',
+    [aasId, roleId]
+  );
+}
+
+async function insertIntoEndpoints(
+  endpointId: string,
+  url: string,
+  protocolName: string,
+  protocolVersion: string,
+  aasId: string,
+  target: string
+) {
+  this.client.query(
+    'INSERT INTO public.endpoints( "URL", protocol_name, protocol_version, "aasId",target) VALUES ($1, $2, $3, $4, $5);',
+    [url, protocolName, protocolVersion, aasId, target]
+  );
+}
+
 describe('listAllEndpoints', function() {
   before(async () => {
     console.log(await execShellCommand('sh ./prepareDB.sh'));
   });
 
   it('returns all properties and values for a single endpoint', async function() {
-    console.log('DB:' + process.env['ENDPOINT_REGISTRY_POSTGRES_DB']);
+    //console.log('DB:' + process.env['ENDPOINT_REGISTRY_POSTGRES_DB']);
 
     var x = await readRecordBySemanticProtocolAndRole(
       'i40:registry-semanticProtocol/onboarding',
@@ -47,7 +68,6 @@ describe('listAllEndpoints', function() {
 
 describe('read endpoints from pg', function() {
   it('returns endpoints by role', async function() {
-    console.log(await execShellCommand('sh ./prepareDB.sh'));
     var x = await readRecordBySemanticProtocolAndRole(
       'i40:registry-semanticProtocol/onboarding',
       'Approver'
