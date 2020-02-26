@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/peer"
 
-	interaction "../../../proto/interaction"
+	interaction "../interaction"
 )
 
 // GRPCServerConfig struct

@@ -1,4 +1,4 @@
-package utils
+package interaction
 
 import (
 	"encoding/json"
@@ -6,12 +6,10 @@ import (
 	"github.com/rs/zerolog/log"
 
 	"github.com/golang/protobuf/jsonpb"
-
-	interaction "../../../proto/interaction"
 )
 
 // ConvertRawJSONToInteractionMessage TODO
-func ConvertRawJSONToInteractionMessage(jsonRaw []byte) *interaction.InteractionMessage {
+func ConvertRawJSONToInteractionMessage(jsonRaw []byte) *InteractionMessage {
 	dat := make(map[string]interface{})
 	if err := json.Unmarshal(jsonRaw, &dat); err != nil {
 		log.Error().Err(err).Msg("unable to ConvertRawJSONToInteractionMessage: Unmarshal jsonRaw")
@@ -24,7 +22,7 @@ func ConvertRawJSONToInteractionMessage(jsonRaw []byte) *interaction.Interaction
 
 	jsonFrame := string(jsonFrameRaw)
 
-	protoFrame := &interaction.Frame{}
+	protoFrame := &Frame{}
 	jsonpb.UnmarshalString(jsonFrame, protoFrame)
 
 	interactionElementsRaw, err := json.Marshal(dat["interactionElements"])
@@ -32,7 +30,7 @@ func ConvertRawJSONToInteractionMessage(jsonRaw []byte) *interaction.Interaction
 		log.Error().Err(err).Msg("unable to ConvertRawJSONToInteractionMessage: Marshal dat[\"interactionElements\"]")
 	}
 
-	protoMessage := &interaction.InteractionMessage{
+	protoMessage := &InteractionMessage{
 		Frame:               protoFrame,
 		InteractionElements: interactionElementsRaw,
 	}
@@ -41,7 +39,7 @@ func ConvertRawJSONToInteractionMessage(jsonRaw []byte) *interaction.Interaction
 }
 
 // ConvertInteractionMessageToRawJSON TODO
-func ConvertInteractionMessageToRawJSON(protoMessage *interaction.InteractionMessage) []byte {
+func ConvertInteractionMessageToRawJSON(protoMessage *InteractionMessage) []byte {
 	protoFrame := protoMessage.Frame
 	marshaler := jsonpb.Marshaler{}
 	jsonFrame, err := marshaler.MarshalToString(protoFrame)

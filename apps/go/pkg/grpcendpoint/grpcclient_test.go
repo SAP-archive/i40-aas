@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	interaction "../../../proto/interaction"
+	interaction "../interaction"
 	"github.com/rs/zerolog/log"
 )
 

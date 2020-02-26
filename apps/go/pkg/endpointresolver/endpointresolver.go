@@ -12,7 +12,7 @@ import (
 	"github.com/rs/zerolog/log"
 
 	amqpclient "../amqpclient"
-	utils "../utils"
+	interaction "../interaction"
 )
 
 // ResolverMsg struct
@@ -79,7 +79,7 @@ func (r *EndpointResolver) Shutdown(ctx context.Context) {
 }
 
 func (r *EndpointResolver) processGenericEgressMsg(msg []byte) {
-	iMsg := utils.ConvertRawJSONToInteractionMessage(msg)
+	iMsg := interaction.ConvertRawJSONToInteractionMessage(msg)
 
 	receiverRole := iMsg.Frame.Receiver.Role.Name
 	receiverID := iMsg.Frame.Receiver.Identification.Id

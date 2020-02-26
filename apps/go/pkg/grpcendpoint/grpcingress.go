@@ -6,7 +6,7 @@ import (
 	"github.com/rs/zerolog/log"
 
 	amqpclient "../amqpclient"
-	utils "../utils"
+	interaction "../interaction"
 )
 
 // GRPCIngressConfig struct
@@ -40,7 +40,7 @@ func (i *GRPCIngress) Init() {
 	go func() {
 		for iMsg := range i.grpcServer.iMessageQueue {
 			log.Debug().Msgf("Got new interactionMessage: %v", iMsg)
-			jsonMessage := utils.ConvertInteractionMessageToRawJSON(iMsg)
+			jsonMessage := interaction.ConvertInteractionMessageToRawJSON(iMsg)
 
 			f := iMsg.Frame
 			routingKey := f.SemanticProtocol + "." + f.Receiver.Role.Name + "." + f.Type

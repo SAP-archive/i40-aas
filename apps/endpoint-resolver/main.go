@@ -14,8 +14,8 @@ import (
 	"github.com/rs/zerolog/log"
 
 	"../go/pkg/amqpclient"
+	utils "../go/pkg/containerutils"
 	"../go/pkg/endpointresolver"
-	"../go/pkg/utils"
 )
 
 func main() {

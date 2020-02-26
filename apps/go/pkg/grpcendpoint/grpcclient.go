@@ -6,7 +6,7 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	interaction "../../../proto/interaction"
+	interaction "../interaction"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 )

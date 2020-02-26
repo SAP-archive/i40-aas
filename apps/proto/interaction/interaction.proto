@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package interaction;
 
-// TODO: Change to AAS Service?
 service InteractionService {
   rpc UploadInteractionMessage(InteractionMessage) returns (InteractionStatus) {}
 }
@@ -44,8 +43,4 @@ message Role {
 message Identification {
   string id = 1;
   string idType = 2;
-}
-
-message InteractionElement {
-
 }

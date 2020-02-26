@@ -12,7 +12,7 @@ import (
 
 	amqpclient "../amqpclient"
 	endpointresolver "../endpointresolver"
-	utils "../utils"
+	interaction "../interaction"
 )
 
 // GRPCEgressConfig struct
@@ -55,7 +55,7 @@ func (e *GRPCEgress) Init() {
 				log.Error().Err(err).Msgf("unable to Unmarshal msg to ResolverMsg: %s", string(msg))
 			}
 
-			iMsg := utils.ConvertRawJSONToInteractionMessage(rMsg.EgressPayload)
+			iMsg := interaction.ConvertRawJSONToInteractionMessage(rMsg.EgressPayload)
 
 			if rMsg.ReceiverType == "cloud" {
 
