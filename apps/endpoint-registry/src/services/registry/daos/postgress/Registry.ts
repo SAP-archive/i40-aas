@@ -301,6 +301,7 @@ class Registry implements iRegistry {
 
   async listAllEndpoints(): Promise<Array<RegistryResultSet>> {
     try {
+      //TODO: Nested SELECTS make it hard to read, first level only required to disambiguate idType?
       var s = `SELECT  "aasId", "aasIdType" ,"idType" as "assetIdType", "URL", "protocol_name", "protocol_version", "roleId","assetId","target" FROM (SELECT "aasId", "idType" as "aasIdType", "URL", "protocol_name", "protocol_version", "roleId","assetId", "target"
       FROM (SELECT *
           FROM public.aas_role
@@ -314,6 +315,8 @@ class Registry implements iRegistry {
       const queryResult = await this.client.query(s);
       const queryResultRows: Array<IJointRecord> = queryResult.rows;
       var recordsByAasId: IData = {};
+      //TODO: better to use map here in order to avoid if statement
+      //inside loop
       queryResultRows.forEach(function(row: IJointRecord) {
         if (!recordsByAasId[row.aasId]) {
           recordsByAasId[row.aasId] = new RegistryResultSet(
@@ -339,6 +342,8 @@ class Registry implements iRegistry {
           );
         }
       });
+      //TODO: this could be combined with the traversal just above
+      //it is not clear why recordsByAasId is needed as an intermediate store
       var result: Array<RegistryResultSet> = [];
       Object.keys(recordsByAasId).forEach(function(key) {
         result.push(recordsByAasId[key]);
