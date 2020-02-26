@@ -4,7 +4,8 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "test": "mocha -r ts-node/register tests/**/*.test.ts",
+    "test": "mocha --require ts-node/register --exit test/unit/**/*.spec.ts",
+    "integration-test": "mocha --require ts-node/register --exit test/integration/**/*.spec.ts",
     "build": "tsc",
     "prestart": "./prepareDB.sh",
     "start": "node ./dist/server.js",

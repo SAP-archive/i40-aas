@@ -160,6 +160,7 @@ async function getAllEndpointsList(): Promise<Array<IRegistryResultSet>> {
     console.log(result);
     return result;
   } catch (e) {
+    console.log(e);
     throw e;
   } finally {
     registryDao.release();

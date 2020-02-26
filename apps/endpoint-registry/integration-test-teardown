@@ -1,2 +1,1 @@
-docker stop some-rabbit
-docker rm some-rabbit
+docker stop some-postgres

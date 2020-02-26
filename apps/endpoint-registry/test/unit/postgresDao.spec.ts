@@ -1,5 +1,5 @@
-require('dotenv').config({ path: 'tests/.env' });
-
+import { config } from 'dotenv';
+console.log(config({ path: 'tests/env.list' }));
 import { expect } from 'chai';
 import {
   readRecordBySemanticProtocolAndRole,
@@ -7,64 +7,10 @@ import {
   getEndpointsByReceiverRole,
   register,
   deleteRecordByIdentifier
-} from '../src/services/registry/registry-api';
+} from '../../src/services/registry/registry-api';
 import { ConversationMember, IdTypeEnum } from 'i40-aas-objects';
-import { IRegisterAas } from '../src/services/registry/daos/interfaces/IApiRequests';
-import { TTarget } from '../src/services/registry/daos/interfaces/IRegistryResultSet';
-
-function execShellCommand(cmd: any) {
-  const exec = require('child_process').exec;
-  return new Promise((resolve, reject) => {
-    exec(cmd, (error: any, stdout: any, stderr: any) => {
-      if (error) {
-        console.warn(error);
-      } else {
-        console.log('command executed correctly');
-      }
-      //console.log(`stdout: ${stdout}`);
-      resolve(stdout ? stdout : stderr);
-    });
-  });
-}
-
-async function insertIntoAasRole(aasId: string, roleId: string) {
-  await this.client.query(
-    ' INSERT INTO public.aas_role( "aasId", "roleId") VALUES ($1, $2);',
-    [aasId, roleId]
-  );
-}
-
-async function insertIntoEndpoints(
-  endpointId: string,
-  url: string,
-  protocolName: string,
-  protocolVersion: string,
-  aasId: string,
-  target: string
-) {
-  this.client.query(
-    'INSERT INTO public.endpoints( "URL", protocol_name, protocol_version, "aasId",target) VALUES ($1, $2, $3, $4, $5);',
-    [url, protocolName, protocolVersion, aasId, target]
-  );
-}
-
-describe('listAllEndpoints', function() {
-  before(async () => {
-    console.log(await execShellCommand('sh ./prepareDB.sh'));
-  });
-
-  it('returns all properties and values for a single endpoint', async function() {
-    //console.log('DB:' + process.env['ENDPOINT_REGISTRY_POSTGRES_DB']);
-
-    var x = await readRecordBySemanticProtocolAndRole(
-      'i40:registry-semanticProtocol/onboarding',
-      'Approver'
-    );
-    expect(x)
-      .to.be.an('array')
-      .with.length.greaterThan(0);
-  });
-});
+import { IRegisterAas } from '../../src/services/registry/daos/interfaces/IApiRequests';
+import { TTarget } from '../../src/services/registry/daos/interfaces/IRegistryResultSet';
 
 describe('read endpoints from pg', function() {
   it('returns endpoints by role', async function() {
@@ -136,7 +82,7 @@ describe('delete registered enntries based on the aasId', function() {
       endpoints: [
         {
           url: 'https://foo-bar/ingress',
-          protocol: 'https',
+          protocol: 'httss',
           protocolVersion: '1.1',
           target: TTarget.cloud
         }
