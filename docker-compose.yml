@@ -6,6 +6,9 @@ services:
   i40-aas-onboarding-skill:
     image: sapi40/i40-aas-onboarding-skill
     environment:
+      ## logging
+      - LOG_LEVEL=${LOG_LEVEL}
+      - LOG_OUTPUT=${LOG_OUTPUT}
       ## mongodb
       - MONGODB_HOST=${MONGODB_HOST}
       - MONGODB_PORT=${MONGODB_PORT}
@@ -41,6 +44,9 @@ services:
     ports:
       - "2000:2000"
     environment:
+      ## logging
+      - LOG_LEVEL=${LOG_LEVEL}
+      - LOG_OUTPUT=${LOG_OUTPUT}
       ## rabbitmq
       - RABBITMQ_AMQP_HOST=${RABBITMQ_AMQP_HOST}
       - RABBITMQ_AMQP_PORT=${RABBITMQ_AMQP_PORT}
@@ -60,6 +66,9 @@ services:
   i40-aas-https-endpoint-egress:
     image: sapi40/i40-aas-https-endpoint-egress
     environment:
+      ## logging
+      - LOG_LEVEL=${LOG_LEVEL}
+      - LOG_OUTPUT=${LOG_OUTPUT}
       ## rabbitmq
       - RABBITMQ_AMQP_HOST=${RABBITMQ_AMQP_HOST}
       - RABBITMQ_AMQP_PORT=${RABBITMQ_AMQP_PORT}
@@ -85,6 +94,9 @@ services:
   #   volumes:
   #     - .compose/volumes/grpc-endpoint-ingress:/grpc-endpoint-ingress
   #   environment:
+  #     ## logging
+  #     - LOG_LEVEL=${LOG_LEVEL}
+  #     - LOG_OUTPUT=${LOG_OUTPUT}
   #     ## rabbitmq
   #     - RABBITMQ_AMQP_HOST=${RABBITMQ_AMQP_HOST}
   #     - RABBITMQ_AMQP_PORT=${RABBITMQ_AMQP_PORT}
@@ -103,6 +115,9 @@ services:
   #   volumes:
   #     - .compose/volumes/grpc-endpoint-egress:/grpc-endpoint-egress
   #   environment:
+  #     ## logging
+  #     - LOG_LEVEL=${LOG_LEVEL}
+  #     - LOG_OUTPUT=${LOG_OUTPUT}
   #     ## rabbitmq
   #     - RABBITMQ_AMQP_HOST=${RABBITMQ_AMQP_HOST}
   #     - RABBITMQ_AMQP_PORT=${RABBITMQ_AMQP_PORT}
@@ -118,6 +133,9 @@ services:
   # i40-aas-endpoint-resolver:
   #   image: sapi40/i40-aas-endpoint-resolver
   #   environment:
+  #     ## logging
+  #     - LOG_LEVEL=${LOG_LEVEL}
+  #     - LOG_OUTPUT=${LOG_OUTPUT}
   #     ## rabbitmq
   #     - RABBITMQ_AMQP_HOST=${RABBITMQ_AMQP_HOST}
   #     - RABBITMQ_AMQP_PORT=${RABBITMQ_AMQP_PORT}
@@ -141,6 +159,9 @@ services:
     ports:
       - "4000:4000"
     environment:
+      ## logging
+      - LOG_LEVEL=${LOG_LEVEL}
+      - LOG_OUTPUT=${LOG_OUTPUT}
       ## adapter-registry
       - ADAPTER_REGISTRY_PROTOCOL=${ADAPTER_REGISTRY_PROTOCOL}
       - ADAPTER_REGISTRY_HOST=${ADAPTER_REGISTRY_HOST}
@@ -161,6 +182,9 @@ services:
     ports:
       - "4400:4400"
     environment:
+      ## logging
+      - LOG_LEVEL=${LOG_LEVEL}
+      - LOG_OUTPUT=${LOG_OUTPUT}
       ## postgres
       - ENDPOINT_REGISTRY_POSTGRES_HOST=${ENDPOINT_REGISTRY_POSTGRES_HOST}
       - ENDPOINT_REGISTRY_POSTGRES_PORT=${ENDPOINT_REGISTRY_POSTGRES_PORT}
@@ -181,6 +205,9 @@ services:
     ports:
       - "4500:4500"
     environment:
+      ## logging
+      - LOG_LEVEL=${LOG_LEVEL}
+      - LOG_OUTPUT=${LOG_OUTPUT}
       ## adapter-registry
       - ADAPTER_REGISTRY_PROTOCOL=${ADAPTER_REGISTRY_PROTOCOL}
       - ADAPTER_REGISTRY_HOST=${ADAPTER_REGISTRY_HOST}
@@ -194,6 +221,9 @@ services:
     ports:
       - "3100:3100"
     environment:
+      ## logging
+      - LOG_LEVEL=${LOG_LEVEL}
+      - LOG_OUTPUT=${LOG_OUTPUT}
       ## mongodb
       - MONGODB_HOST=${MONGODB_HOST}
       - MONGODB_PORT=${MONGODB_PORT}
@@ -209,6 +239,9 @@ services:
     volumes:
       - .compose/volumes/initializer/:/initializer
     environment:
+      ## logging
+      - LOG_LEVEL=${LOG_LEVEL}
+      - LOG_OUTPUT=${LOG_OUTPUT}
       ## postgres
       - ENDPOINT_REGISTRY_POSTGRES_HOST=${ENDPOINT_REGISTRY_POSTGRES_HOST}
       - ENDPOINT_REGISTRY_POSTGRES_PORT=${ENDPOINT_REGISTRY_POSTGRES_PORT}

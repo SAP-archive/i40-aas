@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 	"strconv"
-	"strings"
+
+	"github.com/rs/zerolog/log"
 
 	amqpclient "../amqpclient"
 	utils "../utils"
@@ -18,8 +18,7 @@ import (
 // ResolverMsg struct
 type ResolverMsg struct {
 	EgressPayload []byte
-	Host          string
-	Port          int
+	ReceiverURL   string
 	ReceiverType  string
 }
 
@@ -82,71 +81,81 @@ func (r *EndpointResolver) Shutdown(ctx context.Context) {
 func (r *EndpointResolver) processGenericEgressMsg(msg []byte) {
 	iMsg := utils.ConvertRawJSONToInteractionMessage(msg)
 
-	role := iMsg.Frame.Receiver.Role.Name
-	receiver := "{\"role\":{\"name\":\"" + fmt.Sprintf("%v", role) + "\"}}"
+	receiverRole := iMsg.Frame.Receiver.Role.Name
+	receiverID := iMsg.Frame.Receiver.Identification.Id
+	receiverType := iMsg.Frame.Receiver.Identification.IdType
 	semanticprotocol := iMsg.Frame.SemanticProtocol
 
-	registryResp := queryEndpointRegistry(receiver, semanticprotocol, r.config.EndpointRegistryConfig)
-	var dat []interface{}
-	if err := json.Unmarshal(registryResp, &dat); err != nil {
-		log.Printf("unable to unmarshal msg: %s", err)
-	}
+	registryResp := queryEndpointRegistry(receiverID, receiverType, receiverRole, semanticprotocol, r.config.EndpointRegistryConfig)
+	if string(registryResp) == "[]" || registryResp == nil {
+		log.Warn().Msgf("queryEndpointRegistry unsuccessful: %v", string(registryResp))
+	} else {
+		var dat []interface{}
+		if err := json.Unmarshal(registryResp, &dat); err != nil {
+			log.Error().Err(err).Msg("unable to unmarshal msg")
+		}
 
-	// loop over all AAS
-	for _, aas := range dat {
-		for _, endpoint := range aas.(map[string]interface{})["endpoints"].([]interface{}) {
-			if endpoint.(map[string]interface{})["protocol"] == "grpc" {
-				if true {
-					// TODO Rework - this will 100% error eventually
-					urlHost := fmt.Sprintf("%v", endpoint.(map[string]interface{})["url"])
-					host := strings.Split(urlHost, ":")[0]
-					port, _ := strconv.Atoi(strings.Split(urlHost, ":")[1])
+		// loop over all AAS
+		for _, aas := range dat {
+			for _, endpoint := range aas.(map[string]interface{})["endpoints"].([]interface{}) {
+				if endpoint.(map[string]interface{})["protocol"] == "grpc" {
+					if true {
+						urlHost := fmt.Sprintf("%v", endpoint.(map[string]interface{})["url"])
 
-					resolverMsg := ResolverMsg{
-						EgressPayload: msg,
-						Host:          host,
-						Port:          port,
-						ReceiverType:  "cloud",
+						resolverMsg := ResolverMsg{
+							EgressPayload: msg,
+							ReceiverURL:   urlHost,
+							ReceiverType:  "cloud",
+						}
+						payload, err := json.Marshal(resolverMsg)
+						if err != nil {
+							log.Error().Err(err).Msg("unable to Marshal resolverMsg")
+						}
+
+						routingKey := "egress.grpc"
+						r.ampqPublisher.Publish(routingKey, payload)
 					}
-					payload, err := json.Marshal(resolverMsg)
-					if err != nil {
-						log.Printf("unable to Marshal resolverMsg: %s", err)
-					}
+				} else if endpoint.(map[string]interface{})["protocol"] == "http" {
 
-					routingKey := "egress.grpc"
-					r.ampqPublisher.Publish(routingKey, payload)
+				} else {
+
 				}
-			} else if endpoint.(map[string]interface{})["protocol"] == "http" {
-
-			} else {
-
 			}
 		}
 	}
 }
 
-func queryEndpointRegistry(receiver string, semanticprotocol string, reg EndpointRegistryConfig) []byte {
+func queryEndpointRegistry(receiverID string, receiverIDType string, receiverRole string, semanticProtocol string, reg EndpointRegistryConfig) []byte {
 	client := &http.Client{}
 
 	registryURL := reg.Protocol + "://" + reg.Host + ":" + strconv.Itoa(reg.Port) + reg.Route
 
 	req, err := http.NewRequest("GET", registryURL, nil)
 	if err != nil {
-		log.Fatal(err)
+		log.Error().Err(err).Msg("failed to create endpoint-registry request")
 	}
 	req.SetBasicAuth(reg.User, reg.Password)
 	req.Header.Add("Accept", "application/json")
 	req.Header.Set("Content-Type", "application/json")
 
 	q := url.Values{}
-	q.Add("receiver", receiver)
-	q.Add("semanticprotocol", semanticprotocol)
+	if receiverID != "" && receiverIDType != "" {
+		q.Add("receiverId", receiverID)
+		q.Add("receiverIdType", receiverIDType)
+	} else if receiverRole != "" && semanticProtocol != "" {
+		q.Add("receiverRole", receiverRole)
+		q.Add("semanticProtocol", semanticProtocol)
+	} else {
+		log.Warn().Msg("failed query attempt: (receiverId && receiverIdType) || (receiverRole && semanticProtocol) has not been specified")
+		return nil
+	}
 	req.URL.RawQuery = q.Encode()
 
-	// log.Printf("querying endpoint registry at %s", registryURL)
+	log.Debug().Msgf("Querying: %s", req.URL.String())
+
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Fatal(err)
+		log.Error().Err(err).Msg("failed to query endpoint-registry")
 	}
 
 	bodyText, err := ioutil.ReadAll(resp.Body)

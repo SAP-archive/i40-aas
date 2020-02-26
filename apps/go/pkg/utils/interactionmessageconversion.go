@@ -2,7 +2,8 @@ package utils
 
 import (
 	"encoding/json"
-	"log"
+
+	"github.com/rs/zerolog/log"
 
 	"github.com/golang/protobuf/jsonpb"
 
@@ -13,12 +14,12 @@ import (
 func ConvertRawJSONToInteractionMessage(jsonRaw []byte) *interaction.InteractionMessage {
 	dat := make(map[string]interface{})
 	if err := json.Unmarshal(jsonRaw, &dat); err != nil {
-		log.Printf("unable to Unmarshal jsonRaw: %s", err)
+		log.Error().Err(err).Msg("unable to ConvertRawJSONToInteractionMessage: Unmarshal jsonRaw")
 	}
 
 	jsonFrameRaw, err := json.Marshal(dat["frame"])
 	if err != nil {
-		log.Printf("unable to Marshal dat[\"frame\"]: %s", err)
+		log.Error().Err(err).Msg("unable to ConvertRawJSONToInteractionMessage: Marshal dat[\"frame\"]")
 	}
 
 	jsonFrame := string(jsonFrameRaw)
@@ -28,7 +29,7 @@ func ConvertRawJSONToInteractionMessage(jsonRaw []byte) *interaction.Interaction
 
 	interactionElementsRaw, err := json.Marshal(dat["interactionElements"])
 	if err != nil {
-		log.Printf("unable to Marshal dat[\"interactionElements\"]: %s", err)
+		log.Error().Err(err).Msg("unable to ConvertRawJSONToInteractionMessage: Marshal dat[\"interactionElements\"]")
 	}
 
 	protoMessage := &interaction.InteractionMessage{
@@ -45,7 +46,7 @@ func ConvertInteractionMessageToRawJSON(protoMessage *interaction.InteractionMes
 	marshaler := jsonpb.Marshaler{}
 	jsonFrame, err := marshaler.MarshalToString(protoFrame)
 	if err != nil {
-		log.Printf("unable to MarshalToString protoFrame: %s", err)
+		log.Error().Err(err).Msg("unable to ConvertInteractionMessageToRawJSON: MarshalToString protoFrame")
 	}
 
 	interactionElementsRaw := protoMessage.InteractionElements

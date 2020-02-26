@@ -3,10 +3,12 @@ package grpcendpoint
 import (
 	"context"
 	"encoding/json"
-	"log"
 	"reflect"
 	"strconv"
+	"strings"
 	"time"
+
+	"github.com/rs/zerolog/log"
 
 	amqpclient "../amqpclient"
 	endpointresolver "../endpointresolver"
@@ -36,7 +38,6 @@ func NewGRPCEgress(cfg GRPCEgressConfig) (egress GRPCEgress) {
 // Init GRPC clients and AMQP client
 func (e *GRPCEgress) Init() {
 	e.amqpClient = amqpclient.NewAMQPClient(e.config.AMQPConfig)
-
 	e.amqpClient.Init()
 
 	bindingKey := e.config.AMQPConfig.Exchange + "." + e.config.AMQPConfig.Queue
@@ -51,16 +52,20 @@ func (e *GRPCEgress) Init() {
 
 			err := json.Unmarshal(msg, &rMsg)
 			if err != nil {
-				log.Printf("unable to Unmarshal msg to ResolverMsg: %s", err)
+				log.Error().Err(err).Msgf("unable to Unmarshal msg to ResolverMsg: %s", string(msg))
 			}
 
 			iMsg := utils.ConvertRawJSONToInteractionMessage(rMsg.EgressPayload)
-			log.Print(iMsg)
 
 			if rMsg.ReceiverType == "cloud" {
+
+				// TODO: Rework, this will 100% result in errors!
+				host := strings.Split(rMsg.ReceiverURL, ":")[0]
+				port, _ := strconv.Atoi(strings.Split(rMsg.ReceiverURL, ":")[1])
+
 				cfg := GRPCClientConfig{
-					Host: rMsg.Host,
-					Port: rMsg.Port,
+					Host: host,
+					Port: port,
 				}
 
 				var c grpcClient
@@ -68,9 +73,9 @@ func (e *GRPCEgress) Init() {
 
 				c.interactionClient.UploadInteractionMessage(context.Background(), iMsg)
 			} else if rMsg.ReceiverType == "edge" {
-				log.Printf("NOT IMPLEMENTED: receiver type: %s", rMsg.ReceiverType)
+				log.Warn().Msgf("NOT IMPLEMENTED: receiver type: %s", rMsg.ReceiverType)
 			} else {
-				log.Printf("unknown receiver type: %s", rMsg.ReceiverType)
+				log.Error().Err(err).Msgf("unknown receiver type: %s", rMsg.ReceiverType)
 			}
 		}
 	}()
@@ -106,7 +111,7 @@ func (e *GRPCEgress) clearIdleClients() {
 	for {
 		time.Sleep(1 * time.Second)
 		for i, c := range e.grpcClients {
-			log.Printf("Client %s:%d (index %d) is in state: %s", c.config.Host, c.config.Port, i, c.conn.GetState().String())
+			log.Info().Msgf("Client %s:%d (index %d) is in state: %s", c.config.Host, c.config.Port, i, c.conn.GetState().String())
 		}
 	}
 }

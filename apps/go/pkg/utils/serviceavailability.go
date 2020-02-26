@@ -1,15 +1,16 @@
 package utils
 
 import (
-	"fmt"
 	"net"
 	"sync"
 	"time"
+
+	"github.com/rs/zerolog/log"
 )
 
 // WaitForServices tests and waits on the availability of a TCP host and port
 // based on: https://github.com/alioygur/wait-for/blob/master/main.go
-func WaitForServices(services []string, timeOut time.Duration) error {
+func WaitForServices(services []string, timeOut time.Duration) {
 	var depChan = make(chan struct{})
 	var wg sync.WaitGroup
 	wg.Add(len(services))
@@ -32,8 +33,8 @@ func WaitForServices(services []string, timeOut time.Duration) error {
 
 	select {
 	case <-depChan: // services are ready
-		return nil
+		log.Info().Msg("services are ready")
 	case <-time.After(timeOut):
-		return fmt.Errorf("services aren't ready in %s", timeOut)
+		log.Error().Msgf("services aren't ready in %s", timeOut)
 	}
 }

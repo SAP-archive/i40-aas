@@ -2,14 +2,14 @@ package grpcendpoint
 
 import (
 	"context"
-	"log"
 	"net"
 	"strconv"
 
-	fileservice "../../../proto/fileservice"
-	interaction "../../../proto/interaction"
+	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+
+	interaction "../../../proto/interaction"
 )
 
 // GRPCServerConfig struct
@@ -30,7 +30,8 @@ type grpcServer struct {
 
 func newGRPCServer(cfg GRPCServerConfig) (s grpcServer) {
 	if cfg.Port == 0 {
-		log.Printf("GRPC server port not specified, defaulting to 8000")
+		cfg.Port = 8080
+		log.Warn().Msgf("GRPC server port not specified, defaulting to %v", cfg.Port)
 	}
 
 	s.config = cfg
@@ -49,14 +50,14 @@ func (s *grpcServer) init() (err error) {
 
 	listener, err = net.Listen("tcp", "localhost:"+strconv.Itoa(s.config.Port))
 	if err != nil {
-		log.Fatalf("failed to listen on port %d", s.config.Port)
+		log.Error().Err(err).Msgf("failed to listen on port %d", s.config.Port)
 	}
 
 	if s.config.Certificate != "" && s.config.Key != "" {
 		grpcCreds, err = credentials.NewServerTLSFromFile(
 			s.config.Certificate, s.config.Key)
 		if err != nil {
-			log.Fatalf("failed to create tls GRPC server using cert %s and key %s", s.config.Certificate, s.config.Key)
+			log.Error().Err(err).Msgf("failed to create tls GRPC server using cert %s and key %s", s.config.Certificate, s.config.Key)
 		}
 
 		grpcOpts = append(grpcOpts, grpc.Creds(grpcCreds))
@@ -66,13 +67,12 @@ func (s *grpcServer) init() (err error) {
 
 	s.server = grpc.NewServer(grpcOpts...)
 
-	fileservice.RegisterAASFileServiceServer(s.server, s)
 	interaction.RegisterInteractionServiceServer(s.server, s)
 
-	log.Printf("GRPCServer is serving on port %v", strconv.Itoa(s.config.Port))
+	log.Info().Msgf("GRPCServer is serving on port %v", strconv.Itoa(s.config.Port))
 	err = s.server.Serve(listener)
 	if err != nil {
-		log.Printf("errored listening for grpc connections: %s", err)
+		log.Error().Err(err).Msg("errored listening for grpc connections")
 		return
 	}
 	return
@@ -86,18 +86,6 @@ func (s *grpcServer) close() {
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 
-// Upload capability
-func (s *grpcServer) Upload(stream fileservice.AASFileService_UploadServer) (err error) {
-	// TODO
-	return nil
-}
-
-// Download capability
-func (s *grpcServer) Download(dlreg *fileservice.DownloadRequest, stream fileservice.AASFileService_DownloadServer) (err error) {
-	// TODO
-	return nil
-}
-
 // UploadInteractionMessage capability
 func (s *grpcServer) UploadInteractionMessage(ctx context.Context, iMsg *interaction.InteractionMessage) (*interaction.InteractionStatus, error) {
 	s.iMessageQueue <- iMsg
@@ -106,10 +94,4 @@ func (s *grpcServer) UploadInteractionMessage(ctx context.Context, iMsg *interac
 	// Return proper InteractionStatus
 	iStatus := &interaction.InteractionStatus{}
 	return iStatus, nil
-}
-
-// UploadInteractionMessageStream capability
-func (s *grpcServer) UploadInteractionMessageStream(stream interaction.InteractionService_UploadInteractionMessageStreamServer) error {
-	// TODO
-	return nil
 }

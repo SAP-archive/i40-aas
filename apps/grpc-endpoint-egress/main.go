@@ -3,12 +3,15 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"os/signal"
 	"strconv"
+	"strings"
 	"syscall"
 	"time"
+
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 
 	"../go/pkg/amqpclient"
 	"../go/pkg/grpcendpoint"
@@ -16,8 +19,31 @@ import (
 )
 
 func main() {
-	// Enable line numbers in logging
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	// Configure logging TimeField and line numbers
+	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+	log.Logger = log.With().Caller().Logger()
+
+	if os.Getenv("LOG_OUTPUT") == "CONSOLE" {
+		output := zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339}
+		output.FormatMessage = func(i interface{}) string {
+			return fmt.Sprintf("%s", i)
+		}
+		output.FormatFieldName = func(i interface{}) string {
+			return fmt.Sprintf("%s:", i)
+		}
+		output.FormatFieldValue = func(i interface{}) string {
+			return strings.ToUpper(fmt.Sprintf("%s", i))
+		}
+
+		log.Logger = log.Output(output)
+	}
+
+	if os.Getenv("LOG_LEVEL") == "DEBUG" {
+		log.Debug().Msg("LOG_LEVEL has been set to DEBUG")
+		zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	} else {
+		zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	}
 
 	var (
 		AMQPCfg       amqpclient.Config
@@ -64,5 +90,5 @@ func waitForShutdown(GRPCEgress grpcendpoint.GRPCEgress) {
 	defer cancel()
 	GRPCEgress.Shutdown(ctx)
 
-	log.Printf("Graceful shutdown.")
+	log.Info().Msg("Graceful shutdown.")
 }

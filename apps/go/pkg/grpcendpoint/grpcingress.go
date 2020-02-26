@@ -3,6 +3,8 @@ package grpcendpoint
 import (
 	"context"
 
+	"github.com/rs/zerolog/log"
+
 	amqpclient "../amqpclient"
 	utils "../utils"
 )
@@ -37,6 +39,7 @@ func (i *GRPCIngress) Init() {
 
 	go func() {
 		for iMsg := range i.grpcServer.iMessageQueue {
+			log.Debug().Msgf("Got new interactionMessage: %v", iMsg)
 			jsonMessage := utils.ConvertInteractionMessageToRawJSON(iMsg)
 
 			f := iMsg.Frame

@@ -2,9 +2,9 @@ package amqpclient
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 
+	"github.com/rs/zerolog/log"
 	"github.com/streadway/amqp"
 )
 
@@ -29,15 +29,15 @@ type AMQPClient struct {
 // NewAMQPClient TODO
 func NewAMQPClient(cfg Config) (c AMQPClient) {
 	if cfg.Host == "" {
-		log.Fatal("AMQP host not specified, defaulting to 'localhost'")
+		log.Warn().Msg("AMQP host not specified, defaulting to 'localhost'")
 		cfg.Host = "localhost"
 	}
 	if cfg.Port == 0 {
-		log.Printf("AMQP port not specified, defaulting to 5672")
+		log.Warn().Msg("AMQP port not specified, defaulting to 5672")
 		cfg.Port = 5672
 	}
 	if (cfg.User == "" || cfg.Password == "") && !(cfg.User == "" && cfg.Password == "") {
-		log.Printf("AMQP user/password not configured, defaulting to 'guest:guest'")
+		log.Warn().Msg("AMQP user/password not configured, defaulting to 'guest:guest'")
 		cfg.User = "guest"
 		cfg.Password = "guest"
 	}
@@ -53,19 +53,19 @@ func NewAMQPClient(cfg Config) (c AMQPClient) {
 func (c *AMQPClient) Init() {
 	amqpConn, err := amqp.Dial(fmt.Sprintf("amqp://%s:%s@%s:%s/", c.config.User, c.config.Password, c.config.Host, strconv.Itoa(c.config.Port)))
 	if err != nil {
-		log.Fatalf("failed AMQP dial to RabbitMQ: %s", err)
+		log.Error().Err(err).Msg("failed AMQP dial to RabbitMQ")
 	}
 	c.amqpConn = amqpConn
 
-	log.Printf("got Connection, getting Channel")
+	log.Debug().Msg("got Connection, getting Channel")
 
 	amqpChan, err := amqpConn.Channel()
 	if err != nil {
-		log.Fatalf("failed to open Channel: %s", err)
+		log.Error().Err(err).Msg("failed to open Channel")
 	}
 	c.amqpChan = amqpChan
 
-	log.Printf("got Channel, declaring Exchange (%q)", c.config.Exchange)
+	log.Debug().Msgf("got Channel, declaring Exchange %q", c.config.Exchange)
 
 	amqpChan.ExchangeDeclare(
 		c.config.Exchange, // name
@@ -77,14 +77,14 @@ func (c *AMQPClient) Init() {
 		nil,               // arguments
 	)
 
-	log.Printf("declared Exchange")
+	log.Debug().Msg("declared Exchange")
 
-	log.Printf("connected to AMQP Broker at 'amqp://%s:%s@%s:%s/'", c.config.User, c.config.Password, c.config.Host, strconv.Itoa(c.config.Port))
+	log.Info().Msgf("connected to Exchange %q (AMQP Broker at 'amqp://%s:%s@%s:%s/')", c.config.Exchange, c.config.User, c.config.Password, c.config.Host, strconv.Itoa(c.config.Port))
 }
 
 // Listen TODO
 func (c *AMQPClient) Listen(bindingKey string, ctag string) {
-	log.Printf("declaring Queue %q", c.config.Queue)
+	log.Debug().Msgf("declaring Queue %q", c.config.Queue)
 	queue, err := c.amqpChan.QueueDeclare(
 		c.config.Queue, // name of the queue
 		true,           // durable
@@ -94,11 +94,10 @@ func (c *AMQPClient) Listen(bindingKey string, ctag string) {
 		nil,            // arguments
 	)
 	if err != nil {
-		log.Fatalf("Queue Declare: %s", err)
+		log.Error().Err(err).Msg("Queue Declare")
 	}
 
-	log.Printf("declared Queue (%q %d messages, %d consumers), binding to Exchange (key %q)",
-		queue.Name, queue.Messages, queue.Consumers, bindingKey)
+	log.Debug().Msgf("declared Queue (%q %d messages, %d consumers), binding to Exchange (key %q)", queue.Name, queue.Messages, queue.Consumers, bindingKey)
 
 	if err = c.amqpChan.QueueBind(
 		queue.Name,        // name of the queue
@@ -107,10 +106,10 @@ func (c *AMQPClient) Listen(bindingKey string, ctag string) {
 		false,             // noWait
 		nil,               // arguments
 	); err != nil {
-		log.Fatalf("Queue Bind: %s", err)
+		log.Error().Err(err).Msg("Queue Bind")
 	}
 
-	log.Printf("Queue bound to Exchange, starting Consume (consumer tag %q)", ctag)
+	log.Debug().Msgf("Queue bound to Exchange, starting Consume (consumer tag %q)", ctag)
 	deliveries, err := c.amqpChan.Consume(
 		queue.Name, // name
 		ctag,       // consumerTag,
@@ -121,11 +120,11 @@ func (c *AMQPClient) Listen(bindingKey string, ctag string) {
 		nil,        // arguments
 	)
 	if err != nil {
-		log.Fatalf("Queue Consume: %s", err)
+		log.Error().Err(err).Msg("failed to consume from Queue")
 	}
 
 	for d := range deliveries {
-		// log.Printf(
+		// log.Info().Msgf(
 		// 	"got %dB delivery: [%v]",
 		// 	len(d.Body),
 		// 	d.DeliveryTag,
@@ -134,7 +133,7 @@ func (c *AMQPClient) Listen(bindingKey string, ctag string) {
 		d.Ack(false)
 	}
 
-	log.Printf("deliveries channel closed")
+	log.Info().Msg("deliveries channel closed")
 }
 
 // Close TODO
@@ -163,7 +162,7 @@ func (c *AMQPClient) Publish(routingKey string, payload []byte) {
 			Priority:        0,              // 0-9
 		})
 	if err != nil {
-		log.Printf("Publishing message with key %s to Exchange %s failed: %s", routingKey, c.config.Exchange, err)
+		log.Error().Err(err).Msgf("Publishing message with key %s to Exchange %s failed", routingKey, c.config.Exchange)
 	}
-	// log.Printf("Published %dB with key %s to Exchange %s", len(payload), routingKey, c.config.Exchange)
+	log.Info().Msgf("Published %dB with key %s to Exchange %s", len(payload), routingKey, c.config.Exchange)
 }
