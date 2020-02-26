@@ -8,6 +8,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/peer"
 
 	interaction "../../../proto/interaction"
 )
@@ -88,10 +89,15 @@ func (s *grpcServer) close() {
 
 // UploadInteractionMessage capability
 func (s *grpcServer) UploadInteractionMessage(ctx context.Context, iMsg *interaction.InteractionMessage) (*interaction.InteractionStatus, error) {
-	s.iMessageQueue <- iMsg
+	c, _ := peer.FromContext(ctx)
+	log.Debug().Msgf("received new InteractionMessage from %v", c.Addr)
 
-	// TODO
-	// Return proper InteractionStatus
-	iStatus := &interaction.InteractionStatus{}
+	// TODO check whether InteractionMessage is complete and adjust Status accordingly
+	go func() { s.iMessageQueue <- iMsg }()
+
+	iStatus := &interaction.InteractionStatus{
+		Code: 1,
+	}
+
 	return iStatus, nil
 }

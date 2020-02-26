@@ -160,5 +160,7 @@ func queryEndpointRegistry(receiverID string, receiverIDType string, receiverRol
 
 	bodyText, err := ioutil.ReadAll(resp.Body)
 
+	log.Debug().Msgf("Got: %s", string(bodyText))
+
 	return bodyText
 }
