@@ -1,5 +1,5 @@
 import { RegistryFactory } from './daos/postgress/RegistryFactory';
-import { IdTypeEnum, IIdentifier } from 'i40-aas-objects';
+import { IIdentifier } from 'i40-aas-objects';
 import { RegistryError } from '../../utils/RegistryError';
 import {
   RegistryResultSet,
@@ -13,7 +13,7 @@ import {
   IAssignRoles,
   ICreateAsset
 } from './daos/interfaces/IApiRequests';
-import { ConversationMember } from 'i40-aas-objects';
+import { TIdType } from 'i40-aas-objects/dist/src/types/IdTypeEnum';
 
 async function readRecordByIdentifier(
   identifier: IIdentifier
@@ -133,28 +133,26 @@ async function createSemanticProtocol(req: ICreateSemanticProtocol) {
   }
 }
 
-async function getEndpointsByRole(
-  receiver: ConversationMember,
+async function getEndpointsByReceiverId(
+  receiverId: string,
+  receiverIdType: TIdType
+): Promise<Array<IRegistryResultSet>> {
+  return readRecordByIdentifier({
+    id: receiverId,
+    idType: receiverIdType
+  });
+}
+
+async function getEndpointsByReceiverRole(
+  receiverRole: string,
   semanticProtocol: string
 ): Promise<Array<IRegistryResultSet>> {
-  if (!receiver) {
-    throw new RegistryError('Missing parameter receiver', 422);
+  if (!semanticProtocol) {
+    throw new RegistryError('Missing parameter semanticProtocol', 422);
   }
-  if (receiver.identification) {
-    return readRecordByIdentifier({
-      id: receiver.identification.id,
-      idType: receiver.identification.idType
-    });
-  } else {
-    if (!semanticProtocol) {
-      throw new RegistryError('Missing parameter semanticProtocol', 422);
-    }
-    return readRecordBySemanticProtocolAndRole(
-      semanticProtocol,
-      receiver.role.name
-    );
-  }
+  return readRecordBySemanticProtocolAndRole(semanticProtocol, receiverRole);
 }
+
 async function getAllEndpointsList(): Promise<Array<IRegistryResultSet>> {
   var registryDao: iRegistry = await RegistryFactory.getRegistry();
   try {
@@ -176,7 +174,8 @@ export {
   createSemanticProtocol,
   register,
   readRecordBySemanticProtocolAndRole,
-  getEndpointsByRole,
+  getEndpointsByReceiverRole,
+  getEndpointsByReceiverId,
   createRole,
   createAsset
 };

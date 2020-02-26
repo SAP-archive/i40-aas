@@ -19,7 +19,6 @@ import {
 } from '../interfaces/IApiRequests';
 import {
   RegistryRolesResultSet,
-  CreateRoleResultSet,
   ICreateRoleResultSet
 } from '../interfaces/IRegistryRolesSet';
 
@@ -85,13 +84,15 @@ class Registry implements iRegistry {
       );
       //create endpoint entry
       record.endpoints.forEach(async (endpoint: IEndpoint) => {
+        console.log('endpoint:' + JSON.stringify(endpoint));
         const insertEndpointResult = await this.client.query(
-          'INSERT INTO public.endpoints( "URL", protocol_name, protocol_version, "aasId") VALUES ($1, $2, $3, $4);',
+          'INSERT INTO public.endpoints( "URL", protocol_name, protocol_version, "aasId",target) VALUES ($1, $2, $3, $4, $5);',
           [
             endpoint.url,
             endpoint.protocol,
             endpoint.protocolVersion,
-            record.aasId.id
+            record.aasId.id,
+            endpoint.target
           ]
         );
       });
@@ -217,6 +218,7 @@ class Registry implements iRegistry {
           console.log(endpointRecord);
           var endpoint: IEndpoint = new Endpoint(
             endpointRecord.URL,
+            endpointRecord.target,
             endpointRecord.protocol_name,
             endpointRecord.protocol_version
           );
@@ -241,6 +243,7 @@ class Registry implements iRegistry {
     }
   }
 
+  //TODO: adapt this, no trget in SQL statement
   async readEndpointBySemanticProtocolAndRole(
     sProtocol: string,
     role: string
@@ -265,12 +268,24 @@ class Registry implements iRegistry {
         if (!recordsByAasId[row.aasId]) {
           recordsByAasId[row.aasId] = new RegistryResultSet(
             { id: row.aasId, idType: row.aasIdType },
-            [new Endpoint(row.URL, row.protocol_name, row.protocol_version)],
+            [
+              new Endpoint(
+                row.URL,
+                row.target,
+                row.protocol_name,
+                row.protocol_version
+              )
+            ],
             { id: row.assetId, idType: row.aasIdType }
           );
         } else {
           recordsByAasId[row.aasId].endpoints.push(
-            new Endpoint(row.URL, row.protocol_name, row.protocol_version)
+            new Endpoint(
+              row.URL,
+              row.target,
+              row.protocol_name,
+              row.protocol_version
+            )
           );
         }
       });
@@ -286,7 +301,7 @@ class Registry implements iRegistry {
 
   async listAllEndpoints(): Promise<Array<RegistryResultSet>> {
     try {
-      var s = `SELECT  "aasId", "aasIdType" ,"idType" as "assetIdType", "URL", "protocol_name", "protocol_version", "roleId","assetId" FROM (SELECT "aasId", "idType" as "aasIdType", "URL", "protocol_name", "protocol_version", "roleId","assetId"
+      var s = `SELECT  "aasId", "aasIdType" ,"idType" as "assetIdType", "URL", "protocol_name", "protocol_version", "roleId","assetId","target" FROM (SELECT "aasId", "idType" as "aasIdType", "URL", "protocol_name", "protocol_version", "roleId","assetId", "target"
       FROM (SELECT *
           FROM public.aas_role
                     INNER JOIN public.asset_administration_shells
@@ -303,12 +318,24 @@ class Registry implements iRegistry {
         if (!recordsByAasId[row.aasId]) {
           recordsByAasId[row.aasId] = new RegistryResultSet(
             { id: row.aasId, idType: row.aasIdType },
-            [new Endpoint(row.URL, row.protocol_name, row.protocol_version)],
+            [
+              new Endpoint(
+                row.URL,
+                row.target,
+                row.protocol_name,
+                row.protocol_version
+              )
+            ],
             { id: row.assetId, idType: row.aasIdType }
           );
         } else {
           recordsByAasId[row.aasId].endpoints.push(
-            new Endpoint(row.URL, row.protocol_name, row.protocol_version)
+            new Endpoint(
+              row.URL,
+              row.target,
+              row.protocol_name,
+              row.protocol_version
+            )
           );
         }
       });
