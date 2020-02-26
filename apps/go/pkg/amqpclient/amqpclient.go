@@ -188,6 +188,7 @@ func (c *AMQPClient) Publish(routingKey string, payload []byte) {
 		})
 	if err != nil {
 		log.Error().Err(err).Msgf("failed to publish message with key %s to Exchange %s", routingKey, c.config.Exchange)
+		time.Sleep(1 * time.Second)
 		c.Publish(routingKey, payload)
 	}
 	log.Debug().Msgf("published %dB with key %s to Exchange %s", len(payload), routingKey, c.config.Exchange)
