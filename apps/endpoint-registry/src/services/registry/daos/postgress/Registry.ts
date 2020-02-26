@@ -30,7 +30,7 @@ class Registry implements iRegistry {
     this.client = client;
   }
   release(): void {
-    this.client.release();
+    if (this.client) this.client.release();
   }
 
   async createAsset(asset: ICreateAsset): Promise<ICreateAsset> {
