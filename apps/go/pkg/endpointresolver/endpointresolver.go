@@ -88,7 +88,7 @@ func (r *EndpointResolver) processGenericEgressMsg(msg []byte) {
 
 	registryResp := queryEndpointRegistry(receiverID, receiverType, receiverRole, semanticprotocol, r.config.EndpointRegistryConfig)
 	if string(registryResp) == "[]" || registryResp == nil {
-		log.Warn().Msgf("queryEndpointRegistry unsuccessful: %v", string(registryResp))
+		log.Warn().Msgf("queryEndpointRegistry unsuccessful: %v, dropping message", string(registryResp))
 	} else {
 		var dat []interface{}
 		if err := json.Unmarshal(registryResp, &dat); err != nil {
