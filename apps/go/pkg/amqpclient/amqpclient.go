@@ -3,6 +3,7 @@ package amqpclient
 import (
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/rs/zerolog/log"
 	"github.com/streadway/amqp"
@@ -51,9 +52,13 @@ func NewAMQPClient(cfg Config) (c AMQPClient) {
 
 // Init TODO
 func (c *AMQPClient) Init() {
+	log.Debug().Msgf("connecting to Exchange %q (AMQP Broker at 'amqp://%s:%s@%s:%s/')", c.config.Exchange, c.config.User, c.config.Password, c.config.Host, strconv.Itoa(c.config.Port))
 	amqpConn, err := amqp.Dial(fmt.Sprintf("amqp://%s:%s@%s:%s/", c.config.User, c.config.Password, c.config.Host, strconv.Itoa(c.config.Port)))
 	if err != nil {
 		log.Error().Err(err).Msg("failed AMQP dial to RabbitMQ")
+		time.Sleep(3 * time.Second)
+		c.Init()
+		return
 	}
 	c.amqpConn = amqpConn
 
@@ -62,10 +67,24 @@ func (c *AMQPClient) Init() {
 	amqpChan, err := amqpConn.Channel()
 	if err != nil {
 		log.Error().Err(err).Msg("failed to open Channel")
+		time.Sleep(3 * time.Second)
+		c.Init()
+		return
 	}
 	c.amqpChan = amqpChan
 
 	log.Debug().Msgf("got Channel, declaring Exchange %q", c.config.Exchange)
+
+	go func() {
+		// Wait for the channel to be closed
+		log.Debug().Msgf("closing: %s", <-c.amqpConn.NotifyClose(make(chan *amqp.Error)))
+		log.Debug().Msgf("attempting to reconnect")
+
+		for c.amqpConn.IsClosed() {
+			time.Sleep(3 * time.Second)
+			c.Init()
+		}
+	}()
 
 	amqpChan.ExchangeDeclare(
 		c.config.Exchange, // name
@@ -80,6 +99,11 @@ func (c *AMQPClient) Init() {
 	log.Debug().Msg("declared Exchange")
 
 	log.Info().Msgf("connected to Exchange %q (AMQP Broker at 'amqp://%s:%s@%s:%s/')", c.config.Exchange, c.config.User, c.config.Password, c.config.Host, strconv.Itoa(c.config.Port))
+}
+
+func (c *AMQPClient) reconnect() {
+	log.Info().Msgf(fmt.Sprintf("%v", c.amqpConn.ConnectionState()))
+	// c.Init()
 }
 
 // Listen TODO
@@ -124,16 +148,17 @@ func (c *AMQPClient) Listen(bindingKey string, ctag string) {
 	}
 
 	for d := range deliveries {
-		// log.Info().Msgf(
-		// 	"got %dB delivery: [%v]",
-		// 	len(d.Body),
-		// 	d.DeliveryTag,
-		// )
+		log.Debug().Msgf("got %dB delivery: [%v]", len(d.Body), d.DeliveryTag)
 		c.MsgChan <- d.Body
 		d.Ack(false)
 	}
 
-	log.Info().Msg("deliveries channel closed")
+	log.Warn().Msg("deliveries channel closed, waiting for reconnect")
+	for c.amqpConn.IsClosed() {
+		time.Sleep(100 * time.Millisecond)
+	}
+
+	c.Listen(bindingKey, ctag)
 }
 
 // Close TODO
@@ -162,7 +187,7 @@ func (c *AMQPClient) Publish(routingKey string, payload []byte) {
 			Priority:        0,              // 0-9
 		})
 	if err != nil {
-		log.Error().Err(err).Msgf("Publishing message with key %s to Exchange %s failed", routingKey, c.config.Exchange)
+		log.Error().Err(err).Msgf("failed to publish message with key %s to Exchange %s", routingKey, c.config.Exchange)
 	}
-	log.Info().Msgf("Published %dB with key %s to Exchange %s", len(payload), routingKey, c.config.Exchange)
+	log.Debug().Msgf("published %dB with key %s to Exchange %s", len(payload), routingKey, c.config.Exchange)
 }
