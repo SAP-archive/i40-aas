@@ -84,44 +84,48 @@ async function insertIntoAssetAdministrationShells(
 
 describe('getAllEndpointsList', function() {
   var testGlobals: any;
+
   before(async () => {
     console.log(await execShellCommand('sh ./prepareDB.sh'));
-    testGlobals = { client: await RegistryFactory.getDbClient() };
+    console.log('Using DB: ' + process.env.ENDPOINT_REGISTRY_POSTGRES_DB);
+    testGlobals = {
+      client: await RegistryFactory.getDbClient(),
+      uniqueTestId: 'getAllEndpointsList'
+    };
   });
 
   it('returns all properties and values for a single endpoint', async function() {
-    //console.log('DB:' + process.env['ENDPOINT_REGISTRY_POSTGRES_DB']);
     await insertIntoSemanticProtocols(
-      'i40:registry-semanticProtocol/onboarding',
+      testGlobals.uniqueTestId + 'protocolId',
       testGlobals.client
     );
     await insertIntoRoles(
-      'CentralAssetRepository',
-      'i40:registry-semanticProtocol/onboarding',
+      testGlobals.uniqueTestId + 'roleId',
+      testGlobals.uniqueTestId + 'protocolId',
       testGlobals.client
     );
     await insertIntoAssets(
-      'http://i40-aas-service.westeurope.cloudapp.azure.com',
-      'IRI',
+      testGlobals.uniqueTestId + 'assetId',
+      testGlobals.uniqueTestId + 'idType',
       testGlobals.client
     );
     await insertIntoAssetAdministrationShells(
-      'http://i40-aas-service.westeurope.cloudapp.azure.com/aas',
-      'IRI',
-      'http://i40-aas-service.westeurope.cloudapp.azure.com',
+      testGlobals.uniqueTestId + 'aasId',
+      testGlobals.uniqueTestId + 'idType',
+      testGlobals.uniqueTestId + 'assetId',
       testGlobals.client
     );
     await insertIntoAasRole(
-      'http://i40-aas-service.westeurope.cloudapp.azure.com/aas',
-      'CentralAssetRepository',
+      testGlobals.uniqueTestId + 'aasId',
+      testGlobals.uniqueTestId + 'roleId',
       testGlobals.client
     );
 
     await insertIntoEndpoints(
-      'http://i40-aas-service.westeurope.cloudapp.azure.com/https-endpoint/interaction',
-      'https',
-      '1.1',
-      'http://i40-aas-service.westeurope.cloudapp.azure.com/aas',
+      testGlobals.uniqueTestId + 'url',
+      testGlobals.uniqueTestId + 'protocolName',
+      testGlobals.uniqueTestId + 'protocolVersion',
+      testGlobals.uniqueTestId + 'aasId',
       'cloud',
       testGlobals.client
     );
