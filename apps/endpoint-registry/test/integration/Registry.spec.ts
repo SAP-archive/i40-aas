@@ -1,4 +1,4 @@
-require('dotenv').config({ path: 'test/.env' });
+require('dotenv').config({ path: 'test/env.list' });
 
 import { expect } from 'chai';
 

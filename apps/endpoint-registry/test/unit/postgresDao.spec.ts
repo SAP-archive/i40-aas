@@ -1,5 +1,5 @@
 import { config } from 'dotenv';
-console.log(config({ path: 'tests/.env' }));
+console.log(config({ path: 'tests/env.list' }));
 import { expect } from 'chai';
 import {
   readRecordBySemanticProtocolAndRole,
