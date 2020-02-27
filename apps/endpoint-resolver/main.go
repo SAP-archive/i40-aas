@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/joho/godotenv"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
@@ -16,6 +17,13 @@ import (
 )
 
 func main() {
+	if os.Getenv("HOME") != "/home/aasuser" {
+		err := godotenv.Load("../../.env")
+		if err == nil {
+			log.Warn().Msg("***** DEVELOPMENT MODE: Successfully loaded .env file from repository root! *****")
+		}
+	}
+
 	// Configure logging TimeField and line numbers
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 	log.Logger = log.With().Caller().Logger()
@@ -93,6 +101,6 @@ func main() {
 
 	containerutils.WaitForShutdown()
 
-	defer os.Exit(0)
-	defer resolver.Shutdown()
+	resolver.Shutdown()
+	os.Exit(0)
 }

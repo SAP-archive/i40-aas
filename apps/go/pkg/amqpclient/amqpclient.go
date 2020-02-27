@@ -100,13 +100,14 @@ func (c *AMQPClient) Init() {
 	log.Info().Msgf("connected to Exchange %q (AMQP Broker at 'amqp://%s:%s@%s:%s/')", c.config.Exchange, c.config.User, c.config.Password, c.config.Host, strconv.Itoa(c.config.Port))
 }
 
-func (c *AMQPClient) reconnect() {
-	log.Info().Msgf(fmt.Sprintf("%v", c.amqpConn.ConnectionState()))
-	// c.Init()
-}
-
 // Listen TODO
 func (c *AMQPClient) Listen(queueName string, bindingKey string, ctag string) {
+	log.Debug().Msgf("attempting to consume from Queue %q (bindingKey: %q) as %q", queueName, bindingKey, ctag)
+	if c.amqpChan == nil {
+		log.Debug().Msg("AMQP Channel is nil, reverting to AMQPClient.Init() first")
+		c.Init()
+	}
+
 	log.Debug().Msgf("declaring Queue %q", queueName)
 	queue, err := c.amqpChan.QueueDeclare(
 		queueName, // name of the queue
@@ -117,7 +118,7 @@ func (c *AMQPClient) Listen(queueName string, bindingKey string, ctag string) {
 		nil,       // arguments
 	)
 	if err != nil {
-		log.Error().Err(err).Msg("Queue Declare")
+		log.Error().Err(err).Msg("failed on Queue Declare")
 	}
 
 	log.Debug().Msgf("declared Queue (%q %d messages, %d consumers), binding to Exchange (key %q)", queue.Name, queue.Messages, queue.Consumers, bindingKey)
@@ -129,10 +130,10 @@ func (c *AMQPClient) Listen(queueName string, bindingKey string, ctag string) {
 		false,             // noWait
 		nil,               // arguments
 	); err != nil {
-		log.Error().Err(err).Msg("Queue Bind")
+		log.Error().Err(err).Msg("failed on Queue Bind")
 	}
 
-	log.Debug().Msgf("Queue bound to Exchange, starting Consume (consumer tag %q)", ctag)
+	log.Debug().Msgf("Queue bound to Exchange %q, starting Consume (consumer tag %q)", c.config.Exchange, ctag)
 	deliveries, err := c.amqpChan.Consume(
 		queue.Name, // name
 		ctag,       // consumerTag,
@@ -145,6 +146,8 @@ func (c *AMQPClient) Listen(queueName string, bindingKey string, ctag string) {
 	if err != nil {
 		log.Error().Err(err).Msg("failed to consume from Queue")
 	}
+
+	log.Info().Msgf("consuming from Queue %q (binding: %q) as %q", queueName, bindingKey, ctag)
 
 	for d := range deliveries {
 		log.Debug().Msgf("got %dB delivery: [%v]", len(d.Body), d.DeliveryTag)
@@ -175,6 +178,11 @@ func (c *AMQPClient) Close() {
 
 // Publish TODO
 func (c *AMQPClient) Publish(routingKey string, payload []byte) {
+	if c.amqpChan == nil {
+		log.Debug().Msg("AMQP Channel is nil, reverting to AMQPClient.Init() first")
+		c.Init()
+	}
+
 	err := c.amqpChan.Publish(
 		c.config.Exchange,
 		routingKey, // routing key

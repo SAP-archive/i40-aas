@@ -39,7 +39,6 @@ func NewGRPCEgress(cfg GRPCEgressConfig) (egress GRPCEgress) {
 // Init GRPC clients and AMQP client
 func (e *GRPCEgress) Init() {
 	e.amqpClient = amqpclient.NewAMQPClient(e.config.AMQPConfig)
-	go e.amqpClient.Init()
 
 	queue := os.Getenv("GRPC_ENDPOINT_EGRESS_AMQP_QUEUE")
 	bindingKey := e.config.AMQPConfig.Exchange + "." + queue
