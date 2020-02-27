@@ -124,6 +124,7 @@ export default [
     method: 'get',
     handler: async (req: Request, res: Response) => {
       try {
+        console.log('Query parameters received:' + JSON.stringify(req.query));
         if (req.query.receiverId && req.query.receiverIdType) {
           res.json(
             await getEndpointsByReceiverId(
