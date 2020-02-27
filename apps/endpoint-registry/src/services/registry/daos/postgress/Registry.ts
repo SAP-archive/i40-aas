@@ -83,19 +83,21 @@ class Registry implements iRegistry {
         [record.aasId.id]
       );
       //create endpoint entry
-      record.endpoints.forEach(async (endpoint: IEndpoint) => {
-        console.log('endpoint:' + JSON.stringify(endpoint));
-        const insertEndpointResult = await this.client.query(
-          'INSERT INTO public.endpoints( "URL", protocol_name, protocol_version, "aasId",target) VALUES ($1, $2, $3, $4, $5);',
-          [
-            endpoint.url,
-            endpoint.protocol,
-            endpoint.protocolVersion,
-            record.aasId.id,
-            endpoint.target
-          ]
-        );
-      });
+      await Promise.all(
+        record.endpoints.map(async (endpoint: IEndpoint) => {
+          console.log('endpoint:' + JSON.stringify(endpoint));
+          const insertEndpointResult = await this.client.query(
+            'INSERT INTO public.endpoints( "URL", protocol_name, protocol_version, "aasId",target) VALUES ($1, $2, $3, $4, $5);',
+            [
+              endpoint.url,
+              endpoint.protocol,
+              endpoint.protocolVersion,
+              record.aasId.id,
+              endpoint.target
+            ]
+          );
+        })
+      );
     } catch (e) {
       if (e.code == 23505) {
         console.log('Endpoint already exist');
@@ -264,31 +266,33 @@ class Registry implements iRegistry {
       const queryResult = await this.client.query(s, [sProtocol, role]);
       const queryResultRows: Array<IJointRecord> = queryResult.rows;
       var recordsByAasId: IData = {};
-      queryResultRows.forEach(function(row: IJointRecord) {
-        if (!recordsByAasId[row.aasId]) {
-          recordsByAasId[row.aasId] = new RegistryResultSet(
-            { id: row.aasId, idType: row.aasIdType },
-            [
+      await Promise.all(
+        queryResultRows.map(function(row: IJointRecord) {
+          if (!recordsByAasId[row.aasId]) {
+            recordsByAasId[row.aasId] = new RegistryResultSet(
+              { id: row.aasId, idType: row.aasIdType },
+              [
+                new Endpoint(
+                  row.URL,
+                  row.target,
+                  row.protocol_name,
+                  row.protocol_version
+                )
+              ],
+              { id: row.assetId, idType: row.aasIdType }
+            );
+          } else {
+            recordsByAasId[row.aasId].endpoints.push(
               new Endpoint(
                 row.URL,
                 row.target,
                 row.protocol_name,
                 row.protocol_version
               )
-            ],
-            { id: row.assetId, idType: row.aasIdType }
-          );
-        } else {
-          recordsByAasId[row.aasId].endpoints.push(
-            new Endpoint(
-              row.URL,
-              row.target,
-              row.protocol_name,
-              row.protocol_version
-            )
-          );
-        }
-      });
+            );
+          }
+        })
+      );
       var result: Array<RegistryResultSet> = [];
       Object.keys(recordsByAasId).forEach(function(key) {
         result.push(recordsByAasId[key]);

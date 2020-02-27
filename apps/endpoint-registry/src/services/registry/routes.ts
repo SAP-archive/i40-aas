@@ -28,17 +28,22 @@ export default [
     path: '/assetadministrationshells',
     method: 'post',
     handler: async (req: Request, res: Response) => {
-      console.log('try to register sth.');
+      console.log('/administrationshells POST request received');
       var endpointsAssignmentArray: IRegisterAas[] = req.body;
 
       //TODO: revise the array endpoints, the for loop should go to registry-api
-      endpointsAssignmentArray.forEach(async aas => {
-        try {
-          await register(aas);
-        } catch (e) {
-          res.end(e.message);
-        }
-      });
+      await Promise.all(
+        endpointsAssignmentArray.map(async aas => {
+          try {
+            await register(aas);
+          } catch (e) {
+            res.end(e.message);
+          }
+        })
+      );
+      console.log(
+        'Now sending back response of /administrationshells POST request'
+      );
       res.json(req.body);
     }
   },
@@ -46,15 +51,24 @@ export default [
     path: '/roles',
     method: 'post',
     handler: async (req: Request, res: Response) => {
-      console.log('try to create a role');
+      console.log('/roles POST request received');
+      //console.log('try to create a role');
       var rolesArray: ICreateRole[] = req.body;
-      rolesArray.forEach(async role => {
-        try {
-          await createRole(role);
-        } catch (e) {
-          res.end(e.message);
-        }
-      });
+      console.log('Received body:' + req.body);
+      console.log('Body has ' + rolesArray.length + ' elements.');
+      await Promise.all(
+        rolesArray.map(async role => {
+          try {
+            console.log('Handling role ' + role.roleId);
+            await createRole(role);
+            console.log('Role ' + role.roleId + ' successfully created.');
+          } catch (e) {
+            console.log('There was an error creating roles');
+            res.end(e.message);
+          }
+        })
+      );
+      console.log('Now sending back response of /roles POST request');
       res.json(req.body);
     }
   },
@@ -62,15 +76,19 @@ export default [
     path: '/roleassignment',
     method: 'post',
     handler: async (req: Request, res: Response) => {
-      console.log('try to create a role assignment to AAS');
+      console.log('/roleassignment POST request received');
+      //console.log('try to create a role assignment to AAS');
       var assignmentArray: IAssignRoles[] = req.body;
-      assignmentArray.forEach(async assignment => {
-        try {
-          res.json(await assignRolesToAAS(assignment));
-        } catch (e) {
-          res.end(e.message);
-        }
-      });
+      await Promise.all(
+        assignmentArray.map(async assignment => {
+          try {
+            res.json(await assignRolesToAAS(assignment));
+          } catch (e) {
+            res.end(e.message);
+          }
+        })
+      );
+      console.log('Now sending back response of /roleassignment POST request');
       res.json(req.body);
     }
   },
@@ -78,9 +96,10 @@ export default [
     path: '/semanticprotocol',
     method: 'post',
     handler: async (req: Request, res: Response) => {
-      console.log('try to create a semantic protocol');
+      console.log('/semanticprotocol POST request received');
       try {
         res.json(await createSemanticProtocol(req.body));
+        console.log('Sent back response of /semanticprotocol POST request');
       } catch (e) {
         res.end(e.message);
       }
@@ -90,10 +109,11 @@ export default [
     path: '/asset',
     method: 'post',
     handler: async (req: Request, res: Response) => {
-      console.log('try to create a asset');
+      console.log('/asset POST request received');
       try {
         var asset: ICreateAsset = req.body;
         res.json(await createAsset(asset));
+        console.log('Sent back response of /asset POST request');
       } catch (e) {
         res.end(e.message);
       }
