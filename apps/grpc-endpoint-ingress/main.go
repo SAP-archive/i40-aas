@@ -17,9 +17,11 @@ import (
 )
 
 func main() {
-	err := godotenv.Load("../../.env")
-	if err == nil {
-		log.Warn().Msg("Successfully loaded .env file from repository root!")
+	if os.Getenv("HOME") != "/home/aasuser" {
+		err := godotenv.Load("../../.env")
+		if err == nil {
+			log.Warn().Msg("***** DEVELOPMENT MODE: Successfully loaded .env file from repository root! *****")
+		}
 	}
 
 	// Configure logging TimeField and line numbers
@@ -78,8 +80,8 @@ func main() {
 		GRPCConfig: GRPCSrvCfg,
 	}
 
-	// services := []string{fmt.Sprintf("%s:%s", AMQPCfg.Host, strconv.Itoa(amqpPort))}
-	// utils.WaitForServices(services, time.Duration(60)*time.Second)
+	services := []string{fmt.Sprintf("%s:%s", AMQPCfg.Host, strconv.Itoa(amqpPort))}
+	containerutils.WaitForServices(services, time.Duration(60)*time.Second)
 
 	GRPCIngress = grpcendpoint.NewGRPCIngress(GRPCIngressCfg)
 

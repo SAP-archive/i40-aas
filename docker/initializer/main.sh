@@ -5,7 +5,7 @@ waitfor() {
   while ! nc -z $1 $2; do
     sleep 0.1
   done
-  printf "$1:$2 is available!\n"
+  printf "netcat scan for $1:$2 successful!\n"
 }
 
 filtertarget() {
