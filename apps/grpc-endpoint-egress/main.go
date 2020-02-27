@@ -70,6 +70,6 @@ func main() {
 
 	containerutils.WaitForShutdown()
 
-	defer os.Exit(0)
-	defer GRPCEgress.Shutdown()
+	GRPCEgress.Shutdown()
+	os.Exit(0)
 }

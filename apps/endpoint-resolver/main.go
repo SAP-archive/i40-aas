@@ -93,6 +93,6 @@ func main() {
 
 	containerutils.WaitForShutdown()
 
-	defer os.Exit(0)
-	defer resolver.Shutdown()
+	resolver.Shutdown()
+	os.Exit(0)
 }

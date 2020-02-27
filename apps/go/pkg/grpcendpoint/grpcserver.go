@@ -82,7 +82,7 @@ func (s *grpcServer) init() (err error) {
 func (s *grpcServer) close() {
 	if s.server != nil {
 		s.server.Stop()
-		log.Debug().Msgf("shut down server listening on %s", strconv.Itoa(s.config.Port))
+		log.Debug().Msgf("stopped GRPC server at port %s", strconv.Itoa(s.config.Port))
 	}
 }
 

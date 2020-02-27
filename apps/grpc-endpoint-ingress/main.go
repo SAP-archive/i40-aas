@@ -87,6 +87,6 @@ func main() {
 
 	containerutils.WaitForShutdown()
 
-	defer os.Exit(0)
-	defer GRPCIngress.Shutdown()
+	GRPCIngress.Shutdown()
+	os.Exit(0)
 }
