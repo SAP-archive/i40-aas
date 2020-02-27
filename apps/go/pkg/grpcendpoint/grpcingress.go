@@ -53,4 +53,5 @@ func (i *GRPCIngress) Shutdown() {
 	log.Debug().Msg("entering shutdown sequence")
 	i.grpcServer.close()
 	i.amqpClient.Close()
+	log.Debug().Msg("shutdown sequence complete")
 }

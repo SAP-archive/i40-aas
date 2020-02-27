@@ -1,7 +1,6 @@
 package endpointresolver
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -75,9 +74,11 @@ func (r *EndpointResolver) Init() {
 }
 
 // Shutdown EndpointResolver
-func (r *EndpointResolver) Shutdown(ctx context.Context) {
+func (r *EndpointResolver) Shutdown() {
+	log.Debug().Msgf("entering shutdown sequence")
 	r.amqpConsumer.Close()
 	r.ampqPublisher.Close()
+	log.Debug().Msg("shutdown sequence complete")
 }
 
 func (r *EndpointResolver) processGenericEgressMsg(msg []byte) {

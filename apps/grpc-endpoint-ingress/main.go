@@ -3,10 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
-	"os/signal"
 	"strconv"
 	"strings"
-	"syscall"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -14,6 +12,7 @@ import (
 	"github.com/rs/zerolog/log"
 
 	"../go/pkg/amqpclient"
+	"../go/pkg/containerutils"
 	"../go/pkg/grpcendpoint"
 )
 
@@ -86,16 +85,8 @@ func main() {
 
 	GRPCIngress.Init()
 
-	waitForShutdown()
+	containerutils.WaitForShutdown()
 
 	defer os.Exit(0)
 	defer GRPCIngress.Shutdown()
-}
-
-func waitForShutdown() {
-	interruptChan := make(chan os.Signal, 1)
-	signal.Notify(interruptChan, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
-
-	// Block until we receive our signal.
-	<-interruptChan
 }

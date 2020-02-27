@@ -170,6 +170,7 @@ func (c *AMQPClient) Close() {
 		log.Debug().Msg("closing AMQP connection")
 		c.amqpConn.Close()
 	}
+	log.Debug().Msg("AMQP client closed")
 }
 
 // Publish TODO

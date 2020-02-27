@@ -90,6 +90,7 @@ func (e *GRPCEgress) Shutdown() {
 		c.close()
 	}
 	e.amqpClient.Close()
+	log.Debug().Msg("shutdown sequence complete")
 }
 
 func (e *GRPCEgress) obtainGRPCClient(cfg GRPCClientConfig) grpcClient {

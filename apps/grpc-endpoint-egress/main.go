@@ -1,20 +1,17 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"os"
-	"os/signal"
 	"strconv"
 	"strings"
-	"syscall"
 	"time"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
 	"../go/pkg/amqpclient"
-	utils "../go/pkg/containerutils"
+	"../go/pkg/containerutils"
 	"../go/pkg/grpcendpoint"
 )
 
@@ -65,28 +62,14 @@ func main() {
 	}
 
 	services := []string{fmt.Sprintf("%s:%s", AMQPCfg.Host, strconv.Itoa(amqpPort))}
-	utils.WaitForServices(services, time.Duration(60)*time.Second)
+	containerutils.WaitForServices(services, time.Duration(60)*time.Second)
 
 	GRPCEgress = grpcendpoint.NewGRPCEgress(GRPCEgressCfg)
 
 	GRPCEgress.Init()
 
-	waitForShutdown(GRPCEgress)
-}
+	containerutils.WaitForShutdown()
 
-func waitForShutdown(GRPCEgress grpcendpoint.GRPCEgress) {
 	defer os.Exit(0)
-
-	interruptChan := make(chan os.Signal, 1)
-	signal.Notify(interruptChan, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
-
-	// Block until we receive our signal.
-	<-interruptChan
-
-	// Create a deadline to wait for.
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
-	defer cancel()
-	GRPCEgress.Shutdown(ctx)
-
-	log.Info().Msg("Graceful shutdown.")
+	defer GRPCEgress.Shutdown()
 }

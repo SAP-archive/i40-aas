@@ -89,7 +89,7 @@ func (c *grpcClient) init() {
 
 func (c *grpcClient) close() {
 	if c.conn != nil {
-		log.Debug().Msgf("closing connection to %s", c.conn.Target())
 		c.conn.Close()
+		log.Debug().Msgf("closed connection to %s", c.conn.Target())
 	}
 }
