@@ -52,19 +52,16 @@ func main() {
 		GRPCIngress    grpcendpoint.GRPCIngress
 	)
 
-	// amqpPort, _ := strconv.Atoi(os.Getenv("RABBITMQ_AMQP_PORT"))
-	amqpPort := 5672
+	amqpPort, _ := strconv.Atoi(os.Getenv("RABBITMQ_PORT"))
 	AMQPCfg = amqpclient.Config{
-		Host:     "localhost", //os.Getenv("RABBITMQ_AMQP_HOST"),
+		Host:     os.Getenv("RABBITMQ_HOST"),
 		Port:     amqpPort,
-		User:     "guest",  //os.Getenv("RABBITMQ_BROKER_USER"),
-		Password: "guest",  //os.Getenv("RABBITMQ_BROKER_PASSWORD"),
-		Exchange: "egress", //os.Getenv("RABBITMQ_BROKER_EXCHANGE"),
-		Queue:    "",
+		User:     os.Getenv("RABBITMQ_INGRESS_USER"),
+		Password: os.Getenv("RABBITMQ_INGRESS_PASSWORD"),
+		Exchange: os.Getenv("RABBITMQ_INGRESS_EXCHANGE"),
 	}
 
-	// grpcPort, _ := strconv.Atoi(os.Getenv("GRPC_ENDPOINT_INGRESS_PORT"))
-	grpcPort := 8384
+	grpcPort, _ := strconv.Atoi(os.Getenv("GRPC_ENDPOINT_INGRESS_PORT"))
 	GRPCSrvCfg = grpcendpoint.GRPCServerConfig{
 		Port:        grpcPort,
 		Certificate: "",

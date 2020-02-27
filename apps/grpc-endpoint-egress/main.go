@@ -51,15 +51,13 @@ func main() {
 		GRPCEgress    grpcendpoint.GRPCEgress
 	)
 
-	// amqpPort, _ := strconv.Atoi(os.Getenv("RABBITMQ_AMQP_PORT"))
-	amqpPort := 5672
+	amqpPort, _ := strconv.Atoi(os.Getenv("RABBITMQ_PORT"))
 	AMQPCfg = amqpclient.Config{
-		Host:     "localhost", //os.Getenv("RABBITMQ_AMQP_HOST"),
+		Host:     os.Getenv("RABBITMQ_HOST"),
 		Port:     amqpPort,
-		User:     "guest",  //os.Getenv("RABBITMQ_BROKER_USER"),
-		Password: "guest",  //os.Getenv("RABBITMQ_BROKER_PASSWORD"),
-		Exchange: "egress", //os.Getenv("RABBITMQ_BROKER_EXCHANGE"),
-		Queue:    "grpc",   //os.Getenv("GRPC_ENDPOINT_EGRESS_BROKER_QUEUE"),
+		User:     os.Getenv("RABBITMQ_EGRESS_USER"),
+		Password: os.Getenv("RABBITMQ_EGRESS_PASSWORD"),
+		Exchange: os.Getenv("RABBITMQ_EGRESS_EXCHANGE"),
 	}
 
 	GRPCEgressCfg = grpcendpoint.GRPCEgressConfig{

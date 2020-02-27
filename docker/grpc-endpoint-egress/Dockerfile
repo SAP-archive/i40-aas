@@ -11,7 +11,6 @@ RUN adduser -D -g '' appuser
 
 COPY grpc-endpoint-egress /grpc-endpoint-egress/
 COPY go /go
-COPY proto /proto
 WORKDIR /grpc-endpoint-egress/
 
 # Download dependencies

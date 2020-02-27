@@ -19,7 +19,6 @@ func TestNewAMQPClient(t *testing.T) {
 		User:     "guest",
 		Password: "guest",
 		Exchange: "dummyEx",
-		Queue:    "dummyQ",
 	}
 
 	c := NewAMQPClient(cfg)

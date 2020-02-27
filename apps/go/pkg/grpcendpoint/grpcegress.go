@@ -3,6 +3,7 @@ package grpcendpoint
 import (
 	"context"
 	"encoding/json"
+	"os"
 	"reflect"
 	"strconv"
 	"strings"
@@ -40,9 +41,10 @@ func (e *GRPCEgress) Init() {
 	e.amqpClient = amqpclient.NewAMQPClient(e.config.AMQPConfig)
 	e.amqpClient.Init()
 
-	bindingKey := e.config.AMQPConfig.Exchange + "." + e.config.AMQPConfig.Queue
-	ctag := "grpc-endpoint-egress"
-	go e.amqpClient.Listen(bindingKey, ctag)
+	queue := os.Getenv("GRPC_ENDPOINT_EGRESS_AMQP_QUEUE")
+	bindingKey := e.config.AMQPConfig.Exchange + "." + queue
+	ctag := os.Getenv("GRPC_ENDPOINT_EGRESS_AMQP_CTAG")
+	go e.amqpClient.Listen(queue, bindingKey, ctag)
 
 	go e.clearIdleClients()
 

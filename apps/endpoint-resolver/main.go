@@ -64,23 +64,21 @@ func main() {
 		Password: "admin",                      // os.Getenv("ENDPOINT_REGISTRY_ADMIN_PASSWORD"),
 	}
 
-	// amqpPort, _ := strconv.Atoi(os.Getenv("RABBITMQ_AMQP_PORT"))
+	// amqpPort, _ := strconv.Atoi(os.Getenv("RABBITMQ_PORT"))
 	amqpPort := 5672
 	amqpConsumerCfg = amqpclient.Config{
-		Host:     "localhost", //os.Getenv("RABBITMQ_AMQP_HOST"),
+		Host:     "localhost", //os.Getenv("RABBITMQ_HOST"),
 		Port:     amqpPort,
-		User:     "guest",   //os.Getenv("RABBITMQ_BROKER_USER"),
-		Password: "guest",   //os.Getenv("RABBITMQ_BROKER_PASSWORD"),
-		Exchange: "egress",  //os.Getenv("RABBITMQ_BROKER_EXCHANGE"),
-		Queue:    "generic", //os.Getenv("GRPC_ENDPOINT_EGRESS_BROKER_QUEUE"),
+		User:     "guest",  //os.Getenv("RABBITMQ_EGRESS_USER"),
+		Password: "guest",  //os.Getenv("RABBITMQ_EGRESS_PASSWORD"),
+		Exchange: "egress", //os.Getenv("RABBITMQ_EGRESS_EXCHANGE"),
 	}
 	amqpPublisherCfg = amqpclient.Config{
-		Host:     "localhost", //os.Getenv("RABBITMQ_AMQP_HOST"),
+		Host:     "localhost", //os.Getenv("RABBITMQ_HOST"),
 		Port:     amqpPort,
-		User:     "guest",  //os.Getenv("RABBITMQ_BROKER_USER"),
-		Password: "guest",  //os.Getenv("RABBITMQ_BROKER_PASSWORD"),
-		Exchange: "egress", //os.Getenv("RABBITMQ_BROKER_EXCHANGE"),
-		Queue:    "",       //os.Getenv("GRPC_ENDPOINT_EGRESS_BROKER_QUEUE"),
+		User:     "guest",  //os.Getenv("RABBITMQ_EGRESS_USER"),
+		Password: "guest",  //os.Getenv("RABBITMQ_EGRESS_PASSWORD"),
+		Exchange: "egress", //os.Getenv("RABBITMQ_EGRESS_EXCHANGE"),
 	}
 
 	config = endpointresolver.Config{

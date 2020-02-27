@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"strconv"
 
 	"github.com/rs/zerolog/log"
@@ -58,9 +59,10 @@ func NewEndpointResolver(cfg Config) (resolver EndpointResolver) {
 func (r *EndpointResolver) Init() {
 	r.amqpConsumer = amqpclient.NewAMQPClient(r.config.AMQPConsumerConfig)
 	r.amqpConsumer.Init()
-	bindingKey := r.config.AMQPConsumerConfig.Exchange + "." + r.config.AMQPConsumerConfig.Queue
-	ctag := "endpoint-resolver"
-	go r.amqpConsumer.Listen(bindingKey, ctag)
+	queue := os.Getenv("ENDPOINT_RESOLVER_AMQP_QUEUE")
+	bindingKey := r.config.AMQPConsumerConfig.Exchange + "." + queue
+	ctag := os.Getenv("ENDPOINT_RESOLVER_AMQP_CTAG")
+	go r.amqpConsumer.Listen(queue, bindingKey, ctag)
 
 	r.ampqPublisher = amqpclient.NewAMQPClient(r.config.AMQPPublisherConfig)
 	r.ampqPublisher.Init()

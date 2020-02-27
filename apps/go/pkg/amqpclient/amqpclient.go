@@ -16,7 +16,6 @@ type Config struct {
 	User     string
 	Password string
 	Exchange string
-	Queue    string
 }
 
 // AMQPClient struct
@@ -107,15 +106,15 @@ func (c *AMQPClient) reconnect() {
 }
 
 // Listen TODO
-func (c *AMQPClient) Listen(bindingKey string, ctag string) {
-	log.Debug().Msgf("declaring Queue %q", c.config.Queue)
+func (c *AMQPClient) Listen(queueName string, bindingKey string, ctag string) {
+	log.Debug().Msgf("declaring Queue %q", queueName)
 	queue, err := c.amqpChan.QueueDeclare(
-		c.config.Queue, // name of the queue
-		true,           // durable
-		false,          // delete when unused
-		false,          // exclusive
-		false,          // noWait
-		nil,            // arguments
+		queueName, // name of the queue
+		true,      // durable
+		false,     // delete when unused
+		false,     // exclusive
+		false,     // noWait
+		nil,       // arguments
 	)
 	if err != nil {
 		log.Error().Err(err).Msg("Queue Declare")
@@ -158,7 +157,7 @@ func (c *AMQPClient) Listen(bindingKey string, ctag string) {
 		time.Sleep(100 * time.Millisecond)
 	}
 
-	c.Listen(bindingKey, ctag)
+	c.Listen(queueName, bindingKey, ctag)
 }
 
 // Close TODO
