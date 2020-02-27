@@ -39,7 +39,7 @@ func NewGRPCEgress(cfg GRPCEgressConfig) (egress GRPCEgress) {
 // Init GRPC clients and AMQP client
 func (e *GRPCEgress) Init() {
 	e.amqpClient = amqpclient.NewAMQPClient(e.config.AMQPConfig)
-	e.amqpClient.Init()
+	go e.amqpClient.Init()
 
 	queue := os.Getenv("GRPC_ENDPOINT_EGRESS_AMQP_QUEUE")
 	bindingKey := e.config.AMQPConfig.Exchange + "." + queue
@@ -84,9 +84,10 @@ func (e *GRPCEgress) Init() {
 }
 
 // Shutdown clients + amqp connection
-func (e *GRPCEgress) Shutdown(ctx context.Context) {
+func (e *GRPCEgress) Shutdown() {
+	log.Debug().Msg("entering shutdown sequence")
 	for _, c := range e.grpcClients {
-		c.close(ctx)
+		c.close()
 	}
 	e.amqpClient.Close()
 }

@@ -1,8 +1,6 @@
 package grpcendpoint
 
 import (
-	"context"
-
 	"github.com/rs/zerolog/log"
 
 	amqpclient "../amqpclient"
@@ -34,7 +32,7 @@ func (i *GRPCIngress) Init() {
 	i.amqpClient = amqpclient.NewAMQPClient(i.config.AMQPConfig)
 	i.grpcServer = newGRPCServer(i.config.GRPCConfig)
 
-	i.amqpClient.Init()
+	go i.amqpClient.Init()
 	go i.grpcServer.init()
 
 	go func() {
@@ -51,7 +49,8 @@ func (i *GRPCIngress) Init() {
 }
 
 // Shutdown the Ingress
-func (i *GRPCIngress) Shutdown(ctx context.Context) {
+func (i *GRPCIngress) Shutdown() {
+	log.Debug().Msg("entering shutdown sequence")
 	i.grpcServer.close()
 	i.amqpClient.Close()
 }

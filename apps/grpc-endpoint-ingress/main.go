@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"os/signal"
@@ -10,15 +9,20 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/joho/godotenv"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
 	"../go/pkg/amqpclient"
-	utils "../go/pkg/containerutils"
 	"../go/pkg/grpcendpoint"
 )
 
 func main() {
+	err := godotenv.Load("../../.env")
+	if err == nil {
+		log.Warn().Msg("Successfully loaded .env file from repository root!")
+	}
+
 	// Configure logging TimeField and line numbers
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 	log.Logger = log.With().Caller().Logger()
@@ -75,29 +79,23 @@ func main() {
 		GRPCConfig: GRPCSrvCfg,
 	}
 
-	services := []string{fmt.Sprintf("%s:%s", AMQPCfg.Host, strconv.Itoa(amqpPort))}
-	utils.WaitForServices(services, time.Duration(60)*time.Second)
+	// services := []string{fmt.Sprintf("%s:%s", AMQPCfg.Host, strconv.Itoa(amqpPort))}
+	// utils.WaitForServices(services, time.Duration(60)*time.Second)
 
 	GRPCIngress = grpcendpoint.NewGRPCIngress(GRPCIngressCfg)
 
 	GRPCIngress.Init()
 
-	waitForShutdown(GRPCIngress)
+	waitForShutdown()
+
+	defer os.Exit(0)
+	defer GRPCIngress.Shutdown()
 }
 
-func waitForShutdown(ingress grpcendpoint.GRPCIngress) {
-	defer os.Exit(0)
-
+func waitForShutdown() {
 	interruptChan := make(chan os.Signal, 1)
 	signal.Notify(interruptChan, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 
 	// Block until we receive our signal.
 	<-interruptChan
-
-	// Create a deadline to wait for.
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
-	defer cancel()
-	ingress.Shutdown(ctx)
-
-	log.Info().Msg("Graceful shutdown.")
 }

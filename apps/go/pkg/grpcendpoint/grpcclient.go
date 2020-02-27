@@ -1,7 +1,6 @@
 package grpcendpoint
 
 import (
-	"context"
 	"strconv"
 
 	"github.com/rs/zerolog/log"
@@ -88,8 +87,9 @@ func (c *grpcClient) init() {
 	log.Info().Msgf("GRPC connection to %s initiated and in state %s", grpcHost, c.conn.GetState().String())
 }
 
-func (c *grpcClient) close(ctx context.Context) {
+func (c *grpcClient) close() {
 	if c.conn != nil {
+		log.Debug().Msgf("closing connection to %s", c.conn.Target())
 		c.conn.Close()
 	}
 }

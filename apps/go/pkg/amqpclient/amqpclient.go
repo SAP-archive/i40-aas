@@ -163,9 +163,11 @@ func (c *AMQPClient) Listen(queueName string, bindingKey string, ctag string) {
 // Close TODO
 func (c *AMQPClient) Close() {
 	if c.amqpChan != nil {
+		log.Debug().Msg("closing AMQP channel")
 		c.amqpChan.Close()
 	}
 	if c.amqpConn != nil {
+		log.Debug().Msg("closing AMQP connection")
 		c.amqpConn.Close()
 	}
 }
