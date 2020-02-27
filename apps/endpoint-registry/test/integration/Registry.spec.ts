@@ -14,7 +14,6 @@ function execShellCommand(cmd: any) {
       } else {
         console.log('command executed correctly');
       }
-      //console.log(`stdout: ${stdout}`);
       resolve(stdout ? stdout : stderr);
     });
   });
