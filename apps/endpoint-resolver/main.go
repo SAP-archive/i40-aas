@@ -51,48 +51,37 @@ func main() {
 	}
 
 	var (
-		endpointRegCfg   endpointresolver.EndpointRegistryConfig
-		amqpConsumerCfg  amqpclient.Config
-		amqpPublisherCfg amqpclient.Config
-		config           endpointresolver.Config
-		resolver         endpointresolver.EndpointResolver
+		endpointRegCfg endpointresolver.EndpointRegistryConfig
+		amqpCfg        amqpclient.Config
+		config         endpointresolver.Config
+		resolver       endpointresolver.EndpointResolver
 	)
 
-	// registryPort, _ := strconv.Atoi(os.Getenv("ENDPOINT_REGISTRY_PORT"))
-	registryPort := 4400
+	registryPort, _ := strconv.Atoi(os.Getenv("ENDPOINT_REGISTRY_PORT"))
 	endpointRegCfg = endpointresolver.EndpointRegistryConfig{
-		Protocol: "http",      // os.Getenv("ENDPOINT_REGISTRY_PROTOCOL"),
-		Host:     "localhost", // os.Getenv("ENDPOINT_REGISTRY_HOST"),
+		Protocol: os.Getenv("ENDPOINT_REGISTRY_PROTOCOL"),
+		Host:     os.Getenv("ENDPOINT_REGISTRY_HOST"),
 		Port:     registryPort,
-		Route:    "/assetadministrationshells", // os.Getenv("ENDPOINT_REGISTRY_URL_SUFFIX"),
-		User:     "admin",                      // os.Getenv("ENDPOINT_REGISTRY_ADMIN_USER),
-		Password: "admin",                      // os.Getenv("ENDPOINT_REGISTRY_ADMIN_PASSWORD"),
+		Route:    os.Getenv("ENDPOINT_REGISTRY_URL_SUFFIX"),
+		User:     os.Getenv("ENDPOINT_REGISTRY_ADMIN_USER"),
+		Password: os.Getenv("ENDPOINT_REGISTRY_ADMIN_PASSWORD"),
 	}
 
-	// amqpPort, _ := strconv.Atoi(os.Getenv("RABBITMQ_PORT"))
-	amqpPort := 5672
-	amqpConsumerCfg = amqpclient.Config{
-		Host:     "localhost", //os.Getenv("RABBITMQ_HOST"),
+	amqpPort, _ := strconv.Atoi(os.Getenv("RABBITMQ_PORT"))
+	amqpCfg = amqpclient.Config{
+		Host:     os.Getenv("RABBITMQ_HOST"),
 		Port:     amqpPort,
-		User:     "guest",  //os.Getenv("RABBITMQ_EGRESS_USER"),
-		Password: "guest",  //os.Getenv("RABBITMQ_EGRESS_PASSWORD"),
-		Exchange: "egress", //os.Getenv("RABBITMQ_EGRESS_EXCHANGE"),
-	}
-	amqpPublisherCfg = amqpclient.Config{
-		Host:     "localhost", //os.Getenv("RABBITMQ_HOST"),
-		Port:     amqpPort,
-		User:     "guest",  //os.Getenv("RABBITMQ_EGRESS_USER"),
-		Password: "guest",  //os.Getenv("RABBITMQ_EGRESS_PASSWORD"),
-		Exchange: "egress", //os.Getenv("RABBITMQ_EGRESS_EXCHANGE"),
+		User:     os.Getenv("RABBITMQ_EGRESS_USER"),
+		Password: os.Getenv("RABBITMQ_EGRESS_PASSWORD"),
+		Exchange: os.Getenv("RABBITMQ_EGRESS_EXCHANGE"),
 	}
 
 	config = endpointresolver.Config{
-		AMQPConsumerConfig:     amqpConsumerCfg,
-		AMQPPublisherConfig:    amqpPublisherCfg,
+		AMQPConfig:             amqpCfg,
 		EndpointRegistryConfig: endpointRegCfg,
 	}
 
-	services := []string{fmt.Sprintf("%s:%s", amqpConsumerCfg.Host, strconv.Itoa(amqpPort))}
+	services := []string{fmt.Sprintf("%s:%s", amqpCfg.Host, strconv.Itoa(amqpPort))}
 	containerutils.WaitForServices(services, time.Duration(60)*time.Second)
 
 	resolver = endpointresolver.NewEndpointResolver(config)

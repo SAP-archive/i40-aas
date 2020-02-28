@@ -34,16 +34,14 @@ type EndpointRegistryConfig struct {
 
 // Config struct
 type Config struct {
-	AMQPConsumerConfig     amqpclient.Config
-	AMQPPublisherConfig    amqpclient.Config
+	AMQPConfig             amqpclient.Config
 	EndpointRegistryConfig EndpointRegistryConfig
 }
 
 // EndpointResolver struct
 type EndpointResolver struct {
-	config        Config
-	amqpConsumer  amqpclient.AMQPClient
-	ampqPublisher amqpclient.AMQPClient
+	config     Config
+	amqpClient amqpclient.AMQPClient
 }
 
 // NewEndpointResolver instance
@@ -56,18 +54,15 @@ func NewEndpointResolver(cfg Config) (resolver EndpointResolver) {
 
 // Init EndpointResolver and AMQP client
 func (r *EndpointResolver) Init() {
-	r.amqpConsumer = amqpclient.NewAMQPClient(r.config.AMQPConsumerConfig)
-	r.amqpConsumer.Init()
+	r.amqpClient = amqpclient.NewAMQPClient(r.config.AMQPConfig)
+	r.amqpClient.Init()
 	queue := os.Getenv("ENDPOINT_RESOLVER_AMQP_QUEUE")
-	bindingKey := r.config.AMQPConsumerConfig.Exchange + "." + queue
+	bindingKey := r.config.AMQPConfig.Exchange + "." + queue
 	ctag := os.Getenv("ENDPOINT_RESOLVER_AMQP_CTAG")
-	go r.amqpConsumer.Listen(queue, bindingKey, ctag)
-
-	r.ampqPublisher = amqpclient.NewAMQPClient(r.config.AMQPPublisherConfig)
-	r.ampqPublisher.Init()
+	go r.amqpClient.Listen(queue, bindingKey, ctag)
 
 	go func() {
-		for msg := range r.amqpConsumer.MsgChan {
+		for msg := range r.amqpClient.MsgChan {
 			r.processGenericEgressMsg(msg)
 		}
 	}()
@@ -76,8 +71,7 @@ func (r *EndpointResolver) Init() {
 // Shutdown EndpointResolver
 func (r *EndpointResolver) Shutdown() {
 	log.Debug().Msgf("entering shutdown sequence")
-	r.amqpConsumer.Close()
-	r.ampqPublisher.Close()
+	r.amqpClient.Close()
 	log.Debug().Msg("shutdown sequence complete")
 }
 
@@ -116,7 +110,7 @@ func (r *EndpointResolver) processGenericEgressMsg(msg []byte) {
 						}
 
 						routingKey := "egress.grpc"
-						r.ampqPublisher.Publish(routingKey, payload)
+						r.amqpClient.Publish(routingKey, payload)
 					}
 				} else if endpoint.(map[string]interface{})["protocol"] == "http" {
 
