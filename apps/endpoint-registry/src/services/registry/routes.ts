@@ -82,7 +82,7 @@ export default [
       await Promise.all(
         assignmentArray.map(async assignment => {
           try {
-            res.json(await assignRolesToAAS(assignment));
+            await assignRolesToAAS(assignment);
           } catch (e) {
             res.end(e.message);
           }
