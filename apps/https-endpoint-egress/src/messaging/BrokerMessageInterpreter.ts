@@ -20,8 +20,6 @@ class BrokerMessageInterpreter implements IMessageReceiver {
   eventEmitter: any;
   // Create an eventEmitter object
 
-
-
   constructor(
     private brokerClient: AmqpClient
   ) {
@@ -140,9 +138,7 @@ Decide what to do if the message can not be handled (eg. because receiver role i
 
     if (message) {
       //if validation successful, get the AAS receiver endpoint from AAS-registry service
-      logger.info("Received Msg params [" + message.interactionMessage.frame.sender.role.name + " , " + message.interactionMessage.frame.receiver.role.name + " , " + message.interactionMessage.frame.type + " , " + message.interactionMessage.frame.conversationId + "]");
-
-
+      logger.debug("Received Msg params [" + message.interactionMessage.frame.sender.role.name + " , " + message.interactionMessage.frame.receiver.role.name + " , " + message.interactionMessage.frame.type + " , " + message.interactionMessage.frame.conversationId + "]");
       this.handleResolverMessage(message);
 
     }

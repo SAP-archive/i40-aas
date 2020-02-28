@@ -1,7 +1,6 @@
 import { AmqpClient } from "./messaging/AMQPClient";
 import { BrokerMessageInterpreter } from "./messaging/BrokerMessageInterpreter";
 import { logger } from "./utils/log";
-import { RegistryConnector } from "./messaging/RegistryConnector";
 
 // if (process.env.NODE_ENV !== 'production') {
 const dotenv = require("dotenv");
