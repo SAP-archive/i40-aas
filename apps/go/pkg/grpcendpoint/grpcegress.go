@@ -25,7 +25,7 @@ type GRPCEgressConfig struct {
 type GRPCEgress struct {
 	config      GRPCEgressConfig
 	grpcClients []grpcClient
-	amqpClient  amqpclient.AMQPClient
+	amqpClient  *amqpclient.AMQPClient
 }
 
 // NewGRPCEgress instance

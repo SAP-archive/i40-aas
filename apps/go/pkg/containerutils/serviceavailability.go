@@ -20,12 +20,14 @@ func WaitForServices(services []string, timeOut time.Duration) {
 				defer wg.Done()
 				for {
 					_, err := net.Dial("tcp", s)
-					if err == nil {
+					if err != nil {
+						log.Error().Err(err).Msgf("failed tcp dial for %s", s)
+						time.Sleep(1 * time.Second)
+					} else {
 						log.Debug().Msgf("tcp dial for %s successful", s)
 						return
 					}
-					log.Debug().Err(err).Msgf("failed tcp dial for %s", s)
-					time.Sleep(1 * time.Second)
+
 				}
 			}(s)
 		}

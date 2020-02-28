@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/jpillora/backoff"
 	"github.com/rs/zerolog/log"
 	"github.com/streadway/amqp"
 )
@@ -20,14 +21,17 @@ type Config struct {
 
 // AMQPClient struct
 type AMQPClient struct {
-	config   Config
-	amqpConn *amqp.Connection
-	amqpChan *amqp.Channel
-	MsgChan  chan []byte
+	config    Config
+	conn      *amqp.Connection
+	channel   *amqp.Channel
+	MsgChan   chan []byte
+	reconnect bool
+	backoff   *backoff.Backoff
 }
 
 // NewAMQPClient TODO
-func NewAMQPClient(cfg Config) (c AMQPClient) {
+func NewAMQPClient(cfg Config) *AMQPClient {
+	c := AMQPClient{}
 	if cfg.Host == "" {
 		log.Warn().Msg("AMQP host not specified, defaulting to 'localhost'")
 		cfg.Host = "localhost"
@@ -43,49 +47,49 @@ func NewAMQPClient(cfg Config) (c AMQPClient) {
 	}
 
 	c.config = cfg
+	c.reconnect = true
+
+	c.backoff = &backoff.Backoff{
+		Min:    100 * time.Millisecond,
+		Max:    10 * time.Second,
+		Factor: 2,
+		Jitter: true,
+	}
 
 	c.MsgChan = make(chan []byte)
 
-	return c
+	c.connect()
+
+	return &c
 }
 
 // Init TODO
-func (c *AMQPClient) Init() {
+func (c *AMQPClient) connect() {
 	log.Debug().Msgf("connecting to Exchange %q (AMQP Broker at 'amqp://%s:%s@%s:%s/')", c.config.Exchange, c.config.User, c.config.Password, c.config.Host, strconv.Itoa(c.config.Port))
-	amqpConn, err := amqp.Dial(fmt.Sprintf("amqp://%s:%s@%s:%s/", c.config.User, c.config.Password, c.config.Host, strconv.Itoa(c.config.Port)))
+	conn, err := amqp.Dial(fmt.Sprintf("amqp://%s:%s@%s:%s/", c.config.User, c.config.Password, c.config.Host, strconv.Itoa(c.config.Port)))
 	if err != nil {
-		log.Error().Err(err).Msg("failed AMQP dial to RabbitMQ")
-		time.Sleep(3 * time.Second)
-		c.Init()
+		d := c.backoff.Duration()
+		log.Error().Err(err).Msgf("failed AMQP dial to RabbitMQ, retrying in %s...", d)
+		time.Sleep(d)
+		c.connect()
 		return
 	}
-	c.amqpConn = amqpConn
+	c.conn = conn
 
 	log.Debug().Msg("got Connection, getting Channel")
 
-	amqpChan, err := amqpConn.Channel()
+	channel, err := conn.Channel()
 	if err != nil {
-		log.Error().Err(err).Msg("failed to open Channel")
-		time.Sleep(3 * time.Second)
-		c.Init()
+		d := c.backoff.Duration()
+		log.Error().Err(err).Msgf("failed to open Channel, retrying in %s...", d)
+		time.Sleep(d)
+		c.connect()
 		return
 	}
-	c.amqpChan = amqpChan
-
+	c.channel = channel
 	log.Debug().Msgf("got Channel, declaring Exchange %q", c.config.Exchange)
 
-	go func() {
-		// Wait for the channel to be closed
-		log.Debug().Msgf("closing: %s", <-c.amqpConn.NotifyClose(make(chan *amqp.Error)))
-		log.Debug().Msgf("attempting to reconnect")
-
-		for c.amqpConn.IsClosed() {
-			time.Sleep(3 * time.Second)
-			c.Init()
-		}
-	}()
-
-	amqpChan.ExchangeDeclare(
+	channel.ExchangeDeclare(
 		c.config.Exchange, // name
 		"topic",           //type
 		true,              // durable
@@ -94,22 +98,53 @@ func (c *AMQPClient) Init() {
 		false,             // no-wait
 		nil,               // arguments
 	)
-
 	log.Debug().Msg("declared Exchange")
 
+	go func() {
+		// Wait for the channel to be closed
+		err := <-c.conn.NotifyClose(make(chan *amqp.Error))
+		if err != nil {
+			log.Debug().Msgf("attempting to reconnect")
+			c.connect()
+		} else {
+			log.Debug().Msgf("received final NotifyClose")
+		}
+	}()
+
 	log.Info().Msgf("connected to Exchange %q (AMQP Broker at 'amqp://%s:%s@%s:%s/')", c.config.Exchange, c.config.User, c.config.Password, c.config.Host, strconv.Itoa(c.config.Port))
+	c.backoff.Reset()
+}
+
+// Close TODO
+func (c *AMQPClient) Close() {
+	c.reconnect = false
+	if c.channel != nil {
+		log.Debug().Msg("closing AMQP channel")
+		c.channel.Close()
+	}
+	if c.conn != nil {
+		log.Debug().Msg("closing AMQP connection")
+		c.conn.Close()
+	}
+	log.Debug().Msg("AMQP client closed")
 }
 
 // Listen TODO
 func (c *AMQPClient) Listen(queueName string, bindingKey string, ctag string) {
 	log.Debug().Msgf("attempting to consume from Queue %q (bindingKey: %q) as %q", queueName, bindingKey, ctag)
-	if c.amqpChan == nil {
-		log.Debug().Msg("AMQP Channel is nil, reverting to AMQPClient.Init() first")
-		c.Init()
+	if c.channel == nil {
+		log.Debug().Msg("channel is nil, calling connect() first")
+		c.connect()
+	} else if c.conn.IsClosed() {
+		d := c.backoff.Duration()
+		log.Error().Msgf("channel is closed, retrying in %s...", d)
+		time.Sleep(d)
+		c.Listen(queueName, bindingKey, ctag)
+		return
 	}
 
 	log.Debug().Msgf("declaring Queue %q", queueName)
-	queue, err := c.amqpChan.QueueDeclare(
+	queue, err := c.channel.QueueDeclare(
 		queueName, // name of the queue
 		true,      // durable
 		false,     // delete when unused
@@ -118,23 +153,31 @@ func (c *AMQPClient) Listen(queueName string, bindingKey string, ctag string) {
 		nil,       // arguments
 	)
 	if err != nil {
-		log.Error().Err(err).Msg("failed on Queue Declare")
+		d := c.backoff.Duration()
+		log.Error().Msgf("failed on Queue Declare, retrying in %s...", d)
+		time.Sleep(d)
+		c.Listen(queueName, bindingKey, ctag)
+		return
 	}
 
 	log.Debug().Msgf("declared Queue (%q %d messages, %d consumers), binding to Exchange (key %q)", queue.Name, queue.Messages, queue.Consumers, bindingKey)
 
-	if err = c.amqpChan.QueueBind(
+	if err = c.channel.QueueBind(
 		queue.Name,        // name of the queue
 		bindingKey,        // bindingKey
 		c.config.Exchange, // sourceExchange
 		false,             // noWait
 		nil,               // arguments
 	); err != nil {
-		log.Error().Err(err).Msg("failed on Queue Bind")
+		d := c.backoff.Duration()
+		log.Error().Msgf("failed on Queue Bind, retrying in %s...", d)
+		time.Sleep(d)
+		c.Listen(queueName, bindingKey, ctag)
+		return
 	}
 
 	log.Debug().Msgf("Queue bound to Exchange %q, starting Consume (consumer tag %q)", c.config.Exchange, ctag)
-	deliveries, err := c.amqpChan.Consume(
+	deliveries, err := c.channel.Consume(
 		queue.Name, // name
 		ctag,       // consumerTag,
 		false,      // noAck
@@ -144,10 +187,15 @@ func (c *AMQPClient) Listen(queueName string, bindingKey string, ctag string) {
 		nil,        // arguments
 	)
 	if err != nil {
-		log.Error().Err(err).Msg("failed to consume from Queue")
+		d := c.backoff.Duration()
+		log.Error().Msgf("failed to consume from Queue, retrying in %s...", d)
+		time.Sleep(d)
+		c.Listen(queueName, bindingKey, ctag)
+		return
 	}
 
 	log.Info().Msgf("consuming from Queue %q (binding: %q) as %q", queueName, bindingKey, ctag)
+	c.backoff.Reset()
 
 	for d := range deliveries {
 		log.Debug().Msgf("got %dB delivery: [%v]", len(d.Body), d.DeliveryTag)
@@ -155,35 +203,28 @@ func (c *AMQPClient) Listen(queueName string, bindingKey string, ctag string) {
 		d.Ack(false)
 	}
 
-	log.Warn().Msg("deliveries channel closed, waiting for reconnect")
-	for c.amqpConn.IsClosed() {
-		time.Sleep(100 * time.Millisecond)
-	}
+	log.Warn().Msg("deliveries channel closed")
 
-	c.Listen(queueName, bindingKey, ctag)
-}
-
-// Close TODO
-func (c *AMQPClient) Close() {
-	if c.amqpChan != nil {
-		log.Debug().Msg("closing AMQP channel")
-		c.amqpChan.Close()
+	if c.reconnect {
+		log.Debug().Msgf("reconnect is %v, attempting to restart consuming from Queue %q (binding: %q) as %q", c.reconnect, queueName, bindingKey, ctag)
+		c.Listen(queueName, bindingKey, ctag)
 	}
-	if c.amqpConn != nil {
-		log.Debug().Msg("closing AMQP connection")
-		c.amqpConn.Close()
-	}
-	log.Debug().Msg("AMQP client closed")
 }
 
 // Publish TODO
 func (c *AMQPClient) Publish(routingKey string, payload []byte) {
-	if c.amqpChan == nil {
-		log.Debug().Msg("AMQP Channel is nil, reverting to AMQPClient.Init() first")
-		c.Init()
+	if c.channel == nil {
+		log.Debug().Msg("channel is nil, calling connect() first")
+		c.connect()
+	} else if c.conn.IsClosed() {
+		d := c.backoff.Duration()
+		log.Error().Msgf("channel is closed, retrying in %s...", d)
+		time.Sleep(d)
+		c.Publish(routingKey, payload)
+		return
 	}
 
-	err := c.amqpChan.Publish(
+	err := c.channel.Publish(
 		c.config.Exchange,
 		routingKey, // routing key
 		false,      // mandatory
@@ -197,9 +238,11 @@ func (c *AMQPClient) Publish(routingKey string, payload []byte) {
 			Priority:        0,              // 0-9
 		})
 	if err != nil {
-		log.Error().Err(err).Msgf("failed to publish message with key %s to Exchange %s", routingKey, c.config.Exchange)
-		time.Sleep(1 * time.Second)
+		d := c.backoff.Duration()
+		log.Error().Err(err).Msgf("failed to publish message with key %s to Exchange %s, retrying in %s...", routingKey, c.config.Exchange, d)
+		time.Sleep(d)
 		c.Publish(routingKey, payload)
 	}
-	log.Debug().Msgf("published %dB with key %s to Exchange %s", len(payload), routingKey, c.config.Exchange)
+	log.Debug().Msgf("published %s (%dB) with key %s to Exchange %s", string(payload), len(payload), routingKey, c.config.Exchange)
+	c.backoff.Reset()
 }

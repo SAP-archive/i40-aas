@@ -41,7 +41,7 @@ type Config struct {
 // EndpointResolver struct
 type EndpointResolver struct {
 	config     Config
-	amqpClient amqpclient.AMQPClient
+	amqpClient *amqpclient.AMQPClient
 }
 
 // NewEndpointResolver instance
@@ -55,10 +55,11 @@ func NewEndpointResolver(cfg Config) (resolver EndpointResolver) {
 // Init EndpointResolver and AMQP client
 func (r *EndpointResolver) Init() {
 	r.amqpClient = amqpclient.NewAMQPClient(r.config.AMQPConfig)
-	r.amqpClient.Init()
+
 	queue := os.Getenv("ENDPOINT_RESOLVER_AMQP_QUEUE")
 	bindingKey := r.config.AMQPConfig.Exchange + "." + queue
 	ctag := os.Getenv("ENDPOINT_RESOLVER_AMQP_CTAG")
+
 	go r.amqpClient.Listen(queue, bindingKey, ctag)
 
 	go func() {
@@ -70,7 +71,7 @@ func (r *EndpointResolver) Init() {
 
 // Shutdown EndpointResolver
 func (r *EndpointResolver) Shutdown() {
-	log.Debug().Msgf("entering shutdown sequence")
+	log.Debug().Msg("entering shutdown sequence")
 	r.amqpClient.Close()
 	log.Debug().Msg("shutdown sequence complete")
 }
@@ -92,30 +93,28 @@ func (r *EndpointResolver) processGenericEgressMsg(msg []byte) {
 			log.Error().Err(err).Msg("unable to unmarshal msg")
 		}
 
-		// loop over all AAS
 		for _, aas := range dat {
 			for _, endpoint := range aas.(map[string]interface{})["endpoints"].([]interface{}) {
-				if endpoint.(map[string]interface{})["protocol"] == "grpc" {
-					if true {
-						urlHost := fmt.Sprintf("%v", endpoint.(map[string]interface{})["url"])
+				urlHost := fmt.Sprintf("%v", endpoint.(map[string]interface{})["url"])
+				protocol := fmt.Sprintf("%v", endpoint.(map[string]interface{})["protocol"])
+				target := fmt.Sprintf("%v", endpoint.(map[string]interface{})["protocol"])
 
-						resolverMsg := ResolverMsg{
-							EgressPayload: msg,
-							ReceiverURL:   urlHost,
-							ReceiverType:  "cloud",
-						}
-						payload, err := json.Marshal(resolverMsg)
-						if err != nil {
-							log.Error().Err(err).Msg("unable to Marshal resolverMsg")
-						}
+				resolverMsg := ResolverMsg{
+					EgressPayload: msg,
+					ReceiverURL:   urlHost,
+					ReceiverType:  target,
+				}
+				payload, err := json.Marshal(resolverMsg)
+				if err != nil {
+					log.Error().Err(err).Msg("unable to Marshal resolverMsg")
+				}
 
-						routingKey := "egress.grpc"
-						r.amqpClient.Publish(routingKey, payload)
-					}
-				} else if endpoint.(map[string]interface{})["protocol"] == "http" {
-
+				if protocol == "grpc" {
+					r.amqpClient.Publish("egress.grpc", payload)
+				} else if protocol == "http" || protocol == "https" {
+					r.amqpClient.Publish("egress.http", payload)
 				} else {
-
+					log.Error().Msgf("unsupported protocol %q", protocol)
 				}
 			}
 		}

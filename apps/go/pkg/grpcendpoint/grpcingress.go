@@ -17,7 +17,7 @@ type GRPCIngressConfig struct {
 type GRPCIngress struct {
 	config     GRPCIngressConfig
 	grpcServer grpcServer
-	amqpClient amqpclient.AMQPClient
+	amqpClient *amqpclient.AMQPClient
 }
 
 // NewGRPCIngress instance
@@ -32,7 +32,6 @@ func (i *GRPCIngress) Init() {
 	i.amqpClient = amqpclient.NewAMQPClient(i.config.AMQPConfig)
 	i.grpcServer = newGRPCServer(i.config.GRPCConfig)
 
-	go i.amqpClient.Init()
 	go i.grpcServer.init()
 
 	go func() {
