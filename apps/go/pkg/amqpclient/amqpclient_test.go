@@ -2,23 +2,21 @@ package amqpclient
 
 import (
 	"testing"
-
-	"github.com/NeowayLabs/wabbit/amqptest/server"
 )
 
 func init() {
-	fakeServer := server.NewServer("localhost:15243")
-	fakeServer.Start()
-	defer fakeServer.Stop()
+	// fakeServer := server.NewServer("localhost:5432")
+	// fakeServer.Start()
+	// defer fakeServer.Stop()
 }
 
 func TestNewAMQPClient(t *testing.T) {
 	cfg := Config{
 		Host:     "localhost",
-		Port:     15243,
+		Port:     5672,
 		User:     "guest",
 		Password: "guest",
-		Exchange: "dummyEx",
+		Exchange: "dummyExchange",
 	}
 
 	c := NewAMQPClient(cfg)

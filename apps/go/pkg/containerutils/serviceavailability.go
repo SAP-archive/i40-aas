@@ -5,6 +5,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/jpillora/backoff"
 	"github.com/rs/zerolog/log"
 )
 
@@ -18,11 +19,18 @@ func WaitForServices(services []string, timeOut time.Duration) {
 		for _, s := range services {
 			go func(s string) {
 				defer wg.Done()
+				b := backoff.Backoff{
+					Min:    1 * time.Second,
+					Max:    5 * time.Second,
+					Factor: 2,
+					Jitter: false,
+				}
 				for {
 					_, err := net.Dial("tcp", s)
 					if err != nil {
-						log.Error().Err(err).Msgf("failed tcp dial for %s", s)
-						time.Sleep(1 * time.Second)
+						d := b.Duration()
+						log.Error().Err(err).Msgf("failed tcp dial for %s, retrying in %s...", s, d)
+						time.Sleep(d)
 					} else {
 						log.Debug().Msgf("tcp dial for %s successful", s)
 						return

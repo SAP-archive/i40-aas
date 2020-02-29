@@ -18,9 +18,9 @@ import (
 
 func main() {
 	if os.Getenv("HOME") != "/home/aasuser" {
-		err := godotenv.Load("../../.env")
+		err := godotenv.Load(".env")
 		if err == nil {
-			log.Warn().Msg("***** DEVELOPMENT MODE: Successfully loaded .env file from repository root! *****")
+			log.Warn().Msg("***** DEVELOPMENT MODE: Successfully loaded .env file from ./ *****")
 		}
 	}
 

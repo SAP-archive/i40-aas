@@ -3,8 +3,8 @@ package grpcendpoint
 import (
 	"github.com/rs/zerolog/log"
 
-	amqpclient "../amqpclient"
-	interaction "../interaction"
+	"../amqpclient"
+	"../interaction"
 )
 
 // GRPCIngressConfig struct
@@ -35,15 +35,17 @@ func (i *GRPCIngress) Init() {
 	go i.grpcServer.init()
 
 	go func() {
+		log.Debug().Msg("starting to consume InteractionMessages")
 		for iMsg := range i.grpcServer.iMessageQueue {
-			log.Debug().Msgf("Got new interactionMessage: %v", iMsg)
 			jsonMessage := interaction.ConvertInteractionMessageToRawJSON(iMsg)
+			log.Debug().Msgf("Got new InteractionMessage: %s", string(jsonMessage))
 
 			f := iMsg.Frame
 			routingKey := f.SemanticProtocol + "." + f.Receiver.Role.Name + "." + f.Type
 
 			i.amqpClient.Publish(routingKey, jsonMessage)
 		}
+		log.Debug().Msg("Left for loop!! TODO")
 	}()
 }
 

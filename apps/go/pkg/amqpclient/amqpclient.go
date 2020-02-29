@@ -239,10 +239,10 @@ func (c *AMQPClient) Publish(routingKey string, payload []byte) {
 		})
 	if err != nil {
 		d := c.backoff.Duration()
-		log.Error().Err(err).Msgf("failed to publish message with key %s to Exchange %s, retrying in %s...", routingKey, c.config.Exchange, d)
+		log.Error().Err(err).Msgf("failed to publish %dB to Exchange %s with routingkey %s, retrying in %s...", len(payload), c.config.Exchange, routingKey, d)
 		time.Sleep(d)
 		c.Publish(routingKey, payload)
 	}
-	log.Debug().Msgf("published %s (%dB) with key %s to Exchange %s", string(payload), len(payload), routingKey, c.config.Exchange)
+	log.Debug().Msgf("published %dB to Exchange %s with routingkey %s", len(payload), c.config.Exchange, routingKey)
 	c.backoff.Reset()
 }

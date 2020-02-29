@@ -11,8 +11,8 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	amqpclient "../amqpclient"
-	interaction "../interaction"
+	"../amqpclient"
+	"../interaction"
 )
 
 // ResolverMsg struct
@@ -81,10 +81,10 @@ func (r *EndpointResolver) processGenericEgressMsg(msg []byte) {
 
 	receiverRole := iMsg.Frame.Receiver.Role.Name
 	receiverID := iMsg.Frame.Receiver.Identification.Id
-	receiverType := iMsg.Frame.Receiver.Identification.IdType
+	receiverIDType := iMsg.Frame.Receiver.Identification.IdType
 	semanticprotocol := iMsg.Frame.SemanticProtocol
 
-	registryResp := queryEndpointRegistry(receiverID, receiverType, receiverRole, semanticprotocol, r.config.EndpointRegistryConfig)
+	registryResp := queryEndpointRegistry(receiverID, receiverIDType, receiverRole, semanticprotocol, r.config.EndpointRegistryConfig)
 	if string(registryResp) == "[]" || registryResp == nil {
 		log.Warn().Msgf("queryEndpointRegistry unsuccessful: %v, dropping message", string(registryResp))
 	} else {
@@ -97,7 +97,7 @@ func (r *EndpointResolver) processGenericEgressMsg(msg []byte) {
 			for _, endpoint := range aas.(map[string]interface{})["endpoints"].([]interface{}) {
 				urlHost := fmt.Sprintf("%v", endpoint.(map[string]interface{})["url"])
 				protocol := fmt.Sprintf("%v", endpoint.(map[string]interface{})["protocol"])
-				target := fmt.Sprintf("%v", endpoint.(map[string]interface{})["protocol"])
+				target := fmt.Sprintf("%v", endpoint.(map[string]interface{})["target"])
 
 				resolverMsg := ResolverMsg{
 					EgressPayload: msg,

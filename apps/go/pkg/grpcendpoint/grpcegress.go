@@ -1,19 +1,18 @@
 package grpcendpoint
 
 import (
-	"context"
 	"encoding/json"
 	"os"
-	"reflect"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/jpillora/backoff"
 	"github.com/rs/zerolog/log"
 
-	amqpclient "../amqpclient"
-	endpointresolver "../endpointresolver"
-	interaction "../interaction"
+	"../amqpclient"
+	"../endpointresolver"
+	"../interaction"
 )
 
 // GRPCEgressConfig struct
@@ -24,7 +23,7 @@ type GRPCEgressConfig struct {
 // GRPCEgress struct
 type GRPCEgress struct {
 	config      GRPCEgressConfig
-	grpcClients []grpcClient
+	grpcClients []*grpcClient
 	amqpClient  *amqpclient.AMQPClient
 }
 
@@ -45,7 +44,7 @@ func (e *GRPCEgress) Init() {
 	ctag := os.Getenv("GRPC_ENDPOINT_EGRESS_AMQP_CTAG")
 	go e.amqpClient.Listen(queue, bindingKey, ctag)
 
-	go e.clearIdleClients()
+	// go e.clearIdleClients()
 
 	go func() {
 		for msg := range e.amqpClient.MsgChan {
@@ -57,22 +56,29 @@ func (e *GRPCEgress) Init() {
 			}
 
 			iMsg := interaction.ConvertRawJSONToInteractionMessage(rMsg.EgressPayload)
+			log.Debug().Msgf("got new InteractionMessage (%dB) for %q (%q)", len(rMsg.EgressPayload), rMsg.ReceiverURL, rMsg.ReceiverType)
 
 			if rMsg.ReceiverType == "cloud" {
-
 				// TODO: Rework, this will 100% result in errors!
 				host := strings.Split(rMsg.ReceiverURL, ":")[0]
 				port, _ := strconv.Atoi(strings.Split(rMsg.ReceiverURL, ":")[1])
 
 				cfg := GRPCClientConfig{
-					Host: host,
-					Port: port,
+					Host:     host,
+					Port:     port,
+					RootCert: "",
 				}
 
-				var c grpcClient
-				c = e.obtainGRPCClient(cfg)
+				c := e.obtainGRPCClient(cfg)
+				b := &backoff.Backoff{
+					Min:    10 * time.Millisecond,
+					Max:    10 * time.Second,
+					Factor: 2,
+					Jitter: true,
+				}
 
-				c.interactionClient.UploadInteractionMessage(context.Background(), iMsg)
+				c.UploadInteractionMessage(iMsg, b)
+				log.Debug().Msgf("sent InteractionMessage (%dB) to %s:%d, (client state: %q)", len(rMsg.EgressPayload), c.cfg.Host, c.cfg.Port, c.conn.GetState().String())
 			} else if rMsg.ReceiverType == "edge" {
 				log.Warn().Msgf("NOT IMPLEMENTED: receiver type: %s", rMsg.ReceiverType)
 			} else {
@@ -92,29 +98,26 @@ func (e *GRPCEgress) Shutdown() {
 	log.Debug().Msg("shutdown sequence complete")
 }
 
-func (e *GRPCEgress) obtainGRPCClient(cfg GRPCClientConfig) grpcClient {
-	var c grpcClient
-
-	for _, client := range e.grpcClients {
-		if client.config.Host+strconv.Itoa(client.config.Port) == cfg.Host+strconv.Itoa(cfg.Port) {
-			c = client
+func (e *GRPCEgress) obtainGRPCClient(cfg GRPCClientConfig) *grpcClient {
+	for _, c := range e.grpcClients {
+		if c.cfg.Host+strconv.Itoa(c.cfg.Port) == cfg.Host+strconv.Itoa(cfg.Port) {
+			return c
 		}
 	}
 
-	if reflect.DeepEqual(c, grpcClient{}) {
-		c = newGRPCClient(cfg)
-		c.init()
-		e.grpcClients = append(e.grpcClients, c)
-	}
+	log.Debug().Msgf("creating a new gRPC client for %s:%d", cfg.Host, cfg.Port)
+	c := newGRPCClient(cfg)
+	e.grpcClients = append(e.grpcClients, c)
 
 	return c
 }
 
+// TODO
 func (e *GRPCEgress) clearIdleClients() {
-	for {
-		time.Sleep(1 * time.Second)
-		for i, c := range e.grpcClients {
-			log.Info().Msgf("Client %s:%d (index %d) is in state: %s", c.config.Host, c.config.Port, i, c.conn.GetState().String())
-		}
-	}
+	// for {
+	// 	time.Sleep(1 * time.Second)
+	// 	for i, c := range e.grpcClients {
+	// 		log.Info().Msgf("Client %s:%d (index %d) is in state: %s", c.config.Host, c.config.Port, i, c.conn.GetState().String())
+	// 	}
+	// }
 }

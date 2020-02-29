@@ -10,21 +10,19 @@ import (
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/peer"
 
-	interaction "../interaction"
+	"../interaction"
 )
 
 // GRPCServerConfig struct
 type GRPCServerConfig struct {
-	Port        int
-	Certificate string
-	Key         string
-	ChunkSize   int
-	Compress    bool
+	Port int
+	Cert string
+	Key  string
 }
 
 // grpcServer struct
 type grpcServer struct {
-	config        GRPCServerConfig
+	cfg           GRPCServerConfig
 	server        *grpc.Server
 	iMessageQueue chan *interaction.InteractionMessage
 }
@@ -35,7 +33,7 @@ func newGRPCServer(cfg GRPCServerConfig) (s grpcServer) {
 		log.Warn().Msgf("GRPC server port not specified, defaulting to %v", cfg.Port)
 	}
 
-	s.config = cfg
+	s.cfg = cfg
 
 	s.iMessageQueue = make(chan *interaction.InteractionMessage)
 
@@ -49,28 +47,27 @@ func (s *grpcServer) init() (err error) {
 		grpcCreds credentials.TransportCredentials
 	)
 
-	listener, err = net.Listen("tcp", "localhost:"+strconv.Itoa(s.config.Port))
+	listener, err = net.Listen("tcp", ":"+strconv.Itoa(s.cfg.Port))
 	if err != nil {
-		log.Error().Err(err).Msgf("failed to listen on port %d", s.config.Port)
+		log.Error().Err(err).Msgf("failed to listen on port %d", s.cfg.Port)
 	}
 
-	if s.config.Certificate != "" && s.config.Key != "" {
+	if s.cfg.Cert != "" && s.cfg.Key != "" {
 		grpcCreds, err = credentials.NewServerTLSFromFile(
-			s.config.Certificate, s.config.Key)
+			s.cfg.Cert, s.cfg.Key)
 		if err != nil {
-			log.Error().Err(err).Msgf("failed to create tls GRPC server using cert %s and key %s", s.config.Certificate, s.config.Key)
+			log.Error().Err(err).Msgf("failed to create tls GRPC server using cert %s and key %s", s.cfg.Cert, s.cfg.Key)
 		}
-
 		grpcOpts = append(grpcOpts, grpc.Creds(grpcCreds))
+	} else {
+		log.Warn().Msg("missing cfg.Key - server is insecure")
 	}
-
-	// TODO: Keepalive options
 
 	s.server = grpc.NewServer(grpcOpts...)
 
 	interaction.RegisterInteractionServiceServer(s.server, s)
 
-	log.Info().Msgf("GRPCServer is serving on port %v", strconv.Itoa(s.config.Port))
+	log.Info().Msgf("GRPCServer is serving on port %v", strconv.Itoa(s.cfg.Port))
 	err = s.server.Serve(listener)
 	if err != nil {
 		log.Error().Err(err).Msg("errored listening for grpc connections")
@@ -82,7 +79,7 @@ func (s *grpcServer) init() (err error) {
 func (s *grpcServer) close() {
 	if s.server != nil {
 		s.server.Stop()
-		log.Debug().Msgf("stopped GRPC server at port %s", strconv.Itoa(s.config.Port))
+		log.Debug().Msgf("stopped GRPC server at port %s", strconv.Itoa(s.cfg.Port))
 	}
 }
 

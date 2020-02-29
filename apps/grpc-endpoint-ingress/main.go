@@ -18,9 +18,9 @@ import (
 
 func main() {
 	if os.Getenv("HOME") != "/home/aasuser" {
-		err := godotenv.Load("../../.env")
+		err := godotenv.Load(".env")
 		if err == nil {
-			log.Warn().Msg("***** DEVELOPMENT MODE: Successfully loaded .env file from repository root! *****")
+			log.Warn().Msg("***** DEVELOPMENT MODE: Successfully loaded .env file from ./ *****")
 		}
 	}
 
@@ -68,11 +68,9 @@ func main() {
 
 	grpcPort, _ := strconv.Atoi(os.Getenv("GRPC_ENDPOINT_INGRESS_PORT"))
 	GRPCSrvCfg = grpcendpoint.GRPCServerConfig{
-		Port:        grpcPort,
-		Certificate: "",
-		Key:         "",
-		ChunkSize:   8,
-		Compress:    true,
+		Port: grpcPort,
+		Cert: "",
+		Key:  "",
 	}
 
 	GRPCIngressCfg = grpcendpoint.GRPCIngressConfig{
