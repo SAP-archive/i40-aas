@@ -1,15 +1,4 @@
 import { Request, Response } from 'express';
-import {
-  register,
-  createRole,
-  createSemanticProtocol,
-  assignRolesToAAS,
-  getAllEndpointsList,
-  deleteRecordByIdentifier,
-  createAsset,
-  getEndpointsByReceiverRole,
-  getEndpointsByReceiverId
-} from './registry-api';
 import { IdTypeEnum } from 'i40-aas-objects';
 import { RegistryError } from '../../utils/RegistryError';
 import {
@@ -18,11 +7,9 @@ import {
   IRegisterAas,
   ICreateAsset
 } from './daos/interfaces/IApiRequests';
-import {
-  Role,
-  ConversationMember
-} from 'i40-aas-objects/dist/src/interaction/ConversationMember';
-import { TIdType } from 'i40-aas-objects/src/types/IdTypeEnum';
+
+var registryApi = require('./registry-api');
+
 export default [
   {
     path: '/assetadministrationshells',
@@ -35,7 +22,7 @@ export default [
       await Promise.all(
         endpointsAssignmentArray.map(async aas => {
           try {
-            await register(aas);
+            await registryApi.register(aas);
           } catch (e) {
             res.end(e.message);
           }
@@ -60,7 +47,7 @@ export default [
         rolesArray.map(async role => {
           try {
             console.log('Handling role ' + role.roleId);
-            await createRole(role);
+            await registryApi.createRole(role);
             console.log('Role ' + role.roleId + ' successfully created.');
           } catch (e) {
             console.log('There was an error creating roles');
@@ -82,7 +69,7 @@ export default [
       await Promise.all(
         assignmentArray.map(async assignment => {
           try {
-            await assignRolesToAAS(assignment);
+            await registryApi.assignRolesToAAS(assignment);
           } catch (e) {
             res.end(e.message);
           }
@@ -98,7 +85,7 @@ export default [
     handler: async (req: Request, res: Response) => {
       console.log('/semanticprotocol POST request received');
       try {
-        res.json(await createSemanticProtocol(req.body));
+        res.json(await registryApi.createSemanticProtocol(req.body));
         console.log('Sent back response of /semanticprotocol POST request');
       } catch (e) {
         res.end(e.message);
@@ -112,7 +99,7 @@ export default [
       console.log('/asset POST request received');
       try {
         var asset: ICreateAsset = req.body;
-        res.json(await createAsset(asset));
+        res.json(await registryApi.createAsset(asset));
         console.log('Sent back response of /asset POST request');
       } catch (e) {
         res.end(e.message);
@@ -129,7 +116,10 @@ export default [
           idType = <IdTypeEnum>[][req.query.idType];
         }
         res.json(
-          await deleteRecordByIdentifier({ id: req.query.id, idType: idType })
+          await registryApi.deleteRecordByIdentifier({
+            id: req.query.id,
+            idType: idType
+          })
         );
       } catch (e) {
         console.log(e);
@@ -139,7 +129,6 @@ export default [
     }
   },
   {
-    //throw new RegistryError('Missing parameter receiver', 422);
     path: '/assetadministrationshells',
     method: 'get',
     handler: async (req: Request, res: Response) => {
@@ -147,14 +136,14 @@ export default [
         console.log('Query parameters received:' + JSON.stringify(req.query));
         if (req.query.receiverId && req.query.receiverIdType) {
           res.json(
-            await getEndpointsByReceiverId(
+            await registryApi.getEndpointsByReceiverId(
               req.query.receiverId,
               req.query.receiverIdType
             )
           );
         } else if (req.query.receiverRole && req.query.semanticProtocol) {
           res.json(
-            await getEndpointsByReceiverRole(
+            await registryApi.getEndpointsByReceiverRole(
               req.query.receiverRole,
               req.query.semanticProtocol
             )
@@ -176,7 +165,7 @@ export default [
     method: 'get',
     handler: async (req: Request, res: Response) => {
       try {
-        res.json(await getAllEndpointsList());
+        res.json(await registryApi.getAllEndpointsList());
       } catch (e) {
         console.log(e);
         res.statusCode = e.r_statusCode || 500;
