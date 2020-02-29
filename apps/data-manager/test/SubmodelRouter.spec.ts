@@ -24,22 +24,22 @@ var DATA_MANAGER_PASS = process.env.DATA_MANAGER_PASS;
 
 const app = require("../src/server").app;
 
-describe("the routing controller ", function() {
+describe("the routing controller ", function () {
   let submodelsRequest: Submodel[];
   //read a sample interaction.json to use as body for requests
-  before(function(done) {
+  before(function (done) {
     var fs = require("fs"),
       path = require("path"),
       filePath = path.join(__dirname, "opcua-submodel-instance.json");
 
-    fs.readFile(filePath, "utf8", function(err: any, fileContents: string) {
+    fs.readFile(filePath, "utf8", function (err: any, fileContents: string) {
       if (err) throw err;
       submodelsRequest = JSON.parse(fileContents);
       done();
     });
   });
 
-  it("should return a 200 OK from the adapter, after posting the submodel to the correct adapter ", async function() {
+  it("should return a 200 OK from the adapter, after posting the submodel to the correct adapter ", async function () {
     let regResponse: IStorageAdapter = {
       url: "http://localhost:3000/submodels",
       adapterId: "storage-adapter-ain",
@@ -68,20 +68,13 @@ describe("the routing controller ", function() {
       sinon.fake.resolves({ status: 200 })
     );
 
-    console.log(
-      "result " +
-  (await registryConnector.getAdapterFromRegistry("submodelid",
-    submodelsRequest[0].idShort
-        ))
-    );
-
     RoutingController.initController(registryConnector, adapterConnector);
     let actual = await RoutingController.routeSubmodel(submodelsRequest);
 
     sinon.assert.match(actual, [{ status: 200 }]);
   });
 
-  it("should throw an Error if adapterConn is undefined ", async function() {
+  it("should throw an Error if adapterConn is undefined ", async function () {
     let adapterConnector: any = undefined;
     let registryConnector: AdapterRegistryConnector = new AdapterRegistryConnector(
       <WebClient>{},
@@ -100,77 +93,108 @@ describe("the routing controller ", function() {
   });
 });
 
-describe("the registry connector ", function() {
+describe("the registry connector ", function () {
+
+  var submodelsRequest: Array<Submodel> = new Array();
+  var registryQueryParam: object;
+  var sampleSubmodel: Submodel;
+
+  //read a sample interaction.json to use as body for requests
+  beforeEach(function (done) {
+    var fs = require("fs"),
+      path = require("path"),
+      filePath = path.join(__dirname, "opcua-submodel-instance.json");
+
+    fs.readFile(filePath, "utf8", function (err: any, fileContents: string) {
+      if (err) throw err;
+      submodelsRequest = JSON.parse(fileContents);
+      sampleSubmodel = submodelsRequest.pop() as Submodel;
+
+      registryQueryParam = {
+        submodelid: sampleSubmodel.identification.id,
+        submodelsemanticid: sampleSubmodel.semanticId
+          ? sampleSubmodel.semanticId.keys[0].value
+          : undefined
+      }
+      done();
+    });
+  });
+
+
   function isStorageAdapter(obj: any): obj is IStorageAdapter {
-    if((obj as IStorageAdapter).url){
+    if ((obj as IStorageAdapter).url) {
       return true
     }
     return false
   }
-  it("should get an IStorageAdapter from the adapter-registry ", async function() {
+  it("should get an IStorageAdapter from the adapter-registry ", async function () {
     let fakeGet = sinon.fake.resolves({
       status: 200,
       data:
-        {
-            url: "http://localhost:3000/submodels",
-            adapterId: "storage-adapter-ain",
-            name: "SAP-AIN-Adapter",
-            submodelId: "opc-ua-devices"
-        }
+      {
+        "adapterId": "fooAdapterId",
+        "url": "fooURL",
+        "name": "testAdaptername",
+        "submodelid": "opc-ua-devices",
+        "submodelsemanticid": "part-100-device-information-model"
+      }
 
     });
-    sinon.replace(Axios,"get",fakeGet);
+    sinon.replace(Axios, "get", fakeGet);
     let registryConnector: AdapterRegistryConnector = new AdapterRegistryConnector(
-    new WebClient(),
+      new WebClient(),
       new URL("http://www.foobar.com/foo"),
       "b",
       "c"
     );
-    let result: IStorageAdapter  = await registryConnector.getAdapterFromRegistry("submodelId","fooIdShort");
-console.log(result);
-    expect( isStorageAdapter(result),"should be an adapter object").to.be.true;
+
+
+
+    let result: IStorageAdapter = await registryConnector.getAdapterFromRegistry(registryQueryParam);
+    console.log(result);
+    expect(isStorageAdapter(result), "should be an adapter object").to.be.true;
 
     sinon.restore();
-    });
+  });
 
-  it("should throw an Error if the registry returns an non-valid Storage adapter ", async function() {
+  it("should throw an Error if the registry returns an non-valid Storage adapter ", async function () {
     let fakeGet = sinon.fake.resolves({
       status: 200,
       data:
-        {
+      {
         //empty adapter was returned (eg. when no entry for this submodel exists in registry)
-        }
+      }
 
     });
-    sinon.replace(Axios,"get",fakeGet);
+    sinon.replace(Axios, "get", fakeGet);
     let registryConnector: AdapterRegistryConnector = new AdapterRegistryConnector(
-    new WebClient(),
+      new WebClient(),
       new URL("http://www.foobar.com/foo"),
       "b",
       "c"
     );
-    try{
-      await registryConnector.getAdapterFromRegistry("submodelId","fooIdShort");
+    try {
+      await registryConnector.getAdapterFromRegistry(registryQueryParam);
       fail(); //this should not be called when error thrown
     }
     catch{
-logger.error("[Test] Registry returned no adapter");
+      logger.error("[Test] Registry returned no adapter");
     }
     sinon.restore();
   });
 
 });
 
-describe("the adapter connector ", function() {
+describe("the adapter connector ", function () {
 
   let submodelsRequest: Submodel;
   //read a sample interaction.json to use as body for requests
-  before(function(done) {
+  before(function (done) {
     var fs = require("fs"),
       path = require("path"),
       filePath = path.join(__dirname, "opcua-submodel-instance.json");
 
-    fs.readFile(filePath, "utf8", function(err: any, fileContents: string) {
+    fs.readFile(filePath, "utf8", function (err: any, fileContents: string) {
       if (err) throw err;
       submodelsRequest = JSON.parse(fileContents);
       done();
@@ -185,23 +209,23 @@ describe("the adapter connector ", function() {
   };
 
 
-it(" Should post a submodel to a storage adapter service", async function(){
+  it(" Should post a submodel to a storage adapter service", async function () {
 
-  let fakePost = sinon.fake.resolves({
-    status: 200,
-    data:       {
+    let fakePost = sinon.fake.resolves({
+      status: 200,
+      data: {
       }
+    });
+    let adapterConnector: AdapterConnector = new AdapterConnector(
+      new WebClient()
+    );
+    sinon.replace(Axios, "post", fakePost);
+
+    let result = await adapterConnector.postSubmoduleToAdapter(submodelsRequest, adapter);
+
+    sinon.assert.match(result, { status: 200 });
+    sinon.restore();
+
   });
-  let adapterConnector: AdapterConnector = new AdapterConnector(
-    new WebClient()
-  );
-  sinon.replace(Axios,"post",fakePost);
-
-let result = await adapterConnector.postSubmoduleToAdapter(submodelsRequest,adapter);
-
-sinon.assert.match(result, { status: 200 });
-sinon.restore();
-
-});
 
 });
