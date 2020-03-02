@@ -13,6 +13,7 @@ POST /semanticprotocol
   "semanticProtocol":"<id of the semantic protocol>"
 }
 ```
+
 ## Create an asset
 
 POST /asset
@@ -26,6 +27,7 @@ POST /asset
   }
 }
 ```
+
 ## Create roles
 
 POST /roles
@@ -33,8 +35,8 @@ POST /roles
 ```javascript
 [
   {
-    roleId: "<id of the role>",
-    semanticProtocol: "id of the semantic protocol"
+    roleId: '<id of the role>',
+    semanticProtocol: 'id of the semantic protocol'
   }
 ];
 ```
@@ -55,6 +57,7 @@ POST /assetadministrationshells
         url: "<url of the endpoint>",
         protocolVersion: "<version of the protocol>",
         protocol: "<name of the protocol>"
+        target: "<cloud|edge>"
       }
     ],
     assetId: {
@@ -86,16 +89,18 @@ NOTE: returns an array of endpoints registered for each aasId
         url: "https://myaas.com",
         protocolVersion: "1.0",
         protocol: "https"
+        target: "edge"
       },
       {
         url: "192.168.75.12",
         protocolVersion: "",
-        protocol: "TCP"
+        protocol: "TCP",
+        target: "cloud"
       }
     ],
     assetId: {
       id: "<ID of the Asset>",
-      idType: "URI,CUSTOM,IRDI"
+      idType: "<URI|CUSTOM|IRDI>"
     }
   }
 ];
@@ -103,12 +108,17 @@ NOTE: returns an array of endpoints registered for each aasId
 
 GET /assetadministrationshells
 
-|    parameter     |            Description             |
-| :--------------: | :--------------------------------: |
-|     receiver     | i40-aas-objects conversationMember |
-| semanticProtocol |     id of the semanticProtocol     |
+There are two different queries possible with each two parameters:
 
+|    parameter     |                   Description                   |
+| :--------------: | :---------------------------------------------: |
+|   receiverRole   | role of receving party within semantic protocol |
+| semanticProtocol |           id of the semanticProtocol            |
 
+|   parameter    |                  Description                  |
+| :------------: | :-------------------------------------------: |
+|   receiverId   | id of receving party within semantic protocol |
+| receiverIdType |            type of id (e.g. "IRI")            |
 
 response </br>
 NOTE: if there are multiple aas registerd to an role then there is more then one object in the result list. </br>
@@ -118,24 +128,26 @@ If receiver.identification.id is in the receiver object, only the endpoints for 
 [
   {
     aasId: {
-      id: "<ID of the AAS>",
-      idType: "URI,CUSTOM,IRDI"
+      id: '<ID of the AAS>',
+      idType: 'URI,CUSTOM,IRDI'
     },
     endpoints: [
       {
-        url: "https://myaas.com",
-        protocolVersion: "1.0",
-        protocol: "https"
+        url: 'https://myaas.com',
+        protocolVersion: '1.0',
+        protocol: 'https',
+        target: 'edge'
       },
       {
-        url: "192.168.75.12",
-        protocolVersion: "",
-        protocol: "TCP"
+        url: '192.168.75.12',
+        protocolVersion: '',
+        protocol: 'TCP',
+        target: 'cloud'
       }
     ],
     assetId: {
-      id: "<ID of the Asset>",
-      idType: "URI,CUSTOM,IRDI"
+      id: '<ID of the Asset>',
+      idType: 'URI,CUSTOM,IRDI'
     }
   }
 ];
