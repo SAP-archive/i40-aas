@@ -100,7 +100,7 @@ NOTE: returns an array of endpoints registered for each aasId
     ],
     assetId: {
       id: "<ID of the Asset>",
-      idType: "URI,CUSTOM,IRDI"
+      idType: "<URI|CUSTOM|IRDI>"
     }
   }
 ];
