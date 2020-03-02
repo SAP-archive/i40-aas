@@ -11,9 +11,9 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
-	"../go/pkg/amqpclient"
-	"../go/pkg/containerutils"
-	"../go/pkg/grpcendpoint"
+	"../../pkg/amqpclient"
+	"../../pkg/containerutils"
+	"../../pkg/grpcendpoint"
 )
 
 func main() {

@@ -11,9 +11,8 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
-	"../go/pkg/amqpclient"
-	"../go/pkg/containerutils"
-	"../go/pkg/grpcendpoint"
+	"../../pkg/amqpclient"
+	"../../pkg/containerutils"
 )
 
 func main() {
@@ -51,42 +50,45 @@ func main() {
 	}
 
 	var (
-		AMQPCfg        amqpclient.Config
-		GRPCSrvCfg     grpcendpoint.GRPCServerConfig
-		GRPCIngressCfg grpcendpoint.GRPCIngressConfig
-		GRPCIngress    grpcendpoint.GRPCIngress
+		endpointRegCfg EndpointRegistryConfig
+		amqpCfg        amqpclient.Config
+		config         Config
+		resolver       EndpointResolver
 	)
 
+	registryPort, _ := strconv.Atoi(os.Getenv("ENDPOINT_REGISTRY_PORT"))
+	endpointRegCfg = EndpointRegistryConfig{
+		Protocol: os.Getenv("ENDPOINT_REGISTRY_PROTOCOL"),
+		Host:     os.Getenv("ENDPOINT_REGISTRY_HOST"),
+		Port:     registryPort,
+		Route:    os.Getenv("ENDPOINT_REGISTRY_URL_SUFFIX"),
+		User:     os.Getenv("ENDPOINT_REGISTRY_ADMIN_USER"),
+		Password: os.Getenv("ENDPOINT_REGISTRY_ADMIN_PASSWORD"),
+	}
+
 	amqpPort, _ := strconv.Atoi(os.Getenv("RABBITMQ_PORT"))
-	AMQPCfg = amqpclient.Config{
+	amqpCfg = amqpclient.Config{
 		Host:     os.Getenv("RABBITMQ_HOST"),
 		Port:     amqpPort,
-		User:     os.Getenv("RABBITMQ_INGRESS_USER"),
-		Password: os.Getenv("RABBITMQ_INGRESS_PASSWORD"),
-		Exchange: os.Getenv("RABBITMQ_INGRESS_EXCHANGE"),
+		User:     os.Getenv("RABBITMQ_EGRESS_USER"),
+		Password: os.Getenv("RABBITMQ_EGRESS_PASSWORD"),
+		Exchange: os.Getenv("RABBITMQ_EGRESS_EXCHANGE"),
 	}
 
-	grpcPort, _ := strconv.Atoi(os.Getenv("GRPC_ENDPOINT_INGRESS_PORT"))
-	GRPCSrvCfg = grpcendpoint.GRPCServerConfig{
-		Port: grpcPort,
-		Cert: "",
-		Key:  "",
+	config = Config{
+		AMQPConfig:             amqpCfg,
+		EndpointRegistryConfig: endpointRegCfg,
 	}
 
-	GRPCIngressCfg = grpcendpoint.GRPCIngressConfig{
-		AMQPConfig: AMQPCfg,
-		GRPCConfig: GRPCSrvCfg,
-	}
-
-	services := []string{fmt.Sprintf("%s:%s", AMQPCfg.Host, strconv.Itoa(amqpPort))}
+	services := []string{fmt.Sprintf("%s:%s", amqpCfg.Host, strconv.Itoa(amqpPort))}
 	containerutils.WaitForServices(services, time.Duration(60)*time.Second)
 
-	GRPCIngress = grpcendpoint.NewGRPCIngress(GRPCIngressCfg)
+	resolver = NewEndpointResolver(config)
 
-	GRPCIngress.Init()
+	resolver.Init()
 
 	containerutils.WaitForShutdown()
 
-	GRPCIngress.Shutdown()
+	resolver.Shutdown()
 	os.Exit(0)
 }

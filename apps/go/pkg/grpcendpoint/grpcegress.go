@@ -11,9 +11,15 @@ import (
 	"github.com/rs/zerolog/log"
 
 	"../amqpclient"
-	"../endpointresolver"
 	"../interaction"
 )
+
+// ResolverMsg struct
+type ResolverMsg struct {
+	EgressPayload []byte
+	ReceiverURL   string
+	ReceiverType  string
+}
 
 // GRPCEgressConfig struct
 type GRPCEgressConfig struct {
@@ -52,7 +58,7 @@ func (e *GRPCEgress) Init() {
 			for d := range deliveries {
 				log.Debug().Msgf("got %dB delivery: [%v]", len(d.Body), d.DeliveryTag)
 
-				rMsg := endpointresolver.ResolverMsg{}
+				rMsg := ResolverMsg{}
 
 				err := json.Unmarshal(d.Body, &rMsg)
 				if err != nil {

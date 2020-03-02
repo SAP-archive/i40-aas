@@ -9,9 +9,8 @@ RUN apk update && apk add git && apk add ca-certificates
 # Create appuser
 RUN adduser -D -g '' appuser
 
-COPY grpc-endpoint-egress /grpc-endpoint-egress/
 COPY go /go
-WORKDIR /grpc-endpoint-egress/
+WORKDIR /go/cmd/grpc-endpoint-egress/
 
 # Download dependencies
 RUN go get -d -v

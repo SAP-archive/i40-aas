@@ -1,4 +1,4 @@
-package endpointresolver
+package main
 
 import (
 	"encoding/json"
@@ -11,8 +11,8 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	"../amqpclient"
-	"../interaction"
+	"../../pkg/amqpclient"
+	"../../pkg/interaction"
 )
 
 // ResolverMsg struct

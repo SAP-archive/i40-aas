@@ -9,9 +9,8 @@ RUN apk update && apk add git && apk add ca-certificates
 # Create appuser
 RUN adduser -D -g '' appuser
 
-COPY endpoint-resolver /endpoint-resolver/
 COPY go /go
-WORKDIR /endpoint-resolver/
+WORKDIR /go/cmd/endpoint-resolver/
 
 # Download dependencies
 RUN go get -d -v
