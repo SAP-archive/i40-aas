@@ -30,22 +30,29 @@ func NewGRPCIngress(cfg GRPCIngressConfig) (ingress GRPCIngress) {
 // Init GRPC server and AMQP client
 func (i *GRPCIngress) Init() {
 	i.amqpClient = amqpclient.NewAMQPClient(i.config.AMQPConfig)
-	i.grpcServer = newGRPCServer(i.config.GRPCConfig)
+	i.amqpClient.Connect()
 
+	i.grpcServer = newGRPCServer(i.config.GRPCConfig)
 	go i.grpcServer.init()
 
 	go func() {
 		log.Debug().Msg("starting to consume InteractionMessages")
-		for iMsg := range i.grpcServer.iMessageQueue {
-			jsonMessage := interaction.ConvertInteractionMessageToRawJSON(iMsg)
+		for ia := range i.grpcServer.iQueue {
+			jsonMessage := interaction.ConvertInteractionMessageToRawJSON(ia.Msg)
 			log.Debug().Msgf("Got new InteractionMessage: %s", string(jsonMessage))
 
-			f := iMsg.Frame
+			f := ia.Msg.Frame
 			routingKey := f.SemanticProtocol + "." + f.Receiver.Role.Name + "." + f.Type
 
-			i.amqpClient.Publish(routingKey, jsonMessage)
+			err := i.amqpClient.Publish(routingKey, jsonMessage)
+			if err != nil {
+				ia.Nack()
+			} else {
+				ia.Ack()
+			}
 		}
-		log.Debug().Msg("Left for loop!! TODO")
+
+		// TODO restart!
 	}()
 }
 

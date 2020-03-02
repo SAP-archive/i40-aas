@@ -21,7 +21,7 @@ func TestNewAMQPClient(t *testing.T) {
 
 	c := NewAMQPClient(cfg)
 
-	c.connect()
+	c.Connect()
 
 	if c.conn == nil {
 		t.Errorf("AMQP connection has not been initialized")

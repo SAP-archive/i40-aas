@@ -28,7 +28,6 @@ type grpcClient struct {
 	interactionClient interaction.InteractionServiceClient
 
 	// TODO
-	// - UploadInteractionMessage(InteractionMessage) returns (InteractionStatus) {}
 	// - KeepAlive & Retry
 }
 
@@ -88,6 +87,6 @@ func (c *grpcClient) UploadInteractionMessage(iMsg *interaction.InteractionMessa
 		time.Sleep(d)
 		c.UploadInteractionMessage(iMsg, b)
 	} else {
-		log.Debug().Msgf("UploadInteractionMessage returned status %s", status.String())
+		log.Debug().Msgf("UploadInteractionMessage to %s:%d returned status %s", c.cfg.Host, c.cfg.Port, status.String())
 	}
 }

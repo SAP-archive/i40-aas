@@ -55,16 +55,21 @@ func NewEndpointResolver(cfg Config) (resolver EndpointResolver) {
 // Init EndpointResolver and AMQP client
 func (r *EndpointResolver) Init() {
 	r.amqpClient = amqpclient.NewAMQPClient(r.config.AMQPConfig)
+	r.amqpClient.Connect()
 
 	queue := os.Getenv("ENDPOINT_RESOLVER_AMQP_QUEUE")
 	bindingKey := r.config.AMQPConfig.Exchange + "." + queue
 	ctag := os.Getenv("ENDPOINT_RESOLVER_AMQP_CTAG")
 
-	go r.amqpClient.Listen(queue, bindingKey, ctag)
-
 	go func() {
-		for msg := range r.amqpClient.MsgChan {
-			r.processGenericEgressMsg(msg)
+		for {
+			deliveries := r.amqpClient.Listen(queue, bindingKey, ctag)
+			for d := range deliveries {
+				log.Debug().Msgf("got %dB delivery: [%v]", len(d.Body), d.DeliveryTag)
+				r.processGenericEgressMsg(d.Body)
+				d.Ack(false)
+			}
+			log.Warn().Msg("deliveries channel closed, restarting...")
 		}
 	}()
 }
@@ -109,12 +114,18 @@ func (r *EndpointResolver) processGenericEgressMsg(msg []byte) {
 					log.Error().Err(err).Msg("unable to Marshal resolverMsg")
 				}
 
+				var routingKey string
 				if protocol == "grpc" {
-					r.amqpClient.Publish("egress.grpc", payload)
+					routingKey = "egress.grpc"
 				} else if protocol == "http" || protocol == "https" {
-					r.amqpClient.Publish("egress.http", payload)
+					routingKey = "egress.http"
 				} else {
 					log.Error().Msgf("unsupported protocol %q", protocol)
+				}
+
+				err = r.amqpClient.Publish(routingKey, payload)
+				if err != nil {
+					log.Error().Err(err).Msgf("unable to resolve message: %s", string(payload))
 				}
 			}
 		}

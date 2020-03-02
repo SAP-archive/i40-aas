@@ -4,6 +4,7 @@ import (
 	"context"
 	"net"
 	"strconv"
+	"time"
 
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
@@ -22,9 +23,9 @@ type GRPCServerConfig struct {
 
 // grpcServer struct
 type grpcServer struct {
-	cfg           GRPCServerConfig
-	server        *grpc.Server
-	iMessageQueue chan *interaction.InteractionMessage
+	cfg    GRPCServerConfig
+	server *grpc.Server
+	iQueue chan *interaction.Interaction
 }
 
 func newGRPCServer(cfg GRPCServerConfig) (s grpcServer) {
@@ -35,7 +36,7 @@ func newGRPCServer(cfg GRPCServerConfig) (s grpcServer) {
 
 	s.cfg = cfg
 
-	s.iMessageQueue = make(chan *interaction.InteractionMessage)
+	s.iQueue = make(chan *interaction.Interaction)
 
 	return s
 }
@@ -90,12 +91,17 @@ func (s *grpcServer) UploadInteractionMessage(ctx context.Context, iMsg *interac
 	c, _ := peer.FromContext(ctx)
 	log.Debug().Msgf("received new InteractionMessage from %v", c.Addr)
 
-	// TODO check whether InteractionMessage is complete and adjust Status accordingly
-	go func() { s.iMessageQueue <- iMsg }()
+	i := &interaction.Interaction{
+		Msg:    iMsg,
+		Status: nil,
+	}
+	s.iQueue <- i
 
-	iStatus := &interaction.InteractionStatus{
-		Code: 1,
+	for i.Status == nil {
+		time.Sleep(5 * time.Millisecond)
 	}
 
-	return iStatus, nil
+	log.Debug().Msgf("processing InteractionMessage from %v is complete, InteractionStatus is %v", c.Addr, i.Status)
+
+	return i.Status, nil
 }
