@@ -57,7 +57,7 @@ POST /assetadministrationshells
         url: "<url of the endpoint>",
         protocolVersion: "<version of the protocol>",
         protocol: "<name of the protocol>"
-        target: "cloud|edge"
+        target: "<cloud|edge>"
       }
     ],
     assetId: {
