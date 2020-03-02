@@ -161,7 +161,7 @@ func queryEndpointRegistry(receiverID string, receiverIDType string, receiverRol
 	}
 	req.URL.RawQuery = q.Encode()
 
-	log.Debug().Msgf("Querying: %s", req.URL.String())
+	log.Debug().Msgf("querying: %s", req.URL.String())
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -170,7 +170,7 @@ func queryEndpointRegistry(receiverID string, receiverIDType string, receiverRol
 
 	bodyText, err := ioutil.ReadAll(resp.Body)
 
-	log.Debug().Msgf("Got: %s", string(bodyText))
+	log.Debug().Msgf("querying endpoint-registry gave: %s", string(bodyText))
 
 	return bodyText
 }
