@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/signal"
 	"strconv"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -12,7 +14,6 @@ import (
 	"github.com/rs/zerolog/log"
 
 	"../../pkg/amqpclient"
-	"../../pkg/containerutils"
 	"../../pkg/grpcendpoint"
 )
 
@@ -69,14 +70,15 @@ func main() {
 		AMQPConfig: AMQPCfg,
 	}
 
-	services := []string{fmt.Sprintf("%s:%s", AMQPCfg.Host, strconv.Itoa(amqpPort))}
-	containerutils.WaitForServices(services, time.Duration(60)*time.Second)
-
 	GRPCEgress = grpcendpoint.NewGRPCEgress(GRPCEgressCfg)
 
 	GRPCEgress.Init()
 
-	containerutils.WaitForShutdown()
+	interruptChan := make(chan os.Signal, 1)
+	signal.Notify(interruptChan, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+
+	// Block until we receive our signal.
+	<-interruptChan
 
 	GRPCEgress.Shutdown()
 	os.Exit(0)

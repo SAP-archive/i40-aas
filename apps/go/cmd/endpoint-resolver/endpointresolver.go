@@ -10,6 +10,7 @@ import (
 	"strconv"
 
 	"github.com/rs/zerolog/log"
+	"github.com/streadway/amqp"
 
 	"../../pkg/amqpclient"
 	"../../pkg/interaction"
@@ -66,8 +67,7 @@ func (r *EndpointResolver) Init() {
 			deliveries := r.amqpClient.Listen(queue, bindingKey, ctag)
 			for d := range deliveries {
 				log.Debug().Msgf("got %dB delivery: [%v]", len(d.Body), d.DeliveryTag)
-				r.processGenericEgressMsg(d.Body)
-				d.Ack(false)
+				r.processGenericEgressMsg(d)
 			}
 			log.Warn().Msg("deliveries channel closed, restarting...")
 		}
@@ -81,7 +81,8 @@ func (r *EndpointResolver) Shutdown() {
 	log.Debug().Msg("shutdown sequence complete")
 }
 
-func (r *EndpointResolver) processGenericEgressMsg(msg []byte) {
+func (r *EndpointResolver) processGenericEgressMsg(d amqp.Delivery) {
+	msg := d.Body
 	iMsg := interaction.ConvertRawJSONToInteractionMessage(msg)
 
 	receiverRole := iMsg.Frame.Receiver.Role.Name
@@ -126,7 +127,9 @@ func (r *EndpointResolver) processGenericEgressMsg(msg []byte) {
 				err = r.amqpClient.Publish(routingKey, payload)
 				if err != nil {
 					log.Error().Err(err).Msgf("unable to resolve message: %s", string(payload))
+					d.Nack(false, true)
 				}
+				d.Ack(false)
 			}
 		}
 	}
