@@ -72,7 +72,7 @@ async function readRecordBySemanticProtocolAndRole(
 }
 
 async function register(req: IRegisterAas) {
-  var registryDao: iRegistry = await RegistryFactory.getRegistry();
+  var registryDao: iRegistry = await RegistryFactory.getRegistryNew();
   try {
     var result = await registryDao.registerAas(req);
     console.log(result);

@@ -51,69 +51,9 @@ class Registry implements iRegistry {
     }
   }
 
+  //TODO: error handling in case of already existing
   async registerAas(record: IRegisterAas): Promise<IRegistryResultSet> {
-    //create asset entry
-    try {
-      const insertAssetResult = await this.db.query(
-        ' INSERT INTO public.assets( "assetId", "idType") VALUES ($1, $2);',
-        [record.assetId.id, record.assetId.idType]
-      );
-    } catch (e) {
-      if (e.code == 23505) {
-        console.log('Asset already exist');
-      } else {
-        throw e;
-      }
-    }
-    try {
-      //create aas entry
-      const insertAasResult = await this.db.query(
-        'INSERT INTO public.asset_administration_shells("aasId", "idType", "assetId") VALUES ($1, $2, $3);',
-        [record.aasId.id, record.aasId.idType, record.assetId.id]
-      );
-    } catch (e) {
-      if (e.code == 23505) {
-        console.log('AAS already exist');
-      } else {
-        throw e;
-      }
-    }
-    try {
-      //delete existig
-      const deleteEndpointResult = await this.db.query(
-        'DELETE FROM public.endpoints WHERE "aasId" = $1;',
-        [record.aasId.id]
-      );
-      //create endpoint entry
-      await Promise.all(
-        record.endpoints.map(async (endpoint: IEndpoint) => {
-          console.log('endpoint:' + JSON.stringify(endpoint));
-          const insertEndpointResult = await this.db.query(
-            'INSERT INTO public.endpoints( "URL", protocol_name, protocol_version, "aasId",target) VALUES ($1, $2, $3, $4, $5);',
-            [
-              endpoint.url,
-              endpoint.protocol,
-              endpoint.protocolVersion,
-              record.aasId.id,
-              endpoint.target
-            ]
-          );
-        })
-      );
-    } catch (e) {
-      if (e.code == 23505) {
-        console.log('Endpoint already exist');
-      } else {
-        throw e;
-      }
-    }
-    console.log(record);
-    return record;
-  }
-  /*
-
-  async registerAas(record: IRegisterAas): Promise<IRegistryResultSet> {
-    this.db.tx('registerAAs', async t => {
+    await this.db.tx('registerAas', async t => {
       const insertAssetResult = await t.none(
         ' INSERT INTO public.assets( "assetId", "idType") VALUES ($1, $2);',
         [record.assetId.id, record.assetId.idType]
@@ -147,7 +87,7 @@ class Registry implements iRegistry {
     console.log(record);
     return record;
   }
-*/
+
   updateAas(record: IRegisterAas): Promise<IRegistryResultSet> {
     throw new Error('Method not implemented.');
   }

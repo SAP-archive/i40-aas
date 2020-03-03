@@ -12,6 +12,7 @@ import {
   IJointRecord,
   IEndpointRecord
 } from '../../src/services/registry/daos/interfaces/IQueryResults';
+import { fail } from 'assert';
 const { Pool } = require('pg');
 const _ = require('lodash');
 
@@ -153,7 +154,7 @@ describe('Tests with a simple data model', function() {
     );
   });
 
-  xit('gets the list of endpoints using getAllEndpointsList from the DB', async function() {
+  it('gets the list of endpoints using getAllEndpointsList from the DB', async function() {
     var x = await getAllEndpointsList();
     expect(x)
       .to.be.an('array')
@@ -161,7 +162,7 @@ describe('Tests with a simple data model', function() {
     expect(x[0].endpoints[0]).to.have.property('target', 'cloud');
   });
 
-  xit('gets the right endpoints when reading by semantic protocol and role', async function() {
+  it('gets the right endpoints when reading by semantic protocol and role', async function() {
     var uniqueTestId = 'readRecordBySemanticProtocolAndRole';
 
     await insertIntoSemanticProtocols(
@@ -233,7 +234,7 @@ describe('Tests with a simple data model', function() {
     ).to.be.true;
   });
 
-  xit('rolls back if there is an error when registering', async function() {
+  it('rolls back if there is an error when registering', async function() {
     var uniqueTestId = 'registerAasWithProblem';
 
     await insertIntoAssets(
@@ -254,23 +255,28 @@ describe('Tests with a simple data model', function() {
     //should fail because it has PK aasId = 'aasId' + uniqueTestId
 
     var registerJson: IRegisterAas = makeDummyAASForRegistry(uniqueTestId);
-    await register(registerJson);
+    try {
+      await register(registerJson);
+    } catch (error) {
+      const resultOfAssetQuery = await testGlobals.client.query(
+        'SELECT  * FROM  public.assets WHERE "assetId" = $1;',
+        ['assetId' + uniqueTestId + 'x']
+      );
+      expect(resultOfAssetQuery.rows.length == 0);
 
-    const resultOfAssetQuery = await testGlobals.client.query(
-      'SELECT  * FROM  public.assets WHERE "assetId" = $1;',
-      ['assetId' + uniqueTestId + 'x']
-    );
-    expect(resultOfAssetQuery.rows.length == 0);
-
-    var s = `SELECT  * FROM  public.endpoints`;
-    const resultOfEndpointQuery = await testGlobals.client.query(s);
-    const queryResultRows: Array<IEndpointRecord> = resultOfEndpointQuery.rows;
-    //endpoint should not be there
-    expect(
-      _.some(
-        queryResultRows,
-        (e: IEndpointRecord) => e.aasId == 'aasId' + uniqueTestId
-      )
-    ).to.be.false;
+      var s = `SELECT  * FROM  public.endpoints`;
+      const resultOfEndpointQuery = await testGlobals.client.query(s);
+      const queryResultRows: Array<IEndpointRecord> =
+        resultOfEndpointQuery.rows;
+      //endpoint should not be there
+      expect(
+        _.some(
+          queryResultRows,
+          (e: IEndpointRecord) => e.aasId == 'aasId' + uniqueTestId
+        )
+      ).to.be.false;
+      return;
+    }
+    fail('This test should have resulted in a duplicate key exception');
   });
 });
