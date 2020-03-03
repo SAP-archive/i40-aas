@@ -3,8 +3,6 @@ package grpcendpoint
 import (
 	"encoding/json"
 	"os"
-	"strconv"
-	"strings"
 	"time"
 
 	"github.com/jpillora/backoff"
@@ -56,7 +54,7 @@ func (e *GRPCEgress) Init() {
 		for {
 			deliveries := e.amqpClient.Listen(queue, bindingKey, ctag)
 			for d := range deliveries {
-				log.Debug().Msgf("got %dB delivery: [%v]", len(d.Body), d.DeliveryTag)
+				log.Debug().Msgf("got new %dB delivery [%v]", len(d.Body), d.DeliveryTag)
 
 				rMsg := ResolverMsg{}
 
@@ -69,13 +67,8 @@ func (e *GRPCEgress) Init() {
 				log.Debug().Msgf("got new InteractionMessage (%dB) for %q (%q)", len(rMsg.EgressPayload), rMsg.ReceiverURL, rMsg.ReceiverType)
 
 				if rMsg.ReceiverType == "cloud" {
-					// TODO: Rework, this will 100% result in errors!
-					host := strings.Split(rMsg.ReceiverURL, ":")[0]
-					port, _ := strconv.Atoi(strings.Split(rMsg.ReceiverURL, ":")[1])
-
 					cfg := GRPCClientConfig{
-						Host:     host,
-						Port:     port,
+						URL:      rMsg.ReceiverURL,
 						RootCert: "",
 					}
 
@@ -88,7 +81,7 @@ func (e *GRPCEgress) Init() {
 					}
 
 					c.UploadInteractionMessage(iMsg, b)
-					log.Debug().Msgf("sent InteractionMessage (%dB) to %s:%d, (client state: %q)", len(rMsg.EgressPayload), c.cfg.Host, c.cfg.Port, c.conn.GetState().String())
+					log.Debug().Msgf("sent InteractionMessage (%dB) to %s, (client state: %q)", len(rMsg.EgressPayload), c.cfg.URL, c.conn.GetState().String())
 				} else if rMsg.ReceiverType == "edge" {
 					log.Warn().Msgf("NOT IMPLEMENTED: receiver type: %s", rMsg.ReceiverType)
 				} else {
@@ -114,12 +107,12 @@ func (e *GRPCEgress) Shutdown() {
 
 func (e *GRPCEgress) obtainGRPCClient(cfg GRPCClientConfig) *grpcClient {
 	for _, c := range e.grpcClients {
-		if c.cfg.Host+strconv.Itoa(c.cfg.Port) == cfg.Host+strconv.Itoa(cfg.Port) {
+		if c.cfg.URL == cfg.URL {
 			return c
 		}
 	}
 
-	log.Debug().Msgf("creating a new gRPC client for %s:%d", cfg.Host, cfg.Port)
+	log.Debug().Msgf("creating a new gRPC client for %s", cfg.URL)
 	c := newGRPCClient(cfg)
 	e.grpcClients = append(e.grpcClients, c)
 

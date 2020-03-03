@@ -57,8 +57,7 @@ func dummyInteractionMessage() *interaction.InteractionMessage {
 
 func dummyClient() grpcClient {
 	cltConfig := GRPCClientConfig{
-		Host:     "localhost",
-		Port:     51423,
+		URL:      "localhost:51423",
 		RootCert: "",
 	}
 

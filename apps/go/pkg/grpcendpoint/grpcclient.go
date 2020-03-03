@@ -2,7 +2,6 @@ package grpcendpoint
 
 import (
 	"context"
-	"strconv"
 	"time"
 
 	"github.com/jpillora/backoff"
@@ -15,8 +14,7 @@ import (
 
 // GRPCClientConfig struct
 type GRPCClientConfig struct {
-	Host     string
-	Port     int
+	URL      string
 	RootCert string
 }
 
@@ -34,13 +32,9 @@ type grpcClient struct {
 func newGRPCClient(cfg GRPCClientConfig) *grpcClient {
 	c := &grpcClient{}
 
-	if cfg.Host == "" {
-		cfg.Host = "localhost"
-		log.Warn().Msgf("GRPC server host not specified, defaulting to %q", cfg.Host)
-	}
-	if cfg.Port == 0 {
-		cfg.Port = 8080
-		log.Warn().Msgf("GRPC server port not specified, defaulting to %q", cfg.Port)
+	if cfg.URL == "" {
+		cfg.URL = "localhost:8080"
+		log.Warn().Msgf("GRPC server URL not specified, defaulting to %q", cfg.URL)
 	}
 
 	c.cfg = cfg
@@ -57,17 +51,15 @@ func newGRPCClient(cfg GRPCClientConfig) *grpcClient {
 		c.grpcOpts = append(c.grpcOpts, grpc.WithInsecure())
 	}
 
-	grpcHost := c.cfg.Host + ":" + strconv.Itoa(c.cfg.Port)
-
-	conn, err := grpc.Dial(grpcHost, c.grpcOpts...)
+	conn, err := grpc.Dial(c.cfg.URL, c.grpcOpts...)
 	if err != nil {
-		log.Error().Err(err).Msgf("failed to start grpc connection with address %s", grpcHost)
+		log.Error().Err(err).Msgf("failed to start grpc connection with address %s", c.cfg.URL)
 	}
 	c.conn = conn
 
 	c.interactionClient = interaction.NewInteractionServiceClient(c.conn)
 
-	log.Info().Msgf("new gRPC client connection to %s initiated and in state %s", grpcHost, c.conn.GetState().String())
+	log.Info().Msgf("new gRPC client connection to %s initiated and in state %s", c.cfg.URL, c.conn.GetState().String())
 
 	return c
 }
@@ -87,6 +79,6 @@ func (c *grpcClient) UploadInteractionMessage(iMsg *interaction.InteractionMessa
 		time.Sleep(d)
 		c.UploadInteractionMessage(iMsg, b)
 	} else {
-		log.Debug().Msgf("UploadInteractionMessage to %s:%d returned status %s", c.cfg.Host, c.cfg.Port, status.String())
+		log.Debug().Msgf("UploadInteractionMessage to %s returned status %s", c.cfg.URL, status.String())
 	}
 }

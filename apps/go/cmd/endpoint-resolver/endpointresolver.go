@@ -66,8 +66,15 @@ func (r *EndpointResolver) Init() {
 		for {
 			deliveries := r.amqpClient.Listen(queue, bindingKey, ctag)
 			for d := range deliveries {
-				log.Debug().Msgf("got %dB delivery: [%v]", len(d.Body), d.DeliveryTag)
-				r.processGenericEgressMsg(d)
+				log.Debug().Msgf("got new %dB delivery [%v]", len(d.Body), d.DeliveryTag)
+				err := r.processGenericEgressMsg(d)
+				if err != nil {
+					log.Error().Err(err).Msgf("failed to process %dB delivery [%v], content: %s", len(d.Body), d.DeliveryTag, string(d.Body))
+					d.Nack(false, true)
+				} else {
+					log.Debug().Msgf("processed %dB delivery [%v]: ACK", len(d.Body), d.DeliveryTag)
+					d.Ack(false)
+				}
 			}
 			log.Warn().Msg("deliveries channel closed, restarting...")
 		}
@@ -81,7 +88,7 @@ func (r *EndpointResolver) Shutdown() {
 	log.Debug().Msg("shutdown sequence complete")
 }
 
-func (r *EndpointResolver) processGenericEgressMsg(d amqp.Delivery) {
+func (r *EndpointResolver) processGenericEgressMsg(d amqp.Delivery) error {
 	msg := d.Body
 	iMsg := interaction.ConvertRawJSONToInteractionMessage(msg)
 
@@ -127,12 +134,12 @@ func (r *EndpointResolver) processGenericEgressMsg(d amqp.Delivery) {
 				err = r.amqpClient.Publish(routingKey, payload)
 				if err != nil {
 					log.Error().Err(err).Msgf("unable to resolve message: %s", string(payload))
-					d.Nack(false, true)
+					return err
 				}
-				d.Ack(false)
 			}
 		}
 	}
+	return nil
 }
 
 func queryEndpointRegistry(receiverID string, receiverIDType string, receiverRole string, semanticProtocol string, reg EndpointRegistryConfig) []byte {
