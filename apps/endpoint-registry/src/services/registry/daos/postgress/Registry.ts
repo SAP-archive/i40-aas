@@ -178,7 +178,7 @@ class Registry implements iRegistry {
     console.log(record);
     return record;
   }
-
+  //TODO: naming should be consistent: use same name in registry-api as here
   async readRecordByAasId(
     aasId: IIdentifier
   ): Promise<Array<IRegistryResultSet>> {

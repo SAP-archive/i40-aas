@@ -5,13 +5,35 @@
   "main": "src/index.js",
   "scripts": {
     "test": "mocha --require ts-node/register --exit test/unit/**/*.spec.ts",
-    "integration-test": "mocha --require ts-node/register --exit test/integration/**/*.spec.ts",
+    "test-integration-only": "mocha --require ts-node/register --exit test/integration/**/*.spec.ts",
+    "test-with-integration": "mocha --require ts-node/register --exit test/integration/**/*.spec.ts test/unit/**/*.spec.ts",
+    "coverage": "nyc --reporter html --reporter text npm test",
+    "coverage-with-integration": "nyc --reporter html --reporter text npm run test-with-integration",
     "build": "tsc",
     "prestart": "./prepareDB.sh",
     "start": "node ./dist/server.js",
     "clean": "rm -rf ./dist/*",
     "poststart": "node ./dist/server.js",
     "local": "node -r dotenv/config ./dist/server.js"
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.ts",
+      "src/**/*.tsx"
+    ],
+    "extension": [
+      ".ts",
+      ".tsx"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "reporter": [
+      "text-summary",
+      "html"
+    ],
+    "sourceMap": true,
+    "instrument": true
   },
   "repository": {
     "type": "git",
@@ -25,6 +47,7 @@
     "generic-pool": "^3.7.1",
     "i40-aas-objects": "0.2.6",
     "pg": "^7.11.0",
+    "pg-promise": "^10.4.4",
     "swagger-ui-express": "^4.0.6",
     "ts-postgres": "^1.1.0"
   },

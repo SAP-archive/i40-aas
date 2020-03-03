@@ -5,7 +5,8 @@ import { pgConfig } from '../../src/services/registry/daos/postgress/Connection'
 import {
   getAllEndpointsList,
   readRecordBySemanticProtocolAndRole,
-  register
+  register,
+  readRecordByIdentifier
 } from '../../src/services/registry/registry-api';
 import { IRegisterAas } from '../../src/services/registry/daos/interfaces/IApiRequests';
 import {
@@ -206,6 +207,46 @@ describe('Tests with a simple data model', function() {
     expect(x)
       .to.be.an('array')
       .with.length(1);
+    expect(x[0].endpoints[0]).to.have.property(
+      'protocol',
+      uniqueTestId.toLowerCase() + 'protocolname'
+    );
+    expect(x[0].endpoints[0]).to.have.property('target', 'cloud');
+  });
+
+  it('gets the right endpoints when reading by receiver aas id and id type', async function() {
+    var uniqueTestId = 'readRecordByAasId';
+
+    await insertIntoAssets(
+      uniqueTestId + 'assetId',
+      uniqueTestId + 'idType',
+      testGlobals.client
+    );
+    await insertIntoAssetAdministrationShells(
+      uniqueTestId + 'aasId',
+      uniqueTestId + 'idType',
+      uniqueTestId + 'assetId',
+      testGlobals.client
+    );
+
+    await insertIntoEndpoints(
+      uniqueTestId + 'url',
+      uniqueTestId + 'protocolName',
+      uniqueTestId + 'protocolVersion',
+      uniqueTestId + 'aasId',
+      'cloud',
+      testGlobals.client
+    );
+
+    var x = await readRecordByIdentifier({
+      id: uniqueTestId + 'aasId',
+      idType: 'IRI'
+    });
+
+    expect(x)
+      .to.be.an('array')
+      .with.length(1);
+    expect(x[0].aasId).to.have.property('id', uniqueTestId + 'aasId');
     expect(x[0].endpoints[0]).to.have.property(
       'protocol',
       uniqueTestId.toLowerCase() + 'protocolname'
