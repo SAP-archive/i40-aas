@@ -110,8 +110,8 @@ class Registry implements iRegistry {
     console.log(record);
     return record;
   }
-
   /*
+
   async registerAas(record: IRegisterAas): Promise<IRegistryResultSet> {
     this.db.tx('registerAAs', async t => {
       const insertAssetResult = await t.none(
@@ -143,11 +143,11 @@ class Registry implements iRegistry {
         })
       );
     });
-   
+
     console.log(record);
     return record;
   }
-  */
+*/
   updateAas(record: IRegisterAas): Promise<IRegistryResultSet> {
     throw new Error('Method not implemented.');
   }
@@ -304,7 +304,7 @@ class Registry implements iRegistry {
         'INNER JOIN public.endpoints ' +
         'USING("aasId")) as aasWithProtocols INNER JOIN public.assets USING ("assetId") ';
       const queryResult = await this.db.query(s, [sProtocol, role]);
-      const queryResultRows: Array<IJointRecord> = queryResult.rows;
+      const queryResultRows: Array<IJointRecord> = queryResult;
       var recordsByAasId: IData = {};
       await Promise.all(
         queryResultRows.map(function(row: IJointRecord) {

@@ -56,7 +56,7 @@ async function readRecordBySemanticProtocolAndRole(
 ): Promise<any> {
   console.log(sProtocol);
   console.log(role);
-  var registryDao: iRegistry = await RegistryFactory.getRegistry();
+  var registryDao: iRegistry = await RegistryFactory.getRegistryNew();
   try {
     var result = await registryDao.readEndpointBySemanticProtocolAndRole(
       sProtocol,
@@ -143,6 +143,8 @@ async function getEndpointsByReceiverId(
   });
 }
 
+//TODO: why is this extra level of indirection needed?
+//getEndpointsByReceiverRolejust forwards the call
 async function getEndpointsByReceiverRole(
   receiverRole: string,
   semanticProtocol: string

@@ -8,7 +8,10 @@ import {
   register
 } from '../../src/services/registry/registry-api';
 import { IRegisterAas } from '../../src/services/registry/daos/interfaces/IApiRequests';
-import { IJointRecord } from '../../src/services/registry/daos/interfaces/IQueryResults';
+import {
+  IJointRecord,
+  IEndpointRecord
+} from '../../src/services/registry/daos/interfaces/IQueryResults';
 const { Pool } = require('pg');
 const _ = require('lodash');
 
@@ -103,7 +106,7 @@ async function insertIntoAssetAdministrationShells(
     [aasId, idType, assetId]
   );
 }
-
+//TODO: reinitialize DB after every test
 describe('Tests with a simple data model', function() {
   var testGlobals: any;
 
@@ -150,7 +153,7 @@ describe('Tests with a simple data model', function() {
     );
   });
 
-  it('gets the list of endpoints using getAllEndpointsList from the DB', async function() {
+  xit('gets the list of endpoints using getAllEndpointsList from the DB', async function() {
     var x = await getAllEndpointsList();
     expect(x)
       .to.be.an('array')
@@ -158,7 +161,7 @@ describe('Tests with a simple data model', function() {
     expect(x[0].endpoints[0]).to.have.property('target', 'cloud');
   });
 
-  it('gets the right endpoints when reading by semantic protocol and role', async function() {
+  xit('gets the right endpoints when reading by semantic protocol and role', async function() {
     var uniqueTestId = 'readRecordBySemanticProtocolAndRole';
 
     await insertIntoSemanticProtocols(
@@ -215,12 +218,59 @@ describe('Tests with a simple data model', function() {
     await register(registerJson);
     var s = `SELECT  * FROM  public.endpoints`;
     const resultOfQuery = await testGlobals.client.query(s);
-    const queryResultRows: Array<IJointRecord> = resultOfQuery.rows;
+    const queryResultRows: Array<IEndpointRecord> = resultOfQuery.rows;
     expect(
       _.some(
         queryResultRows,
-        (e: IJointRecord) => e.aasId == 'aasId' + uniqueTestId
+        (e: IEndpointRecord) => e.aasId == 'aasId' + uniqueTestId
       )
     ).to.be.true;
+    expect(
+      _.some(
+        queryResultRows,
+        (e: IEndpointRecord) => e.protocol_name == 'protocol' + uniqueTestId
+      )
+    ).to.be.true;
+  });
+
+  xit('rolls back if there is an error when registering', async function() {
+    var uniqueTestId = 'registerAasWithProblem';
+
+    await insertIntoAssets(
+      'assetId' + uniqueTestId + 'x',
+      'IRI',
+      testGlobals.client
+    );
+    await insertIntoAssetAdministrationShells(
+      'aasId' + uniqueTestId,
+      'IRI',
+      'assetId' + uniqueTestId + 'x',
+      testGlobals.client
+    );
+
+    //there shall be no conflict when writing the asset because the
+    //asset in the database has id 'assetId' + uniqueTestId + 'x'
+    //with 'x' at then end. But writing to asset_administration_shells
+    //should fail because it has PK aasId = 'aasId' + uniqueTestId
+
+    var registerJson: IRegisterAas = makeDummyAASForRegistry(uniqueTestId);
+    await register(registerJson);
+
+    const resultOfAssetQuery = await testGlobals.client.query(
+      'SELECT  * FROM  public.assets WHERE "assetId" = $1;',
+      ['assetId' + uniqueTestId + 'x']
+    );
+    expect(resultOfAssetQuery.rows.length == 0);
+
+    var s = `SELECT  * FROM  public.endpoints`;
+    const resultOfEndpointQuery = await testGlobals.client.query(s);
+    const queryResultRows: Array<IEndpointRecord> = resultOfEndpointQuery.rows;
+    //endpoint should not be there
+    expect(
+      _.some(
+        queryResultRows,
+        (e: IEndpointRecord) => e.aasId == 'aasId' + uniqueTestId
+      )
+    ).to.be.false;
   });
 });
