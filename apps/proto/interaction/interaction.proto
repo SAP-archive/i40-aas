@@ -2,8 +2,13 @@ syntax = "proto3";
 
 package interaction;
 
-service InteractionService {
-  rpc UploadInteractionMessage(InteractionMessage) returns (InteractionStatus) {}
+// TODO
+// service InteractionEgress {
+//   rpc ReceiveInteractionMessages(ConversationMember) returns (stream InteractionMessage) {}
+// }
+
+service InteractionIngress {
+  rpc SendInteractionMessage(InteractionMessage) returns (InteractionStatus) {}
 }
 
 message InteractionStatus {

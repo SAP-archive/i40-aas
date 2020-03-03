@@ -66,7 +66,7 @@ func (s *grpcServer) init() (err error) {
 
 	s.server = grpc.NewServer(grpcOpts...)
 
-	interaction.RegisterInteractionServiceServer(s.server, s)
+	interaction.RegisterInteractionIngressServer(s.server, s)
 
 	log.Info().Msgf("GRPCServer is serving on port %v", strconv.Itoa(s.cfg.Port))
 	err = s.server.Serve(listener)
@@ -86,8 +86,8 @@ func (s *grpcServer) close() {
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 
-// UploadInteractionMessage capability
-func (s *grpcServer) UploadInteractionMessage(ctx context.Context, iMsg *interaction.InteractionMessage) (*interaction.InteractionStatus, error) {
+// SendInteractionMessage capability
+func (s *grpcServer) SendInteractionMessage(ctx context.Context, iMsg *interaction.InteractionMessage) (*interaction.InteractionStatus, error) {
 	c, _ := peer.FromContext(ctx)
 	log.Debug().Msgf("received new InteractionMessage from %v", c.Addr)
 
@@ -101,7 +101,7 @@ func (s *grpcServer) UploadInteractionMessage(ctx context.Context, iMsg *interac
 		time.Sleep(5 * time.Millisecond)
 	}
 
-	log.Debug().Msgf("processing InteractionMessage from %v is complete, InteractionStatus is %v", c.Addr, i.Status)
+	log.Debug().Msgf("processed InteractionMessage from %v, InteractionStatus is %v", c.Addr, i.Status)
 
 	return i.Status, nil
 }

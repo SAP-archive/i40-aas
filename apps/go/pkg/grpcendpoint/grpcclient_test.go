@@ -100,15 +100,15 @@ func TestNewGRPCClient(t *testing.T) {
 	// }
 }
 
-func TestUploadInteractionMessage(t *testing.T) {
+func TestSendInteractionMessage(t *testing.T) {
 	c := dummyClient()
 
 	iMsg := dummyInteractionMessage()
 
-	_, err := c.interactionClient.UploadInteractionMessage(context.Background(), iMsg)
+	_, err := c.interactionClient.SendInteractionMessage(context.Background(), iMsg)
 	if err != nil {
-		t.Errorf("UploadInteractionMessage failed: %s", err)
+		t.Errorf("SendInteractionMessage failed: %s", err)
 	}
 
-	c.UploadInteractionMessage(iMsg, &backoff.Backoff{})
+	c.SendInteractionMessage(iMsg, &backoff.Backoff{})
 }

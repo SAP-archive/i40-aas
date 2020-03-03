@@ -80,7 +80,7 @@ func (e *GRPCEgress) Init() {
 						Jitter: true,
 					}
 
-					c.UploadInteractionMessage(iMsg, b)
+					c.SendInteractionMessage(iMsg, b)
 					log.Debug().Msgf("sent InteractionMessage (%dB) to %s, (client state: %q)", len(rMsg.EgressPayload), c.cfg.URL, c.conn.GetState().String())
 				} else if rMsg.ReceiverType == "edge" {
 					log.Warn().Msgf("NOT IMPLEMENTED: receiver type: %s", rMsg.ReceiverType)

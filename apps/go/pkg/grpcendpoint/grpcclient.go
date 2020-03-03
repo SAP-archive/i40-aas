@@ -23,7 +23,7 @@ type grpcClient struct {
 	cfg               GRPCClientConfig
 	grpcOpts          []grpc.DialOption
 	conn              *grpc.ClientConn
-	interactionClient interaction.InteractionServiceClient
+	interactionClient interaction.InteractionIngressClient
 
 	// TODO
 	// - KeepAlive & Retry
@@ -57,7 +57,7 @@ func newGRPCClient(cfg GRPCClientConfig) *grpcClient {
 	}
 	c.conn = conn
 
-	c.interactionClient = interaction.NewInteractionServiceClient(c.conn)
+	c.interactionClient = interaction.NewInteractionIngressClient(c.conn)
 
 	log.Info().Msgf("new gRPC client connection to %s initiated and in state %s", c.cfg.URL, c.conn.GetState().String())
 
@@ -71,14 +71,14 @@ func (c *grpcClient) close() {
 	}
 }
 
-func (c *grpcClient) UploadInteractionMessage(iMsg *interaction.InteractionMessage, b *backoff.Backoff) {
-	status, err := c.interactionClient.UploadInteractionMessage(context.Background(), iMsg)
+func (c *grpcClient) SendInteractionMessage(iMsg *interaction.InteractionMessage, b *backoff.Backoff) {
+	status, err := c.interactionClient.SendInteractionMessage(context.Background(), iMsg)
 	if err != nil {
 		d := b.Duration()
-		log.Error().Err(err).Msgf("failed to UploadInteractionMessage, gRPC connection is in state %s, retrying in %s...", c.conn.GetState().String(), d)
+		log.Error().Err(err).Msgf("failed to SendInteractionMessage, gRPC connection is in state %s, retrying in %s...", c.conn.GetState().String(), d)
 		time.Sleep(d)
-		c.UploadInteractionMessage(iMsg, b)
+		c.SendInteractionMessage(iMsg, b)
 	} else {
-		log.Debug().Msgf("UploadInteractionMessage to %s returned status %s", c.cfg.URL, status.String())
+		log.Debug().Msgf("sent InteractionMessage to %s returning status %s", c.cfg.URL, status.String())
 	}
 }
