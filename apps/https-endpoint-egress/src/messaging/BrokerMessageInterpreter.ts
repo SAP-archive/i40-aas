@@ -81,15 +81,9 @@ Decide what to do if the message can not be handled (eg. because receiver role i
         this.handleUnactionableMessage(msg);
         return undefined;
       }
-      //the interaction message should not be empty
-      let interactionMessage = resolverMessage.interactionMessage;
-      if (!interactionMessage) {
-        this.handleUnactionableMessage(msg, ["message.receiverURL"]);
-        return undefined;
-      }
 
       //the receiver role field of the frame should not be empty
-      let receiverURL = resolverMessage.receiverURL;
+      let receiverURL = resolverMessage.ReceiverURL;
       if (!receiverURL) {
         this.handleUnactionableMessage(msg, ["message.receiverURL"]);
         return undefined;
@@ -108,15 +102,26 @@ Decide what to do if the message can not be handled (eg. because receiver role i
   private handleResolverMessage(
     resolverMessage: IResolverMessage
   ) {
-    let receiverURL: string = resolverMessage.receiverURL;
+    let receiverURL: string = resolverMessage.ReceiverURL;
 
     if (receiverURL) {
       logger.info(
         "[HTTP-Egress]: ReceiverURL is " + receiverURL
       );
       try {
+
+        let interactionMessageBase64 = resolverMessage.EgressPayload
+        let buff = new Buffer(interactionMessageBase64, 'base64');
+        let interactionMessageString = buff.toString('ascii');
+        //the interaction message should not be empty
+
+         if (!interactionMessageString) {
+          this.handleUnactionableMessage(interactionMessageString, ["message.EgressPayload"]);
+          return undefined;
+        }
+
         //POST the Interaction message to the Receiver AAS
-        sendInteractionReplyToAAS(receiverURL, resolverMessage.interactionMessage);
+        sendInteractionReplyToAAS(receiverURL, interactionMessageString);
       } catch (error) {
         logger.error(
           "Error when posting to AAS " +
@@ -140,7 +145,10 @@ Decide what to do if the message can not be handled (eg. because receiver role i
 
     if (message) {
       //if validation successful, get the AAS receiver endpoint from AAS-registry service
-      logger.info("Received Msg params [" + message.interactionMessage.frame.sender.role.name + " , " + message.interactionMessage.frame.receiver.role.name + " , " + message.interactionMessage.frame.type + " , " + message.interactionMessage.frame.conversationId + "]");
+      logger.debug("HTTP-EGRESS: Received Msg " + message);
+
+
+      //logger.info("Received Msg params [" + message.EgressPayload.frame.sender.role.name + " , " + message.EgressPayload.frame.receiver.role.name + " , " + message.EgressPayload.frame.type + " , " + message.EgressPayload.frame.conversationId + "]");
 
 
       this.handleResolverMessage(message);

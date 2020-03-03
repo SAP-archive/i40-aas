@@ -8,7 +8,7 @@ let webClient = new WebClient();
 //Send a request to a dummy AAS service (e.g. an operator in case of an onboarding process)
 export async function sendInteractionReplyToAAS(
   receiverURL: string,
-  message: IInteractionMessage
+  message: string
 ) {
   let response: AxiosResponse = await webClient.postRequest(
     receiverURL,
@@ -27,6 +27,9 @@ function handleResponseFromClientAAS(
     if (response.status === 200) {
       logger.info(
         "[AAS Client]: Request success to receiver at " + receiverURL
+      );
+      logger.debug(
+        "[AAS Client]: Response from Receiver AAS " + JSON.stringify(response.data)
       );
     } else {
       logger.error(
