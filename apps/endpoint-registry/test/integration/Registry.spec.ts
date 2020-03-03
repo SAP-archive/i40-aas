@@ -1,9 +1,9 @@
 require('dotenv').config({ path: 'test/env.list' });
 
 import { expect } from 'chai';
-
+import { pgConfig } from '../../src/services/registry/daos/postgress/Connection';
 import { getAllEndpointsList } from '../../src/services/registry/registry-api';
-import { RegistryFactory } from '../../src/services/registry/daos/postgress/RegistryFactory';
+const { Pool } = require('pg');
 
 function execShellCommand(cmd: any) {
   const exec = require('child_process').exec;
@@ -88,7 +88,7 @@ describe('getAllEndpointsList', function() {
     console.log(await execShellCommand('sh ./prepareDB.sh'));
     console.log('Using DB: ' + process.env.ENDPOINT_REGISTRY_POSTGRES_DB);
     testGlobals = {
-      client: await RegistryFactory.getDbClient(),
+      client: await new Pool(pgConfig).connect(),
       uniqueTestId: 'getAllEndpointsList'
     };
   });

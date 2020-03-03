@@ -21,21 +21,22 @@ import {
   RegistryRolesResultSet,
   ICreateRoleResultSet
 } from '../interfaces/IRegistryRolesSet';
+import pgPromise = require('pg-promise');
 
 class Registry implements iRegistry {
-  private client: any;
+  //private readonly db: any;
 
-  constructor(client: any) {
+  constructor(private readonly db: pgPromise.IDatabase<{}>) {
     //https://node-postgres.com/
-    this.client = client;
+    //this.db = db;
   }
   release(): void {
-    if (this.client) this.client.release();
+    //if (this.db) this.db.release();
   }
 
   async createAsset(asset: ICreateAsset): Promise<ICreateAsset> {
     try {
-      const insertAssetResult = await this.client.query(
+      const insertAssetResult = await this.db.query(
         ' INSERT INTO public.assets( "assetId", "idType") VALUES ($1, $2);',
         [asset.assetId.id, asset.assetId.idType]
       );
@@ -50,9 +51,38 @@ class Registry implements iRegistry {
     }
   }
   async registerAas(record: IRegisterAas): Promise<IRegistryResultSet> {
+    this.db.tx('registerAAs', async t => {
+      const insertAssetResult = await t.none(
+        ' INSERT INTO public.assets( "assetId", "idType") VALUES ($1, $2);',
+        [record.assetId.id, record.assetId.idType]
+      );
+      const insertAasResult = await t.none(
+        'INSERT INTO public.asset_administration_shells("aasId", "idType", "assetId") VALUES ($1, $2, $3);',
+        [record.aasId.id, record.aasId.idType, record.assetId.id]
+      );
+      const deleteEndpointResult = await t.none(
+        'DELETE FROM public.endpoints WHERE "aasId" = $1;',
+        [record.aasId.id]
+      );
+      await Promise.all(
+        record.endpoints.map(async (endpoint: IEndpoint) => {
+          console.log('endpoint:' + JSON.stringify(endpoint));
+          const insertEndpointResult = await t.none(
+            'INSERT INTO public.endpoints( "URL", protocol_name, protocol_version, "aasId",target) VALUES ($1, $2, $3, $4, $5);',
+            [
+              endpoint.url,
+              endpoint.protocol,
+              endpoint.protocolVersion,
+              record.aasId.id,
+              endpoint.target
+            ]
+          );
+        })
+      );
+    });
     //create asset entry
     try {
-      const insertAssetResult = await this.client.query(
+      const insertAssetResult = await this.db.query(
         ' INSERT INTO public.assets( "assetId", "idType") VALUES ($1, $2);',
         [record.assetId.id, record.assetId.idType]
       );
@@ -65,7 +95,7 @@ class Registry implements iRegistry {
     }
     try {
       //create aas entry
-      const insertAasResult = await this.client.query(
+      const insertAasResult = await this.db.query(
         'INSERT INTO public.asset_administration_shells("aasId", "idType", "assetId") VALUES ($1, $2, $3);',
         [record.aasId.id, record.aasId.idType, record.assetId.id]
       );
@@ -78,7 +108,7 @@ class Registry implements iRegistry {
     }
     try {
       //delete existig
-      const deleteEndpointResult = await this.client.query(
+      const deleteEndpointResult = await this.db.query(
         'DELETE FROM public.endpoints WHERE "aasId" = $1;',
         [record.aasId.id]
       );
@@ -86,7 +116,7 @@ class Registry implements iRegistry {
       await Promise.all(
         record.endpoints.map(async (endpoint: IEndpoint) => {
           console.log('endpoint:' + JSON.stringify(endpoint));
-          const insertEndpointResult = await this.client.query(
+          const insertEndpointResult = await this.db.query(
             'INSERT INTO public.endpoints( "URL", protocol_name, protocol_version, "aasId",target) VALUES ($1, $2, $3, $4, $5);',
             [
               endpoint.url,
@@ -115,7 +145,7 @@ class Registry implements iRegistry {
     console.log(' ********* AASID ' + aasId.id);
 
     try {
-      const deleteRowsCount = await this.client.query(
+      const deleteRowsCount = await this.db.query(
         'WITH deleted AS (DELETE FROM asset_administration_shells WHERE "aasId" = $1 RETURNING *) SELECT count(*) FROM deleted;',
         [aasId.id]
       );
@@ -143,7 +173,7 @@ class Registry implements iRegistry {
     record: import('../interfaces/IApiRequests').ICreateSemanticProtocol
   ): Promise<ICreateSemanticProtocol> {
     try {
-      const insertRolesResult = await this.client.query(
+      const insertRolesResult = await this.db.query(
         'INSERT INTO public.semantic_protocols("protocolId") VALUES ($1);',
         [record.semanticProtocol]
       );
@@ -165,7 +195,7 @@ class Registry implements iRegistry {
         'aasId ' + record.aasId.id + ' with role id ' + record.roleId
       );
 
-      const insertRolesResult = await this.client.query(
+      const insertRolesResult = await this.db.query(
         'INSERT INTO public.aas_role("aasId","roleId")  VALUES ($1, $2);',
         [record.aasId.id, record.roleId]
       );
@@ -183,7 +213,7 @@ class Registry implements iRegistry {
 
   async createRole(record: ICreateRole): Promise<ICreateRoleResultSet> {
     try {
-      const insertRolesResult = await this.client.query(
+      const insertRolesResult = await this.db.query(
         'INSERT INTO public.roles( "roleId", "protocolId") VALUES ($1, $2);',
         [record.roleId, record.semanticProtocol]
       );
@@ -204,13 +234,13 @@ class Registry implements iRegistry {
   ): Promise<Array<IRegistryResultSet>> {
     try {
       console.log(aasId);
-      const aasRecords = await this.client.query(
+      const aasRecords = await this.db.query(
         'SELECT * FROM public.asset_administration_shells WHERE "aasId" = $1',
         [aasId.id]
       );
       if (aasRecords.rows.length > 0) {
         var aasRecord = aasRecords.rows[0];
-        const endpointRecords = await this.client.query(
+        const endpointRecords = await this.db.query(
           'SELECT * FROM public.endpoints WHERE "aasId" = $1',
           [aasRecord.aasId]
         );
@@ -263,7 +293,7 @@ class Registry implements iRegistry {
         'limit 1)) as res ' +
         'INNER JOIN public.endpoints ' +
         'USING("aasId")) as aasWithProtocols INNER JOIN public.assets USING ("assetId") ';
-      const queryResult = await this.client.query(s, [sProtocol, role]);
+      const queryResult = await this.db.query(s, [sProtocol, role]);
       const queryResultRows: Array<IJointRecord> = queryResult.rows;
       var recordsByAasId: IData = {};
       await Promise.all(
@@ -316,7 +346,7 @@ class Registry implements iRegistry {
       USING
       ("aasId"))as res2 INNER JOIN public.assets
     USING ("assetId")`;
-      const queryResult = await this.client.query(s);
+      const queryResult = await this.db.query(s);
       const queryResultRows: Array<IJointRecord> = queryResult.rows;
       var recordsByAasId: IData = {};
       //TODO: better to use map here in order to avoid if statement

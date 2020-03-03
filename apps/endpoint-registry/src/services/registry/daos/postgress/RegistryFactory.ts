@@ -1,5 +1,4 @@
 const { Pool } = require('pg');
-const genericPool = require('generic-pool');
 import { pgConfig } from './Connection';
 import { Registry } from './Registry';
 
@@ -10,7 +9,7 @@ class RegistryFactory {
     const client = await this.getDbClient();
     return new Registry(client);
   }
-  static async getDbClient() {
+  private static async getDbClient() {
     console.log(pgConfig);
     return await this.pool.connect();
   }
