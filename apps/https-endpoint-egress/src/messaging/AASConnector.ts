@@ -10,33 +10,11 @@ export async function sendInteractionReplyToAAS(
   receiverURL: string,
   message: string
 ) {
-  let response: AxiosResponse = await webClient.postRequest(
+ let response: AxiosResponse = await webClient.postRequest(
     receiverURL,
     message,
     undefined
   );
-  handleResponseFromClientAAS(response, receiverURL);
   return response;
 }
 
-function handleResponseFromClientAAS(
-  response: AxiosResponse,
-  receiverURL: string
-) {
-  if (response) {
-    if (response.status === 200) {
-      logger.info(
-        "[AAS Client]: Request success to receiver at " + receiverURL
-      );
-      logger.debug(
-        "[AAS Client]: Response from Receiver AAS " + JSON.stringify(response.data)
-      );
-    } else {
-      logger.error(
-        "[AAS Client]:  sending Request to AAS Client" + response.status
-      );
-    }
-  } else {
-    logger.error("[AAS Client]: Generic Error sending Request to AAS Client");
-  }
-}
