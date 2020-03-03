@@ -254,7 +254,7 @@ class Registry implements iRegistry {
       var s =
         'SELECT public.assets."idType" as "assetIdType", ' +
         'public.assets."assetId",aasWithProtocols."aasId",aasWithProtocols."idType" as "aasIdType", ' +
-        'aasWithProtocols."protocol_name" ,aasWithProtocols."protocol_version", aasWithProtocols."roleId",aasWithProtocols."URL" ' +
+        'aasWithProtocols."protocol_name" ,aasWithProtocols."protocol_version", aasWithProtocols."roleId",aasWithProtocols."URL",aasWithProtocols."target" ' +
         'FROM ((SELECT * FROM public.aas_role ' +
         'INNER JOIN public.asset_administration_shells ' +
         'USING ("aasId") ' +
