@@ -81,6 +81,7 @@ class Registry implements iRegistry {
       );
     });
     //create asset entry
+    /*
     try {
       const insertAssetResult = await this.db.query(
         ' INSERT INTO public.assets( "assetId", "idType") VALUES ($1, $2);',
@@ -134,7 +135,7 @@ class Registry implements iRegistry {
       } else {
         throw e;
       }
-    }
+    }*/
     console.log(record);
     return record;
   }
@@ -284,7 +285,7 @@ class Registry implements iRegistry {
       var s =
         'SELECT public.assets."idType" as "assetIdType", ' +
         'public.assets."assetId",aasWithProtocols."aasId",aasWithProtocols."idType" as "aasIdType", ' +
-        'aasWithProtocols."protocol_name" ,aasWithProtocols."protocol_version", aasWithProtocols."roleId",aasWithProtocols."URL" ' +
+        'aasWithProtocols."protocol_name" ,aasWithProtocols."protocol_version", aasWithProtocols."roleId",aasWithProtocols."URL",aasWithProtocols."target" ' +
         'FROM ((SELECT * FROM public.aas_role ' +
         'INNER JOIN public.asset_administration_shells ' +
         'USING ("aasId") ' +
@@ -346,8 +347,8 @@ class Registry implements iRegistry {
       USING
       ("aasId"))as res2 INNER JOIN public.assets
     USING ("assetId")`;
-      const queryResult = await this.db.query(s);
-      const queryResultRows: Array<IJointRecord> = queryResult.rows;
+      const resultOfQuery = await this.db.query(s);
+      const queryResultRows: Array<IJointRecord> = resultOfQuery;
       var recordsByAasId: IData = {};
       //TODO: better to use map here in order to avoid if statement
       //inside loop

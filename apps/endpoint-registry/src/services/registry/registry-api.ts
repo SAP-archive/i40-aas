@@ -154,7 +154,7 @@ async function getEndpointsByReceiverRole(
 }
 
 async function getAllEndpointsList(): Promise<Array<IRegistryResultSet>> {
-  var registryDao: iRegistry = await RegistryFactory.getRegistry();
+  var registryDao: iRegistry = await RegistryFactory.getRegistryNew();
   try {
     var result = await registryDao.listAllEndpoints();
     console.log(result);
