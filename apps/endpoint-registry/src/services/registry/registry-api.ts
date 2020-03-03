@@ -18,7 +18,7 @@ import { TIdType } from 'i40-aas-objects/dist/src/types/IdTypeEnum';
 async function readRecordByIdentifier(
   identifier: IIdentifier
 ): Promise<Array<RegistryResultSet>> {
-  var registryDao: iRegistry = await RegistryFactory.getRegistryNew();
+  var registryDao: iRegistry = await RegistryFactory.getRegistry();
   try {
     if (!identifier.id) {
       throw new RegistryError('Missing parameter id', 422);
@@ -56,7 +56,7 @@ async function readRecordBySemanticProtocolAndRole(
 ): Promise<any> {
   console.log(sProtocol);
   console.log(role);
-  var registryDao: iRegistry = await RegistryFactory.getRegistryNew();
+  var registryDao: iRegistry = await RegistryFactory.getRegistry();
   try {
     var result = await registryDao.readEndpointBySemanticProtocolAndRole(
       sProtocol,
@@ -72,7 +72,7 @@ async function readRecordBySemanticProtocolAndRole(
 }
 
 async function register(req: IRegisterAas) {
-  var registryDao: iRegistry = await RegistryFactory.getRegistryNew();
+  var registryDao: iRegistry = await RegistryFactory.getRegistry();
   try {
     var result = await registryDao.registerAas(req);
     console.log(result);
@@ -156,7 +156,7 @@ async function getEndpointsByReceiverRole(
 }
 
 async function getAllEndpointsList(): Promise<Array<IRegistryResultSet>> {
-  var registryDao: iRegistry = await RegistryFactory.getRegistryNew();
+  var registryDao: iRegistry = await RegistryFactory.getRegistry();
   try {
     var result = await registryDao.listAllEndpoints();
     console.log(result);
