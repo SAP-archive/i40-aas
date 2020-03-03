@@ -90,6 +90,6 @@ typings/
 
 #######################
 # # ignore all .env files
-# *.env
+*.env
 # except for the one in root
-!.env
+!/.env
