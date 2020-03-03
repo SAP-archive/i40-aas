@@ -27,7 +27,7 @@ enum TTarget {
 interface IEndpoint {
   url: string;
   protocol: string;
-  target: TTarget;
+  target: string;
   protocolVersion?: string;
 }
 
@@ -38,7 +38,7 @@ class Endpoint implements IEndpoint {
 
   constructor(
     url: string,
-    public target: TTarget,
+    public target: string,
     protocol: string,
     protocolVersion?: string
   ) {

@@ -4,9 +4,13 @@ import { expect } from 'chai';
 import { pgConfig } from '../../src/services/registry/daos/postgress/Connection';
 import {
   getAllEndpointsList,
-  readRecordBySemanticProtocolAndRole
+  readRecordBySemanticProtocolAndRole,
+  register
 } from '../../src/services/registry/registry-api';
+import { IRegisterAas } from '../../src/services/registry/daos/interfaces/IApiRequests';
+import { IJointRecord } from '../../src/services/registry/daos/interfaces/IQueryResults';
 const { Pool } = require('pg');
+const _ = require('lodash');
 
 function execShellCommand(cmd: any) {
   const exec = require('child_process').exec;
@@ -20,6 +24,22 @@ function execShellCommand(cmd: any) {
       resolve(stdout ? stdout : stderr);
     });
   });
+}
+
+function makeDummyAASForRegistry(tag: string) {
+  return <IRegisterAas>{
+    aasId: {
+      id: 'aasId' + tag,
+      idType: 'IRI'
+    },
+    endpoints: [
+      { url: 'url' + tag, protocol: 'protocol' + tag, target: 'cloud' }
+    ],
+    assetId: {
+      id: 'assetId' + tag,
+      idType: 'IRI'
+    }
+  };
 }
 
 async function insertIntoAasRole(aasId: string, roleId: string, dbClient: any) {
@@ -187,5 +207,20 @@ describe('Tests with a simple data model', function() {
       uniqueTestId.toLowerCase() + 'protocolname'
     );
     expect(x[0].endpoints[0]).to.have.property('target', 'cloud');
+  });
+
+  it('registers AASs correctly', async function() {
+    var uniqueTestId = 'registerAas';
+    var registerJson: IRegisterAas = makeDummyAASForRegistry(uniqueTestId);
+    await register(registerJson);
+    var s = `SELECT  * FROM  public.endpoints`;
+    const resultOfQuery = await testGlobals.client.query(s);
+    const queryResultRows: Array<IJointRecord> = resultOfQuery.rows;
+    expect(
+      _.some(
+        queryResultRows,
+        (e: IJointRecord) => e.aasId == 'aasId' + uniqueTestId
+      )
+    ).to.be.true;
   });
 });

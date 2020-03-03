@@ -50,38 +50,9 @@ class Registry implements iRegistry {
       }
     }
   }
+
   async registerAas(record: IRegisterAas): Promise<IRegistryResultSet> {
-    this.db.tx('registerAAs', async t => {
-      const insertAssetResult = await t.none(
-        ' INSERT INTO public.assets( "assetId", "idType") VALUES ($1, $2);',
-        [record.assetId.id, record.assetId.idType]
-      );
-      const insertAasResult = await t.none(
-        'INSERT INTO public.asset_administration_shells("aasId", "idType", "assetId") VALUES ($1, $2, $3);',
-        [record.aasId.id, record.aasId.idType, record.assetId.id]
-      );
-      const deleteEndpointResult = await t.none(
-        'DELETE FROM public.endpoints WHERE "aasId" = $1;',
-        [record.aasId.id]
-      );
-      await Promise.all(
-        record.endpoints.map(async (endpoint: IEndpoint) => {
-          console.log('endpoint:' + JSON.stringify(endpoint));
-          const insertEndpointResult = await t.none(
-            'INSERT INTO public.endpoints( "URL", protocol_name, protocol_version, "aasId",target) VALUES ($1, $2, $3, $4, $5);',
-            [
-              endpoint.url,
-              endpoint.protocol,
-              endpoint.protocolVersion,
-              record.aasId.id,
-              endpoint.target
-            ]
-          );
-        })
-      );
-    });
     //create asset entry
-    /*
     try {
       const insertAssetResult = await this.db.query(
         ' INSERT INTO public.assets( "assetId", "idType") VALUES ($1, $2);',
@@ -135,10 +106,48 @@ class Registry implements iRegistry {
       } else {
         throw e;
       }
-    }*/
+    }
     console.log(record);
     return record;
   }
+
+  /*
+  async registerAas(record: IRegisterAas): Promise<IRegistryResultSet> {
+    this.db.tx('registerAAs', async t => {
+      const insertAssetResult = await t.none(
+        ' INSERT INTO public.assets( "assetId", "idType") VALUES ($1, $2);',
+        [record.assetId.id, record.assetId.idType]
+      );
+      const insertAasResult = await t.none(
+        'INSERT INTO public.asset_administration_shells("aasId", "idType", "assetId") VALUES ($1, $2, $3);',
+        [record.aasId.id, record.aasId.idType, record.assetId.id]
+      );
+      const deleteEndpointResult = await t.none(
+        'DELETE FROM public.endpoints WHERE "aasId" = $1;',
+        [record.aasId.id]
+      );
+
+      await Promise.all(
+        record.endpoints.map(async (endpoint: IEndpoint) => {
+          console.log('endpoint:' + JSON.stringify(endpoint));
+          const insertEndpointResult = await t.none(
+            'INSERT INTO public.endpoints( "URL", protocol_name, protocol_version, "aasId",target) VALUES ($1, $2, $3, $4, $5);',
+            [
+              endpoint.url,
+              endpoint.protocol,
+              endpoint.protocolVersion,
+              record.aasId.id,
+              endpoint.target
+            ]
+          );
+        })
+      );
+    });
+   
+    console.log(record);
+    return record;
+  }
+  */
   updateAas(record: IRegisterAas): Promise<IRegistryResultSet> {
     throw new Error('Method not implemented.');
   }
