@@ -24,14 +24,14 @@ import {
 import pgPromise = require('pg-promise');
 
 class Registry implements iRegistry {
-  //private readonly db: any;
-
-  constructor(private readonly db: pgPromise.IDatabase<{}>) {
+  //TODO: make typed once migration complete
+  constructor(private readonly db: any /*: pgPromise.IDatabase<{}>*/) {
     //https://node-postgres.com/
     //this.db = db;
   }
   release(): void {
-    //if (this.db) this.db.release();
+    //TODO: remove method once migration complete
+    if (this.db && this.db.release) this.db.release();
   }
 
   async createAsset(asset: ICreateAsset): Promise<ICreateAsset> {
@@ -53,7 +53,8 @@ class Registry implements iRegistry {
 
   //TODO: error handling in case of already existing
   async registerAas(record: IRegisterAas): Promise<IRegistryResultSet> {
-    await this.db.tx('registerAas', async t => {
+    //TODO: remove cast once migration complete
+    await (<pgPromise.IDatabase<{}>>this.db).tx('registerAas', async t => {
       const insertAssetResult = await t.none(
         ' INSERT INTO public.assets( "assetId", "idType") VALUES ($1, $2);',
         [record.assetId.id, record.assetId.idType]
@@ -188,15 +189,16 @@ class Registry implements iRegistry {
         'SELECT * FROM public.asset_administration_shells WHERE "aasId" = $1',
         [aasId.id]
       );
-      if (aasRecords.rows.length > 0) {
-        var aasRecord = aasRecords.rows[0];
+      if (aasRecords.length > 0) {
+        var aasRecord = aasRecords[0];
+        //TODO: do proper chaining of queries
         const endpointRecords = await this.db.query(
           'SELECT * FROM public.endpoints WHERE "aasId" = $1',
           [aasRecord.aasId]
         );
         var endpoints: Array<IEndpoint> = [];
 
-        endpointRecords.rows.forEach((endpointRecord: IEndpointRecord) => {
+        endpointRecords.forEach((endpointRecord: IEndpointRecord) => {
           console.log(endpointRecord);
           var endpoint: IEndpoint = new Endpoint(
             endpointRecord.URL,
@@ -243,8 +245,8 @@ class Registry implements iRegistry {
         'limit 1)) as res ' +
         'INNER JOIN public.endpoints ' +
         'USING("aasId")) as aasWithProtocols INNER JOIN public.assets USING ("assetId") ';
-      const queryResult = await this.db.query(s, [sProtocol, role]);
-      const queryResultRows: Array<IJointRecord> = queryResult;
+      const resultOfQuery = await this.db.any(s, [sProtocol, role]);
+      const queryResultRows: Array<IJointRecord> = resultOfQuery;
       var recordsByAasId: IData = {};
       await Promise.all(
         queryResultRows.map(function(row: IJointRecord) {
@@ -301,6 +303,8 @@ class Registry implements iRegistry {
       var recordsByAasId: IData = {};
       //TODO: better to use map here in order to avoid if statement
       //inside loop
+      //TODO: uncomment before pushing
+      /*
       queryResultRows.forEach(function(row: IJointRecord) {
         if (!recordsByAasId[row.aasId]) {
           recordsByAasId[row.aasId] = new RegistryResultSet(
@@ -326,6 +330,7 @@ class Registry implements iRegistry {
           );
         }
       });
+      */
       //TODO: this could be combined with the traversal just above
       //it is not clear why recordsByAasId is needed as an intermediate store
       var result: Array<RegistryResultSet> = [];

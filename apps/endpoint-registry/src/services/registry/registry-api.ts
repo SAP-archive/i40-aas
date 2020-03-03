@@ -18,7 +18,7 @@ import { TIdType } from 'i40-aas-objects/dist/src/types/IdTypeEnum';
 async function readRecordByIdentifier(
   identifier: IIdentifier
 ): Promise<Array<RegistryResultSet>> {
-  var registryDao: iRegistry = await RegistryFactory.getRegistry();
+  var registryDao: iRegistry = await RegistryFactory.getRegistryNew();
   try {
     if (!identifier.id) {
       throw new RegistryError('Missing parameter id', 422);
