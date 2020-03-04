@@ -28,8 +28,10 @@ class Registry implements iRegistry {
     //https://node-postgres.com/
     //this.db = db;
   }
-  async release() {
-    if (this.db && this.db.release) await this.db.release();
+  release() {
+    if (this.db && this.db.release) {
+      this.db.release();
+    }
   }
 
   async createAsset(asset: ICreateAsset): Promise<ICreateAsset> {

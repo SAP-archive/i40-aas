@@ -9,13 +9,14 @@ import {
   readRecordByIdentifier
 } from '../../src/services/registry/registry-api';
 import { IRegisterAas } from '../../src/services/registry/daos/interfaces/IApiRequests';
-import {
-  IJointRecord,
-  IEndpointRecord
-} from '../../src/services/registry/daos/interfaces/IQueryResults';
+import { IEndpointRecord } from '../../src/services/registry/daos/interfaces/IQueryResults';
 import { fail } from 'assert';
+import e = require('express');
+import { RegistryFactory } from '../../src/services/registry/daos/postgress/RegistryFactory';
+
 const { Pool } = require('pg');
 const _ = require('lodash');
+const pool = RegistryFactory.getPool();
 
 function execShellCommand(cmd: any) {
   const exec = require('child_process').exec;
@@ -47,29 +48,46 @@ function makeDummyAASForRegistry(tag: string) {
   };
 }
 
-async function insertIntoAasRole(aasId: string, roleId: string, dbClient: any) {
-  await dbClient.query(
-    ' INSERT INTO public.aas_role( "aasId", "roleId") VALUES ($1, $2);',
-    [aasId, roleId]
-  );
+async function insertIntoAasRole(aasId: string, roleId: string) {
+  const dbClient = await pool.connect();
+  try {
+    await dbClient.query(
+      ' INSERT INTO public.aas_role( "aasId", "roleId") VALUES ($1, $2);',
+      [aasId, roleId]
+    );
+  } catch (error) {
+    throw e;
+  } finally {
+    dbClient.release();
+  }
 }
 
-async function insertIntoRoles(
-  roleId: string,
-  protocolId: string,
-  dbClient: any
-) {
-  await dbClient.query(
-    'INSERT INTO public.roles( "roleId", "protocolId") VALUES ($1, $2);',
-    [roleId, protocolId]
-  );
+async function insertIntoRoles(roleId: string, protocolId: string) {
+  const dbClient = await pool.connect();
+  try {
+    await dbClient.query(
+      'INSERT INTO public.roles( "roleId", "protocolId") VALUES ($1, $2);',
+      [roleId, protocolId]
+    );
+  } catch (error) {
+    throw e;
+  } finally {
+    dbClient.release();
+  }
 }
 
-async function insertIntoSemanticProtocols(protocolId: string, dbClient: any) {
-  await dbClient.query(
-    'INSERT INTO public.semantic_protocols("protocolId") VALUES ($1);',
-    [protocolId]
-  );
+async function insertIntoSemanticProtocols(protocolId: string) {
+  const dbClient = await pool.connect();
+  try {
+    await dbClient.query(
+      'INSERT INTO public.semantic_protocols("protocolId") VALUES ($1);',
+      [protocolId]
+    );
+  } catch (error) {
+    throw e;
+  } finally {
+    dbClient.release();
+  }
 }
 
 async function insertIntoEndpoints(
@@ -77,37 +95,53 @@ async function insertIntoEndpoints(
   protocolName: string,
   protocolVersion: string,
   aasId: string,
-  target: string,
-  dbClient: any
+  target: string
 ) {
-  dbClient.query(
-    'INSERT INTO public.endpoints( "URL", protocol_name, protocol_version, "aasId",target) VALUES ($1, $2, $3, $4, $5);',
-    [url, protocolName, protocolVersion, aasId, target]
-  );
+  const dbClient = await pool.connect();
+  try {
+    dbClient.query(
+      'INSERT INTO public.endpoints( "URL", protocol_name, protocol_version, "aasId",target) VALUES ($1, $2, $3, $4, $5);',
+      [url, protocolName, protocolVersion, aasId, target]
+    );
+  } catch (error) {
+    throw e;
+  } finally {
+    dbClient.release();
+  }
 }
 
-async function insertIntoAssets(
-  assetId: string,
-  idType: string,
-  dbClient: any
-) {
-  await dbClient.query(
-    ' INSERT INTO public.assets( "assetId", "idType") VALUES ($1, $2);',
-    [assetId, idType]
-  );
+async function insertIntoAssets(assetId: string, idType: string) {
+  const dbClient = await pool.connect();
+  try {
+    await dbClient.query(
+      ' INSERT INTO public.assets( "assetId", "idType") VALUES ($1, $2);',
+      [assetId, idType]
+    );
+  } catch (error) {
+    throw e;
+  } finally {
+    dbClient.release();
+  }
 }
 
 async function insertIntoAssetAdministrationShells(
   aasId: string,
   idType: string,
-  assetId: string,
-  dbClient: any
+  assetId: string
 ) {
-  await dbClient.query(
-    'INSERT INTO public.asset_administration_shells("aasId", "idType", "assetId") VALUES ($1, $2, $3);',
-    [aasId, idType, assetId]
-  );
+  const dbClient = await pool.connect();
+  try {
+    await dbClient.query(
+      'INSERT INTO public.asset_administration_shells("aasId", "idType", "assetId") VALUES ($1, $2, $3);',
+      [aasId, idType, assetId]
+    );
+  } catch (error) {
+    throw e;
+  } finally {
+    dbClient.release();
+  }
 }
+
 //TODO: reinitialize DB after every test
 describe('Tests with a simple data model', function() {
   var testGlobals: any;
@@ -115,43 +149,24 @@ describe('Tests with a simple data model', function() {
   before(async () => {
     console.log(await execShellCommand('sh ./prepareDB.sh'));
     console.log('Using DB: ' + process.env.ENDPOINT_REGISTRY_POSTGRES_DB);
-    testGlobals = {
-      client: await new Pool(pgConfig).connect()
-    };
+
     var uniqueTestId = 'dataForAllTests';
-    await insertIntoSemanticProtocols(
-      uniqueTestId + 'protocolId',
-      testGlobals.client
-    );
-    await insertIntoRoles(
-      uniqueTestId + 'roleId',
-      uniqueTestId + 'protocolId',
-      testGlobals.client
-    );
-    await insertIntoAssets(
-      uniqueTestId + 'assetId',
-      uniqueTestId + 'idType',
-      testGlobals.client
-    );
+    await insertIntoSemanticProtocols(uniqueTestId + 'protocolId');
+    await insertIntoRoles(uniqueTestId + 'roleId', uniqueTestId + 'protocolId');
+    await insertIntoAssets(uniqueTestId + 'assetId', uniqueTestId + 'idType');
     await insertIntoAssetAdministrationShells(
       uniqueTestId + 'aasId',
       uniqueTestId + 'idType',
-      uniqueTestId + 'assetId',
-      testGlobals.client
+      uniqueTestId + 'assetId'
     );
-    await insertIntoAasRole(
-      uniqueTestId + 'aasId',
-      uniqueTestId + 'roleId',
-      testGlobals.client
-    );
+    await insertIntoAasRole(uniqueTestId + 'aasId', uniqueTestId + 'roleId');
 
     await insertIntoEndpoints(
       uniqueTestId + 'url',
       uniqueTestId + 'protocolName',
       uniqueTestId + 'protocolVersion',
       uniqueTestId + 'aasId',
-      'cloud',
-      testGlobals.client
+      'cloud'
     );
   });
 
@@ -166,39 +181,22 @@ describe('Tests with a simple data model', function() {
   it('gets the right endpoints when reading by semantic protocol and role', async function() {
     var uniqueTestId = 'readRecordBySemanticProtocolAndRole';
 
-    await insertIntoSemanticProtocols(
-      uniqueTestId + 'protocolId',
-      testGlobals.client
-    );
-    await insertIntoRoles(
-      uniqueTestId + 'roleId',
-      uniqueTestId + 'protocolId',
-      testGlobals.client
-    );
-    await insertIntoAssets(
-      uniqueTestId + 'assetId',
-      uniqueTestId + 'idType',
-      testGlobals.client
-    );
+    await insertIntoSemanticProtocols(uniqueTestId + 'protocolId');
+    await insertIntoRoles(uniqueTestId + 'roleId', uniqueTestId + 'protocolId');
+    await insertIntoAssets(uniqueTestId + 'assetId', uniqueTestId + 'idType');
     await insertIntoAssetAdministrationShells(
       uniqueTestId + 'aasId',
       uniqueTestId + 'idType',
-      uniqueTestId + 'assetId',
-      testGlobals.client
+      uniqueTestId + 'assetId'
     );
-    await insertIntoAasRole(
-      uniqueTestId + 'aasId',
-      uniqueTestId + 'roleId',
-      testGlobals.client
-    );
+    await insertIntoAasRole(uniqueTestId + 'aasId', uniqueTestId + 'roleId');
 
     await insertIntoEndpoints(
       uniqueTestId + 'url',
       uniqueTestId + 'protocolName',
       uniqueTestId + 'protocolVersion',
       uniqueTestId + 'aasId',
-      'cloud',
-      testGlobals.client
+      'cloud'
     );
     var x = await readRecordBySemanticProtocolAndRole(
       uniqueTestId + 'protocolId',
@@ -217,16 +215,11 @@ describe('Tests with a simple data model', function() {
   it('gets the right endpoints when reading by receiver aas id and id type', async function() {
     var uniqueTestId = 'readRecordByAasId';
 
-    await insertIntoAssets(
-      uniqueTestId + 'assetId',
-      uniqueTestId + 'idType',
-      testGlobals.client
-    );
+    await insertIntoAssets(uniqueTestId + 'assetId', uniqueTestId + 'idType');
     await insertIntoAssetAdministrationShells(
       uniqueTestId + 'aasId',
       uniqueTestId + 'idType',
-      uniqueTestId + 'assetId',
-      testGlobals.client
+      uniqueTestId + 'assetId'
     );
 
     await insertIntoEndpoints(
@@ -234,8 +227,7 @@ describe('Tests with a simple data model', function() {
       uniqueTestId + 'protocolName',
       uniqueTestId + 'protocolVersion',
       uniqueTestId + 'aasId',
-      'cloud',
-      testGlobals.client
+      'cloud'
     );
 
     var x = await readRecordByIdentifier({
@@ -259,35 +251,37 @@ describe('Tests with a simple data model', function() {
     var registerJson: IRegisterAas = makeDummyAASForRegistry(uniqueTestId);
     await register(registerJson);
     var s = `SELECT  * FROM  public.endpoints`;
-    const resultOfQuery = await testGlobals.client.query(s);
-    const queryResultRows: Array<IEndpointRecord> = resultOfQuery.rows;
-    expect(
-      _.some(
-        queryResultRows,
-        (e: IEndpointRecord) => e.aasId == 'aasId' + uniqueTestId
-      )
-    ).to.be.true;
-    expect(
-      _.some(
-        queryResultRows,
-        (e: IEndpointRecord) => e.protocol_name == 'protocol' + uniqueTestId
-      )
-    ).to.be.true;
+    const dbClient = await pool.connect();
+    try {
+      const resultOfQuery = await dbClient.query(s);
+      const queryResultRows: Array<IEndpointRecord> = resultOfQuery.rows;
+      expect(
+        _.some(
+          queryResultRows,
+          (e: IEndpointRecord) => e.aasId == 'aasId' + uniqueTestId
+        )
+      ).to.be.true;
+      expect(
+        _.some(
+          queryResultRows,
+          (e: IEndpointRecord) => e.protocol_name == 'protocol' + uniqueTestId
+        )
+      ).to.be.true;
+    } catch (error) {
+      fail('Exception thrown');
+    } finally {
+      dbClient.release();
+    }
   });
 
   it('rolls back if there is an error when registering', async function() {
     var uniqueTestId = 'registerAasWithProblem';
 
-    await insertIntoAssets(
-      'assetId' + uniqueTestId + 'x',
-      'IRI',
-      testGlobals.client
-    );
+    await insertIntoAssets('assetId' + uniqueTestId + 'x', 'IRI');
     await insertIntoAssetAdministrationShells(
       'aasId' + uniqueTestId,
       'IRI',
-      'assetId' + uniqueTestId + 'x',
-      testGlobals.client
+      'assetId' + uniqueTestId + 'x'
     );
 
     //there shall be no conflict when writing the asset because the
@@ -299,24 +293,31 @@ describe('Tests with a simple data model', function() {
     try {
       await register(registerJson);
     } catch (error) {
-      const resultOfAssetQuery = await testGlobals.client.query(
-        'SELECT  * FROM  public.assets WHERE "assetId" = $1;',
-        ['assetId' + uniqueTestId + 'x']
-      );
-      expect(resultOfAssetQuery.rows.length == 0);
+      const dbClient = await pool.connect();
+      try {
+        const resultOfAssetQuery = await dbClient.query(
+          'SELECT  * FROM  public.assets WHERE "assetId" = $1;',
+          ['assetId' + uniqueTestId + 'x']
+        );
+        expect(resultOfAssetQuery.rows.length == 0);
 
-      var s = `SELECT  * FROM  public.endpoints`;
-      const resultOfEndpointQuery = await testGlobals.client.query(s);
-      const queryResultRows: Array<IEndpointRecord> =
-        resultOfEndpointQuery.rows;
-      //endpoint should not be there
-      expect(
-        _.some(
-          queryResultRows,
-          (e: IEndpointRecord) => e.aasId == 'aasId' + uniqueTestId
-        )
-      ).to.be.false;
-      return;
+        var s = `SELECT  * FROM  public.endpoints`;
+        const resultOfEndpointQuery = await dbClient.query(s);
+        const queryResultRows: Array<IEndpointRecord> =
+          resultOfEndpointQuery.rows;
+        //endpoint should not be there
+        expect(
+          _.some(
+            queryResultRows,
+            (e: IEndpointRecord) => e.aasId == 'aasId' + uniqueTestId
+          )
+        ).to.be.false;
+        return;
+      } catch (error) {
+        fail('Exception thrown in test');
+      } finally {
+        dbClient.release();
+      }
     }
     fail('This test should have resulted in a duplicate key exception');
   });

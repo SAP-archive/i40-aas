@@ -3,14 +3,17 @@ import { pgConfig } from './Connection';
 import { Registry } from './Registry';
 
 class RegistryFactory {
+  private static pool = new Pool(pgConfig);
+
   static async getRegistry(): Promise<Registry> {
-    const client = await this.getDbClient();
+    const client = RegistryFactory.getPool();
+    await client.connect();
     return new Registry(client);
   }
 
-  private static async getDbClient() {
+  static getPool() {
     console.log(pgConfig);
-    return await new Pool(pgConfig).connect();
+    return RegistryFactory.pool;
   }
 }
 
