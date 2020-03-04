@@ -1,4 +1,4 @@
-var pgConfig: object;
+var pgConfig: any;
 try {
   pgConfig = {
     host: process.env.ENDPOINT_REGISTRY_POSTGRES_HOST,

@@ -1,18 +1,20 @@
 const { Pool } = require('pg');
-const genericPool = require('generic-pool');
 import { pgConfig } from './Connection';
 import { Registry } from './Registry';
 
 class RegistryFactory {
-  static pool: any = new Pool(pgConfig);
+  private static pool = new Pool(pgConfig);
 
   static async getRegistry(): Promise<Registry> {
-    const client = await this.getDbClient();
-    return new Registry(client);
+    const client = RegistryFactory.getPool();
+    //await client.connect();
+    return new Registry(await client.connect());
   }
-  static async getDbClient() {
+
+  static getPool() {
     console.log(pgConfig);
-    return await this.pool.connect();
+    return RegistryFactory.pool;
   }
 }
+
 export { RegistryFactory };

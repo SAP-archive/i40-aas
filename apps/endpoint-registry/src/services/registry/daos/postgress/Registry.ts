@@ -21,16 +21,17 @@ import {
   RegistryRolesResultSet,
   ICreateRoleResultSet
 } from '../interfaces/IRegistryRolesSet';
+import pgPromise = require('pg-promise');
 
 class Registry implements iRegistry {
-  private client: any;
-
-  constructor(client: any) {
+  constructor(private readonly client: any) {
     //https://node-postgres.com/
-    this.client = client;
+    //this.db = db;
   }
-  release(): void {
-    if (this.client) this.client.release();
+  release() {
+    if (this.client && this.client.release) {
+      this.client.release();
+    }
   }
 
   async createAsset(asset: ICreateAsset): Promise<ICreateAsset> {
@@ -49,40 +50,25 @@ class Registry implements iRegistry {
       }
     }
   }
+
+  //TODO: error handling in case of already existing
   async registerAas(record: IRegisterAas): Promise<IRegistryResultSet> {
-    //create asset entry
+    //TODO: remove cast once migration complete
     try {
+      await this.client.query('BEGIN');
       const insertAssetResult = await this.client.query(
         ' INSERT INTO public.assets( "assetId", "idType") VALUES ($1, $2);',
         [record.assetId.id, record.assetId.idType]
       );
-    } catch (e) {
-      if (e.code == 23505) {
-        console.log('Asset already exist');
-      } else {
-        throw e;
-      }
-    }
-    try {
-      //create aas entry
       const insertAasResult = await this.client.query(
         'INSERT INTO public.asset_administration_shells("aasId", "idType", "assetId") VALUES ($1, $2, $3);',
         [record.aasId.id, record.aasId.idType, record.assetId.id]
       );
-    } catch (e) {
-      if (e.code == 23505) {
-        console.log('AAS already exist');
-      } else {
-        throw e;
-      }
-    }
-    try {
-      //delete existig
       const deleteEndpointResult = await this.client.query(
         'DELETE FROM public.endpoints WHERE "aasId" = $1;',
         [record.aasId.id]
       );
-      //create endpoint entry
+
       await Promise.all(
         record.endpoints.map(async (endpoint: IEndpoint) => {
           console.log('endpoint:' + JSON.stringify(endpoint));
@@ -98,16 +84,15 @@ class Registry implements iRegistry {
           );
         })
       );
-    } catch (e) {
-      if (e.code == 23505) {
-        console.log('Endpoint already exist');
-      } else {
-        throw e;
-      }
+      await this.client.query('COMMIT');
+      console.log(record);
+      return record;
+    } catch (error) {
+      await this.client.query('ROLLBACK');
+      throw error;
     }
-    console.log(record);
-    return record;
   }
+
   updateAas(record: IRegisterAas): Promise<IRegistryResultSet> {
     throw new Error('Method not implemented.');
   }
@@ -198,7 +183,7 @@ class Registry implements iRegistry {
     console.log(record);
     return record;
   }
-
+  //TODO: naming should be consistent: use same name in registry-api as here
   async readRecordByAasId(
     aasId: IIdentifier
   ): Promise<Array<IRegistryResultSet>> {
@@ -210,6 +195,7 @@ class Registry implements iRegistry {
       );
       if (aasRecords.rows.length > 0) {
         var aasRecord = aasRecords.rows[0];
+        //TODO: do proper chaining of queries
         const endpointRecords = await this.client.query(
           'SELECT * FROM public.endpoints WHERE "aasId" = $1',
           [aasRecord.aasId]
@@ -245,7 +231,6 @@ class Registry implements iRegistry {
     }
   }
 
-  //TODO: adapt this, no trget in SQL statement
   async readEndpointBySemanticProtocolAndRole(
     sProtocol: string,
     role: string
@@ -263,8 +248,8 @@ class Registry implements iRegistry {
         'limit 1)) as res ' +
         'INNER JOIN public.endpoints ' +
         'USING("aasId")) as aasWithProtocols INNER JOIN public.assets USING ("assetId") ';
-      const queryResult = await this.client.query(s, [sProtocol, role]);
-      const queryResultRows: Array<IJointRecord> = queryResult.rows;
+      const resultOfQuery = await this.client.query(s, [sProtocol, role]);
+      const queryResultRows: Array<IJointRecord> = resultOfQuery.rows;
       var recordsByAasId: IData = {};
       await Promise.all(
         queryResultRows.map(function(row: IJointRecord) {
@@ -316,11 +301,12 @@ class Registry implements iRegistry {
       USING
       ("aasId"))as res2 INNER JOIN public.assets
     USING ("assetId")`;
-      const queryResult = await this.client.query(s);
-      const queryResultRows: Array<IJointRecord> = queryResult.rows;
+      const resultOfQuery = await this.client.query(s);
+      const queryResultRows: Array<IJointRecord> = resultOfQuery.rows;
       var recordsByAasId: IData = {};
       //TODO: better to use map here in order to avoid if statement
       //inside loop
+
       queryResultRows.forEach(function(row: IJointRecord) {
         if (!recordsByAasId[row.aasId]) {
           recordsByAasId[row.aasId] = new RegistryResultSet(
@@ -346,6 +332,7 @@ class Registry implements iRegistry {
           );
         }
       });
+
       //TODO: this could be combined with the traversal just above
       //it is not clear why recordsByAasId is needed as an intermediate store
       var result: Array<RegistryResultSet> = [];

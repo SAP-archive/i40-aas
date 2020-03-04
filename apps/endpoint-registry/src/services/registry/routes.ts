@@ -98,6 +98,10 @@ export default [
     handler: async (req: Request, res: Response) => {
       console.log('/asset POST request received');
       try {
+        //TODO: inconsistencies
+        // parsing should always be done in the same place for all handlers
+        //either in the handler or in registry-api
+        //sending the response should also be done in the same way
         var asset: ICreateAsset = req.body;
         res.json(await registryApi.createAsset(asset));
         console.log('Sent back response of /asset POST request');
@@ -113,7 +117,7 @@ export default [
       try {
         var idType: IdTypeEnum = IdTypeEnum['Custom'];
         if (req.query.idType) {
-          idType = <IdTypeEnum>[][req.query.idType];
+          idType = req.query.idType;
         }
         res.json(
           await registryApi.deleteRecordByIdentifier({

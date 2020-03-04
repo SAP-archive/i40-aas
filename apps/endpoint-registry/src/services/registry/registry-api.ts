@@ -143,6 +143,8 @@ async function getEndpointsByReceiverId(
   });
 }
 
+//TODO: why is this extra level of indirection needed?
+//getEndpointsByReceiverRolejust forwards the call
 async function getEndpointsByReceiverRole(
   receiverRole: string,
   semanticProtocol: string
