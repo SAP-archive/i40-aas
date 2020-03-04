@@ -247,7 +247,7 @@ describe('routes', function() {
 
   it('calls getEndpointsByReceiverId  depending on the parameters passed', function(done) {
     var fakeByReceiverId = sinon.fake.resolves([]);
-    sinon.replace(registryApi, 'getEndpointsByReceiverId', fakeByReceiverId);
+    sinon.replace(registryApi, 'readRecordByIdentifier', fakeByReceiverId);
     handlerMap['get']['/assetadministrationshells'](
       {
         query: {
@@ -258,10 +258,10 @@ describe('routes', function() {
       {
         json: function(json: string) {
           if (
-            fakeByReceiverId.calledWith(
-              'receiverId' + 'getEndpointsByReceiverId',
-              'IRI'
-            )
+            fakeByReceiverId.calledWith({
+              id: 'receiverId' + 'getEndpointsByReceiverId',
+              idType: 'IRI'
+            })
           ) {
             done();
           } else {
@@ -278,7 +278,7 @@ describe('routes', function() {
     var fakeByReceiverRole = sinon.fake.resolves([]);
     sinon.replace(
       registryApi,
-      'getEndpointsByReceiverRole',
+      'readRecordBySemanticProtocolAndRole',
       fakeByReceiverRole
     );
     handlerMap['get']['/assetadministrationshells'](
@@ -292,8 +292,8 @@ describe('routes', function() {
         json: function(json: string) {
           if (
             fakeByReceiverRole.calledWith(
-              'receiverRole' + 'getEndpointsByReceiverRole',
-              'semanticProtocol' + 'getEndpointsByReceiverRole'
+              'semanticProtocol' + 'getEndpointsByReceiverRole',
+              'receiverRole' + 'getEndpointsByReceiverRole'
             )
           ) {
             done();
