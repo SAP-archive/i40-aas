@@ -1,5 +1,4 @@
 import { TIdType } from 'i40-aas-objects/src/types/IdTypeEnum';
-//import { TTarget } from './IRegistryResultSet';
 
 interface IJointRecord {
   assetIdType: string;
