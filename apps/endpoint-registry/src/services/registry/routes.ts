@@ -7,8 +7,9 @@ import {
   IRegisterAas,
   ICreateAsset
 } from './daos/interfaces/IApiRequests';
+import { RegistryApi } from './registry-api';
 
-var registryApi = require('./registry-api');
+var registryApi = new RegistryApi();
 
 export default [
   {

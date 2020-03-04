@@ -21,7 +21,6 @@ import {
   RegistryRolesResultSet,
   ICreateRoleResultSet
 } from '../interfaces/IRegistryRolesSet';
-import pgPromise = require('pg-promise');
 
 class Registry implements iRegistry {
   constructor(private readonly client: any) {

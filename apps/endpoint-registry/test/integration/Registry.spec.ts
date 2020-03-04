@@ -1,13 +1,8 @@
 require('dotenv').config({ path: 'test/env.list' });
 
 import { expect } from 'chai';
-import { pgConfig } from '../../src/services/registry/daos/postgress/Connection';
-import {
-  getAllEndpointsList,
-  readRecordBySemanticProtocolAndRole,
-  register,
-  readRecordByIdentifier
-} from '../../src/services/registry/registry-api';
+
+import { RegistryApi } from '../../src/services/registry/registry-api';
 import { IRegisterAas } from '../../src/services/registry/daos/interfaces/IApiRequests';
 import { IEndpointRecord } from '../../src/services/registry/daos/interfaces/IQueryResults';
 import { fail } from 'assert';
@@ -144,8 +139,6 @@ async function insertIntoAssetAdministrationShells(
 
 //TODO: reinitialize DB after every test
 describe('Tests with a simple data model', function() {
-  var testGlobals: any;
-
   before(async () => {
     console.log(await execShellCommand('sh ./prepareDB.sh'));
     console.log('Using DB: ' + process.env.ENDPOINT_REGISTRY_POSTGRES_DB);
@@ -171,7 +164,7 @@ describe('Tests with a simple data model', function() {
   });
 
   it('gets the list of endpoints using getAllEndpointsList from the DB', async function() {
-    var x = await getAllEndpointsList();
+    var x = await new RegistryApi().getAllEndpointsList();
     expect(x)
       .to.be.an('array')
       .with.length(1);
@@ -198,7 +191,7 @@ describe('Tests with a simple data model', function() {
       uniqueTestId + 'aasId',
       'cloud'
     );
-    var x = await readRecordBySemanticProtocolAndRole(
+    var x = await new RegistryApi().readRecordBySemanticProtocolAndRole(
       uniqueTestId + 'protocolId',
       uniqueTestId + 'roleId'
     );
@@ -230,7 +223,7 @@ describe('Tests with a simple data model', function() {
       'cloud'
     );
 
-    var x = await readRecordByIdentifier({
+    var x = await new RegistryApi().readRecordByIdentifier({
       id: uniqueTestId + 'aasId',
       idType: 'IRI'
     });
@@ -249,7 +242,7 @@ describe('Tests with a simple data model', function() {
   it('registers AASs correctly', async function() {
     var uniqueTestId = 'registerAas';
     var registerJson: IRegisterAas = makeDummyAASForRegistry(uniqueTestId);
-    await register(registerJson);
+    await new RegistryApi().register(registerJson);
     var s = `SELECT  * FROM  public.endpoints`;
     const dbClient = await pool.connect();
     try {
@@ -291,7 +284,7 @@ describe('Tests with a simple data model', function() {
 
     var registerJson: IRegisterAas = makeDummyAASForRegistry(uniqueTestId);
     try {
-      await register(registerJson);
+      await new RegistryApi().register(registerJson);
     } catch (error) {
       const dbClient = await pool.connect();
       try {

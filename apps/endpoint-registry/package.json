@@ -47,7 +47,6 @@
     "generic-pool": "^3.7.1",
     "i40-aas-objects": "0.2.6",
     "pg": "^7.11.0",
-    "pg-promise": "^10.4.4",
     "swagger-ui-express": "^4.0.6",
     "ts-postgres": "^1.1.0"
   },
