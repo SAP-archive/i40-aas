@@ -7,76 +7,67 @@ services:
     image: sapi40/i40-aas-onboarding-skill:${TAG}
     build:
       context: apps/onboarding-skill
-      dockerfile: ../../docker/onboarding-skill/Dockerfile
+      dockerfile: ../docker/onboarding-skill/Dockerfile
   ##########################################
   i40-aas-https-endpoint-ingress:
     image: sapi40/i40-aas-https-endpoint-ingress:${TAG}
     build:
       context: apps/https-endpoint-ingress
-      dockerfile: ../../docker/https-endpoint-ingress/Dockerfile
+      dockerfile: ../docker/https-endpoint-ingress/Dockerfile
   ##########################################
   i40-aas-https-endpoint-egress:
     image: sapi40/i40-aas-https-endpoint-egress:${TAG}
     build:
       context: apps/https-endpoint-egress
-      dockerfile: ../../docker/https-endpoint-egress/Dockerfile
+      dockerfile: ../docker/https-endpoint-egress/Dockerfile
   ##########################################
   i40-aas-grpc-endpoint-ingress:
     image: sapi40/i40-aas-grpc-endpoint-ingress:${TAG}
     build:
       context: apps
-      dockerfile: ../docker/grpc-endpoint-ingress/Dockerfile
+      dockerfile: docker/grpc-endpoint-ingress/Dockerfile
   ##########################################
   i40-aas-grpc-endpoint-egress:
     image: sapi40/i40-aas-grpc-endpoint-egress:${TAG}
     build:
       context: apps
-      dockerfile: ../docker/grpc-endpoint-egress/Dockerfile
+      dockerfile: docker/grpc-endpoint-egress/Dockerfile
   ##########################################
   i40-aas-endpoint-resolver:
     image: sapi40/i40-aas-endpoint-resolver:${TAG}
     build:
       context: apps
-      dockerfile: ../docker/endpoint-resolver/Dockerfile
+      dockerfile: docker/endpoint-resolver/Dockerfile
   ##########################################
   i40-aas-initializer:
     image: sapi40/i40-aas-initializer:${TAG}
     build:
-      context: docker/initializer
-      dockerfile: Dockerfile
+      context: apps
+      dockerfile: docker/initializer/Dockerfile
   ##########################################
   i40-aas-data-manager:
     image: sapi40/i40-aas-data-manager:${TAG}
     build:
       context: apps/data-manager
-      dockerfile: ../../docker/data-manager/Dockerfile
+      dockerfile: ../docker/data-manager/Dockerfile
   ##########################################
   i40-aas-endpoint-registry:
     image: sapi40/i40-aas-endpoint-registry:${TAG}
     build:
       context: apps/endpoint-registry
-      dockerfile: ../../docker/endpoint-registry/Dockerfile
-    ## TODO
-    # logging:
-    #   driver: "fluentd"
-    #   options:
-    #     fluentd-address: localhost:24224
-    #     fluentd-async-connect: 'true'
-    #     fluentd-retry-wait: '1s'
-    #     fluentd-max-retries: '100'
-    #     tag: i40-aas-initializer
+      dockerfile: ../docker/endpoint-registry/Dockerfile
   ##########################################
   i40-aas-adapter-registry:
     image: sapi40/i40-aas-adapter-registry:${TAG}
     build:
       context: apps/adapter-registry
-      dockerfile: ../../docker/adapter-registry/Dockerfile
+      dockerfile: ../docker/adapter-registry/Dockerfile
   ##########################################
   i40-aas-storage-adapter-mongodb:
     image: sapi40/i40-aas-storage-adapter-mongodb:${TAG}
     build:
       context: apps/storage-adapter-mongodb
-      dockerfile: ../../docker/storage-adapter-mongodb/Dockerfile
+      dockerfile: ../docker/storage-adapter-mongodb/Dockerfile
 
 
   ########################################################
@@ -91,52 +82,3 @@ services:
       - ENDPOINT_REGISTRY_PGADMIN_HOST=${ENDPOINT_REGISTRY_PGADMIN_HOST}
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
-
-
-  ########################################################
-  #### Logging (TODO)
-  ##########################################
-  # fluentd:
-  #   build:
-  #     context: docker/fluentd
-  #     dockerfile: Dockerfile
-  #   volumes:
-  #     - .compose/volumes/fluentd/conf:/fluentd/etc/conf
-  #   links:
-  #     - "elasticsearch"
-  #   ports:
-  #     - "24224:24224"
-  #     - "24224:24224/udp"
-  # ##########################################
-  # elasticsearch:
-  #   image: elasticsearch:7.6.0
-  #   ports:
-  #     - "9200:9200"
-  #     - "9300:9300"
-  #   environment:
-  #     - discovery.type=single-node
-  #   logging:
-  #     driver: fluentd
-  #     options:
-  #         fluentd-address: localhost:24224
-  #         fluentd-async-connect: 'true'
-  #         fluentd-retry-wait: '1s'
-  #         fluentd-max-retries: '100'
-  # ##########################################
-  # kibana:
-  #   image: kibana:7.6.0
-  #   links:
-  #     - "elasticsearch"
-  #   ports:
-  #     - "5601:5601"
-  #   logging:
-  #     driver: fluentd
-  #     options:
-  #         fluentd-address: localhost:24224
-  #         fluentd-async-connect: 'true'
-  #         fluentd-retry-wait: '1s'
-  #         fluentd-max-retries: '30'
-
-  ########################################################
-  #### Utilization monitoring (TODO)
-  ##########################################
