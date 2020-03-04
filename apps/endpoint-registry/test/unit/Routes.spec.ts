@@ -1,6 +1,6 @@
 import { expect, assert } from 'chai';
 import sinon from 'sinon';
-import { RegistryApi } from '../../src/services/registry/registry-api';
+import { RegistryApi } from '../../src/services/registry/RegistryApi';
 import {
   IRegisterAas,
   ICreateRole,
@@ -96,7 +96,7 @@ describe('routes', function() {
           }
         },
         end: function(json: string) {
-          done('There was an error from the the registry-api');
+          done('There was an error from the the RegistryApi');
         }
       }
     );
@@ -119,7 +119,7 @@ describe('routes', function() {
           }
         },
         end: function(json: string) {
-          done('There was an error from the the registry-api');
+          done('There was an error from the the RegistryApi');
         }
       }
     );
@@ -145,7 +145,7 @@ describe('routes', function() {
           }
         },
         end: function(json: string) {
-          done('There was an error from the the registry-api');
+          done('There was an error from the the RegistryApi');
         }
       }
     );
@@ -170,7 +170,7 @@ describe('routes', function() {
           }
         },
         end: function(json: string) {
-          done('There was an error from the the registry-api');
+          done('There was an error from the the RegistryApi');
         }
       }
     );
@@ -193,7 +193,7 @@ describe('routes', function() {
           }
         },
         end: function(json: string) {
-          done('There was an error from the the registry-api');
+          done('There was an error from the the RegistryApi');
         }
       }
     );
@@ -214,7 +214,7 @@ describe('routes', function() {
           }
         },
         end: function(json: string) {
-          done('There was an error from the the registry-api');
+          done('There was an error from the the RegistryApi');
         }
       }
     );
@@ -239,7 +239,7 @@ describe('routes', function() {
           }
         },
         end: function(json: string) {
-          done('There was an error from the the registry-api');
+          done('There was an error from the the RegistryApi');
         }
       }
     );
@@ -269,7 +269,7 @@ describe('routes', function() {
           }
         },
         end: function(json: string) {
-          done('There was an error from the the registry-api');
+          done('There was an error from the the RegistryApi');
         }
       }
     );
@@ -302,7 +302,7 @@ describe('routes', function() {
           }
         },
         end: function(json: string) {
-          done('There was an error from the the registry-api');
+          done('There was an error from the the RegistryApi');
         }
       }
     );

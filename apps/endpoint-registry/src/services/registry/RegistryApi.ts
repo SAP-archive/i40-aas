@@ -1,4 +1,4 @@
-import { RegistryFactory } from './daos/postgress/RegistryFactory';
+import { RegistryFactory } from './daos/postgres/RegistryFactory';
 import { IIdentifier } from 'i40-aas-objects';
 import { RegistryError } from '../../utils/RegistryError';
 import {

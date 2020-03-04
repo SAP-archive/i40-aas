@@ -7,7 +7,7 @@ import {
   IRegisterAas,
   ICreateAsset
 } from './daos/interfaces/IApiRequests';
-import { RegistryApi } from './registry-api';
+import { RegistryApi } from './RegistryApi';
 
 var registryApi = new RegistryApi();
 
@@ -19,7 +19,7 @@ export default [
       console.log('/administrationshells POST request received');
       var endpointsAssignmentArray: IRegisterAas[] = req.body;
 
-      //TODO: revise the array endpoints, the for loop should go to registry-api
+      //TODO: revise the array endpoints, the for loop should go to RegistryApi
       await Promise.all(
         endpointsAssignmentArray.map(async aas => {
           try {
@@ -101,7 +101,7 @@ export default [
       try {
         //TODO: inconsistencies
         // parsing should always be done in the same place for all handlers
-        //either in the handler or in registry-api
+        //either in the handler or in RegistryApi
         //sending the response should also be done in the same way
         var asset: ICreateAsset = req.body;
         res.json(await registryApi.createAsset(asset));

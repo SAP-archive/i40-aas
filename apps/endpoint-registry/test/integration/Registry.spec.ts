@@ -2,12 +2,12 @@ require('dotenv').config({ path: 'test/env.list' });
 
 import { expect } from 'chai';
 
-import { RegistryApi } from '../../src/services/registry/registry-api';
+import { RegistryApi } from '../../src/services/registry/RegistryApi';
 import { IRegisterAas } from '../../src/services/registry/daos/interfaces/IApiRequests';
 import { IEndpointRecord } from '../../src/services/registry/daos/interfaces/IQueryResults';
 import { fail } from 'assert';
 import e = require('express');
-import { RegistryFactory } from '../../src/services/registry/daos/postgress/RegistryFactory';
+import { RegistryFactory } from '../../src/services/registry/daos/postgres/RegistryFactory';
 
 const { Pool } = require('pg');
 const _ = require('lodash');
