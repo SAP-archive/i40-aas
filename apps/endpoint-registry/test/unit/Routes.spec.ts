@@ -49,7 +49,7 @@ function wait(ms: number) {
   return new Promise(res => setTimeout(res, ms));
 }
 
-describe('the post on /aasetadministrationshells', function() {
+describe('routes', function() {
   var registryRoutes: any;
   var handlerMap: any = {};
   var fakeApiCallWithDelay: any;
@@ -233,6 +233,69 @@ describe('the post on /aasetadministrationshells', function() {
               id: 'aasId' + 'deleteRecordByIdentifier',
               idType: 'IRI'
             })
+          ) {
+            done();
+          } else {
+            done('Call did not take place correctly');
+          }
+        },
+        end: function(json: string) {
+          done('There was an error from the the registry-api');
+        }
+      }
+    );
+  });
+
+  it('calls getEndpointsByReceiverId  depending on the parameters passed', function(done) {
+    var fakeByReceiverId = sinon.fake.resolves([]);
+    sinon.replace(registryApi, 'getEndpointsByReceiverId', fakeByReceiverId);
+    handlerMap['get']['/assetadministrationshells'](
+      {
+        query: {
+          receiverId: 'receiverId' + 'getEndpointsByReceiverId',
+          receiverIdType: 'IRI'
+        }
+      },
+      {
+        json: function(json: string) {
+          if (
+            fakeByReceiverId.calledWith(
+              'receiverId' + 'getEndpointsByReceiverId',
+              'IRI'
+            )
+          ) {
+            done();
+          } else {
+            done('Call did not take place correctly');
+          }
+        },
+        end: function(json: string) {
+          done('There was an error from the the registry-api');
+        }
+      }
+    );
+  });
+  it('calls getEndpointsByReceiverRole  depending on the parameters passed', function(done) {
+    var fakeByReceiverRole = sinon.fake.resolves([]);
+    sinon.replace(
+      registryApi,
+      'getEndpointsByReceiverRole',
+      fakeByReceiverRole
+    );
+    handlerMap['get']['/assetadministrationshells'](
+      {
+        query: {
+          receiverRole: 'receiverRole' + 'getEndpointsByReceiverRole',
+          semanticProtocol: 'semanticProtocol' + 'getEndpointsByReceiverRole'
+        }
+      },
+      {
+        json: function(json: string) {
+          if (
+            fakeByReceiverRole.calledWith(
+              'receiverRole' + 'getEndpointsByReceiverRole',
+              'semanticProtocol' + 'getEndpointsByReceiverRole'
+            )
           ) {
             done();
           } else {
