@@ -7,8 +7,8 @@ class RegistryFactory {
 
   static async getRegistry(): Promise<Registry> {
     const client = RegistryFactory.getPool();
-    await client.connect();
-    return new Registry(client);
+    //await client.connect();
+    return new Registry(await client.connect());
   }
 
   static getPool() {
