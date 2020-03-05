@@ -99,28 +99,20 @@ class Registry implements iRegistry {
   }
 
   async deleteAasByAasId(aasId: IIdentifier): Promise<number> {
+    //This will remove all records associated with aasId from
+    //all tables due to constraints in the DB setup
     console.log(' ********* AASID ' + aasId.id);
 
     try {
-      await this.client.query('BEGIN');
       const deleteRowsCount = await this.client.query(
         'WITH deleted AS (DELETE FROM asset_administration_shells WHERE "aasId" = $1 RETURNING *) SELECT count(*) FROM deleted;',
         [aasId.id]
       );
       if (deleteRowsCount.rows.length < 1) {
         console.log('No entry with this aasId');
-        await this.client.query(
-          'DELETE FROM public.endpoints WHERE "aasId" = $1;',
-          [aasId.id]
-        );
-        await this.client.query(
-          'DELETE FROM public.aas_role WHERE "aasId" = $1;',
-          [aasId.id]
-        );
-        await this.client.query('COMMIT');
+
         return +deleteRowsCount.rows[0].count;
       } else {
-        await this.client.query('COMMIT');
         //TODO: parse the json to get the correct rowscount
         console.log('  Deleted rows ' + deleteRowsCount.rows.length);
         return +deleteRowsCount.rows[0].count;
