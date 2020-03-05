@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package interaction;
+
+// TODO
+// service InteractionEgress {
+//   rpc ReceiveInteractionMessages(ConversationMember) returns (stream InteractionMessage) {}
+// }
+
+service InteractionIngress {
+  rpc SendInteractionMessage(InteractionMessage) returns (InteractionStatus) {}
+}
+
+message InteractionStatus {
+  InteractionStatusCode Code = 1;
+}
+
+enum InteractionStatusCode {
+  Unknown = 0;
+  Ok = 1;
+  Failed = 2;
+}
+
+message InteractionMessage {
+  Frame frame = 1;
+  bytes interactionElements = 2;
+}
+
+message Frame {
+  string semanticProtocol = 1;
+  string type = 2;
+  string messageId = 3;
+  uint32 replyBy = 4;
+  ConversationMember receiver = 5;
+  ConversationMember sender = 6;
+  string conversationId = 7;
+}
+
+message ConversationMember {
+  Identification identification = 1;
+  Role role = 2;
+}
+
+message Role {
+  string name = 1;
+}
+
+message Identification {
+  string id = 1;
+  string idType = 2;
+}

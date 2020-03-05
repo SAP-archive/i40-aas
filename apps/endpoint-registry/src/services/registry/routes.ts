@@ -1,14 +1,4 @@
 import { Request, Response } from 'express';
-import {
-  register,
-  createRole,
-  createSemanticProtocol,
-  assignRolesToAAS,
-  getAllEndpointsList,
-  deleteRecordByIdentifier,
-  createAsset,
-  getEndpointsByRole
-} from './registry-api';
 import { IdTypeEnum } from 'i40-aas-objects';
 import { RegistryError } from '../../utils/RegistryError';
 import {
@@ -17,26 +7,31 @@ import {
   IRegisterAas,
   ICreateAsset
 } from './daos/interfaces/IApiRequests';
-import {
-  Role,
-  ConversationMember
-} from 'i40-aas-objects/dist/src/interaction/ConversationMember';
+import { RegistryApi } from './RegistryApi';
+
+var registryApi = new RegistryApi();
+
 export default [
   {
     path: '/assetadministrationshells',
     method: 'post',
     handler: async (req: Request, res: Response) => {
-      console.log('try to register sth.');
+      console.log('/administrationshells POST request received');
       var endpointsAssignmentArray: IRegisterAas[] = req.body;
 
-      //TODO: revise the array endpoints, the for loop should go to registry-api
-      endpointsAssignmentArray.forEach(async aas => {
-        try {
-          await register(aas);
-        } catch (e) {
-          res.end(e.message);
-        }
-      });
+      //TODO: revise the array endpoints, the for loop should go to RegistryApi
+      await Promise.all(
+        endpointsAssignmentArray.map(async aas => {
+          try {
+            await registryApi.register(aas);
+          } catch (e) {
+            res.end(e.message);
+          }
+        })
+      );
+      console.log(
+        'Now sending back response of /administrationshells POST request'
+      );
       res.json(req.body);
     }
   },
@@ -44,15 +39,24 @@ export default [
     path: '/roles',
     method: 'post',
     handler: async (req: Request, res: Response) => {
-      console.log('try to create a role');
+      console.log('/roles POST request received');
+      //console.log('try to create a role');
       var rolesArray: ICreateRole[] = req.body;
-      rolesArray.forEach(async role => {
-        try {
-          await createRole(role);
-        } catch (e) {
-          res.end(e.message);
-        }
-      });
+      console.log('Received body:' + req.body);
+      console.log('Body has ' + rolesArray.length + ' elements.');
+      await Promise.all(
+        rolesArray.map(async role => {
+          try {
+            console.log('Handling role ' + role.roleId);
+            await registryApi.createRole(role);
+            console.log('Role ' + role.roleId + ' successfully created.');
+          } catch (e) {
+            console.log('There was an error creating roles');
+            res.end(e.message);
+          }
+        })
+      );
+      console.log('Now sending back response of /roles POST request');
       res.json(req.body);
     }
   },
@@ -60,15 +64,19 @@ export default [
     path: '/roleassignment',
     method: 'post',
     handler: async (req: Request, res: Response) => {
-      console.log('try to create a role assignment to AAS');
+      console.log('/roleassignment POST request received');
+      //console.log('try to create a role assignment to AAS');
       var assignmentArray: IAssignRoles[] = req.body;
-      assignmentArray.forEach(async assignment => {
-        try {
-          res.json(await assignRolesToAAS(assignment));
-        } catch (e) {
-          res.end(e.message);
-        }
-      });
+      await Promise.all(
+        assignmentArray.map(async assignment => {
+          try {
+            await registryApi.assignRolesToAAS(assignment);
+          } catch (e) {
+            res.end(e.message);
+          }
+        })
+      );
+      console.log('Now sending back response of /roleassignment POST request');
       res.json(req.body);
     }
   },
@@ -76,9 +84,10 @@ export default [
     path: '/semanticprotocol',
     method: 'post',
     handler: async (req: Request, res: Response) => {
-      console.log('try to create a semantic protocol');
+      console.log('/semanticprotocol POST request received');
       try {
-        res.json(await createSemanticProtocol(req.body));
+        res.json(await registryApi.createSemanticProtocol(req.body));
+        console.log('Sent back response of /semanticprotocol POST request');
       } catch (e) {
         res.end(e.message);
       }
@@ -88,10 +97,15 @@ export default [
     path: '/asset',
     method: 'post',
     handler: async (req: Request, res: Response) => {
-      console.log('try to create a asset');
+      console.log('/asset POST request received');
       try {
+        //TODO: inconsistencies
+        // parsing should always be done in the same place for all handlers
+        //either in the handler or in RegistryApi
+        //sending the response should also be done in the same way
         var asset: ICreateAsset = req.body;
-        res.json(await createAsset(asset));
+        res.json(await registryApi.createAsset(asset));
+        console.log('Sent back response of /asset POST request');
       } catch (e) {
         res.end(e.message);
       }
@@ -104,10 +118,13 @@ export default [
       try {
         var idType: IdTypeEnum = IdTypeEnum['Custom'];
         if (req.query.idType) {
-          idType = <IdTypeEnum>[][req.query.idType];
+          idType = req.query.idType;
         }
         res.json(
-          await deleteRecordByIdentifier({ id: req.query.id, idType: idType })
+          await registryApi.deleteRecordByIdentifier({
+            id: req.query.id,
+            idType: idType
+          })
         );
       } catch (e) {
         console.log(e);
@@ -121,13 +138,26 @@ export default [
     method: 'get',
     handler: async (req: Request, res: Response) => {
       try {
-        if (!req.query.receiver) {
-          throw new RegistryError('Missing parameter receiver', 422);
-        }
-        var receiver: ConversationMember = JSON.parse(req.query.receiver);
-        res.json(
-          await getEndpointsByRole(receiver, req.query.semanticprotocol)
-        );
+        console.log('Query parameters received:' + JSON.stringify(req.query));
+        if (req.query.receiverId && req.query.receiverIdType) {
+          res.json(
+            await registryApi.getEndpointsByReceiverId(
+              req.query.receiverId,
+              req.query.receiverIdType
+            )
+          );
+        } else if (req.query.receiverRole && req.query.semanticProtocol) {
+          res.json(
+            await registryApi.getEndpointsByReceiverRole(
+              req.query.receiverRole,
+              req.query.semanticProtocol
+            )
+          );
+        } else
+          throw new RegistryError(
+            'Mandatory query parameters: receiverId and receiverIdType, or receiverRole and semanticProtocol',
+            422
+          );
       } catch (e) {
         console.log(e);
         res.statusCode = e.r_statusCode || 500;
@@ -140,7 +170,7 @@ export default [
     method: 'get',
     handler: async (req: Request, res: Response) => {
       try {
-        res.json(await getAllEndpointsList());
+        res.json(await registryApi.getAllEndpointsList());
       } catch (e) {
         console.log(e);
         res.statusCode = e.r_statusCode || 500;

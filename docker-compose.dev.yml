@@ -1,41 +1,84 @@
 version: '3.7'
-version: '3.7'
 services:
-  ## Provide build instructions for all i40-aas images
+  ########################################################
+  #### Provide build instructions for all i40-aas images
+  ##########################################
   i40-aas-onboarding-skill:
+    image: sapi40/i40-aas-onboarding-skill:${TAG}
     build:
       context: apps/onboarding-skill
-      dockerfile: ../../docker/onboarding-skill/Dockerfile
+      dockerfile: ../docker/onboarding-skill/Dockerfile
+  ##########################################
   i40-aas-https-endpoint-ingress:
+    image: sapi40/i40-aas-https-endpoint-ingress:${TAG}
     build:
       context: apps/https-endpoint-ingress
-      dockerfile: ../../docker/https-endpoint-ingress/Dockerfile
+      dockerfile: ../docker/https-endpoint-ingress/Dockerfile
+  ##########################################
   i40-aas-https-endpoint-egress:
+    image: sapi40/i40-aas-https-endpoint-egress:${TAG}
     build:
       context: apps/https-endpoint-egress
-      dockerfile: ../../docker/https-endpoint-egress/Dockerfile
+      dockerfile: ../docker/https-endpoint-egress/Dockerfile
+  ##########################################
+  i40-aas-grpc-endpoint-ingress:
+    image: sapi40/i40-aas-grpc-endpoint-ingress:${TAG}
+    build:
+      context: apps
+      dockerfile: docker/grpc-endpoint-ingress/Dockerfile
+  ##########################################
+  i40-aas-grpc-endpoint-egress:
+    image: sapi40/i40-aas-grpc-endpoint-egress:${TAG}
+    build:
+      context: apps
+      dockerfile: docker/grpc-endpoint-egress/Dockerfile
+  ##########################################
+  i40-aas-endpoint-resolver:
+    image: sapi40/i40-aas-endpoint-resolver:${TAG}
+    build:
+      context: apps
+      dockerfile: docker/endpoint-resolver/Dockerfile
+  ##########################################
+  i40-aas-initializer:
+    image: sapi40/i40-aas-initializer:${TAG}
+    build:
+      context: apps
+      dockerfile: docker/initializer/Dockerfile
+  ##########################################
   i40-aas-data-manager:
+    image: sapi40/i40-aas-data-manager:${TAG}
     build:
       context: apps/data-manager
-      dockerfile: ../../docker/data-manager/Dockerfile
+      dockerfile: ../docker/data-manager/Dockerfile
+  ##########################################
   i40-aas-endpoint-registry:
+    image: sapi40/i40-aas-endpoint-registry:${TAG}
     build:
       context: apps/endpoint-registry
-      dockerfile: ../../docker/endpoint-registry/Dockerfile
+      dockerfile: ../docker/endpoint-registry/Dockerfile
+  ##########################################
   i40-aas-adapter-registry:
+    image: sapi40/i40-aas-adapter-registry:${TAG}
     build:
       context: apps/adapter-registry
-      dockerfile: ../../docker/adapter-registry/Dockerfile
+      dockerfile: ../docker/adapter-registry/Dockerfile
+  ##########################################
   i40-aas-storage-adapter-mongodb:
+    image: sapi40/i40-aas-storage-adapter-mongodb:${TAG}
     build:
       context: apps/storage-adapter-mongodb
-      dockerfile: ../../docker/storage-adapter-mongodb/Dockerfile
+      dockerfile: ../docker/storage-adapter-mongodb/Dockerfile
 
-  ## Additional services:
+
+  ########################################################
+  #### Additional services:
+  ##########################################
   ## Monitor Postgres DB
   pgadmin:
     image: dpage/pgadmin4
     ports:
       - "8080:80"
-    env_file:
-      - .compose/envs/pgadmin.env
+    environment:
+      - ENDPOINT_REGISTRY_PGADMIN_HOST=${ENDPOINT_REGISTRY_PGADMIN_HOST}
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}

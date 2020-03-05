@@ -12,8 +12,8 @@ let RABBITMQ_AMQP_PORT: string | undefined = process.env.RABBITMQ_AMQP_PORT;
 let RABBITMQ_BROKER_EXCHANGE: string | undefined = process.env.RABBITMQ_BROKER_EXCHANGE;
 let RABBITMQ_BROKER_USER: string | undefined = process.env.RABBITMQ_BROKER_USER;
 let RABBITMQ_BROKER_PASSWORD: string | undefined = process.env.RABBITMQ_BROKER_PASSWORD;
-let BROCKER_QUEUE = "endpoint-egress"; //TODO: here also from env variable??
-let RABBITMQ_BROKER_TOPIC_EGRESS: string | undefined = process.env.RABBITMQ_BROKER_TOPIC_EGRESS;
+let BROCKER_QUEUE = "http"; //TODO: here also from env variable??
+let RABBITMQ_BROKER_TOPIC_EGRESS = "egress.http" //: string | undefined = process.env.RABBITMQ_BROKER_TOPIC_EGRESS;
 
 logger.debug("Env Variable BROKER_URL: " + RABBITMQ_AMQP_HOST);
 logger.debug("Env Variable BROKER_EXCHANGE: " + RABBITMQ_BROKER_EXCHANGE);
