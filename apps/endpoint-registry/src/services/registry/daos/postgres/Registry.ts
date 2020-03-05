@@ -21,7 +21,6 @@ import {
   RegistryRolesResultSet,
   ICreateRoleResultSet
 } from '../interfaces/IRegistryRolesSet';
-import pgPromise = require('pg-promise');
 
 class Registry implements iRegistry {
   constructor(private readonly client: any) {
@@ -183,7 +182,7 @@ class Registry implements iRegistry {
     console.log(record);
     return record;
   }
-  //TODO: naming should be consistent: use same name in registry-api as here
+  //TODO: naming should be consistent: use same name in RegistryApi as here
   async readRecordByAasId(
     aasId: IIdentifier
   ): Promise<Array<IRegistryResultSet>> {

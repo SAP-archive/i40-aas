@@ -1,13 +1,11 @@
 import { expect, assert } from 'chai';
-//import registryRoutes from '../../src/services/registry/routes';
-import * as registryApi from '../../src/services/registry/registry-api';
 import sinon from 'sinon';
+import { RegistryApi } from '../../src/services/registry/RegistryApi';
 import {
   IRegisterAas,
   ICreateRole,
   IAssignRoles
 } from '../../src/services/registry/daos/interfaces/IApiRequests';
-import { fail } from 'assert';
 import { IRegistryResultSet } from '../../src/services/registry/daos/interfaces/IRegistryResultSet';
 
 var rewire = require('rewire');
@@ -54,6 +52,7 @@ describe('routes', function() {
   var handlerMap: any = {};
   var fakeApiCallWithDelay: any;
   var callCounter = sinon.fake();
+  var registryApi: RegistryApi;
   before(() => {
     fakeApiCallWithDelay = sinon.fake(
       () =>
@@ -64,7 +63,7 @@ describe('routes', function() {
           }, 100);
         })
     );
-
+    registryApi = new RegistryApi();
     registryRoutes = rewire('../../src/services/registry/routes');
 
     registryRoutes.__set__('registryApi', registryApi);
@@ -97,7 +96,7 @@ describe('routes', function() {
           }
         },
         end: function(json: string) {
-          done('There was an error from the the registry-api');
+          done('There was an error from the the RegistryApi');
         }
       }
     );
@@ -120,7 +119,7 @@ describe('routes', function() {
           }
         },
         end: function(json: string) {
-          done('There was an error from the the registry-api');
+          done('There was an error from the the RegistryApi');
         }
       }
     );
@@ -146,7 +145,7 @@ describe('routes', function() {
           }
         },
         end: function(json: string) {
-          done('There was an error from the the registry-api');
+          done('There was an error from the the RegistryApi');
         }
       }
     );
@@ -171,7 +170,7 @@ describe('routes', function() {
           }
         },
         end: function(json: string) {
-          done('There was an error from the the registry-api');
+          done('There was an error from the the RegistryApi');
         }
       }
     );
@@ -194,7 +193,7 @@ describe('routes', function() {
           }
         },
         end: function(json: string) {
-          done('There was an error from the the registry-api');
+          done('There was an error from the the RegistryApi');
         }
       }
     );
@@ -215,7 +214,7 @@ describe('routes', function() {
           }
         },
         end: function(json: string) {
-          done('There was an error from the the registry-api');
+          done('There was an error from the the RegistryApi');
         }
       }
     );
@@ -240,7 +239,7 @@ describe('routes', function() {
           }
         },
         end: function(json: string) {
-          done('There was an error from the the registry-api');
+          done('There was an error from the the RegistryApi');
         }
       }
     );
@@ -248,7 +247,7 @@ describe('routes', function() {
 
   it('calls getEndpointsByReceiverId  depending on the parameters passed', function(done) {
     var fakeByReceiverId = sinon.fake.resolves([]);
-    sinon.replace(registryApi, 'getEndpointsByReceiverId', fakeByReceiverId);
+    sinon.replace(registryApi, 'readRecordByIdentifier', fakeByReceiverId);
     handlerMap['get']['/assetadministrationshells'](
       {
         query: {
@@ -259,10 +258,10 @@ describe('routes', function() {
       {
         json: function(json: string) {
           if (
-            fakeByReceiverId.calledWith(
-              'receiverId' + 'getEndpointsByReceiverId',
-              'IRI'
-            )
+            fakeByReceiverId.calledWith({
+              id: 'receiverId' + 'getEndpointsByReceiverId',
+              idType: 'IRI'
+            })
           ) {
             done();
           } else {
@@ -270,7 +269,7 @@ describe('routes', function() {
           }
         },
         end: function(json: string) {
-          done('There was an error from the the registry-api');
+          done('There was an error from the the RegistryApi');
         }
       }
     );
@@ -279,7 +278,7 @@ describe('routes', function() {
     var fakeByReceiverRole = sinon.fake.resolves([]);
     sinon.replace(
       registryApi,
-      'getEndpointsByReceiverRole',
+      'readRecordBySemanticProtocolAndRole',
       fakeByReceiverRole
     );
     handlerMap['get']['/assetadministrationshells'](
@@ -293,8 +292,8 @@ describe('routes', function() {
         json: function(json: string) {
           if (
             fakeByReceiverRole.calledWith(
-              'receiverRole' + 'getEndpointsByReceiverRole',
-              'semanticProtocol' + 'getEndpointsByReceiverRole'
+              'semanticProtocol' + 'getEndpointsByReceiverRole',
+              'receiverRole' + 'getEndpointsByReceiverRole'
             )
           ) {
             done();
@@ -303,7 +302,7 @@ describe('routes', function() {
           }
         },
         end: function(json: string) {
-          done('There was an error from the the registry-api');
+          done('There was an error from the the RegistryApi');
         }
       }
     );
