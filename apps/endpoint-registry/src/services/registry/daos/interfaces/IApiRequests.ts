@@ -9,6 +9,7 @@ interface IRegisterAas {
 }
 
 interface ICreateSemanticProtocol {
+  //field called protocolId in DB
   semanticProtocol: string;
 }
 interface ICreateRole {
