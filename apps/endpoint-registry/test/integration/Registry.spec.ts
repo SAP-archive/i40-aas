@@ -6,7 +6,8 @@ import { RegistryApi } from '../../src/services/registry/RegistryApi';
 import {
   IRegisterAas,
   ICreateAsset,
-  ICreateSemanticProtocol
+  ICreateSemanticProtocol,
+  IAssignRoles
 } from '../../src/services/registry/daos/interfaces/IApiRequests';
 import { IEndpointRecord } from '../../src/services/registry/daos/interfaces/IQueryResults';
 import { fail } from 'assert';
@@ -63,6 +64,16 @@ function makeDummySemanticProtocol(tag: string): ICreateSemanticProtocol {
   };
 }
 
+function makeDummyRoleAssignment(tag: string): IAssignRoles {
+  return {
+    aasId: {
+      id: 'aasId' + tag,
+      idType: 'IRI'
+    },
+    roleId: 'roleId' + tag
+  };
+}
+
 async function insertIntoAasRole(aasId: string, roleId: string) {
   const dbClient = await pool.connect();
   try {
@@ -85,6 +96,7 @@ async function insertIntoRoles(roleId: string, protocolId: string) {
       [roleId, protocolId]
     );
   } catch (error) {
+    console.log(error.message);
     throw e;
   } finally {
     dbClient.release();
@@ -293,6 +305,35 @@ describe('Tests with a simple data model', function() {
       expect(resultOfAssetQuery.rows.length == 1);
     } catch (error) {
       fail('Exception thrown');
+    } finally {
+      dbClient.release();
+    }
+  });
+
+  it('assigns roles correctly', async function() {
+    var uniqueTestId = 'assignRoles';
+    var roleAssignmentJson: IAssignRoles = makeDummyRoleAssignment(
+      uniqueTestId
+    );
+    await insertIntoSemanticProtocols('protocolId' + uniqueTestId);
+    await insertIntoRoles('roleId' + uniqueTestId, 'protocolId' + uniqueTestId);
+    await insertIntoAssets('assetId' + uniqueTestId, 'IRI');
+    await insertIntoAssetAdministrationShells(
+      'aasId' + uniqueTestId,
+      'idType' + uniqueTestId,
+      'assetId' + uniqueTestId
+    );
+    await new RegistryApi().assignRolesToAAS(roleAssignmentJson);
+
+    const dbClient = await pool.connect();
+    try {
+      const resultOfAssetQuery = await dbClient.query(
+        'SELECT  * FROM  public.aas_role WHERE "aasId" = $1 AND "roleId" = $2;',
+        [roleAssignmentJson.aasId.id, roleAssignmentJson.roleId]
+      );
+      expect(resultOfAssetQuery.rows.length == 1);
+    } catch (error) {
+      fail('Exception thrown:' + error.message);
     } finally {
       dbClient.release();
     }

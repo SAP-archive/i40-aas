@@ -259,6 +259,7 @@ class Registry implements iRegistry {
         queryResultRows.map(function(row: IJointRecord) {
           //TODO:is there a way to get rid of the if statement
           //using something like a collector
+          //use something like node-transform
           if (!recordsByAasId[row.aasId]) {
             recordsByAasId[row.aasId] = new RegistryResultSet(
               { id: row.aasId, idType: row.aasIdType },
@@ -312,7 +313,7 @@ class Registry implements iRegistry {
       var recordsByAasId: IData = {};
       //TODO: better to use map here in order to avoid if statement
       //inside loop
-
+      //use node-transform perhaps
       queryResultRows.forEach(function(row: IJointRecord) {
         if (!recordsByAasId[row.aasId]) {
           recordsByAasId[row.aasId] = new RegistryResultSet(
@@ -340,7 +341,6 @@ class Registry implements iRegistry {
       });
 
       //TODO: this could be combined with the traversal just above
-      //it is not clear why recordsByAasId is needed as an intermediate store
       var result: Array<RegistryResultSet> = [];
       Object.keys(recordsByAasId).forEach(function(key) {
         result.push(recordsByAasId[key]);

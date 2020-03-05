@@ -72,6 +72,8 @@ export default [
           try {
             await registryApi.assignRolesToAAS(assignment);
           } catch (e) {
+            //TODO: internal db exception messages should not be exposed to the client
+            //applied to all catch blocks
             res.end(e.message);
           }
         })
