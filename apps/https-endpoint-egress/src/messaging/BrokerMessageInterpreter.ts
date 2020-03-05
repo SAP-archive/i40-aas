@@ -4,8 +4,6 @@ import { IMessageReceiver } from "./interfaces/IMessageReceiver";
 import { IInteractionMessage } from "i40-aas-objects";
 import { AmqpClient } from "./AMQPClient";
 import { IResolverMessage } from "./interfaces/IResolverMessage";
-import { AxiosResponse } from "axios";
-import { IRegistryEntry, IEndpoint } from "../WebClient/model/RegistryEntryDAO";
 import { sendInteractionReplyToAAS } from "./AASConnector";
 
 /*
@@ -33,19 +31,6 @@ class BrokerMessageInterpreter implements IMessageReceiver {
   start(routingKeys: string[]) {
     this.brokerClient.addSubscriptionData(new Subscription(routingKeys, this));
     this.brokerClient.startListening();
-  }
-
-  //Here handle the case of no valid fields like ReceiverURL
-  private handleUnintelligibleMessage(
-    message: IResolverMessage,
-    missingData: string[]
-  ) {
-    logger.error(
-      "Missing necessary data, " +
-      missingData.toString() +
-      ", in incoming message:" +
-      message
-    );
   }
   /*
 Decide what to do if the message can not be handled (eg. because receiver role is missing)
