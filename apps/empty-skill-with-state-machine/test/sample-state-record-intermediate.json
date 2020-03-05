@@ -1,0 +1,143 @@
+{
+  "actions": [
+    {
+      "type": "xstate.stop",
+      "activity": {
+        "id": "create-instance-promise",
+        "src": "createInstance",
+        "onDone": [
+          {
+            "target": "InstancePublished",
+            "cond": "notRequestType",
+            "actions": "sendResponseInstanceToOperator"
+          },
+          {
+            "target": "WaitingForType",
+            "cond": "requestType",
+            "actions": "sendResponseToOperatorAndRequestType"
+          }
+        ],
+        "onError": { "target": "OperationFailed", "actions": "sendErrorBack" },
+        "type": "xstate.invoke"
+      }
+    },
+    { "type": "sendResponseToOperatorAndRequestType" }
+  ],
+  "activities": { "xstate.invoke": false },
+  "meta": {},
+  "events": [],
+  "value": "WaitingForType",
+  "context": {
+    "messageDispatcher": {
+      "messageSender": {},
+      "webClient": {},
+      "dataManagerUrlSuffix": "data-manager"
+    },
+    "message": {
+      "frame": {
+        "type": "type",
+        "messageId": "messageId",
+        "receiver": {
+          "identification": { "id": "id", "idType": "idType" },
+          "role": { "name": "central-asset-repository" }
+        },
+        "semanticProtocol": "semprot",
+        "sender": {
+          "identification": { "id": "id", "idType": "idType" },
+          "role": { "name": "operator" }
+        },
+        "conversationId": "conversationId"
+      },
+      "interactionElements": [{}]
+    }
+  },
+  "event": {
+    "type": "done.invoke.create-instance-promise",
+    "data": { "status": 200 }
+  },
+  "historyValue": { "current": "WaitingForType", "states": {} },
+  "history": {
+    "actions": [
+      {
+        "type": "xstate.start",
+        "activity": {
+          "id": "create-instance-promise",
+          "src": "createInstance",
+          "onDone": [
+            {
+              "target": "InstancePublished",
+              "cond": "notRequestType",
+              "actions": "sendResponseInstanceToOperator"
+            },
+            {
+              "target": "WaitingForType",
+              "cond": "requestType",
+              "actions": "sendResponseToOperatorAndRequestType"
+            }
+          ],
+          "onError": {
+            "target": "OperationFailed",
+            "actions": "sendErrorBack"
+          },
+          "type": "xstate.invoke"
+        }
+      }
+    ],
+    "activities": {
+      "xstate.invoke": {
+        "type": "xstate.start",
+        "activity": {
+          "id": "create-instance-promise",
+          "src": "createInstance",
+          "onDone": [
+            {
+              "target": "InstancePublished",
+              "cond": "notRequestType",
+              "actions": "sendResponseInstanceToOperator"
+            },
+            {
+              "target": "WaitingForType",
+              "cond": "requestType",
+              "actions": "sendResponseToOperatorAndRequestType"
+            }
+          ],
+          "onError": {
+            "target": "OperationFailed",
+            "actions": "sendErrorBack"
+          },
+          "type": "xstate.invoke"
+        }
+      }
+    },
+    "meta": {},
+    "events": [],
+    "value": "CreatingInstance",
+    "context": {
+      "messageDispatcher": {
+        "messageSender": {},
+        "webClient": {},
+        "dataManagerUrlSuffix": "data-manager"
+      },
+      "message": {
+        "frame": {
+          "type": "type",
+          "messageId": "messageId",
+          "receiver": {
+            "identification": { "id": "id", "idType": "idType" },
+            "role": { "name": "central-asset-repository" }
+          },
+          "semanticProtocol": "semprot",
+          "sender": {
+            "identification": { "id": "id", "idType": "idType" },
+            "role": { "name": "operator" }
+          },
+          "conversationId": "conversationId"
+        },
+        "interactionElements": [{}]
+      }
+    },
+    "event": { "type": "PUBLISHINSTANCE_FROM_OPERATOR" },
+    "historyValue": { "current": "CreatingInstance", "states": {} }
+  },
+  "changed": true
+}
