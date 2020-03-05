@@ -107,6 +107,7 @@ export default [
         res.json(await registryApi.createAsset(asset));
         console.log('Sent back response of /asset POST request');
       } catch (e) {
+        //TODO: which status code is sent back, make consistent with others
         res.end(e.message);
       }
     }
