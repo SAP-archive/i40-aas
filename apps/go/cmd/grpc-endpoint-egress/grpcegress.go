@@ -1,4 +1,4 @@
-package grpcendpoint
+package main
 
 import (
 	"encoding/json"
@@ -8,8 +8,8 @@ import (
 	"github.com/jpillora/backoff"
 	"github.com/rs/zerolog/log"
 
-	"../amqpclient"
-	"../interaction"
+	"github.com/SAP/i40-aas/src/go/pkg/amqpclient"
+	"github.com/SAP/i40-aas/src/go/pkg/interaction"
 )
 
 // ResolverMsg struct
