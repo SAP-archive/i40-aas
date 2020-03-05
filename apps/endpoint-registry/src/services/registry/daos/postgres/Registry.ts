@@ -41,6 +41,7 @@ class Registry implements iRegistry {
       );
       return asset;
     } catch (e) {
+      //TODO: all error messages should be converted to user readable messages in this class
       if (e.code == 23505) {
         console.log('Asset already exist');
         throw new Error('Asset already exist');
