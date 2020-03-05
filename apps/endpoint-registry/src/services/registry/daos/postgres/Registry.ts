@@ -22,7 +22,6 @@ import {
   ICreateRoleResultSet
 } from '../interfaces/IRegistryRolesSet';
 
-//TODO:
 class Registry implements iRegistry {
   constructor(private readonly client: any) {
     //https://node-postgres.com/
