@@ -22,6 +22,7 @@ import {
   ICreateRoleResultSet
 } from '../interfaces/IRegistryRolesSet';
 
+//TODO:
 class Registry implements iRegistry {
   constructor(private readonly client: any) {
     //https://node-postgres.com/
@@ -55,6 +56,7 @@ class Registry implements iRegistry {
     //TODO: remove cast once migration complete
     try {
       await this.client.query('BEGIN');
+      //TODO: if error handling change, we can use createAsset here
       const insertAssetResult = await this.client.query(
         ' INSERT INTO public.assets( "assetId", "idType") VALUES ($1, $2);',
         [record.assetId.id, record.assetId.idType]
@@ -95,18 +97,30 @@ class Registry implements iRegistry {
   updateAas(record: IRegisterAas): Promise<IRegistryResultSet> {
     throw new Error('Method not implemented.');
   }
+
   async deleteAasByAasId(aasId: IIdentifier): Promise<number> {
     console.log(' ********* AASID ' + aasId.id);
 
     try {
+      await this.client.query('BEGIN');
       const deleteRowsCount = await this.client.query(
         'WITH deleted AS (DELETE FROM asset_administration_shells WHERE "aasId" = $1 RETURNING *) SELECT count(*) FROM deleted;',
         [aasId.id]
       );
       if (deleteRowsCount.rows.length < 1) {
         console.log('No entry with this aasId');
+        await this.client.query(
+          'DELETE FROM public.endpoints WHERE "aasId" = $1;',
+          [aasId.id]
+        );
+        await this.client.query(
+          'DELETE FROM public.aas_role WHERE "aasId" = $1;',
+          [aasId.id]
+        );
+        await this.client.query('COMMIT');
         return +deleteRowsCount.rows[0].count;
       } else {
+        await this.client.query('COMMIT');
         //TODO: parse the json to get the correct rowscount
         console.log('  Deleted rows ' + deleteRowsCount.rows.length);
         return +deleteRowsCount.rows[0].count;
@@ -252,6 +266,8 @@ class Registry implements iRegistry {
       var recordsByAasId: IData = {};
       await Promise.all(
         queryResultRows.map(function(row: IJointRecord) {
+          //TODO:is there a way to get rid of the if statement
+          //using something like a collector
           if (!recordsByAasId[row.aasId]) {
             recordsByAasId[row.aasId] = new RegistryResultSet(
               { id: row.aasId, idType: row.aasIdType },
