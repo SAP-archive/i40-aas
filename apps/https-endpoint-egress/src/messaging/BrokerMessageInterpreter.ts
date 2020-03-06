@@ -4,7 +4,8 @@ import { IMessageReceiver } from "./interfaces/IMessageReceiver";
 import { IInteractionMessage } from "i40-aas-objects";
 import { AmqpClient } from "./AMQPClient";
 import { IResolverMessage } from "./interfaces/IResolverMessage";
-import { sendInteractionReplyToAAS } from "./AASConnector";
+import { AASConnector} from "./AASConnector";
+import { WebClient } from "../WebClient/WebClient";
 
 /*
 Class that receives the the Interaction Messages received from the broker.
@@ -12,6 +13,9 @@ The messages after validation are sent to the RegistryConnector that makes a req
 */
 
 class BrokerMessageInterpreter implements IMessageReceiver {
+
+  //dispatcher of messages to AAS Clients
+  aasConn = new AASConnector(new WebClient());
 
   // Import events module
   events = require('events');
@@ -103,7 +107,7 @@ Decide what to do if the message can not be handled (eg. because receiver role i
       }
 
       //POST the Interaction message to the Receiver AAS
-      var AASResponse = await sendInteractionReplyToAAS(receiverURL, interactionMessageString);
+      var AASResponse = await this.aasConn.sendInteractionReplyToAAS(receiverURL, interactionMessageString);
 
       logger.info("[AAS Client]: Successfully posted message. AAS Response was:" + AASResponse);
       //if ReceiverURL is missing

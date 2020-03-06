@@ -1,13 +1,26 @@
 import Axios from "axios";
-import { expect } from "chai";
+import { AmqpClient } from "../../src/messaging/AMQPClient";
+import { BrokerMessageInterpreter } from "../../src/messaging/BrokerMessageInterpreter";
+import { doesNotReject } from "assert";
+import { logger } from "../../src/utils/log";
 import sinon from "sinon";
+import { IResolverMessage } from "../../src/messaging/interfaces/IResolverMessage";
 
+var chai = require("chai");
+var chaiAsPromised = require("chai-as-promised");
+chai.use(chaiAsPromised);
 
+// Then either:
+var expect = chai.expect;
+// or:
+//var assert = chai.assert;
+// or:
+chai.should();
 
 
 describe("the BrokerMessageInterpreter ", function () {
 
-  var brokerMessage;
+  var brokerMessage:string;
   //read a sample broker message
   before(function (done) {
     var fs = require("fs"),
@@ -23,67 +36,85 @@ describe("the BrokerMessageInterpreter ", function () {
     });
   });
 
-  it(" should POST the message to the Receiver AAS ", async function () {
+  afterEach(function () {
+    sinon.restore();
+});
 
-
-  let messageInterpreter: BrokerMessageInterpreter = new BrokerMessageInterpreter(
-    brokerClient
-  );
-
-
-    let regResponse: IStorageAdapter = {
-      url: "http://localhost:3000/submodels",
-      adapterId: "storage-adapter-ain",
-      name: "SAP-AIN-Adapter",
-      submodelId: "opc-ua-devices"
-    };
-
-    let adapterConnector: AdapterConnector = new AdapterConnector(
-      <WebClient>{}
-    );
-    let registryConnector: AdapterRegistryConnector = new AdapterRegistryConnector(
-      <WebClient>{},
-      new URL("http://www.foobar.com/foo"),
-      "b",
-      "c"
-    );
-    sinon.replace(
-      registryConnector,
-      "getAdapterFromRegistry",
-      sinon.fake.resolves(regResponse)
-    );
-
-    sinon.replace(
-      adapterConnector,
-      "postSubmoduleToAdapter",
-      sinon.fake.resolves({ status: 200 })
-    );
-
-    RoutingController.initController(registryConnector, adapterConnector);
-    let actual = await RoutingController.routeSubmodel(submodelsRequest);
-
-    sinon.assert.match(actual, [{ status: 200 }]);
-  });
 
   it("forwards the message to the AASConnector if it is parsable and contains ReceiverURL", async function() {
-    let message = brokerMessage;
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      <IMessageSender>{},
-      <WebClient>{},
-      "data-manager"
+    let message = JSON.stringify(brokerMessage);
+    console.log('BrokerMsg '+message);
+
+    let messageInterpreter: BrokerMessageInterpreter = new BrokerMessageInterpreter(      new AmqpClient("a", "b", "c", "d", "e", "")
+    );
+    let fakeAASConnectorCall = sinon.fake();
+    sinon.replace(messageInterpreter.aasConn,"sendInteractionReplyToAAS",fakeAASConnectorCall);
+
+    messageInterpreter.receive(message);
+    sinon.assert.calledOnce(fakeAASConnectorCall);
+
+  });
+
+  it("logs an error if the message is non parsable or empty", async function() {
+    let message = "";
+
+    let messageInterpreter: BrokerMessageInterpreter = new BrokerMessageInterpreter(      new AmqpClient("a", "b", "c", "d", "e", "")
+    );
+    let fakeAASConnectorCall = sinon.fake();
+    sinon.replace(messageInterpreter.aasConn,"sendInteractionReplyToAAS",fakeAASConnectorCall);
+
+    messageInterpreter.receive(message);
+    //check if error logged
+    let spy = sinon.spy(logger, "error");
+    sinon.assert.called(spy);
+    //the message should not be dispatched
+    sinon.assert.notCalled(fakeAASConnectorCall);
+
+  });
+
+  it("logs an error if the message does contain a ReceiverURL", async function() {
+
+    //remove the receiverURL from the message
+    let resolverMessage: IResolverMessage | undefined = brokerMessage as unknown as IResolverMessage;
+    resolverMessage.ReceiverURL = "";
+    let receiverURL = resolverMessage.ReceiverURL;
+    console.log('ReceiverURL '+ receiverURL);
+
+
+    let messageInterpreter: BrokerMessageInterpreter = new BrokerMessageInterpreter(      new AmqpClient("a", "b", "c", "d", "e", "")
+    );
+    let fakeAASConnectorCall = sinon.fake();
+    sinon.replace(messageInterpreter.aasConn,"sendInteractionReplyToAAS",fakeAASConnectorCall);
+
+    messageInterpreter.receive(JSON.stringify(resolverMessage));
+    //check if error logged
+    let spy = sinon.spy(logger, "error");
+    sinon.assert.called(spy);
+    //the message should not be dispatched
+    sinon.assert.notCalled(fakeAASConnectorCall);
+
+  });
+
+
+  it("logs Success when it receives a 200 response from the AAS if the POST was successfull", async function() {
+     //remove the receiverURL from the message
+     let resolverMessage: IResolverMessage | undefined = brokerMessage as unknown as IResolverMessage;
+
+    let messageInterpreter: BrokerMessageInterpreter = new BrokerMessageInterpreter(      new AmqpClient("a", "b", "c", "d", "e", "")
     );
 
-    
+    let fakePost = sinon.fake.resolves({
+      status: 200,
+      data: {
+      }
+    });
 
-    let fakeapplyEvent = sinon.fake();
-    sinon.replace(skill, "applyEvent", fakeapplyEvent);
+    sinon.replace(Axios, "post", fakePost);
 
-    let messageInterpreter: MessageInterpreter = new MessageInterpreter(
-      skill,
-      new AmqpClient("a", "b", "c", "d", "")
-    );
-    messageInterpreter.receive(JSON.stringify(message));
-    sinon.assert.calledOnce(fakeapplyEvent);
+    let result = await messageInterpreter.aasConn.sendInteractionReplyToAAS(resolverMessage.ReceiverURL,resolverMessage.EgressPayload);
+
+    sinon.assert.match(result, { status: 200 });
+
   });
 
 
