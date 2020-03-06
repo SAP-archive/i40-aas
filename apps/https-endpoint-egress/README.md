@@ -1,17 +1,22 @@
 # Https-endpoint-egress
 
-This component listens to messages published to the broker from skills polls the registry to get the client URLs based on their IDs or role, and forwards the response to their respective receivers.
+This component listens to messages published to the broker from skills, and forwards the interaction message contained in them to their respective receivers-AAS.
 
-The component subscribes to topics with the following keys:
 
-`http.client`
 
-The message should contain an interaction form.
-
-- Read the `{receiver.identification.id}` from the `frame` of the interaction
-- Make a POST to `REGISTRY_URL/read` with param `{id = receiver.id}`
-- Get the receiver endpoint URL from the registry service component using the ID of the receiver
-- Make a POST to the AAS-Client (eg. Operator) endpoint with the interaction message in body (the operator, in case case of an onboarding process)
+The message received from the broker should have the following structure :
+```
+{
+  "EgressPayload": "Interaction-Message",
+  "ReceiverURL": "The Url of the Receiver-AAS,
+  "ReceiverType": "cloud / edge"
+}
+```
+What the service does:
+- The component subscribes to broker topics with the following keys: `egress.http` and listens for messages from the `endpoint-resolver` service.
+- Read the receiver endpoint URL (`{ReceiverURL}`) from the broker message
+- Make a POST to the AAS-Receiver (eg. Operator) endpoint with the interaction message in body (eg. the operator, in case case of an onboarding process)
+- Logs the response of the AAS-Receiver
 
 ## Configuration
 Service configuration is handled via environment variable injection. Within the `env_file:` section of `docker-compose.yml` you find a list of _.env_-files mounted. The corresponding default configurations and explanations are located in: `.compose-envs/<SERVICE-NAME>.env`.

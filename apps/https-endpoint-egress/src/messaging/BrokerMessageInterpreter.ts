@@ -1,12 +1,11 @@
-import * as logger from "winston";
 import { Subscription } from "./interfaces/Subscription";
 import { IMessageReceiver } from "./interfaces/IMessageReceiver";
 import { IInteractionMessage } from "i40-aas-objects";
 import { AmqpClient } from "./AMQPClient";
 import { IResolverMessage } from "./interfaces/IResolverMessage";
-import { AxiosResponse } from "axios";
-import { IRegistryEntry, IEndpoint } from "../WebClient/model/RegistryEntryDAO";
-import { sendInteractionReplyToAAS } from "./AASConnector";
+import { AASConnector} from "./AASConnector";
+import { WebClient } from "../WebClient/WebClient";
+import { logger } from "./../utils/log";
 
 /*
 Class that receives the the Interaction Messages received from the broker.
@@ -15,12 +14,13 @@ The messages after validation are sent to the RegistryConnector that makes a req
 
 class BrokerMessageInterpreter implements IMessageReceiver {
 
+  //dispatcher of messages to AAS Clients
+  aasConn = new AASConnector(new WebClient());
+
   // Import events module
   events = require('events');
   eventEmitter: any;
   // Create an eventEmitter object
-
-
 
   constructor(
     private brokerClient: AmqpClient
@@ -35,19 +35,6 @@ class BrokerMessageInterpreter implements IMessageReceiver {
   start(routingKeys: string[]) {
     this.brokerClient.addSubscriptionData(new Subscription(routingKeys, this));
     this.brokerClient.startListening();
-  }
-
-  //Here handle the case of no valid fields like ReceiverURL
-  private handleUnintelligibleMessage(
-    message: IResolverMessage,
-    missingData: string[]
-  ) {
-    logger.error(
-      "Missing necessary data, " +
-      missingData.toString() +
-      ", in incoming message:" +
-      message
-    );
   }
   /*
 Decide what to do if the message can not be handled (eg. because receiver role is missing)
@@ -120,7 +107,7 @@ Decide what to do if the message can not be handled (eg. because receiver role i
       }
 
       //POST the Interaction message to the Receiver AAS
-      var AASResponse = await sendInteractionReplyToAAS(receiverURL, interactionMessageString);
+      var AASResponse = await this.aasConn.sendInteractionReplyToAAS(receiverURL, interactionMessageString);
 
       logger.info("[AAS Client]: Successfully posted message. AAS Response was:" + AASResponse);
       //if ReceiverURL is missing
