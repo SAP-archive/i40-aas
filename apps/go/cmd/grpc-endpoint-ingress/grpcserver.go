@@ -1,4 +1,4 @@
-package grpcendpoint
+package main
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/peer"
 
-	"../interaction"
+	"github.com/SAP/i40-aas/src/go/pkg/interaction"
 )
 
 // GRPCServerConfig struct

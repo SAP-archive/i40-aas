@@ -12,8 +12,8 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/streadway/amqp"
 
-	"../../pkg/amqpclient"
-	"../../pkg/interaction"
+	"github.com/SAP/i40-aas/src/go/pkg/amqpclient"
+	"github.com/SAP/i40-aas/src/go/pkg/interaction"
 )
 
 // ResolverMsg struct
