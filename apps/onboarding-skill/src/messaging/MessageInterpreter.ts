@@ -1,10 +1,10 @@
 //import * as logger from "winston";
-import { AssetRepositoryOnboardingSkill } from "../services/onboarding/AssetRepositoryOnboardingSkill";
-import { AmqpClient } from "./AmqpClient";
-import { InteractionMessage } from "i40-aas-objects";
-import { IMessageReceiver } from "../services/onboarding/messaginginterface/IMessageReceiver";
-import { Subscription } from "../services/onboarding/messaginginterface/Subscription";
-import { logger } from "../log";
+import { AssetRepositoryOnboardingSkill } from '../services/onboarding/Skill';
+import { AmqpClient } from './AmqpClient';
+import { InteractionMessage } from 'i40-aas-objects';
+import { IMessageReceiver } from '../services/onboarding/messaginginterface/IMessageReceiver';
+import { Subscription } from '../services/onboarding/messaginginterface/Subscription';
+import { logger } from '../log';
 
 class MessageInterpreter implements IMessageReceiver {
   constructor(
@@ -22,9 +22,9 @@ class MessageInterpreter implements IMessageReceiver {
     missingData: string[]
   ) {
     logger.error(
-      "Missing necessary data, " +
+      'Missing necessary data, ' +
         missingData.toString() +
-        ", in incoming message:" +
+        ', in incoming message:' +
         message
     );
     this.skill.receivedUnintelligibleMessage(message);
@@ -33,13 +33,13 @@ class MessageInterpreter implements IMessageReceiver {
   private handleUnactionableMessage(message: string, missingData?: string[]) {
     if (missingData) {
       logger.error(
-        "Cannot react to this message as the following data, " +
+        'Cannot react to this message as the following data, ' +
           missingData.toString() +
-          ", is missing: " +
+          ', is missing: ' +
           message
       );
     } else {
-      logger.error("Cannot react to this unparsable message:" + message);
+      logger.error('Cannot react to this unparsable message:' + message);
     }
   }
 
@@ -65,7 +65,7 @@ class MessageInterpreter implements IMessageReceiver {
       }
     } catch (error) {
       logger.error(
-        "Error received during validation of required fields:" + error
+        'Error received during validation of required fields:' + error
       );
       this.skill.preprocessingError(data);
       return false;
@@ -83,13 +83,13 @@ class MessageInterpreter implements IMessageReceiver {
           ? true
           : false;
       if (!essentialDataGiven) {
-        this.handleUnactionableMessage(msg, ["a sender role or id"]);
+        this.handleUnactionableMessage(msg, ['a sender role or id']);
         return undefined;
       }
       return data;
     } catch (error) {
       logger.error(
-        "General error received during validation of essential fields:" + error
+        'General error received during validation of essential fields:' + error
       );
       this.handleUnactionableMessage(msg);
       return undefined;
@@ -101,7 +101,7 @@ class MessageInterpreter implements IMessageReceiver {
     let message = this.validateEssential(msg);
     if (!message) {
       logger.error(
-        "An invalid message was received but it does not include enough information to send any kind of response."
+        'An invalid message was received but it does not include enough information to send any kind of response.'
       );
       return;
     }
@@ -109,7 +109,7 @@ class MessageInterpreter implements IMessageReceiver {
     if (this.validateRequired(message)) {
       this.skill.applyEvent(
         message.frame.type.toUpperCase() +
-          "_FROM_" +
+          '_FROM_' +
           message.frame.sender.role.name.toUpperCase(),
         message.frame.conversationId,
         message
