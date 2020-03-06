@@ -41,6 +41,7 @@ class Registry implements iRegistry {
       );
       return asset;
     } catch (e) {
+      //TODO: all error messages should be converted to user readable messages in this class
       if (e.code == 23505) {
         console.log('Asset already exist');
         throw new Error('Asset already exist');
@@ -55,6 +56,7 @@ class Registry implements iRegistry {
     //TODO: remove cast once migration complete
     try {
       await this.client.query('BEGIN');
+      //TODO: if error handling change, we can use createAsset here
       const insertAssetResult = await this.client.query(
         ' INSERT INTO public.assets( "assetId", "idType") VALUES ($1, $2);',
         [record.assetId.id, record.assetId.idType]
@@ -95,7 +97,10 @@ class Registry implements iRegistry {
   updateAas(record: IRegisterAas): Promise<IRegistryResultSet> {
     throw new Error('Method not implemented.');
   }
+
   async deleteAasByAasId(aasId: IIdentifier): Promise<number> {
+    //This will remove all records associated with aasId from
+    //all tables due to constraints in the DB setup
     console.log(' ********* AASID ' + aasId.id);
 
     try {
@@ -105,6 +110,7 @@ class Registry implements iRegistry {
       );
       if (deleteRowsCount.rows.length < 1) {
         console.log('No entry with this aasId');
+
         return +deleteRowsCount.rows[0].count;
       } else {
         //TODO: parse the json to get the correct rowscount
@@ -252,6 +258,9 @@ class Registry implements iRegistry {
       var recordsByAasId: IData = {};
       await Promise.all(
         queryResultRows.map(function(row: IJointRecord) {
+          //TODO:is there a way to get rid of the if statement
+          //using something like a collector
+          //use something like node-transform
           if (!recordsByAasId[row.aasId]) {
             recordsByAasId[row.aasId] = new RegistryResultSet(
               { id: row.aasId, idType: row.aasIdType },
@@ -305,7 +314,7 @@ class Registry implements iRegistry {
       var recordsByAasId: IData = {};
       //TODO: better to use map here in order to avoid if statement
       //inside loop
-
+      //use node-transform perhaps
       queryResultRows.forEach(function(row: IJointRecord) {
         if (!recordsByAasId[row.aasId]) {
           recordsByAasId[row.aasId] = new RegistryResultSet(
@@ -333,7 +342,6 @@ class Registry implements iRegistry {
       });
 
       //TODO: this could be combined with the traversal just above
-      //it is not clear why recordsByAasId is needed as an intermediate store
       var result: Array<RegistryResultSet> = [];
       Object.keys(recordsByAasId).forEach(function(key) {
         result.push(recordsByAasId[key]);

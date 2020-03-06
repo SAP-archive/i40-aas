@@ -72,6 +72,8 @@ export default [
           try {
             await registryApi.assignRolesToAAS(assignment);
           } catch (e) {
+            //TODO: internal db exception messages should not be exposed to the client
+            //applied to all catch blocks
             res.end(e.message);
           }
         })
@@ -107,6 +109,7 @@ export default [
         res.json(await registryApi.createAsset(asset));
         console.log('Sent back response of /asset POST request');
       } catch (e) {
+        //TODO: which status code is sent back, make consistent with others
         res.end(e.message);
       }
     }

@@ -19,7 +19,9 @@ class RegistryApi {
   async readRecordByIdentifier(
     identifier: IIdentifier
   ): Promise<Array<RegistryResultSet>> {
+    //TODO: dependency injection is better
     var registryDao: iRegistry = await RegistryFactory.getRegistry();
+
     try {
       if (!identifier.id) {
         throw new RegistryError('Missing parameter id', 422);
