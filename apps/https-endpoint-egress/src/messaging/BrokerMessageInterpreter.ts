@@ -1,4 +1,3 @@
-import * as logger from "winston";
 import { Subscription } from "./interfaces/Subscription";
 import { IMessageReceiver } from "./interfaces/IMessageReceiver";
 import { IInteractionMessage } from "i40-aas-objects";
@@ -6,6 +5,7 @@ import { AmqpClient } from "./AMQPClient";
 import { IResolverMessage } from "./interfaces/IResolverMessage";
 import { AASConnector} from "./AASConnector";
 import { WebClient } from "../WebClient/WebClient";
+import { logger } from "./../utils/log";
 
 /*
 Class that receives the the Interaction Messages received from the broker.
