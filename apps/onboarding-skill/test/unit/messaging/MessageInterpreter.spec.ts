@@ -1,15 +1,13 @@
 import { AssetRepositoryOnboardingSkill } from '../../../src/services/onboarding/Skill';
-import { MessageDispatcher } from '../../../src/messaging/MessageDispatcher';
-import { IMessageSender } from '../../../src/services/onboarding/messaginginterface/IMessageSender';
+import { MessageDispatcher } from '../../../src/services/onboarding/MessageDispatcher';
+import { IMessageSender } from '../../../src/base/messaginginterface/IMessageSender';
 import { WebClient } from '../../../src/web/WebClient';
-import { SimpleMongoDbClient } from '../../../src/persistence/SimpleMongoDbClient';
+import { SimpleMongoDbClient } from '../../../src/base/persistence/SimpleMongoDbClient';
 import sinon from 'sinon';
-import { MessageInterpreter } from '../../../src/messaging/MessageInterpreter';
-import { AmqpClient } from '../../../src/messaging/AmqpClient';
-import { ConsumeMessage } from 'amqplib';
+import { MessageInterpreter } from '../../../src/base/messaging/MessageInterpreter';
+import { AmqpClient } from '../../../src/base/messaging/AmqpClient';
 import { InteractionMessage } from 'i40-aas-objects';
 import { logger } from '../../../src/log';
-import { Subscription } from '../../../src/services/onboarding/messaginginterface/Subscription';
 
 var chai = require('chai');
 var chaiAsPromised = require('chai-as-promised');

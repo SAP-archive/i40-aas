@@ -1,8 +1,8 @@
-import { ISkillContext } from "./statemachineinterface/ISkillContext";
-import { IMessageDispatcher } from "./messaginginterface/IMessageDispatcher";
-import { logger } from "../../log";
-import { AxiosResponse } from "axios";
-import { InteractionMessage } from "i40-aas-objects";
+import { ISkillContext } from './statemachineinterface/ISkillContext';
+import { IMessageDispatcher } from './messaginginterface/IMessageDispatcher';
+import { logger } from '../../log';
+import { AxiosResponse } from 'axios';
+import { InteractionMessage } from 'i40-aas-objects';
 
 class SkillActionMap {
   constructor(private messageDispatcher: IMessageDispatcher) {}
@@ -10,35 +10,35 @@ class SkillActionMap {
   private logRequestError(error: any) {
     if (error.response) {
       /*
-      * The request was made and the server responded with a
-      * status code that falls out of the range of 2xx
-      */
+       * The request was made and the server responded with a
+       * status code that falls out of the range of 2xx
+       */
       logger.debug(
-        "The request was made and the server responded with a status code that falls out of the range of 2xx"
+        'The request was made and the server responded with a status code that falls out of the range of 2xx'
       );
-      logger.debug("Status " + error.response.status);
-      logger.debug("Headers " + error.response.headers);
+      logger.debug('Status ' + error.response.status);
+      logger.debug('Headers ' + error.response.headers);
     } else if (error.request) {
       /*
-      * The request was made but no response was received, `error.request`
-      * is an instance of XMLHttpRequest in the browser and an instance
-      * of http.ClientRequest in Node.js
-      */
-      logger.debug("The request was made but no response was received");
-      logger.debug("Request: " + error.request); //This might print out the password
+       * The request was made but no response was received, `error.request`
+       * is an instance of XMLHttpRequest in the browser and an instance
+       * of http.ClientRequest in Node.js
+       */
+      logger.debug('The request was made but no response was received');
+      logger.debug('Request: ' + error.request); //This might print out the password
     } else {
       // Something happened in setting up the request and triggered an Error
       logger.debug(
-        "Something happened in setting up the request and triggered an Error"
+        'Something happened in setting up the request and triggered an Error'
       );
-      logger.debug("Error", error.message);
+      logger.debug('Error', error.message);
     }
     //all relevant fields have been logged, no need to log entire error again
     //logger.debug(error);
   }
 
   sendCreationErrorToOperator(context: ISkillContext, event: any) {
-    logger.debug("Received error. Now sending error back");
+    logger.debug('Received error. Now sending error back');
     let md = this.messageDispatcher;
     this.logRequestError(event.data);
     if (!event.data.response) {
@@ -58,28 +58,28 @@ class SkillActionMap {
   }
 
   requestApprovalFromApprover(context: ISkillContext, event: any) {
-    logger.debug("Calling requestApprovalFromApprover");
+    logger.debug('Calling requestApprovalFromApprover');
     this.messageDispatcher.requestApprovalFromApprover(context.message);
   }
 
   sendResponseToOperatorAndRequestType(context: ISkillContext, event: any) {
-    logger.debug("Calling sendResponseInstanceToOperator");
+    logger.debug('Calling sendResponseInstanceToOperator');
     this.messageDispatcher.sendResponseInstanceToOperator(
       context.message,
       context.message.interactionElements[0]
     );
-    logger.debug("Calling requestTypeFromManufacturer");
-    this.messageDispatcher.requestTypeFromManufacturer("", {});
+    logger.debug('Calling requestTypeFromManufacturer');
+    this.messageDispatcher.requestTypeFromManufacturer('', {});
     //TODO:send actual type to actual url
   }
   createInstance(context: ISkillContext, event: any): Promise<AxiosResponse> {
-    logger.debug("SkillActionMap::createInstance called");
+    logger.debug('SkillActionMap::createInstance called');
     return this.messageDispatcher.createInstanceOnCAR(
       context.message.interactionElements
     );
   }
   sendResponseInstanceToOperator(context: ISkillContext, event: any) {
-    logger.debug("onDone called");
+    logger.debug('onDone called');
     return this.messageDispatcher.sendResponseInstanceToOperator(
       context.message,
       context.message.interactionElements[0]

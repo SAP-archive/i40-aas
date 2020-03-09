@@ -1,14 +1,14 @@
 import { interpret, State, Interpreter, EventObject } from 'xstate';
 import * as logger from 'winston';
 
-import { IDatabaseClient } from './persistenceinterface/IDatabaseClient';
-import { IStateRecord } from './persistenceinterface/IStateRecord';
+import { IDatabaseClient } from '../../base/persistenceinterface/IDatabaseClient';
+import { IStateRecord } from '../../base/persistenceinterface/IStateRecord';
 import { SkillStateMachine } from './SkillStateMachineSpecification';
 import { ISkillContext } from './statemachineinterface/ISkillContext';
 import { IMessageDispatcher } from './messaginginterface/IMessageDispatcher';
 
 import { SkillActionMap } from './SkillActionMap';
-import { DeferredMessageDispatcher } from '../../messaging/DeferredMessageDisptacher';
+import { DeferredMessageDispatcher } from './DeferredMessageDisptacher';
 import * as _ from 'lodash';
 import { InteractionMessage } from 'i40-aas-objects';
 
@@ -65,7 +65,7 @@ class Skill {
     else return false;
   }
 
-  private prepareContext(
+  private createContextForStateMachine(
     message: InteractionMessage,
     messageDispatcher: IMessageDispatcher
   ): ISkillContext {
@@ -105,7 +105,10 @@ class Skill {
     let deferredMessageDispatcher = new DeferredMessageDispatcher(
       this.messageDispatcher
     );
-    let context = this.prepareContext(message, deferredMessageDispatcher);
+    let context = this.createContextForStateMachine(
+      message,
+      deferredMessageDispatcher
+    );
 
     try {
       let previousStateRecord: IStateRecord | null = await this.getPreviousStateFromDb(

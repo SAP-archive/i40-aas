@@ -2,19 +2,17 @@ import { expect } from 'chai';
 import { logger } from '../../../src/log';
 import { AssetRepositoryOnboardingSkill } from '../../../src/services/onboarding/Skill';
 import sinon from 'sinon';
-import { MessageDispatcher } from '../../../src/messaging/MessageDispatcher';
+import { MessageDispatcher } from '../../../src/services/onboarding/MessageDispatcher';
 import { WebClient } from '../../../src/web/WebClient';
 import fs from 'fs';
-import { MessageSender } from '../../../src/messaging/MessageSender';
-import { IMessageSender } from '../../../src/services/onboarding/messaginginterface/IMessageSender';
-import { SimpleMongoDbClient } from '../../../src/persistence/SimpleMongoDbClient';
+import { MessageSender } from '../../../src/base/messaging/MessageSender';
+import { IMessageSender } from '../../../src/base/messaginginterface/IMessageSender';
+import { SimpleMongoDbClient } from '../../../src/base/persistence/SimpleMongoDbClient';
 
 import Axios, { AxiosError } from 'axios';
-import { AmqpClient } from '../../../src/messaging/AmqpClient';
-import { fail } from 'assert';
+import { AmqpClient } from '../../../src/base/messaging/AmqpClient';
 import { InteractionMessage } from 'i40-aas-objects';
 import { IConversationMember } from 'i40-aas-objects/dist/src/interaction/ConversationMember';
-import { IDatabaseClient } from '../../../src/services/onboarding/persistenceinterface/IDatabaseClient';
 
 const initializeLogger = require('../../../src/log');
 
