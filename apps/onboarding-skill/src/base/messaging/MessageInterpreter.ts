@@ -1,5 +1,5 @@
 //import * as logger from "winston";
-import { AssetRepositoryOnboardingSkill } from '../../services/onboarding/Skill';
+import { AssetRepositoryOnboardingSkill } from '../Skill';
 import { AmqpClient } from './AmqpClient';
 import { InteractionMessage } from 'i40-aas-objects';
 import { IMessageReceiver } from '../messaginginterface/IMessageReceiver';

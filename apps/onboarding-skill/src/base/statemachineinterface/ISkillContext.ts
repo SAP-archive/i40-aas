@@ -6,5 +6,6 @@ interface ISkillContext {
   responseInstance?: ISubmodel;
   message: InteractionMessage;
   actionMap: SkillActionMap;
+  configuration: object;
 }
 export { ISkillContext };

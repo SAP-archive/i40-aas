@@ -1,6 +1,6 @@
 import { AmqpClient } from './base/messaging/AmqpClient';
 import { MessageInterpreter } from './base/messaging/MessageInterpreter';
-import { AssetRepositoryOnboardingSkill } from './services/onboarding/Skill';
+import { AssetRepositoryOnboardingSkill } from './base/Skill';
 import { MessageDispatcher } from './services/onboarding/MessageDispatcher';
 import { MessageSender } from './base/messaging/MessageSender';
 import { WebClient } from './web/WebClient';

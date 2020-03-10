@@ -111,16 +111,16 @@ class SkillStateMachineSpecification {
     },
     guards: {
       notRequestType: (context: any, event: any) => {
-        return !context.askForType;
+        return !context.configuration['askForType'];
       },
       requestType: (context: any, event: any) => {
-        return context.askForType;
+        return context.configuration['askForType'];
       },
       notRequestApproval: (context: any, event: any) => {
-        return !context.askForApproval;
+        return !context.configuration['askForApproval'];
       },
       requestApproval: (context: any, event: any) => {
-        return context.askForApproval;
+        return context.configuration['askForApproval'];
       }
     },
     actions: {

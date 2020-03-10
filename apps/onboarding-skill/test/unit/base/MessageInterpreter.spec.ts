@@ -1,4 +1,4 @@
-import { AssetRepositoryOnboardingSkill } from '../../../src/services/onboarding/Skill';
+import { AssetRepositoryOnboardingSkill } from '../../../src/base/Skill';
 import { MessageDispatcher } from '../../../src/services/onboarding/MessageDispatcher';
 import { IMessageSender } from '../../../src/base/messaginginterface/IMessageSender';
 import { WebClient } from '../../../src/web/WebClient';
@@ -88,7 +88,8 @@ describe('validation process', function() {
     );
     let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
       messageDispatcher,
-      makeFakeDbClient()
+      makeFakeDbClient(),
+      {}
     );
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
@@ -134,7 +135,8 @@ describe('validation process', function() {
 
     let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
       messageDispatcher,
-      makeFakeDbClient()
+      makeFakeDbClient(),
+      {}
     );
 
     let fakeapplyEvent = sinon.fake();
@@ -184,7 +186,8 @@ describe('validation process', function() {
 
     let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
       messageDispatcher,
-      makeFakeDbClient()
+      makeFakeDbClient(),
+      {}
     );
 
     let fakeapplyEvent = sinon.fake();
@@ -232,7 +235,8 @@ describe('validation process', function() {
 
     let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
       messageDispatcher,
-      makeFakeDbClient()
+      makeFakeDbClient(),
+      {}
     );
 
     let fakeapplyEvent = sinon.fake();
@@ -288,7 +292,8 @@ describe('validation process', function() {
     );
     let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
       messageDispatcher,
-      makeFakeDbClient()
+      makeFakeDbClient(),
+      {}
     );
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
@@ -340,7 +345,8 @@ describe('validation process', function() {
     );
     let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
       messageDispatcher,
-      makeFakeDbClient()
+      makeFakeDbClient(),
+      {}
     );
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
@@ -391,7 +397,8 @@ describe('validation process', function() {
     );
     let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
       messageDispatcher,
-      makeFakeDbClient()
+      makeFakeDbClient(),
+      {}
     );
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
@@ -436,7 +443,8 @@ describe('validation process', function() {
     sinon.replace(messageDispatcher, 'replyError', fakeReplyError);
     let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
       messageDispatcher,
-      makeFakeDbClient()
+      makeFakeDbClient(),
+      {}
     );
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
@@ -476,7 +484,8 @@ describe('validation process', function() {
     sinon.replace(messageDispatcher, 'replyError', fakeReplyError);
     let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
       messageDispatcher,
-      makeFakeDbClient()
+      makeFakeDbClient(),
+      {}
     );
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
@@ -522,7 +531,8 @@ describe('validation process', function() {
     sinon.replace(messageDispatcher, 'replyError', fakeReplyError);
     let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
       messageDispatcher,
-      makeFakeDbClient()
+      makeFakeDbClient(),
+      {}
     );
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
@@ -543,7 +553,8 @@ describe('validation process', function() {
 
     let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
       messageDispatcher,
-      makeFakeDbClient()
+      makeFakeDbClient(),
+      {}
     );
 
     let fakeapplyEvent = sinon.fake();

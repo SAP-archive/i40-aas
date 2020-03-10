@@ -1,17 +1,17 @@
 import { interpret, State, Interpreter, EventObject } from 'xstate';
 import * as logger from 'winston';
 
-import { IDatabaseClient } from '../../base/persistenceinterface/IDatabaseClient';
-import { IStateRecord } from '../../base/persistenceinterface/IStateRecord';
-import { SkillStateMachine } from './SkillStateMachineSpecification';
+import { IDatabaseClient } from './persistenceinterface/IDatabaseClient';
+import { IStateRecord } from './persistenceinterface/IStateRecord';
+import { SkillStateMachine } from '../services/onboarding/SkillStateMachineSpecification';
 
-import { IMessageDispatcher } from './messaginginterface/IMessageDispatcher';
+import { IMessageDispatcher } from '../services/onboarding/messaginginterface/IMessageDispatcher';
 
-import { SkillActionMap } from './SkillActionMap';
-import { DeferredMessageDispatcher } from './DeferredMessageDisptacher';
+import { SkillActionMap } from '../services/onboarding/SkillActionMap';
+import { DeferredMessageDispatcher } from '../services/onboarding/DeferredMessageDisptacher';
 import * as _ from 'lodash';
 import { InteractionMessage } from 'i40-aas-objects';
-import { ISkillContext } from '../../base/statemachineinterface/ISkillContext';
+import { ISkillContext } from './statemachineinterface/ISkillContext';
 
 //Try to keep this generic. Do not mention roles or message types. Do not perform actions that
 //should be modelled in the state machine. This class should remain relatively constant. It
@@ -22,7 +22,7 @@ class Skill {
   constructor(
     private messageDispatcher: IMessageDispatcher,
     private dbClient: IDatabaseClient,
-    private configurationObject: object
+    private configuration: object
   ) {}
 
   receivedUnintelligibleMessage(message: InteractionMessage): void {
@@ -74,12 +74,7 @@ class Skill {
     return {
       message: message,
       actionMap: new SkillActionMap(messageDispatcher),
-      askForApproval: process.env.ONBOARDING_SKILL_REQUEST_APPROVAL
-        ? eval(process.env.ONBOARDING_SKILL_REQUEST_APPROVAL)
-        : false,
-      askForType: process.env.ONBOARDING_SKILL_REQUEST_TYPE
-        ? eval(process.env.ONBOARDING_SKILL_REQUEST_TYPE)
-        : false
+      configuration: this.configuration
     };
   }
 
