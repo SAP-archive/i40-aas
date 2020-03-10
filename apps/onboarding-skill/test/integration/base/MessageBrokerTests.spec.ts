@@ -1,8 +1,8 @@
-import { AmqpClient } from '../../src/base/messaging/AmqpClient';
-import { IMessageReceiver } from '../../src/base/messaging/MessageInterpreter';
-import { Subscription } from '../../src/base/messaginginterface/Subscription';
-import { SapMqttClient } from '../../src/base/examples/SapMqttClient';
-import { logger } from '../../src/log';
+import { AmqpClient } from '../../../src/base/messaging/AmqpClient';
+import { IMessageReceiver } from '../../../src/base/messaging/MessageInterpreter';
+import { Subscription } from '../../../src/base/messaginginterface/Subscription';
+import { SapMqttClient } from '../../../src/base/examples/SapMqttClient';
+import { logger } from '../../../src/log';
 import sinon from 'sinon';
 var chai = require('chai');
 var chaiAsPromised = require('chai-as-promised');

@@ -12,7 +12,10 @@ describe('replyTo', function() {
   //TODO: refactor to not test so many things in one test
   it('inverts the sender and receiver when creating the reply frame of a message, adding own sender information', function() {
     let message: InteractionMessage = JSON.parse(
-      fs.readFileSync(process.cwd() + '/test/interaction_sample.json', 'utf8')
+      fs.readFileSync(
+        process.cwd() + '/test/data/base/interaction_sample.json',
+        'utf8'
+      )
     );
     let HTTP_ENDPOINT_ROUTING_KEY = 'http.client';
     let BROCKER_URL = 'a.b.c';

@@ -1,8 +1,7 @@
-import { MachineOptions, EventObject, Machine, assign } from "xstate";
+import { MachineOptions, EventObject, Machine, assign } from 'xstate';
 
-import { ISkillContext } from "./statemachineinterface/ISkillContext";
-
-import { logger } from "../../log";
+import { logger } from '../../log';
+import { ISkillContext } from '../../base/statemachineinterface/ISkillContext';
 
 //TODO:
 //the state machine could be specified such that any error/notUnderstood from a third party
@@ -12,89 +11,89 @@ import { logger } from "../../log";
 //this is currently not the case
 class SkillStateMachineSpecification {
   private readonly machineDescription = {
-    id: "onboarding-central-asset-repository",
-    initial: "WaitingForOnboardingRequest",
+    id: 'onboarding-central-asset-repository',
+    initial: 'WaitingForOnboardingRequest',
     strict: true,
     states: {
       WaitingForOnboardingRequest: {
         on: {
           PUBLISHINSTANCE_FROM_OPERATOR: [
-                    {
-                    cond: "notRequestApproval",
-                    target: "CreatingInstance"
-                    },
-                    {
-                    cond: "requestApproval",
-                    target: "WaitingForApproval",
-                    actions: ["requestApprovalFromApprover"]
-                    }
+            {
+              cond: 'notRequestApproval',
+              target: 'CreatingInstance'
+            },
+            {
+              cond: 'requestApproval',
+              target: 'WaitingForApproval',
+              actions: ['requestApprovalFromApprover']
+            }
           ]
         }
       },
       WaitingForApproval: {
         on: {
           APPROVED_FROM_APPROVER: {
-                    target: "CreatingInstance"
+            target: 'CreatingInstance'
           },
           REQUESTREFUSED_FROM_APPROVER: {
-                    target: "OperationFailed",
-                    actions: ["sendRequestRefusedToOperator"]
+            target: 'OperationFailed',
+            actions: ['sendRequestRefusedToOperator']
           },
           NOTUNDERSTOOD_FROM_APPROVER: {
-                    target: "OperationFailed",
-                    actions: ["sendRequestRefusedToOperator"]
+            target: 'OperationFailed',
+            actions: ['sendRequestRefusedToOperator']
           },
           ERROR_FROM_APPROVER: {
-                    target: "OperationFailed",
-                    actions: ["sendRequestRefusedToOperator"]
+            target: 'OperationFailed',
+            actions: ['sendRequestRefusedToOperator']
           }
         }
       },
       CreatingInstance: {
         invoke: {
-          id: "create-instance-promise",
-          src: "createInstance",
+          id: 'create-instance-promise',
+          src: 'createInstance',
           onDone: [
-                    {
-                    target: "InstancePublished",
-                    cond: "notRequestType",
-                    actions: "sendResponseInstanceToOperator"
-                    },
-                    {
-                    target: "WaitingForType",
-                    cond: "requestType",
-                    actions: "sendResponseToOperatorAndRequestType"
-                    }
+            {
+              target: 'InstancePublished',
+              cond: 'notRequestType',
+              actions: 'sendResponseInstanceToOperator'
+            },
+            {
+              target: 'WaitingForType',
+              cond: 'requestType',
+              actions: 'sendResponseToOperatorAndRequestType'
+            }
           ],
           onError: {
-                    target: "OperationFailed",
-                    actions: "sendCreationErrorToOperator"
+            target: 'OperationFailed',
+            actions: 'sendCreationErrorToOperator'
           }
         }
       },
       InstancePublished: {
-        type: "final"
+        type: 'final'
       },
       InstanceAndTypePublished: {
-        type: "final"
+        type: 'final'
       },
       OperationFailed: {
-        type: "final"
+        type: 'final'
       },
       WaitingForType: {
         on: {
           RESPONSETYPE_FROM_MANUFACTURER: {
-                    target: "InstanceAndTypePublished",
-                    actions: ["sendResponseTypeToOperator"]
+            target: 'InstanceAndTypePublished',
+            actions: ['sendResponseTypeToOperator']
           },
           NOTUNDERSTOOD_FROM_MANUFACTURER: {
-                    target: "InstancePublished"
+            target: 'InstancePublished'
           },
           ERROR_FROM_MANUFACTURER: {
-                    target: "InstancePublished"
+            target: 'InstancePublished'
           },
           REQUESTREFUSED_FROM_MANUFACTURER: {
-                    target: "InstancePublished"
+            target: 'InstancePublished'
           }
         }
       }
@@ -106,7 +105,7 @@ class SkillStateMachineSpecification {
   > = {
     services: {
       createInstance: (context: any, event: any) => {
-        logger.debug("service createInstance called");
+        logger.debug('service createInstance called');
         return context.actionMap.createInstance(context, event);
       }
     },

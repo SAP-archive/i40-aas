@@ -4,13 +4,14 @@ import * as logger from 'winston';
 import { IDatabaseClient } from '../../base/persistenceinterface/IDatabaseClient';
 import { IStateRecord } from '../../base/persistenceinterface/IStateRecord';
 import { SkillStateMachine } from './SkillStateMachineSpecification';
-import { ISkillContext } from './statemachineinterface/ISkillContext';
+
 import { IMessageDispatcher } from './messaginginterface/IMessageDispatcher';
 
 import { SkillActionMap } from './SkillActionMap';
 import { DeferredMessageDispatcher } from './DeferredMessageDisptacher';
 import * as _ from 'lodash';
 import { InteractionMessage } from 'i40-aas-objects';
+import { ISkillContext } from '../../base/statemachineinterface/ISkillContext';
 
 //Try to keep this generic. Do not mention roles or message types. Do not perform actions that
 //should be modelled in the state machine. This class should remain relatively constant. It

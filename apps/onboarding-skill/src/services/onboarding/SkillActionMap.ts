@@ -1,8 +1,8 @@
-import { ISkillContext } from './statemachineinterface/ISkillContext';
 import { IMessageDispatcher } from './messaginginterface/IMessageDispatcher';
 import { logger } from '../../log';
 import { AxiosResponse } from 'axios';
 import { InteractionMessage } from 'i40-aas-objects';
+import { ISkillContext } from '../../base/statemachineinterface/ISkillContext';
 
 class SkillActionMap {
   constructor(private messageDispatcher: IMessageDispatcher) {}

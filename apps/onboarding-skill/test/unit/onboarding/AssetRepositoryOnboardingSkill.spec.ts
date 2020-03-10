@@ -254,7 +254,8 @@ describe('applyEvent', function() {
         _id: conversationId,
         version: 2,
         serializedState: fs.readFileSync(
-          process.cwd() + '/test/sample-state-wait-for-approval.json',
+          process.cwd() +
+            '/test/data/onboarding/sample-state-wait-for-approval.json',
           'utf8'
         )
       })
@@ -356,7 +357,8 @@ describe('applyEvent', function() {
         _id: conversationId,
         version: 2,
         serializedState: fs.readFileSync(
-          process.cwd() + '/test/sample-state-wait-for-approval.json',
+          process.cwd() +
+            '/test/data/onboarding/sample-state-wait-for-approval.json',
           'utf8'
         )
       })
@@ -446,7 +448,8 @@ describe('applyEvent', function() {
         _id: conversationId,
         version: 2,
         serializedState: fs.readFileSync(
-          process.cwd() + '/test/sample-state-wait-for-approval.json',
+          process.cwd() +
+            '/test/data/onboarding/sample-state-wait-for-approval.json',
           'utf8'
         )
       })
@@ -548,7 +551,8 @@ describe('applyEvent', function() {
         _id: conversationId,
         version: 2,
         serializedState: fs.readFileSync(
-          process.cwd() + '/test/sample-state-wait-for-approval.json',
+          process.cwd() +
+            '/test/data/onboarding/sample-state-wait-for-approval.json',
           'utf8'
         )
       })
@@ -637,7 +641,8 @@ describe('applyEvent', function() {
         _id: conversationId,
         version: 2,
         serializedState: fs.readFileSync(
-          process.cwd() + '/test/sample-state-wait-for-approval.json',
+          process.cwd() +
+            '/test/data/onboarding/sample-state-wait-for-approval.json',
           'utf8'
         )
       })
@@ -727,7 +732,8 @@ describe('applyEvent', function() {
         _id: conversationId,
         version: 2,
         serializedState: fs.readFileSync(
-          process.cwd() + '/test/sample-state-wait-for-approval.json',
+          process.cwd() +
+            '/test/data/onboarding/sample-state-wait-for-approval.json',
           'utf8'
         )
       })
@@ -829,7 +835,8 @@ describe('applyEvent', function() {
         _id: conversationId,
         version: 2,
         serializedState: fs.readFileSync(
-          process.cwd() + '/test/sample-state-wait-for-approval.json',
+          process.cwd() +
+            '/test/data/onboarding/sample-state-wait-for-approval.json',
           'utf8'
         )
       })
@@ -931,7 +938,8 @@ describe('applyEvent', function() {
         _id: conversationId,
         version: 2,
         serializedState: fs.readFileSync(
-          process.cwd() + '/test/sample-state-wait-for-approval.json',
+          process.cwd() +
+            '/test/data/onboarding/sample-state-wait-for-approval.json',
           'utf8'
         )
       })
@@ -1065,7 +1073,7 @@ describe('applyEvent', function() {
         _id: conversationId,
         version: 2,
         serializedState: fs.readFileSync(
-          process.cwd() + '/test/sample-state-record.json',
+          process.cwd() + '/test/data/onboarding/sample-state-record.json',
           'utf8'
         )
       })
@@ -1108,7 +1116,7 @@ describe('applyEvent', function() {
         _id: conversationId,
         version: 2,
         serializedState: fs.readFileSync(
-          process.cwd() + '/test/sample-state-final.json',
+          process.cwd() + '/test/data/onboarding/sample-state-final.json',
           'utf8'
         )
       })
@@ -1151,7 +1159,8 @@ describe('applyEvent', function() {
         _id: conversationId,
         version: 2,
         serializedState: fs.readFileSync(
-          process.cwd() + '/test/sample-state-record-intermediate.json',
+          process.cwd() +
+            '/test/data/onboarding/sample-state-record-intermediate.json',
           'utf8'
         )
       })
@@ -1199,7 +1208,8 @@ describe('applyEvent', function() {
         _id: conversationId,
         version: 2,
         serializedState: fs.readFileSync(
-          process.cwd() + '/test/sample-state-record-intermediate.json',
+          process.cwd() +
+            '/test/data/onboarding/sample-state-record-intermediate.json',
           'utf8'
         )
       })
@@ -1472,7 +1482,8 @@ describe('applyEvent', function() {
         _id: conversationId,
         version: 2,
         serializedState: fs.readFileSync(
-          process.cwd() + '/test/sample-state-record-intermediate.json',
+          process.cwd() +
+            '/test/data/onboarding/sample-state-record-intermediate.json',
           'utf8'
         )
       })
@@ -1537,7 +1548,8 @@ describe('applyEvent', function() {
         _id: conversationId,
         version: 2,
         serializedState: fs.readFileSync(
-          process.cwd() + '/test/sample-state-record-intermediate.json',
+          process.cwd() +
+            '/test/data/onboarding/sample-state-record-intermediate.json',
           'utf8'
         )
       })
@@ -1589,7 +1601,8 @@ describe('applyEvent', function() {
         _id: conversationId,
         version: 2,
         serializedState: fs.readFileSync(
-          process.cwd() + '/test/sample-state-record-intermediate.json',
+          process.cwd() +
+            '/test/data/onboarding/sample-state-record-intermediate.json',
           'utf8'
         )
       })
@@ -1640,7 +1653,8 @@ describe('applyEvent', function() {
         _id: conversationId,
         version: 2,
         serializedState: fs.readFileSync(
-          process.cwd() + '/test/sample-state-record-intermediate.json',
+          process.cwd() +
+            '/test/data/onboarding/sample-state-record-intermediate.json',
           'utf8'
         )
       })

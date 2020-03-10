@@ -1,7 +1,7 @@
 import { fail } from 'assert';
-import { logger } from '../../src/log';
-import { SimpleMongoDbClient } from '../../src/base/persistence/SimpleMongoDbClient';
-import { IStateRecord } from '../../src/base/persistenceinterface/IStateRecord';
+import { logger } from '../../../src/log';
+import { SimpleMongoDbClient } from '../../../src/base/persistence/SimpleMongoDbClient';
+import { IStateRecord } from '../../../src/base/persistenceinterface/IStateRecord';
 var chai = require('chai');
 var chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
