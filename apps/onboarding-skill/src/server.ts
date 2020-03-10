@@ -91,7 +91,14 @@ let dbClient: IDatabaseClient = new SimpleMongoDbClient(
   MONGO_INITDB_ROOT_PASSWORD
 );
 
-let skill = new AssetRepositoryOnboardingSkill(messageDispatcher, dbClient);
+let skill = new AssetRepositoryOnboardingSkill(messageDispatcher, dbClient, {
+  askForApproval: process.env.ONBOARDING_SKILL_REQUEST_APPROVAL
+    ? eval(process.env.ONBOARDING_SKILL_REQUEST_APPROVAL)
+    : false,
+  askForType: process.env.ONBOARDING_SKILL_REQUEST_TYPE
+    ? eval(process.env.ONBOARDING_SKILL_REQUEST_TYPE)
+    : false
+});
 
 //TODO: no need to share amqpClient amongst sender and receiver
 let messageInterpreter: MessageInterpreter = new MessageInterpreter(

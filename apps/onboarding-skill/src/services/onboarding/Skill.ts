@@ -21,7 +21,8 @@ class Skill {
 
   constructor(
     private messageDispatcher: IMessageDispatcher,
-    private dbClient: IDatabaseClient
+    private dbClient: IDatabaseClient,
+    private configurationObject: object
   ) {}
 
   receivedUnintelligibleMessage(message: InteractionMessage): void {
