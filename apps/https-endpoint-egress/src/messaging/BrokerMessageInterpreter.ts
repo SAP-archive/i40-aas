@@ -1,9 +1,11 @@
-import * as logger from "winston";
 import { Subscription } from "./interfaces/Subscription";
 import { IMessageReceiver } from "./interfaces/IMessageReceiver";
 import { IInteractionMessage } from "i40-aas-objects";
 import { AmqpClient } from "./AMQPClient";
-import { RegistryConnector } from "./RegistryConnector";
+import { IResolverMessage } from "./interfaces/IResolverMessage";
+import { AASConnector} from "./AASConnector";
+import { WebClient } from "../WebClient/WebClient";
+import { logger } from "./../utils/log";
 
 /*
 Class that receives the the Interaction Messages received from the broker.
@@ -12,15 +14,15 @@ The messages after validation are sent to the RegistryConnector that makes a req
 
 class BrokerMessageInterpreter implements IMessageReceiver {
 
-// Import events module
-events = require('events');
-eventEmitter: any;
-// Create an eventEmitter object
+  //dispatcher of messages to AAS Clients
+  aasConn = new AASConnector(new WebClient());
 
-
+  // Import events module
+  events = require('events');
+  eventEmitter: any;
+  // Create an eventEmitter object
 
   constructor(
-    private registryConnector: RegistryConnector,
     private brokerClient: AmqpClient
   ) {
     this.eventEmitter = new this.events.EventEmitter();
@@ -34,19 +36,6 @@ eventEmitter: any;
     this.brokerClient.addSubscriptionData(new Subscription(routingKeys, this));
     this.brokerClient.startListening();
   }
-
-  private handleUnintelligibleMessage(
-    message: IInteractionMessage,
-    missingData: string[]
-  ) {
-    logger.error(
-      "Missing necessary data, " +
-        missingData.toString() +
-        ", in incoming message:" +
-        message
-    );
-    this.registryConnector.receivedUnintelligibleMessage(message);
-  }
   /*
 Decide what to do if the message can not be handled (eg. because receiver role is missing)
 */
@@ -54,65 +43,39 @@ Decide what to do if the message can not be handled (eg. because receiver role i
     if (missingData) {
       logger.error(
         "Cannot react to this message as the following data, " +
-          missingData.toString() +
-          ", is missing: " +
-          message
+        missingData.toString() +
+        ", is missing: " +
+        message
       );
     } else {
       logger.error("Cannot react to this unparsable message:" + message);
     }
   }
 
-  private validateRequired(data: IInteractionMessage): boolean {
-    //essential validation passed: receiverRole exists
-    let reiverRole: string | undefined;
-    let conversationId: string | undefined;
-    try {
-      reiverRole = data.frame.receiver.role.name;
-      conversationId = data.frame.conversationId;
-
-      //check if any of them is empty
-      let requiredAndMissingData: string[] = [
-        reiverRole,
-        conversationId
-      ].filter(e => e.length === 0);
-
-      if (requiredAndMissingData.length > 0) {
-        this.handleUnintelligibleMessage(data, requiredAndMissingData);
-        return false;
-      }
-    } catch (error) {
-      logger.error(
-        "Generic error received during validation of required fields:" + error
-      );
-      return false;
-    }
-    return true;
-  }
-
   /*
-  Check that the message received from the broker are valid.
-  With regards to the Frame schema
+  Check that the message received from the resolver is valid.
+  With regards to
   */
-  private validateEssentialInteractionElements(
+  private validateEssentialResolverElements(
     msg: string
-  ): IInteractionMessage | undefined {
+  ): IResolverMessage | undefined {
     //variable to hold the message
-    let data: IInteractionMessage | undefined = undefined;
+    let resolverMessage: IResolverMessage | undefined = undefined;
     try {
       //assign the parsed message to the data variable
-      data = JSON.parse(msg);
-      if (!data) {
+      resolverMessage = JSON.parse(msg);
+      if (!resolverMessage) {
         this.handleUnactionableMessage(msg);
         return undefined;
       }
+
       //the receiver role field of the frame should not be empty
-      let essentialData = data.frame.receiver.role.name;
-      if (!essentialData) {
-        this.handleUnactionableMessage(msg, ["frame.receiver.role.name"]);
+      let receiverURL = resolverMessage.ReceiverURL;
+      if (!receiverURL) {
+        this.handleUnactionableMessage(msg, ["message.receiverURL"]);
         return undefined;
       }
-      return data;
+      return resolverMessage;
     } catch (error) {
       logger.error(
         "Generic error received during validation of essential fields: " + error
@@ -122,15 +85,50 @@ Decide what to do if the message can not be handled (eg. because receiver role i
     }
   }
 
-  receive(msg: string) {
 
-    let message  = this.validateEssentialInteractionElements(msg);
+  private async handleResolverMessage(
+    resolverMessage: IResolverMessage
+  ) {
+    let receiverURL: string = resolverMessage.ReceiverURL;
 
-    if (message && this.validateRequired(message)) {
+    if (receiverURL) {
+      logger.debug(
+        "[HTTP-Egress]: ReceiverURL is " + receiverURL
+      );
+
+      let interactionMessageBase64 = resolverMessage.EgressPayload
+      let buff = Buffer.from(interactionMessageBase64, 'base64');
+      let interactionMessageString = buff.toString('ascii');
+      //the interaction message should not be empty
+
+      if (!interactionMessageString) {
+        this.handleUnactionableMessage(interactionMessageString, ["message.EgressPayload"]);
+        return undefined;
+      }
+
+      //POST the Interaction message to the Receiver AAS
+      var AASResponse = await this.aasConn.sendInteractionReplyToAAS(receiverURL, interactionMessageString);
+
+      logger.info("[AAS Client]: Successfully posted message. AAS Response was:" + AASResponse);
+      //if ReceiverURL is missing
+    } else {
+      logger.error("[HTTP-Egress]: Error trying to read the ReceiverURL");
+      this.handleUnactionableMessage("[HTTP-Egress]: Error trying to read the ReceiverURL");
+      return undefined;
+    }
+
+  }
+
+  async receive(msg: string) {
+    //check if the message is valid for use
+    let message = this.validateEssentialResolverElements(msg);
+
+    if (message) {
       //if validation successful, get the AAS receiver endpoint from AAS-registry service
-      logger.info("Received Msg params [" + message.frame.sender.role.name + " , "+ message.frame.receiver.role.name + " , "+ message.frame.type + " , "+ message.frame.conversationId + "]");
+      logger.debug("HTTP-EGRESS: Received Msg " + JSON.stringify(message));
+      //logger.info("Received Msg params [" + message.EgressPayload.frame.sender.role.name + " , " + message.EgressPayload.frame.receiver.role.name + " , " + message.EgressPayload.frame.type + " , " + message.EgressPayload.frame.conversationId + "]");
+      await this.handleResolverMessage(message).catch(err => {logger.error("[AAS Client] Error posting to AAS Client : "+err)});
 
-      this.registryConnector.getReceiverURLFromRegistry(message);
     }
   }
 }

@@ -1,9 +1,9 @@
-dist: trusty
+dist: bionic
 language: generic
 git:
   depth: 1
 
-if: branch = master AND type = push
+if: branch = master #AND type = push
 
 env:
   - SERVICE=adapter-registry
@@ -13,12 +13,15 @@ env:
   - SERVICE=https-endpoint-ingress
   - SERVICE=onboarding-skill
   - SERVICE=storage-adapter-mongodb
+  - SERVICE=grpc-endpoint-ingress
+  - SERVICE=grpc-endpoint-egress
+  - SERVICE=initializer
+  - SERVICE=endpoint-resolver
 
 install:
+  - make --version
   - docker --version
+  - docker-compose --version
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - cp docker/${SERVICE}/Dockerfile apps/${SERVICE}
-  - cd apps/${SERVICE}
-  - docker build -t "sapi40/i40-aas-${SERVICE}:latest" .
-  - docker push "sapi40/i40-aas-${SERVICE}:latest"
-
+  - make build-single
+  - make push-single

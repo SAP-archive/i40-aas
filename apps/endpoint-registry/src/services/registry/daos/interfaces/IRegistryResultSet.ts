@@ -8,16 +8,26 @@ class RegistryResultSet implements IRegistryResultSet {
   public aasId: IIdentifier;
   public endpoints: Array<Endpoint>;
   public assetId: IIdentifier;
-  constructor(aasId: IIdentifier, endpoints: Array<Endpoint>, assetId: IIdentifier) {
+  constructor(
+    aasId: IIdentifier,
+    endpoints: Array<Endpoint>,
+    assetId: IIdentifier
+  ) {
     this.aasId = aasId;
     this.endpoints = endpoints;
     this.assetId = assetId;
   }
 }
 
+enum TTarget {
+  cloud,
+  edge
+}
+
 interface IEndpoint {
   url: string;
   protocol: string;
+  target: string;
   protocolVersion?: string;
 }
 
@@ -25,7 +35,13 @@ class Endpoint implements IEndpoint {
   public url: string;
   public protocol: string;
   public protocolVersion?: string;
-  constructor(url: string, protocol: string, protocolVersion?: string) {
+
+  constructor(
+    url: string,
+    public target: string,
+    protocol: string,
+    protocolVersion?: string
+  ) {
     this.url = url;
 
     protocol
@@ -42,4 +58,4 @@ var x = {
   endpoints: [{ url: '', protocol: "https", protocolVersion: '1.1' }],
   assetId: { id: '', idType: '' }
 }; */
-export { RegistryResultSet, Endpoint, IEndpoint, IRegistryResultSet };
+export { RegistryResultSet, Endpoint, IEndpoint, IRegistryResultSet, TTarget };
