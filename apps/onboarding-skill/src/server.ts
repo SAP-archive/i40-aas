@@ -1,6 +1,6 @@
 import { AmqpClient } from './base/messaging/AmqpClient';
 import { MessageInterpreter } from './base/messaging/MessageInterpreter';
-import { AssetRepositoryOnboardingSkill } from './base/Skill';
+import { Skill } from './base/Skill';
 import { MessageDispatcher } from './services/onboarding/MessageDispatcher';
 import { MessageSender } from './base/messaging/MessageSender';
 import { WebClient } from './web/WebClient';
@@ -91,7 +91,7 @@ let dbClient: IDatabaseClient = new SimpleMongoDbClient(
   MONGO_INITDB_ROOT_PASSWORD
 );
 
-let skill = new AssetRepositoryOnboardingSkill(messageDispatcher, dbClient, {
+let skill = new Skill(messageDispatcher, dbClient, {
   askForApproval: process.env.ONBOARDING_SKILL_REQUEST_APPROVAL
     ? eval(process.env.ONBOARDING_SKILL_REQUEST_APPROVAL)
     : false,

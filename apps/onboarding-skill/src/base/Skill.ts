@@ -12,6 +12,7 @@ import { DeferredMessageDispatcher } from '../services/onboarding/DeferredMessag
 import * as _ from 'lodash';
 import { InteractionMessage } from 'i40-aas-objects';
 import { ISkillContext } from './statemachineinterface/ISkillContext';
+import { DeferredActionResolverFactory } from '../services/onboarding/DeferredActionResolver';
 
 //Try to keep this generic. Do not mention roles or message types. Do not perform actions that
 //should be modelled in the state machine. This class should remain relatively constant. It
@@ -98,7 +99,10 @@ class Skill {
     fnOnTransitionDone?: (state: State<ISkillContext, EventObject>) => void,
     fnOnTransitionError?: (state: State<ISkillContext, EventObject>) => void
   ) {
-    let deferredMessageDispatcher = new DeferredMessageDispatcher(
+    //let deferredMessageDispatcher = new DeferredMessageDispatcher(
+    // this.messageDispatcher
+    //);
+    let deferredMessageDispatcher = DeferredActionResolverFactory.getDeferredExecutor(
       this.messageDispatcher
     );
     let context = this.createContextForStateMachine(

@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { logger } from '../../../src/log';
-import { AssetRepositoryOnboardingSkill } from '../../../src/base/Skill';
+import { Skill } from '../../../src/base/Skill';
 import sinon from 'sinon';
 import { MessageDispatcher } from '../../../src/services/onboarding/MessageDispatcher';
 import { WebClient } from '../../../src/web/WebClient';
@@ -109,11 +109,7 @@ describe('applyEvent', function() {
         fakecreateInstanceOnCAR
       );
 
-      let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-        messageDispatcher,
-        dbClient,
-        {}
-      );
+      let skill: Skill = new Skill(messageDispatcher, dbClient, {});
       skill.applyEvent(
         'PUBLISHINSTANCE_FROM_OPERATOR',
         conversationId,
@@ -172,11 +168,9 @@ describe('applyEvent', function() {
     sinon.replace(messageSender, 'sendTo', fakesendTo);
     //sinon.replace(messageSender, "replyTo", sinon.fake());
 
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      dbClient,
-      { askForApproval: true }
-    );
+    let skill: Skill = new Skill(messageDispatcher, dbClient, {
+      askForApproval: true
+    });
 
     skill.applyEvent(
       'PUBLISHINSTANCE_FROM_OPERATOR',
@@ -276,11 +270,9 @@ describe('applyEvent', function() {
     let fakeSendTo = sinon.fake();
     sinon.replace(messageSender, 'sendTo', fakeSendTo);
 
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      dbClient,
-      { askForApproval: true }
-    );
+    let skill: Skill = new Skill(messageDispatcher, dbClient, {
+      askForApproval: true
+    });
 
     skill.applyEvent(
       'APPROVED_FROM_APPROVER',
@@ -370,11 +362,9 @@ describe('applyEvent', function() {
     let fakeSendTo = sinon.fake();
     sinon.replace(messageSender, 'sendTo', fakeSendTo);
 
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      dbClient,
-      { askForApproval: true }
-    );
+    let skill: Skill = new Skill(messageDispatcher, dbClient, {
+      askForApproval: true
+    });
 
     skill.applyEvent(
       'REQUESTREFUSED_FROM_APPROVER',
@@ -472,11 +462,9 @@ describe('applyEvent', function() {
     let fakeSendTo = sinon.fake();
     sinon.replace(messageSender, 'sendTo', fakeSendTo);
 
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      dbClient,
-      { askForApproval: true }
-    );
+    let skill: Skill = new Skill(messageDispatcher, dbClient, {
+      askForApproval: true
+    });
 
     skill.applyEvent(
       'APPROVED_FROM_APPROVER',
@@ -566,11 +554,9 @@ describe('applyEvent', function() {
     let fakeSendTo = sinon.fake();
     sinon.replace(messageSender, 'sendTo', fakeSendTo);
 
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      dbClient,
-      { askForApproval: true }
-    );
+    let skill: Skill = new Skill(messageDispatcher, dbClient, {
+      askForApproval: true
+    });
 
     skill.applyEvent(
       'NOTUNDERSTOOD_FROM_APPROVER',
@@ -658,11 +644,9 @@ describe('applyEvent', function() {
     let fakeSendTo = sinon.fake();
     sinon.replace(messageSender, 'sendTo', fakeSendTo);
 
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      dbClient,
-      { askForApproval: true }
-    );
+    let skill: Skill = new Skill(messageDispatcher, dbClient, {
+      askForApproval: true
+    });
 
     skill.applyEvent(
       'ERROR_FROM_APPROVER',
@@ -760,11 +744,9 @@ describe('applyEvent', function() {
     let fakeSendTo = sinon.fake();
     sinon.replace(messageSender, 'sendTo', fakeSendTo);
 
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      dbClient,
-      { askForApproval: true }
-    );
+    let skill: Skill = new Skill(messageDispatcher, dbClient, {
+      askForApproval: true
+    });
 
     skill.applyEvent(
       'APPROVED_FROM_APPROVER',
@@ -864,11 +846,9 @@ describe('applyEvent', function() {
     let fakeSendTo = sinon.fake();
     sinon.replace(messageSender, 'sendTo', fakeSendTo);
 
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      dbClient,
-      { askForApproval: true }
-    );
+    let skill: Skill = new Skill(messageDispatcher, dbClient, {
+      askForApproval: true
+    });
 
     skill.applyEvent(
       'APPROVED_FROM_APPROVER',
@@ -968,11 +948,9 @@ describe('applyEvent', function() {
     let fakeSendTo = sinon.fake();
     sinon.replace(messageSender, 'sendTo', fakeSendTo);
 
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      dbClient,
-      { askForApproval: true }
-    );
+    let skill: Skill = new Skill(messageDispatcher, dbClient, {
+      askForApproval: true
+    });
 
     skill.applyEvent(
       'APPROVED_FROM_APPROVER',
@@ -1034,11 +1012,9 @@ describe('applyEvent', function() {
       fakecreateInstanceOnCAR
     );
 
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      dbClient,
-      { askForType: true }
-    );
+    let skill: Skill = new Skill(messageDispatcher, dbClient, {
+      askForType: true
+    });
 
     skill.applyEvent(
       'PUBLISHINSTANCE_FROM_OPERATOR',
@@ -1094,11 +1070,7 @@ describe('applyEvent', function() {
     let fakePublish = sinon.fake();
     sinon.replace(amqpClient, 'publish', fakePublish);
 
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      dbClient,
-      {}
-    );
+    let skill: Skill = new Skill(messageDispatcher, dbClient, {});
 
     await skill.applyEvent(
       'NOTUNDERSTOOD_FROM_OPERATOR',
@@ -1142,11 +1114,7 @@ describe('applyEvent', function() {
       fakereplyNotUnderstood
     );
 
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      dbClient,
-      {}
-    );
+    let skill: Skill = new Skill(messageDispatcher, dbClient, {});
 
     await skill.applyEvent(
       'PUBLISHINSTANCE_FROM_OPERATOR',
@@ -1187,11 +1155,7 @@ describe('applyEvent', function() {
       fakereplyNotUnderstood
     );
 
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      dbClient,
-      {}
-    );
+    let skill: Skill = new Skill(messageDispatcher, dbClient, {});
 
     await skill.applyEvent(
       'NOTUNDERSTOOD_FROM_OPERATOR',
@@ -1233,11 +1197,9 @@ describe('applyEvent', function() {
     let fakeSendTo = sinon.fake();
     sinon.replace(messageSender, 'sendTo', fakeSendTo);
 
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      dbClient,
-      { askForType: true }
-    );
+    let skill: Skill = new Skill(messageDispatcher, dbClient, {
+      askForType: true
+    });
     skill.applyEvent(
       'RESPONSETYPE_FROM_MANUFACTURER',
       conversationId,
@@ -1288,11 +1250,7 @@ describe('applyEvent', function() {
       fakecreateInstanceOnCAR
     );
 
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      dbClient,
-      {}
-    );
+    let skill: Skill = new Skill(messageDispatcher, dbClient, {});
 
     skill.applyEvent(
       'PUBLISHINSTANCE_FROM_OPERATOR',
@@ -1342,11 +1300,7 @@ describe('applyEvent', function() {
     let fakePost = sinon.fake.rejects(makeRequestError(400));
     sinon.replace(Axios, 'post', fakePost);
 
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      dbClient,
-      {}
-    );
+    let skill: Skill = new Skill(messageDispatcher, dbClient, {});
 
     skill.applyEvent(
       'PUBLISHINSTANCE_FROM_OPERATOR',
@@ -1402,11 +1356,7 @@ describe('applyEvent', function() {
       fakesendResponseInstanceToOperator
     );
 
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      dbClient,
-      {}
-    );
+    let skill: Skill = new Skill(messageDispatcher, dbClient, {});
 
     skill.applyEvent(
       'PUBLISHINSTANCE_FROM_OPERATOR',
@@ -1455,11 +1405,7 @@ describe('applyEvent', function() {
     let sendTo = sinon.fake();
     sinon.replace(messageSender, 'sendTo', sendTo);
 
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      dbClient,
-      {}
-    );
+    let skill: Skill = new Skill(messageDispatcher, dbClient, {});
 
     skill.applyEvent(
       'PUBLISHINSTANCE_FROM_OPERATOR',
@@ -1516,11 +1462,7 @@ describe('applyEvent', function() {
     //let sendTo = sinon.fake();
     //sinon.replace(messageSender, "sendTo", sendTo);
 
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      dbClient,
-      {}
-    );
+    let skill: Skill = new Skill(messageDispatcher, dbClient, {});
     let fakecreateAndStartMaschineServiceFromPreviousWithCurrentContext = sinon.fake.throws(
       new Error()
     );
@@ -1579,11 +1521,7 @@ describe('applyEvent', function() {
     let sendTo = sinon.fake();
     sinon.replace(messageSender, 'sendTo', sendTo);
 
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      dbClient,
-      {}
-    );
+    let skill: Skill = new Skill(messageDispatcher, dbClient, {});
 
     skill.applyEvent(
       'REQUESTREFUSED_FROM_MANUFACTURER',
@@ -1633,11 +1571,7 @@ describe('applyEvent', function() {
     let sendTo = sinon.fake();
     sinon.replace(messageSender, 'sendTo', sendTo);
 
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      dbClient,
-      {}
-    );
+    let skill: Skill = new Skill(messageDispatcher, dbClient, {});
 
     skill.applyEvent(
       'NOTUNDERSTOOD_FROM_MANUFACTURER',
@@ -1686,11 +1620,7 @@ describe('applyEvent', function() {
     let sendTo = sinon.fake();
     sinon.replace(messageSender, 'sendTo', sendTo);
 
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      dbClient,
-      {}
-    );
+    let skill: Skill = new Skill(messageDispatcher, dbClient, {});
 
     skill.applyEvent(
       'ERROR_FROM_MANUFACTURER',

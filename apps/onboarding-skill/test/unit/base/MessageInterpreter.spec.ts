@@ -1,4 +1,4 @@
-import { AssetRepositoryOnboardingSkill } from '../../../src/base/Skill';
+import { Skill } from '../../../src/base/Skill';
 import { MessageDispatcher } from '../../../src/services/onboarding/MessageDispatcher';
 import { IMessageSender } from '../../../src/base/messaginginterface/IMessageSender';
 import { WebClient } from '../../../src/web/WebClient';
@@ -86,11 +86,7 @@ describe('validation process', function() {
       'replyNotUnderstood',
       fakeReplyNotUnderstood
     );
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      makeFakeDbClient(),
-      {}
-    );
+    let skill: Skill = new Skill(messageDispatcher, makeFakeDbClient(), {});
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
       new AmqpClient('a', 'b', 'c', 'd', '')
@@ -133,11 +129,7 @@ describe('validation process', function() {
       'data-manager'
     );
 
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      makeFakeDbClient(),
-      {}
-    );
+    let skill: Skill = new Skill(messageDispatcher, makeFakeDbClient(), {});
 
     let fakeapplyEvent = sinon.fake();
     sinon.replace(skill, 'applyEvent', fakeapplyEvent);
@@ -184,11 +176,7 @@ describe('validation process', function() {
       'data-manager'
     );
 
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      makeFakeDbClient(),
-      {}
-    );
+    let skill: Skill = new Skill(messageDispatcher, makeFakeDbClient(), {});
 
     let fakeapplyEvent = sinon.fake();
     sinon.replace(skill, 'applyEvent', fakeapplyEvent);
@@ -233,11 +221,7 @@ describe('validation process', function() {
       'data-manager'
     );
 
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      makeFakeDbClient(),
-      {}
-    );
+    let skill: Skill = new Skill(messageDispatcher, makeFakeDbClient(), {});
 
     let fakeapplyEvent = sinon.fake();
     sinon.replace(skill, 'applyEvent', fakeapplyEvent);
@@ -290,11 +274,7 @@ describe('validation process', function() {
       'replyNotUnderstood',
       fakeReplyNotUnderstood
     );
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      makeFakeDbClient(),
-      {}
-    );
+    let skill: Skill = new Skill(messageDispatcher, makeFakeDbClient(), {});
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
       new AmqpClient('a', 'b', 'c', 'd', '')
@@ -343,11 +323,7 @@ describe('validation process', function() {
       'replyNotUnderstood',
       fakeReplyNotUnderstood
     );
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      makeFakeDbClient(),
-      {}
-    );
+    let skill: Skill = new Skill(messageDispatcher, makeFakeDbClient(), {});
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
       new AmqpClient('a', 'b', 'c', 'd', '')
@@ -395,11 +371,7 @@ describe('validation process', function() {
       'replyNotUnderstood',
       fakeReplyNotUnderstood
     );
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      makeFakeDbClient(),
-      {}
-    );
+    let skill: Skill = new Skill(messageDispatcher, makeFakeDbClient(), {});
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
       new AmqpClient('a', 'b', 'c', 'd', '')
@@ -441,11 +413,7 @@ describe('validation process', function() {
 
     let fakeReplyError = sinon.fake();
     sinon.replace(messageDispatcher, 'replyError', fakeReplyError);
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      makeFakeDbClient(),
-      {}
-    );
+    let skill: Skill = new Skill(messageDispatcher, makeFakeDbClient(), {});
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
       new AmqpClient('a', 'b', 'c', 'd', '')
@@ -482,11 +450,7 @@ describe('validation process', function() {
 
     let fakeReplyError = sinon.fake();
     sinon.replace(messageDispatcher, 'replyError', fakeReplyError);
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      makeFakeDbClient(),
-      {}
-    );
+    let skill: Skill = new Skill(messageDispatcher, makeFakeDbClient(), {});
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
       new AmqpClient('a', 'b', 'c', 'd', '')
@@ -529,11 +493,7 @@ describe('validation process', function() {
 
     let fakeReplyError = sinon.fake();
     sinon.replace(messageDispatcher, 'replyError', fakeReplyError);
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      makeFakeDbClient(),
-      {}
-    );
+    let skill: Skill = new Skill(messageDispatcher, makeFakeDbClient(), {});
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
       new AmqpClient('a', 'b', 'c', 'd', '')
@@ -551,11 +511,7 @@ describe('validation process', function() {
       'data-manager'
     );
 
-    let skill: AssetRepositoryOnboardingSkill = new AssetRepositoryOnboardingSkill(
-      messageDispatcher,
-      makeFakeDbClient(),
-      {}
-    );
+    let skill: Skill = new Skill(messageDispatcher, makeFakeDbClient(), {});
 
     let fakeapplyEvent = sinon.fake();
     sinon.replace(skill, 'applyEvent', fakeapplyEvent);

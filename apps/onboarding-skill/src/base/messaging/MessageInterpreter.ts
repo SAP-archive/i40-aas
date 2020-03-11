@@ -1,5 +1,5 @@
 //import * as logger from "winston";
-import { AssetRepositoryOnboardingSkill } from '../Skill';
+import { Skill } from '../Skill';
 import { AmqpClient } from './AmqpClient';
 import { InteractionMessage } from 'i40-aas-objects';
 import { IMessageReceiver } from '../messaginginterface/IMessageReceiver';
@@ -7,10 +7,7 @@ import { Subscription } from '../messaginginterface/Subscription';
 import { logger } from '../../log';
 
 class MessageInterpreter implements IMessageReceiver {
-  constructor(
-    private skill: AssetRepositoryOnboardingSkill,
-    private amqpClient: AmqpClient
-  ) {}
+  constructor(private skill: Skill, private amqpClient: AmqpClient) {}
 
   start(topic: string) {
     this.amqpClient.addSubscriptionData(new Subscription(topic, this));
