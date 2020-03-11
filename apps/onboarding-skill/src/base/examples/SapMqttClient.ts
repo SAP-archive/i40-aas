@@ -21,6 +21,9 @@ class SapMqttClient implements IMessageBrokerClient {
     private brokerPass: string
   ) {
     this.client = mqtt.connect(this.mqttUrl, { protocol: 'mqtt' });
+    this.client.on('connect', function() {
+      logger.debug('mqtt connected');
+    });
   }
 
   startListening(cb?: (() => void) | undefined): void {
@@ -30,6 +33,7 @@ class SapMqttClient implements IMessageBrokerClient {
       let messageReceiver: IMessageReceiver = this.subscription.messageReceiver;
 
       this.client.on('connect', function() {
+        logger.debug('mqtt connected - now subscribing');
         that.client.subscribe(subscriptionTopic, function(err) {
           if (err) {
             throw new Error('Error receiving message');
@@ -52,9 +56,11 @@ class SapMqttClient implements IMessageBrokerClient {
   }
 
   publish(routingKey: string, msg: string): void {
-    this.client.publish(routingKey, msg);
+    this.client.publish(routingKey, msg, () =>
+      logger.debug('message published from mqtt client')
+    );
     logger.debug(
-      'mqtt client sent to exchange to topic ' +
+      'mqtt client sent to exchange for topic ' +
         routingKey +
         " following message'" +
         msg +

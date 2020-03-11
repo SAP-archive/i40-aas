@@ -1256,7 +1256,7 @@ describe('applyEvent', function() {
     );
   });
 
-  it("does not send out a responseInstance if there was an error in writing to the database after entering 'InstancePublished'", function(done) {
+  it('does not send out a responseInstance if there was an error in writing to the database after entering InstancePublished', function(done) {
     let conversationId = 'abcd1234';
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
       <IMessageSender>{},

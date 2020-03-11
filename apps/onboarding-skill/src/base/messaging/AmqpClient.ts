@@ -152,7 +152,13 @@ class AmqpClient implements IMessageBrokerClient {
       ch.assertExchange(that.brokerExchange, 'topic', { durable: true });
       if (that.useMqtt) {
         ch.assertExchange(AmqpClient.MQTT_EXCHANGE, 'topic', { durable: true });
-        ch.bindExchange(that.brokerExchange, AmqpClient.MQTT_EXCHANGE, '*');
+        ch.bindExchange(
+          that.brokerExchange,
+          AmqpClient.MQTT_EXCHANGE,
+          '*',
+          {},
+          () => logger.error('Mqtt exchange bound')
+        );
       }
 
       ch.assertQueue(that.listenerQName, { exclusive: false }, function(
@@ -185,13 +191,19 @@ class AmqpClient implements IMessageBrokerClient {
           ch.bindQueue(
             q.queue,
             that.brokerExchange,
-            that.myConn.subscription.topic
+            that.myConn.subscription.topic,
+            {},
+            () => {
+              logger.debug('q ' + q.queue + ' bound to exchange');
+              if (cb) cb();
+            }
           );
         } else {
           logger.error(
             'Attempting to set up a subscription even though none was provided.'
           );
         }
+        //adding consume callback
         ch.consume(
           q.queue,
           function(msg: Message | null) {
@@ -214,7 +226,7 @@ class AmqpClient implements IMessageBrokerClient {
           },
           { noAck: true }
         );
-        if (cb) cb();
+        //if (cb) cb();
       });
     });
   }
@@ -269,24 +281,27 @@ class AmqpClient implements IMessageBrokerClient {
               durable: true
             }
           );
-
+          logger.debug('exchange asserted');
           that.myConn.pubChannel.bindExchange(
             AmqpClient.MQTT_EXCHANGE, //destination
             that.brokerExchange, //source
             '#',
-            {}
+            {},
+            () => {
+              logger.debug(
+                'bound exchange. All messages arriving at ' +
+                  that.brokerExchange +
+                  ' will be forwarded to ' +
+                  AmqpClient.MQTT_EXCHANGE
+              );
+              logger.debug('Calling publish callback');
+              if (cb) cb();
+            }
           );
-
-          logger.debug(
-            'bound exchange. All messages arriving at ' +
-              that.brokerExchange +
-              ' will be forwarded to ' +
-              AmqpClient.MQTT_EXCHANGE
-          );
+        } else {
+          logger.debug('Calling publish callback');
+          if (cb) cb();
         }
-
-        logger.debug('Calling publish callback');
-        if (cb) cb();
       });
     }
 
