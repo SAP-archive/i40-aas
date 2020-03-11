@@ -51,9 +51,7 @@ class SapMqttClient implements IMessageBrokerClient {
     }
   }
 
-  setupPublishing(cb: () => void): void {
-    cb();
-  }
+  setupPublishing(): void {}
 
   publish(routingKey: string, msg: string): void {
     this.client.publish(routingKey, msg, () =>

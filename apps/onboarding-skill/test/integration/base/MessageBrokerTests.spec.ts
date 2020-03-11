@@ -59,15 +59,15 @@ describe('AmpqClient', function() {
         })()
       )
     );
-    amqpClientReceiver.startListening(() => {
-      amqpClientSender.setupPublishing(() => {
-        try {
-          amqpClientSender.publish('test1.x', 'ping' + Date.now());
-        } catch (error) {
-          logger.debug('Could not publish:' + error);
-        }
-      });
-    });
+    amqpClientReceiver.startListening();
+    amqpClientSender.setupPublishing();
+    setTimeout(() => {
+      try {
+        amqpClientSender.publish('test1.x', 'ping' + Date.now());
+      } catch (error) {
+        logger.debug('Could not publish:' + error);
+      }
+    }, 100);
   });
 
   it('can  receive mqtt messages from the broker *if a message broker has been started*', function(done) {
@@ -101,11 +101,9 @@ describe('AmpqClient', function() {
       )
     );
 
-    amqpClientReceiver.startListening(() => {
-      mqttSender.setupPublishing(() => {
-        mqttSender.publish('test1b.x', 'ping' + Date.now());
-      });
-    });
+    amqpClientReceiver.startListening();
+
+    setTimeout(() => mqttSender.publish('test1b.x', 'ping' + Date.now()), 100);
   });
 
   it('can send mqtt messages to the broker *if a message broker has been started*', function(done) {
@@ -194,18 +192,18 @@ describe('AmpqClient', function() {
       )
     );
     let testRunning: boolean = true;
-    amqpClientReceiver.startListening(() => {
-      amqpClientSender.setupPublishing(async () => {
-        while (testRunning) {
-          try {
-            amqpClientSender.publish('test2.x', 'ping');
-          } catch (error) {
-            logger.debug('Could not publish:' + error);
-          }
+    amqpClientReceiver.startListening();
+    amqpClientSender.setupPublishing();
+    setTimeout(async () => {
+      while (testRunning) {
+        try {
           await AmqpClient.sleep(50);
+          amqpClientSender.publish('test2.x', 'ping');
+        } catch (error) {
+          logger.debug('Could not publish:' + error);
         }
-      });
-    });
+      }
+    }, 100);
   });
 
   it('recovers from a dropped connection as a receiver', function(done) {
@@ -259,18 +257,18 @@ describe('AmpqClient', function() {
     );
 
     let testRunning: boolean = true;
-    amqpClientReceiver.startListening(() => {
-      amqpClientSender.setupPublishing(async () => {
-        logger.debug('Listening for messages');
-        while (testRunning) {
-          try {
-            amqpClientSender.publish('test3.x', String(counter++));
-          } catch (error) {
-            logger.debug('Could not publish:' + error);
-          }
-          await AmqpClient.sleep(50);
+    amqpClientReceiver.startListening();
+    amqpClientSender.setupPublishing();
+    setTimeout(async () => {
+      logger.debug('Listening for messages');
+      while (testRunning) {
+        try {
+          amqpClientSender.publish('test3.x', String(counter++));
+        } catch (error) {
+          logger.debug('Could not publish:' + error);
         }
-      });
-    });
+        await AmqpClient.sleep(50);
+      }
+    }, 100);
   });
 });

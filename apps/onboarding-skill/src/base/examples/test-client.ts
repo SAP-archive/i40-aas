@@ -33,19 +33,19 @@ function start() {
       })()
     )
   );
-  amqpClientReceiver.startListening(() => {
-    amqpClientSender.setupPublishing(() => {
-      if (clockSet) return;
-      setInterval(() => {
-        try {
-          amqpClientSender.publish('skill.x', 'ping' + counter++);
-        } catch (error) {
-          logger.debug('Could not publish:' + error);
-        }
-      }, 1000);
-      clockSet = true;
-    });
-  });
+  amqpClientReceiver.startListening();
+
+  amqpClientSender.setupPublishing();
+
+  if (clockSet) return;
+  setInterval(() => {
+    try {
+      amqpClientSender.publish('skill.x', 'ping' + counter++);
+    } catch (error) {
+      logger.debug('Could not publish:' + error);
+    }
+  }, 1000);
+  clockSet = true;
 }
 
 start();

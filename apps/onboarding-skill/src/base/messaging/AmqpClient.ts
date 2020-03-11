@@ -126,9 +126,9 @@ class AmqpClient implements IMessageBrokerClient {
     this.myConn.subscription = subscription;
   }
 
-  private doSubscription(cb?: () => void) {
+  private doSubscription(afterSubscriptionDone?: () => void) {
     if (!this.myConn.subscription) {
-      if (cb) cb();
+      if (afterSubscriptionDone) afterSubscriptionDone();
       return;
     }
 
@@ -195,58 +195,55 @@ class AmqpClient implements IMessageBrokerClient {
             {},
             () => {
               logger.debug('q ' + q.queue + ' bound to exchange');
-              if (cb) cb();
             }
           );
+          ch.consume(
+            q.queue,
+            function(msg: Message | null) {
+              if (msg === null) {
+                throw Error('Null message received!');
+              }
+              logger.debug(
+                that.uniqueListenerId + ' received message on queue ' + q.queue
+              );
+
+              if (that.myConn.subscription) {
+                that.myConn.subscription.messageReceiver.receive(
+                  msg.content.toString()
+                );
+              } else {
+                logger.error(
+                  'Attempting to set up a subscription even though none was provided.'
+                );
+              }
+            },
+            { noAck: true } //
+          );
+          if (afterSubscriptionDone) afterSubscriptionDone();
+          //if (cb) cb();
         } else {
           logger.error(
             'Attempting to set up a subscription even though none was provided.'
           );
         }
-        //adding consume callback
-        ch.consume(
-          q.queue,
-          function(msg: Message | null) {
-            if (msg === null) {
-              throw Error('Null message received!');
-            }
-            logger.debug(
-              that.uniqueListenerId + ' received message on queue ' + q.queue
-            );
-
-            if (that.myConn.subscription) {
-              that.myConn.subscription.messageReceiver.receive(
-                msg.content.toString()
-              );
-            } else {
-              logger.error(
-                'Attempting to set up a subscription even though none was provided.'
-              );
-            }
-          },
-          { noAck: true }
-        );
-        //if (cb) cb();
       });
     });
   }
 
   //==1.connect and 2.subscribe
-  private connectAndDoSubscription(cb?: () => void) {
+  private connectAndDoSubscription(afterSubscriptionDone?: () => void) {
     if (this.myConn.connection == undefined || this.myConn.connectionClosed) {
       this.connect(() => {
-        this.doSubscription(cb);
+        this.doSubscription(afterSubscriptionDone);
       });
     } else {
-      this.doSubscription(cb);
+      this.doSubscription(afterSubscriptionDone);
     }
   }
 
-  startListening(cb?: () => void) {
-    if (!this.myConn.subscription) {
-      if (cb) cb();
-    } else {
-      this.connectAndDoSubscription(cb);
+  startListening() {
+    if (this.myConn.subscription) {
+      this.connectAndDoSubscription();
     }
   }
 
