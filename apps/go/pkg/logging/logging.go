@@ -1,7 +1,6 @@
 package logging
 
 import (
-	"fmt"
 	"os"
 	"strings"
 	"time"
@@ -19,29 +18,21 @@ func (h severityHook) Run(e *zerolog.Event, level zerolog.Level, msg string) {
 }
 
 // SetupLogging returns a configured logger
-func SetupLogging() zerolog.Logger {
-	output := os.Getenv("LOG_OUTPUT")
+func SetupLogging(output string, level string) (zerolog.Logger, error) {
+	// default configuration
 	if output == "" {
-		output = "CONSOLE"
+		output = "JSON"
 	}
-	level := os.Getenv("LOG_LEVEL")
 	if level == "" {
-		level = "DEBUG"
+		level = "debug"
+	} else {
+		level = strings.ToLower(level)
 	}
 
+	// setup output configuration
 	if output == "CONSOLE" {
 		log.Logger = log.With().Caller().Logger()
-		output := zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.RFC3339}
-		output.FormatMessage = func(i interface{}) string {
-			return fmt.Sprintf("%s", i)
-		}
-		output.FormatFieldName = func(i interface{}) string {
-			return fmt.Sprintf("%s:", i)
-		}
-		output.FormatFieldValue = func(i interface{}) string {
-			return strings.ToUpper(fmt.Sprintf("%s", i))
-		}
-
+		output := zerolog.ConsoleWriter{Out: os.Stdout, NoColor: false, TimeFormat: time.RFC3339}
 		log.Logger = log.Output(output)
 	} else {
 		// Stackdriver specifics
@@ -49,12 +40,13 @@ func SetupLogging() zerolog.Logger {
 		log.Logger = zerolog.New(os.Stdout).Hook(severityHook{}).With().Caller().Logger()
 	}
 
-	if level == "DEBUG" {
-		zerolog.SetGlobalLevel(zerolog.DebugLevel)
-		log.Debug().Msg("LOG_LEVEL has been set to DEBUG")
-	} else {
-		zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	// setup log level configuration
+	logLevel, err := zerolog.ParseLevel(level)
+	if err != nil {
+		return zerolog.New(os.Stderr), err
 	}
+	zerolog.SetGlobalLevel(logLevel)
+	log.Debug().Msgf("log level has been set to %v", zerolog.GlobalLevel())
 
-	return log.Logger
+	return log.Logger, nil
 }

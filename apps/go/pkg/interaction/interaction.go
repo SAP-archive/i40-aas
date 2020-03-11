@@ -9,13 +9,13 @@ type Interaction struct {
 // Ack TODO
 func (i *Interaction) Ack() {
 	i.Status = &InteractionStatus{
-		Code: 1,
+		Code: 200,
 	}
 }
 
 // Nack TODO
 func (i *Interaction) Nack() {
 	i.Status = &InteractionStatus{
-		Code: 2,
+		Code: 500,
 	}
 }

@@ -89,7 +89,11 @@ typings/
 !.compose/volumes/certs/.gitkeep
 
 #######################
-# # ignore all .env files
+# ignore all .env files
 *.env
 # except for the one in root
 !/.env
+
+#######################
+# ignore all cover.out files (from gocover)
+*/cover.out

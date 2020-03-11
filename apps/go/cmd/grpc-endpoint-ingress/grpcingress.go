@@ -4,7 +4,6 @@ import (
 	"github.com/rs/zerolog/log"
 
 	"github.com/SAP/i40-aas/src/go/pkg/amqpclient"
-	"github.com/SAP/i40-aas/src/go/pkg/interaction"
 )
 
 // GRPCIngressConfig struct
@@ -38,13 +37,17 @@ func (i *GRPCIngress) Init() {
 	go func() {
 		log.Debug().Msg("starting to consume InteractionMessages")
 		for ia := range i.grpcServer.iQueue {
-			jsonMessage := interaction.ConvertInteractionMessageToRawJSON(ia.Msg)
+			jsonMessage, err := ia.Msg.ToRawJSON()
+			if err != nil {
+				log.Error().Err(err).Msgf("unable to process ia.Msg of Interaction %v", ia)
+				continue
+			}
 			log.Debug().Msgf("Got new InteractionMessage: %s", string(jsonMessage))
 
 			f := ia.Msg.Frame
 			routingKey := f.SemanticProtocol + "." + f.Receiver.Role.Name + "." + f.Type
 
-			err := i.amqpClient.Publish(routingKey, jsonMessage)
+			err = i.amqpClient.Publish(routingKey, jsonMessage)
 			if err != nil {
 				ia.Nack()
 			} else {

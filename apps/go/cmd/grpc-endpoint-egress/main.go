@@ -13,8 +13,22 @@ import (
 	"github.com/SAP/i40-aas/src/go/pkg/logging"
 )
 
+var err error
+
 func main() {
-	log.Logger = logging.SetupLogging()
+	output := os.Getenv("LOG_OUTPUT")
+	if output == "" {
+		output = "CONSOLE"
+	}
+	level := os.Getenv("LOG_LEVEL")
+	if level == "" {
+		level = "DEBUG"
+	}
+	log.Logger, err = logging.SetupLogging(output, level)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to configure global logger")
+	}
+
 	if os.Getenv("HOME") != "/home/aasuser" {
 		err := godotenv.Load(".env")
 		if err == nil {
