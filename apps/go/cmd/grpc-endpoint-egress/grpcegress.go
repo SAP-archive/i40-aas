@@ -42,6 +42,11 @@ func NewGRPCEgress(cfg GRPCEgressConfig) (egress GRPCEgress) {
 // Init GRPC clients and AMQP client
 func (e *GRPCEgress) Init() {
 	e.amqpClient = amqpclient.NewAMQPClient(e.config.AMQPConfig)
+	// e.amqpClient, err = amqpclient.NewAMQPClient(e.config.AMQPConfig)
+	// if err != nil {
+	// 	// TODO
+	// }
+
 	e.amqpClient.Connect()
 
 	queue := os.Getenv("GRPC_ENDPOINT_EGRESS_AMQP_QUEUE")
@@ -61,9 +66,14 @@ func (e *GRPCEgress) Init() {
 				err := json.Unmarshal(d.Body, &rMsg)
 				if err != nil {
 					log.Error().Err(err).Msgf("unable to Unmarshal msg to ResolverMsg: %s", string(d.Body))
+					continue
 				}
 
-				iMsg := interaction.ConvertRawJSONToInteractionMessage(rMsg.EgressPayload)
+				iMsg, err := interaction.NewInteractionMessage(rMsg.EgressPayload)
+				if err != nil {
+					log.Error().Err(err).Msgf("unable to genera")
+					continue
+				}
 				log.Debug().Msgf("got new InteractionMessage (%dB) for %q (%q)", len(rMsg.EgressPayload), rMsg.ReceiverURL, rMsg.ReceiverType)
 
 				if rMsg.ReceiverType == "cloud" {

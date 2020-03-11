@@ -56,6 +56,10 @@ func NewEndpointResolver(cfg Config) (resolver EndpointResolver) {
 // Init EndpointResolver and AMQP client
 func (r *EndpointResolver) Init() {
 	r.amqpClient = amqpclient.NewAMQPClient(r.config.AMQPConfig)
+	// r.amqpClient, err = amqpclient.NewAMQPClient(r.config.AMQPConfig)
+	// if err != nil {
+	// 	// TODO
+	// }
 	r.amqpClient.Connect()
 
 	queue := os.Getenv("ENDPOINT_RESOLVER_AMQP_QUEUE")
@@ -88,61 +92,75 @@ func (r *EndpointResolver) Shutdown() {
 	log.Debug().Msg("shutdown sequence complete")
 }
 
-func (r *EndpointResolver) processGenericEgressMsg(d amqp.Delivery) error {
+func (r *EndpointResolver) processGenericEgressMsg(d amqp.Delivery) (err error) {
 	msg := d.Body
-	iMsg := interaction.ConvertRawJSONToInteractionMessage(msg)
+	iMsg, err := interaction.NewInteractionMessage(msg)
+	if err != nil {
+		log.Error().Err(err).Msgf("unable to processGenericEgressMsg %v", msg)
+		return err
+	}
 
 	receiverRole := iMsg.Frame.Receiver.Role.Name
 	receiverID := iMsg.Frame.Receiver.Identification.Id
 	receiverIDType := iMsg.Frame.Receiver.Identification.IdType
 	semanticprotocol := iMsg.Frame.SemanticProtocol
 
-	registryResp := queryEndpointRegistry(receiverID, receiverIDType, receiverRole, semanticprotocol, r.config.EndpointRegistryConfig)
-	if string(registryResp) == "[]" || registryResp == nil {
-		log.Warn().Msgf("queryEndpointRegistry unsuccessful: %v, dropping message", string(registryResp))
-	} else {
-		var dat []interface{}
-		if err := json.Unmarshal(registryResp, &dat); err != nil {
-			log.Error().Err(err).Msg("unable to unmarshal msg")
-		}
+	registryResp, err := queryEndpointRegistry(receiverID, receiverIDType, receiverRole, semanticprotocol, r.config.EndpointRegistryConfig)
+	if err != nil {
+		err = fmt.Errorf("queryEndpointRegistry unsuccessful")
+		log.Error().Err(err).Msg("queryEndpointRegistry unsuccessful")
+		return err
+	}
 
-		for _, aas := range dat {
-			for _, endpoint := range aas.(map[string]interface{})["endpoints"].([]interface{}) {
-				urlHost := fmt.Sprintf("%v", endpoint.(map[string]interface{})["url"])
-				protocol := fmt.Sprintf("%v", endpoint.(map[string]interface{})["protocol"])
-				target := fmt.Sprintf("%v", endpoint.(map[string]interface{})["target"])
+	if string(registryResp) == "[]" {
+		log.Warn().Msgf("queryEndpointRegistry empty: %v, dropping message", string(registryResp))
+		return nil
+	}
 
-				resolverMsg := ResolverMsg{
-					EgressPayload: msg,
-					ReceiverURL:   urlHost,
-					ReceiverType:  target,
-				}
-				payload, err := json.Marshal(resolverMsg)
-				if err != nil {
-					log.Error().Err(err).Msg("unable to Marshal resolverMsg")
-				}
+	var dat []interface{}
+	if err := json.Unmarshal(registryResp, &dat); err != nil {
+		log.Error().Err(err).Msg("unable to unmarshal msg")
+		return err
+	}
 
-				var routingKey string
-				if protocol == "grpc" {
-					routingKey = "egress.grpc"
-				} else if protocol == "http" || protocol == "https" {
-					routingKey = "egress.http"
-				} else {
-					log.Error().Msgf("unsupported protocol %q", protocol)
-				}
+	for _, aas := range dat {
+		for _, endpoint := range aas.(map[string]interface{})["endpoints"].([]interface{}) {
+			urlHost := fmt.Sprintf("%v", endpoint.(map[string]interface{})["url"])
+			protocol := fmt.Sprintf("%v", endpoint.(map[string]interface{})["protocol"])
+			target := fmt.Sprintf("%v", endpoint.(map[string]interface{})["target"])
 
-				err = r.amqpClient.Publish(routingKey, payload)
-				if err != nil {
-					log.Error().Err(err).Msgf("unable to resolve message: %s", string(payload))
-					return err
-				}
+			resolverMsg := ResolverMsg{
+				EgressPayload: msg,
+				ReceiverURL:   urlHost,
+				ReceiverType:  target,
+			}
+			payload, err := json.Marshal(resolverMsg)
+			if err != nil {
+				log.Error().Err(err).Msgf("unable to Marshal resolverMsg %v", resolverMsg)
+				return err
+			}
+
+			var routingKey string
+			if protocol == "grpc" {
+				routingKey = "egress.grpc"
+			} else if protocol == "http" || protocol == "https" {
+				routingKey = "egress.http"
+			} else {
+				log.Error().Msgf("unsupported protocol %q", protocol)
+			}
+
+			err = r.amqpClient.Publish(routingKey, payload)
+			if err != nil {
+				log.Error().Err(err).Msgf("unable to resolve message: %s", string(payload))
+				return err
 			}
 		}
+
 	}
 	return nil
 }
 
-func queryEndpointRegistry(receiverID string, receiverIDType string, receiverRole string, semanticProtocol string, reg EndpointRegistryConfig) []byte {
+func queryEndpointRegistry(receiverID string, receiverIDType string, receiverRole string, semanticProtocol string, reg EndpointRegistryConfig) (bodyText []byte, err error) {
 	client := &http.Client{}
 
 	registryURL := reg.Protocol + "://" + reg.Host + ":" + strconv.Itoa(reg.Port) + reg.Route
@@ -163,8 +181,9 @@ func queryEndpointRegistry(receiverID string, receiverIDType string, receiverRol
 		q.Add("receiverRole", receiverRole)
 		q.Add("semanticProtocol", semanticProtocol)
 	} else {
-		log.Warn().Msg("failed query attempt: (receiverId && receiverIdType) || (receiverRole && semanticProtocol) has not been specified")
-		return nil
+		err = fmt.Errorf("failed query attempt: (receiverId && receiverIdType) || (receiverRole && semanticProtocol) has not been specified")
+		log.Error().Err(err).Msg("failed query attempt: (receiverId && receiverIdType) || (receiverRole && semanticProtocol) has not been specified")
+		return nil, err
 	}
 	req.URL.RawQuery = q.Encode()
 
@@ -173,11 +192,16 @@ func queryEndpointRegistry(receiverID string, receiverIDType string, receiverRol
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to query endpoint-registry")
+		return nil, err
 	}
 
-	bodyText, err := ioutil.ReadAll(resp.Body)
+	bodyText, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to read response body")
+		return nil, err
+	}
 
 	log.Debug().Msgf("querying endpoint-registry gave: %s", string(bodyText))
 
-	return bodyText
+	return bodyText, nil
 }
