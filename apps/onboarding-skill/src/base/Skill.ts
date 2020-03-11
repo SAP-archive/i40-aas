@@ -191,4 +191,4 @@ class Skill {
   }
 }
 
-export { Skill as AssetRepositoryOnboardingSkill };
+export { Skill };
