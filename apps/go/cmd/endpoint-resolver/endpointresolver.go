@@ -56,6 +56,10 @@ func NewEndpointResolver(cfg Config) (resolver EndpointResolver) {
 // Init EndpointResolver and AMQP client
 func (r *EndpointResolver) Init() {
 	r.amqpClient = amqpclient.NewAMQPClient(r.config.AMQPConfig)
+	// r.amqpClient, err = amqpclient.NewAMQPClient(r.config.AMQPConfig)
+	// if err != nil {
+	// 	// TODO
+	// }
 	r.amqpClient.Connect()
 
 	queue := os.Getenv("ENDPOINT_RESOLVER_AMQP_QUEUE")

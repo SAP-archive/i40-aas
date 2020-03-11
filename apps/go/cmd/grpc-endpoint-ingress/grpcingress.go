@@ -29,6 +29,10 @@ func NewGRPCIngress(cfg GRPCIngressConfig) (ingress GRPCIngress) {
 // Init GRPC server and AMQP client
 func (i *GRPCIngress) Init() {
 	i.amqpClient = amqpclient.NewAMQPClient(i.config.AMQPConfig)
+	// i.amqpClient, err = amqpclient.NewAMQPClient(i.config.AMQPConfig)
+	// if err != nil {
+	// 	// TODO
+	// }
 	i.amqpClient.Connect()
 
 	i.grpcServer = newGRPCServer(i.config.GRPCConfig)
@@ -45,7 +49,7 @@ func (i *GRPCIngress) Init() {
 			log.Debug().Msgf("Got new InteractionMessage: %s", string(jsonMessage))
 
 			f := ia.Msg.Frame
-			routingKey := f.SemanticProtocol + "." + f.Receiver.Role.Name + "." + f.Type
+			routingKey := i.config.AMQPConfig.Exchange + "." + f.SemanticProtocol + "." + f.Receiver.Role.Name + "." + f.Type
 
 			err = i.amqpClient.Publish(routingKey, jsonMessage)
 			if err != nil {

@@ -1,19 +1,19 @@
 package interaction
 
-// Interaction struct TODO
+// Interaction bundles an InteractionStatus for an InteractionMessage
 type Interaction struct {
 	Msg    *InteractionMessage
 	Status *InteractionStatus
 }
 
-// Ack TODO
+// Ack the InteractionMessage
 func (i *Interaction) Ack() {
 	i.Status = &InteractionStatus{
 		Code: 200,
 	}
 }
 
-// Nack TODO
+// Nack the InteractionMessage
 func (i *Interaction) Nack() {
 	i.Status = &InteractionStatus{
 		Code: 500,

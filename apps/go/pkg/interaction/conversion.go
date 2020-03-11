@@ -10,7 +10,12 @@ import (
 )
 
 // NewInteractionMessage returns a new InteractionMessage
-func NewInteractionMessage(i interface{}) (im *InteractionMessage, err error) {
+func NewInteractionMessage(i interface{}) (*InteractionMessage, error) {
+	var (
+		im  *InteractionMessage
+		err error
+	)
+
 	switch v := i.(type) {
 	case []byte:
 		im, err = fromRawJSON(v)
@@ -26,7 +31,12 @@ func NewInteractionMessage(i interface{}) (im *InteractionMessage, err error) {
 
 // fromString initializes a new InteractionMessage from a string containing
 // a corresponding JSON
-func fromString(jsonString string) (im *InteractionMessage, err error) {
+func fromString(jsonString string) (*InteractionMessage, error) {
+	var (
+		im  *InteractionMessage
+		err error
+	)
+
 	im, err = fromRawJSON([]byte(jsonString))
 	return im, err
 }
@@ -34,9 +44,13 @@ func fromString(jsonString string) (im *InteractionMessage, err error) {
 // fromRawJSON initializes a new InteractionMessage from bytes containing
 // a corresponding JSON
 func fromRawJSON(rawJSON []byte) (*InteractionMessage, error) {
-	im := &InteractionMessage{}
+	var (
+		im  *InteractionMessage
+		err error
+	)
+
 	dat := make(map[string]interface{})
-	err := json.Unmarshal(rawJSON, &dat)
+	err = json.Unmarshal(rawJSON, &dat)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to Unmarshal rawJSON")
 		return nil, err
@@ -97,7 +111,12 @@ func (im *InteractionMessage) ToRawJSON() ([]byte, error) {
 }
 
 // ToString returns a JSON representation of an InteractionMessage as string
-func (im *InteractionMessage) ToString() (jsonString string, err error) {
+func (im *InteractionMessage) ToString() (string, error) {
+	var (
+		jsonString string
+		err        error
+	)
+
 	protoFrame := im.Frame
 	marshaler := jsonpb.Marshaler{}
 	jsonFrame, err := marshaler.MarshalToString(protoFrame)
