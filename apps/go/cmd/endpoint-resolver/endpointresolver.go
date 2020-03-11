@@ -35,32 +35,47 @@ type EndpointRegistryConfig struct {
 
 // Config struct
 type Config struct {
-	AMQPConfig             amqpclient.Config
-	EndpointRegistryConfig EndpointRegistryConfig
+	AMQPConfig             *amqpclient.Config
+	EndpointRegistryConfig *EndpointRegistryConfig
 }
 
 // EndpointResolver struct
 type EndpointResolver struct {
-	config     Config
+	config     *Config
 	amqpClient *amqpclient.AMQPClient
 }
 
 // NewEndpointResolver instance
-func NewEndpointResolver(cfg Config) (resolver EndpointResolver) {
-	// TODO: Check default/settings in cfg
-	resolver.config = cfg
+func NewEndpointResolver(cfg *Config) (*EndpointResolver, error) {
+	var (
+		resolver *EndpointResolver
+		err      error
+	)
 
-	return resolver
+	err = cfg.validate()
+	if err != nil {
+		return nil, err
+	}
+
+	resolver = &EndpointResolver{}
+
+	resolver.config = cfg
+	resolver.amqpClient, err = amqpclient.NewAMQPClient(cfg.AMQPConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	return resolver, nil
 }
 
 // Init EndpointResolver and AMQP client
-func (r *EndpointResolver) Init() {
-	r.amqpClient = amqpclient.NewAMQPClient(r.config.AMQPConfig)
-	// r.amqpClient, err = amqpclient.NewAMQPClient(r.config.AMQPConfig)
-	// if err != nil {
-	// 	// TODO
-	// }
-	r.amqpClient.Connect()
+func (r *EndpointResolver) Init() error {
+	var err error
+
+	err = r.amqpClient.Connect()
+	if err != nil {
+		return err
+	}
 
 	queue := os.Getenv("ENDPOINT_RESOLVER_AMQP_QUEUE")
 	bindingKey := r.config.AMQPConfig.Exchange + "." + queue
@@ -83,13 +98,20 @@ func (r *EndpointResolver) Init() {
 			log.Warn().Msg("deliveries channel closed, restarting...")
 		}
 	}()
+
+	return nil
 }
 
 // Shutdown EndpointResolver
-func (r *EndpointResolver) Shutdown() {
-	log.Debug().Msg("entering shutdown sequence")
-	r.amqpClient.Close()
-	log.Debug().Msg("shutdown sequence complete")
+func (r *EndpointResolver) Shutdown() error {
+	var err error
+
+	err = r.amqpClient.Close()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (r *EndpointResolver) processGenericEgressMsg(d amqp.Delivery) (err error) {
@@ -160,7 +182,7 @@ func (r *EndpointResolver) processGenericEgressMsg(d amqp.Delivery) (err error) 
 	return nil
 }
 
-func queryEndpointRegistry(receiverID string, receiverIDType string, receiverRole string, semanticProtocol string, reg EndpointRegistryConfig) (bodyText []byte, err error) {
+func queryEndpointRegistry(receiverID string, receiverIDType string, receiverRole string, semanticProtocol string, reg *EndpointRegistryConfig) (bodyText []byte, err error) {
 	client := &http.Client{}
 
 	registryURL := reg.Protocol + "://" + reg.Host + ":" + strconv.Itoa(reg.Port) + reg.Route
@@ -204,4 +226,51 @@ func queryEndpointRegistry(receiverID string, receiverIDType string, receiverRol
 	log.Debug().Msgf("querying endpoint-registry gave: %s", string(bodyText))
 
 	return bodyText, nil
+}
+
+func (cfg *Config) validate() error {
+	var err error
+
+	if cfg.AMQPConfig == nil {
+		err = fmt.Errorf("AMQPConfig cannot be nil")
+		return err
+	}
+
+	err = cfg.EndpointRegistryConfig.validate()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (cfg *EndpointRegistryConfig) validate() error {
+	var err error
+
+	if cfg.Protocol == "" {
+		err = fmt.Errorf("protocol has not been specified")
+		return err
+	}
+	if cfg.Host == "" {
+		err = fmt.Errorf("host has not been specified")
+		return err
+	}
+	if cfg.Port == 0 {
+		err = fmt.Errorf("port has not been specified")
+		return err
+	}
+	if cfg.Route == "" {
+		err = fmt.Errorf("route has not been specified")
+		return err
+	}
+	if cfg.User == "" {
+		err = fmt.Errorf("user has not been specified")
+		return err
+	}
+	if cfg.Password == "" {
+		err = fmt.Errorf("password has not been specified")
+		return err
+	}
+
+	return nil
 }

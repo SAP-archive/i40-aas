@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/jpillora/backoff"
@@ -20,8 +21,7 @@ type GRPCClientConfig struct {
 
 // grpcClient struct
 type grpcClient struct {
-	cfg               GRPCClientConfig
-	grpcOpts          []grpc.DialOption
+	cfg               *GRPCClientConfig
 	conn              *grpc.ClientConn
 	interactionClient interaction.InteractionIngressClient
 
@@ -29,31 +29,38 @@ type grpcClient struct {
 	// - KeepAlive & Retry
 }
 
-func newGRPCClient(cfg GRPCClientConfig) *grpcClient {
-	c := &grpcClient{}
+func newGRPCClient(cfg *GRPCClientConfig) (*grpcClient, error) {
+	var (
+		c        *grpcClient
+		grpcOpts []grpc.DialOption
+		err      error
+	)
 
-	if cfg.URL == "" {
-		cfg.URL = "localhost:8080"
-		log.Warn().Msgf("GRPC server URL not specified, defaulting to %q", cfg.URL)
+	err = cfg.validate()
+	if err != nil {
+		return nil, err
 	}
 
+	c = &grpcClient{}
+
 	c.cfg = cfg
-	c.grpcOpts = []grpc.DialOption{}
+	grpcOpts = []grpc.DialOption{}
 
 	if cfg.RootCert != "" {
 		grpcCreds, err := credentials.NewClientTLSFromFile(cfg.RootCert, "localhost")
 		if err != nil {
 			log.Error().Err(err).Msgf("failed to create grpc tls client via root-cert %s", cfg.RootCert)
 		}
-		c.grpcOpts = append(c.grpcOpts, grpc.WithTransportCredentials(grpcCreds))
+		grpcOpts = append(grpcOpts, grpc.WithTransportCredentials(grpcCreds))
 	} else {
 		log.Warn().Msg("missing cfg.RootCert - reverting to WithInsecure()")
-		c.grpcOpts = append(c.grpcOpts, grpc.WithInsecure())
+		grpcOpts = append(grpcOpts, grpc.WithInsecure())
 	}
 
-	conn, err := grpc.Dial(c.cfg.URL, c.grpcOpts...)
+	conn, err := grpc.Dial(c.cfg.URL, grpcOpts...)
 	if err != nil {
 		log.Error().Err(err).Msgf("failed to start grpc connection with address %s", c.cfg.URL)
+		return nil, err
 	}
 	c.conn = conn
 
@@ -61,14 +68,21 @@ func newGRPCClient(cfg GRPCClientConfig) *grpcClient {
 
 	log.Info().Msgf("new gRPC client connection to %s initiated and in state %s", c.cfg.URL, c.conn.GetState().String())
 
-	return c
+	return c, nil
 }
 
-func (c *grpcClient) close() {
+func (c *grpcClient) close() error {
+	var err error
+
 	if c.conn != nil {
-		c.conn.Close()
+		err = c.conn.Close()
+		if err != nil {
+			return err
+		}
+
 		log.Debug().Msgf("closed connection to %s", c.conn.Target())
 	}
+	return nil
 }
 
 func (c *grpcClient) SendInteractionMessage(iMsg *interaction.InteractionMessage, b *backoff.Backoff) {
@@ -81,4 +95,15 @@ func (c *grpcClient) SendInteractionMessage(iMsg *interaction.InteractionMessage
 	} else {
 		log.Debug().Msgf("sent InteractionMessage to %s returning status %s", c.cfg.URL, status.String())
 	}
+}
+
+func (cfg *GRPCClientConfig) validate() error {
+	var err error
+
+	if cfg.URL == "" {
+		err = fmt.Errorf("URL has not been specified")
+		return err
+	}
+
+	return nil
 }

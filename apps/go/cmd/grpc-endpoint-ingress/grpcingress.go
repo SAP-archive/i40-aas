@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/rs/zerolog/log"
 
 	"github.com/SAP/i40-aas/src/go/pkg/amqpclient"
@@ -8,35 +10,56 @@ import (
 
 // GRPCIngressConfig struct
 type GRPCIngressConfig struct {
-	AMQPConfig amqpclient.Config
-	GRPCConfig GRPCServerConfig
+	AMQPConfig    *amqpclient.Config
+	GRPCSrvConfig *GRPCServerConfig
 }
 
 // GRPCIngress struct
 type GRPCIngress struct {
-	config     GRPCIngressConfig
-	grpcServer grpcServer
+	config     *GRPCIngressConfig
+	grpcServer *grpcServer
 	amqpClient *amqpclient.AMQPClient
 }
 
 // NewGRPCIngress instance
-func NewGRPCIngress(cfg GRPCIngressConfig) (ingress GRPCIngress) {
-	// TODO: Check default/settings in cfg
+func NewGRPCIngress(cfg *GRPCIngressConfig) (*GRPCIngress, error) {
+	var (
+		ingress *GRPCIngress
+		err     error
+	)
+
+	err = cfg.validate()
+	if err != nil {
+		return nil, err
+	}
+
+	ingress = &GRPCIngress{}
+
 	ingress.config = cfg
-	return ingress
+
+	ingress.amqpClient, err = amqpclient.NewAMQPClient(cfg.AMQPConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	ingress.grpcServer, err = newGRPCServer(cfg.GRPCSrvConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	return ingress, nil
 }
 
 // Init GRPC server and AMQP client
-func (i *GRPCIngress) Init() {
-	i.amqpClient = amqpclient.NewAMQPClient(i.config.AMQPConfig)
-	// i.amqpClient, err = amqpclient.NewAMQPClient(i.config.AMQPConfig)
-	// if err != nil {
-	// 	// TODO
-	// }
+func (i *GRPCIngress) Init() error {
+	var err error
+
 	i.amqpClient.Connect()
 
-	i.grpcServer = newGRPCServer(i.config.GRPCConfig)
-	go i.grpcServer.init()
+	err = i.grpcServer.init()
+	if err != nil {
+		return err
+	}
 
 	go func() {
 		log.Debug().Msg("starting to consume InteractionMessages")
@@ -61,12 +84,34 @@ func (i *GRPCIngress) Init() {
 
 		// TODO restart!
 	}()
+	return nil
 }
 
 // Shutdown the Ingress
-func (i *GRPCIngress) Shutdown() {
-	log.Debug().Msg("entering shutdown sequence")
+func (i *GRPCIngress) Shutdown() error {
+	var err error
+
 	i.grpcServer.close()
-	i.amqpClient.Close()
-	log.Debug().Msg("shutdown sequence complete")
+
+	err = i.amqpClient.Close()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (cfg *GRPCIngressConfig) validate() error {
+	var err error
+
+	if cfg.AMQPConfig == nil {
+		err = fmt.Errorf("AMQPConfig cannot be nil")
+		return err
+	}
+	if cfg.GRPCSrvConfig == nil {
+		err = fmt.Errorf("GRPCSrvConfig cannot be nil")
+		return err
+	}
+
+	return nil
 }

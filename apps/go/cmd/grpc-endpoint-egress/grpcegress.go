@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"time"
 
@@ -21,31 +22,41 @@ type ResolverMsg struct {
 
 // GRPCEgressConfig struct
 type GRPCEgressConfig struct {
-	AMQPConfig amqpclient.Config
+	AMQPConfig *amqpclient.Config
 }
 
 // GRPCEgress struct
 type GRPCEgress struct {
-	config      GRPCEgressConfig
+	config      *GRPCEgressConfig
 	grpcClients []*grpcClient
 	amqpClient  *amqpclient.AMQPClient
 }
 
 // NewGRPCEgress instance
-func NewGRPCEgress(cfg GRPCEgressConfig) (egress GRPCEgress) {
-	// TODO: Check default/settings in cfg
+func NewGRPCEgress(cfg *GRPCEgressConfig) (*GRPCEgress, error) {
+	var (
+		egress *GRPCEgress
+		err    error
+	)
 
+	err = cfg.validate()
+	if err != nil {
+		return nil, err
+	}
+
+	egress = &GRPCEgress{}
 	egress.config = cfg
-	return egress
+	egress.amqpClient, err = amqpclient.NewAMQPClient(cfg.AMQPConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	return egress, nil
 }
 
 // Init GRPC clients and AMQP client
-func (e *GRPCEgress) Init() {
-	e.amqpClient = amqpclient.NewAMQPClient(e.config.AMQPConfig)
-	// e.amqpClient, err = amqpclient.NewAMQPClient(e.config.AMQPConfig)
-	// if err != nil {
-	// 	// TODO
-	// }
+func (e *GRPCEgress) Init() error {
+	// var err error
 
 	e.amqpClient.Connect()
 
@@ -77,12 +88,17 @@ func (e *GRPCEgress) Init() {
 				log.Debug().Msgf("got new InteractionMessage (%dB) for %q (%q)", len(rMsg.EgressPayload), rMsg.ReceiverURL, rMsg.ReceiverType)
 
 				if rMsg.ReceiverType == "cloud" {
-					cfg := GRPCClientConfig{
+					cfg := &GRPCClientConfig{
 						URL:      rMsg.ReceiverURL,
 						RootCert: "",
 					}
 
-					c := e.obtainGRPCClient(cfg)
+					c, err := e.obtainGRPCClient(cfg)
+					if err != nil {
+						log.Error().Err(err).Msgf("failed to obtain GRPCClient")
+						continue
+					}
+
 					b := &backoff.Backoff{
 						Min:    10 * time.Millisecond,
 						Max:    10 * time.Second,
@@ -103,30 +119,45 @@ func (e *GRPCEgress) Init() {
 			log.Warn().Msg("deliveries channel closed, restarting...")
 		}
 	}()
+
+	return nil
 }
 
 // Shutdown clients + amqp connection
-func (e *GRPCEgress) Shutdown() {
-	log.Debug().Msg("entering shutdown sequence")
+func (e *GRPCEgress) Shutdown() error {
+	var err error
+
 	for _, c := range e.grpcClients {
-		c.close()
+		err = c.close()
+		if err != nil {
+			return err
+		}
 	}
-	e.amqpClient.Close()
-	log.Debug().Msg("shutdown sequence complete")
+
+	err = e.amqpClient.Close()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func (e *GRPCEgress) obtainGRPCClient(cfg GRPCClientConfig) *grpcClient {
+func (e *GRPCEgress) obtainGRPCClient(cfg *GRPCClientConfig) (*grpcClient, error) {
 	for _, c := range e.grpcClients {
 		if c.cfg.URL == cfg.URL {
-			return c
+			return c, nil
 		}
 	}
 
 	log.Debug().Msgf("creating a new gRPC client for %s", cfg.URL)
-	c := newGRPCClient(cfg)
+	c, err := newGRPCClient(cfg)
+	if err != nil {
+		return nil, err
+	}
+
 	e.grpcClients = append(e.grpcClients, c)
 
-	return c
+	return c, nil
 }
 
 // TODO
@@ -137,4 +168,15 @@ func (e *GRPCEgress) clearIdleClients() {
 	// 		log.Info().Msgf("Client %s:%d (index %d) is in state: %s", c.config.Host, c.config.Port, i, c.conn.GetState().String())
 	// 	}
 	// }
+}
+
+func (cfg *GRPCEgressConfig) validate() error {
+	var err error
+
+	if cfg.AMQPConfig == nil {
+		err = fmt.Errorf("AMQPConfig cannot be nil")
+		return err
+	}
+
+	return nil
 }

@@ -21,53 +21,51 @@ type Config struct {
 
 // AMQPClient struct
 type AMQPClient struct {
-	config    Config
+	config    *Config
 	conn      *amqp.Connection
 	channel   *amqp.Channel
 	reconnect bool
 	backoff   *backoff.Backoff
 }
 
-// NewAMQPClient TODO
-func NewAMQPClient(cfg Config) *AMQPClient {
-	c := AMQPClient{}
-	if cfg.Host == "" {
-		log.Warn().Msg("AMQP host not specified, defaulting to 'localhost'")
-		cfg.Host = "localhost"
-	}
-	if cfg.Port == 0 {
-		log.Warn().Msg("AMQP port not specified, defaulting to 5672")
-		cfg.Port = 5672
-	}
-	if (cfg.User == "" || cfg.Password == "") && !(cfg.User == "" && cfg.Password == "") {
-		log.Warn().Msg("AMQP user/password not configured, defaulting to 'guest:guest'")
-		cfg.User = "guest"
-		cfg.Password = "guest"
+// NewAMQPClient for a given Config
+func NewAMQPClient(cfg *Config) (*AMQPClient, error) {
+	var (
+		c   *AMQPClient
+		err error
+	)
+
+	err = cfg.validate()
+	if err != nil {
+		return nil, err
 	}
 
+	c = &AMQPClient{}
 	c.config = cfg
 	c.reconnect = true
 
 	c.backoff = &backoff.Backoff{
-		Min:    100 * time.Millisecond,
+		Min:    50 * time.Millisecond,
 		Max:    10 * time.Second,
 		Factor: 2,
 		Jitter: true,
 	}
 
-	return &c
+	return c, nil
 }
 
 // Connect TODO
-func (c *AMQPClient) Connect() {
+func (c *AMQPClient) Connect() error {
+	var err error
+
 	log.Debug().Msgf("connecting to Exchange %q (AMQP Broker at 'amqp://%s:%s@%s:%s/')", c.config.Exchange, c.config.User, c.config.Password, c.config.Host, strconv.Itoa(c.config.Port))
 	conn, err := amqp.Dial(fmt.Sprintf("amqp://%s:%s@%s:%s/", c.config.User, c.config.Password, c.config.Host, strconv.Itoa(c.config.Port)))
 	if err != nil {
 		d := c.backoff.Duration()
 		log.Error().Err(err).Msgf("failed AMQP dial to RabbitMQ, retrying in %s...", d)
 		time.Sleep(d)
-		c.Connect()
-		return
+		err = c.Connect()
+		return err
 	}
 	c.conn = conn
 
@@ -78,8 +76,8 @@ func (c *AMQPClient) Connect() {
 		d := c.backoff.Duration()
 		log.Error().Err(err).Msgf("failed to open Channel, retrying in %s...", d)
 		time.Sleep(d)
-		c.Connect()
-		return
+		err = c.Connect()
+		return err
 	}
 	c.channel = channel
 	log.Debug().Msgf("got Channel, declaring Exchange %q", c.config.Exchange)
@@ -97,31 +95,45 @@ func (c *AMQPClient) Connect() {
 
 	go func() {
 		// Wait for the channel to be closed
-		err := <-c.conn.NotifyClose(make(chan *amqp.Error))
-		if err != nil {
+		errChan := <-c.conn.NotifyClose(make(chan *amqp.Error))
+		if errChan != nil {
 			log.Debug().Msgf("attempting to reconnect")
-			c.Connect()
-		} else {
-			log.Debug().Msgf("received final NotifyClose")
+			err = c.Connect()
+			return
 		}
+		log.Debug().Msgf("received final NotifyClose")
 	}()
 
 	log.Info().Msgf("connected to Exchange %q (AMQP Broker at 'amqp://%s:%s@%s:%s/')", c.config.Exchange, c.config.User, c.config.Password, c.config.Host, strconv.Itoa(c.config.Port))
 	c.backoff.Reset()
+
+	return nil
 }
 
 // Close TODO
-func (c *AMQPClient) Close() {
+func (c *AMQPClient) Close() error {
+	var err error
+
 	c.reconnect = false
+
 	if c.channel != nil {
-		log.Debug().Msg("closing AMQP channel")
-		c.channel.Close()
+		err = c.channel.Close()
+		if err != nil {
+			return err
+		}
+		log.Debug().Msg("closed AMQP channel")
 	}
+
 	if c.conn != nil {
-		log.Debug().Msg("closing AMQP connection")
-		c.conn.Close()
+		err = c.conn.Close()
+		if err != nil {
+			return err
+		}
+		log.Debug().Msg("closed AMQP connection")
 	}
-	log.Debug().Msg("AMQP client closed")
+
+	log.Debug().Msg("closed AMQPClient")
+	return nil
 }
 
 // Listen TODO
@@ -232,5 +244,32 @@ func (c *AMQPClient) Publish(routingKey string, payload []byte) error {
 	}
 	log.Debug().Msgf("published %dB to Exchange %q with routingkey %q", len(payload), c.config.Exchange, routingKey)
 	c.backoff.Reset()
+	return nil
+}
+
+// validate a Config for an AMQPClient by checking that everything has been set
+func (cfg *Config) validate() error {
+	var err error
+
+	if cfg.Host == "" {
+		err = fmt.Errorf("host has not been specified")
+		return err
+	}
+	if cfg.Port == 0 {
+		err = fmt.Errorf("port has not been specified")
+		return err
+	}
+	if cfg.User == "" {
+		err = fmt.Errorf("user has not been specified")
+		return err
+	}
+	if cfg.Password == "" {
+		err = fmt.Errorf("password has not been specified")
+		return err
+	}
+	if cfg.Exchange == "" {
+		err = fmt.Errorf("exchange has not been specified")
+		return err
+	}
 	return nil
 }
