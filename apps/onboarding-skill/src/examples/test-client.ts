@@ -1,8 +1,8 @@
 import { ConsumeMessage } from 'amqplib';
-import { AmqpClient } from '../messaging/AmqpClient';
-import { IMessageReceiver } from '../messaging/MessageInterpreter';
-import { logger } from '../../log';
-import { Subscription } from '../messaginginterface/Subscription';
+import { AmqpClient } from '../base/messaging/AmqpClient';
+import { IMessageReceiver } from '../base/messaging/MessageInterpreter';
+import { logger } from '../log';
+import { Subscription } from '../base/messaginginterface/Subscription';
 
 const initializeLogger = require('../log');
 let amqpClientSender: AmqpClient;

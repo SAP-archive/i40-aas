@@ -1,7 +1,7 @@
 import { Submodel, InteractionMessage } from 'i40-aas-objects';
 
 import { CommandCollector } from '../../base/messaging/CommandCollector';
-import { IMessageDispatcher } from './messaginginterface/IMessageDispatcher';
+import { IMessageDispatcher } from './IMessageDispatcher';
 
 import { ICommand } from '../../base/messaginginterface/ICommand';
 import { AxiosResponse } from 'axios';

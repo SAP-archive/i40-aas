@@ -1,9 +1,9 @@
-import { AmqpClient } from '../messaging/AmqpClient';
+import { AmqpClient } from '../base/messaging/AmqpClient';
 import { SapMqttClient } from './SapMqttClient';
-import { IMessageReceiver } from '../messaging/MessageInterpreter';
-import { logger } from '../../log';
-import { IMessageBrokerClient } from '../messaginginterface/IMessageBrokerClient';
-import { Subscription } from '../messaginginterface/Subscription';
+import { IMessageReceiver } from '../base/messaging/MessageInterpreter';
+import { logger } from '../log';
+import { IMessageBrokerClient } from '../base/messaginginterface/IMessageBrokerClient';
+import { Subscription } from '../base/messaginginterface/Subscription';
 
 const initializeLogger = require('../log');
 let sender: IMessageBrokerClient;
@@ -30,19 +30,19 @@ function start() {
       })()
     )
   );
-  receiver.startListening(() => {
-    sender.setupPublishing(() => {
-      if (clockSet) return;
-      setInterval(() => {
-        try {
-          sender.publish('skill.x', 'ping' + counter++);
-        } catch (error) {
-          logger.debug('Could not publish:' + error);
-        }
-      }, 1000);
-      clockSet = true;
-    });
-  });
+  receiver.startListening();
+  sender.setupPublishing();
+  setTimeout(() => {
+    if (clockSet) return;
+    setInterval(() => {
+      try {
+        sender.publish('skill.x', 'ping' + counter++);
+      } catch (error) {
+        logger.debug('Could not publish:' + error);
+      }
+    }, 1000);
+    clockSet = true;
+  }, 100);
 }
 
 start();

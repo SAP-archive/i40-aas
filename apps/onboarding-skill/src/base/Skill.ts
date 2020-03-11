@@ -5,7 +5,7 @@ import { IDatabaseClient } from './persistenceinterface/IDatabaseClient';
 import { IStateRecord } from './persistenceinterface/IStateRecord';
 import { SkillStateMachine } from '../services/onboarding/SkillStateMachineSpecification';
 
-import { IMessageDispatcher } from '../services/onboarding/messaginginterface/IMessageDispatcher';
+import { IMessageDispatcher } from '../services/onboarding/IMessageDispatcher';
 
 import { SkillActionMap } from '../services/onboarding/SkillActionMap';
 import { DeferredMessageDispatcher } from '../services/onboarding/DeferredMessageDisptacher';
@@ -98,7 +98,6 @@ class Skill {
     fnOnTransitionDone?: (state: State<ISkillContext, EventObject>) => void,
     fnOnTransitionError?: (state: State<ISkillContext, EventObject>) => void
   ) {
-    //TODO: should be injected
     let deferredMessageDispatcher = new DeferredMessageDispatcher(
       this.messageDispatcher
     );

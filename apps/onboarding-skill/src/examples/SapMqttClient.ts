@@ -1,6 +1,6 @@
-import { IMessageBrokerClient } from '../messaginginterface/IMessageBrokerClient';
-import { IMessageReceiver } from '../messaginginterface/IMessageReceiver';
-import { Subscription } from '../messaginginterface/Subscription';
+import { IMessageBrokerClient } from '../base/messaginginterface/IMessageBrokerClient';
+import { IMessageReceiver } from '../base/messaginginterface/IMessageReceiver';
+import { Subscription } from '../base/messaginginterface/Subscription';
 import { Client } from 'mqtt';
 import * as logger from 'winston';
 

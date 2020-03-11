@@ -4,7 +4,7 @@ import * as logger from 'winston';
 import { WebClient } from '../../web/WebClient';
 import { AxiosResponse } from 'axios';
 import { Submodel, InteractionMessage, IFrame } from 'i40-aas-objects';
-import { IMessageDispatcher } from './messaginginterface/IMessageDispatcher';
+import { IMessageDispatcher } from './IMessageDispatcher';
 import { Roles } from '../../base/messaginginterface/Roles';
 import { MessageTypes } from '../../base/messaginginterface/MessageTypes';
 
