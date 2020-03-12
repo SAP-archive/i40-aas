@@ -32,7 +32,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /go/bin/main
 ###############################################################################
 # STEP 2: Build the image
 
-FROM scratch
+FROM scratch as prod
 
 # Copy SSL certificates & user from STEP 1
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
