@@ -463,4 +463,37 @@ describe('Tests with a simple data model', function() {
     }
     fail('This test should have resulted in a duplicate key exception');
   });
+
+  it('should be possible to register a new aas on an existing asset', async function() {
+    var uniqueTestId = 'registerAasWithExistingAsset';
+
+    //existing asset
+    await insertIntoAssets('assetId' + uniqueTestId, 'IRI');
+
+    var registerJson: IRegisterAas = makeDummyAAS(uniqueTestId);
+    await new RegistryApi().register(registerJson);
+    const dbClient = await pool.connect();
+    try {
+      const resultOfQuery = await dbClient.query(
+        `SELECT  * FROM  public.endpoints`
+      );
+      const queryResultRows: Array<IEndpointRecord> = resultOfQuery.rows;
+      expect(
+        _.some(
+          queryResultRows,
+          (e: IEndpointRecord) => e.aasId == 'aasId' + uniqueTestId
+        )
+      ).to.be.true;
+      expect(
+        _.some(
+          queryResultRows,
+          (e: IEndpointRecord) => e.protocol_name == 'protocol' + uniqueTestId
+        )
+      ).to.be.true;
+    } catch (error) {
+      fail('Exception thrown');
+    } finally {
+      dbClient.release();
+    }
+  });
 });
