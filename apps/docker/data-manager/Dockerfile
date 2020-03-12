@@ -1,13 +1,18 @@
 FROM node:lts-alpine AS ts-builder
 
-WORKDIR /manager
+WORKDIR /wdir
 
-# Install required modules from package.json first to avoid frequent reinstallation
-COPY package.json /manager
+## copy package.json first and proceed to install dependencies to leverage caching as much as possible
+##   1. install production dependencies and create a copy of node_modules to be reused in prod stage below
+##   2. install dev dependencies
+COPY package.json /wdir
+RUN npm install --production \
+    && mkdir /production-dependencies/ \
+    && cp -R node_modules /production-dependencies/
 RUN npm install
 
 # Add & compile sourcecode
-COPY . /manager
+COPY . /wdir
 RUN npm run clean \
     && npm run build
 
@@ -16,12 +21,11 @@ FROM node:lts-alpine
 
 RUN adduser -D aasuser
 
-WORKDIR /manager
+WORKDIR /wdir
 
-COPY --from=ts-builder /manager/dist /manager/dist
-COPY package.json /manager
-
-RUN npm install --production
+COPY --from=ts-builder /wdir/dist /wdir/dist
+COPY --from=ts-builder /production-dependencies/node_modules /wdir/node_modules
+COPY package.json /wdir
 
 USER aasuser
 EXPOSE 4000
