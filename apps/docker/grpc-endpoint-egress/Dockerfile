@@ -10,13 +10,13 @@ RUN apk update && apk add git && apk add ca-certificates
 RUN adduser -D -g '' appuser
 
 # Copy go modules from repository
-COPY go/pkg/amqpclient /go/pkg/amqpclient
-COPY go/pkg/interaction /go/pkg/interaction
-COPY go/pkg/logging /go/pkg/logging
+COPY pkg/amqpclient /go/pkg/amqpclient
+COPY pkg/interaction /go/pkg/interaction
+COPY pkg/logging /go/pkg/logging
 
 # Copy everything required to download (& cache) dependencies
-COPY go/cmd/grpc-endpoint-egress/go.mod /go/cmd/grpc-endpoint-egress/go.mod
-COPY go/cmd/grpc-endpoint-egress/go.sum /go/cmd/grpc-endpoint-egress/go.sum
+COPY cmd/grpc-endpoint-egress/go.mod /go/cmd/grpc-endpoint-egress/go.mod
+COPY cmd/grpc-endpoint-egress/go.sum /go/cmd/grpc-endpoint-egress/go.sum
 
 WORKDIR /go/cmd/grpc-endpoint-egress/
 
@@ -24,7 +24,7 @@ WORKDIR /go/cmd/grpc-endpoint-egress/
 RUN go mod download
 
 # Copy sourcecode
-COPY go/cmd/grpc-endpoint-egress /go/cmd/grpc-endpoint-egress
+COPY cmd/grpc-endpoint-egress /go/cmd/grpc-endpoint-egress
 
 # Build the binary
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /go/bin/main

@@ -24,26 +24,26 @@ services:
   i40-aas-grpc-endpoint-ingress:
     image: sapi40/i40-aas-grpc-endpoint-ingress:${TAG}
     build:
-      context: apps
-      dockerfile: docker/grpc-endpoint-ingress/Dockerfile
+      context: apps/go
+      dockerfile: ../docker/grpc-endpoint-ingress/Dockerfile
   ##########################################
   i40-aas-grpc-endpoint-egress:
     image: sapi40/i40-aas-grpc-endpoint-egress:${TAG}
     build:
-      context: apps
-      dockerfile: docker/grpc-endpoint-egress/Dockerfile
+      context: apps/go
+      dockerfile: ../docker/grpc-endpoint-egress/Dockerfile
   ##########################################
   i40-aas-endpoint-resolver:
     image: sapi40/i40-aas-endpoint-resolver:${TAG}
     build:
-      context: apps
-      dockerfile: docker/endpoint-resolver/Dockerfile
+      context: apps/go
+      dockerfile: ../docker/endpoint-resolver/Dockerfile
   ##########################################
   i40-aas-initializer:
     image: sapi40/i40-aas-initializer:${TAG}
     build:
-      context: apps
-      dockerfile: docker/initializer/Dockerfile
+      context: apps/docker/initializer
+      dockerfile: Dockerfile
   ##########################################
   i40-aas-data-manager:
     image: sapi40/i40-aas-data-manager:${TAG}

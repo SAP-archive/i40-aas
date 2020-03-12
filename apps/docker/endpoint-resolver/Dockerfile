@@ -10,13 +10,13 @@ RUN apk update && apk add git && apk add ca-certificates
 RUN adduser -D -g '' appuser
 
 # Copy go modules from repository
-COPY go/pkg/amqpclient /go/pkg/amqpclient
-COPY go/pkg/interaction /go/pkg/interaction
-COPY go/pkg/logging /go/pkg/logging
+COPY pkg/amqpclient /go/pkg/amqpclient
+COPY pkg/interaction /go/pkg/interaction
+COPY pkg/logging /go/pkg/logging
 
 # Copy everything required to download (& cache) dependencies
-COPY go/cmd/endpoint-resolver/go.mod /go/cmd/endpoint-resolver/go.mod
-COPY go/cmd/endpoint-resolver/go.sum /go/cmd/endpoint-resolver/go.sum
+COPY cmd/endpoint-resolver/go.mod /go/cmd/endpoint-resolver/go.mod
+COPY cmd/endpoint-resolver/go.sum /go/cmd/endpoint-resolver/go.sum
 
 WORKDIR /go/cmd/endpoint-resolver/
 
@@ -24,7 +24,7 @@ WORKDIR /go/cmd/endpoint-resolver/
 RUN go mod download
 
 # Copy sourcecode
-COPY go/cmd/endpoint-resolver /go/cmd/endpoint-resolver
+COPY cmd/endpoint-resolver /go/cmd/endpoint-resolver
 
 # Build the binary
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /go/bin/main
