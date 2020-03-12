@@ -56,15 +56,16 @@ func NewGRPCEgress(cfg *GRPCEgressConfig) (*GRPCEgress, error) {
 
 // Init GRPC clients and AMQP client
 func (e *GRPCEgress) Init() error {
-	// var err error
+	var err error
 
-	e.amqpClient.Connect()
+	err = e.amqpClient.Connect()
+	if err != nil {
+		return err
+	}
 
 	queue := os.Getenv("GRPC_ENDPOINT_EGRESS_AMQP_QUEUE")
 	bindingKey := e.config.AMQPConfig.Exchange + "." + queue
 	ctag := os.Getenv("GRPC_ENDPOINT_EGRESS_AMQP_CTAG")
-
-	// go e.clearIdleClients()
 
 	go func() {
 		for {
@@ -143,9 +144,21 @@ func (e *GRPCEgress) Shutdown() error {
 }
 
 func (e *GRPCEgress) obtainGRPCClient(cfg *GRPCClientConfig) (*grpcClient, error) {
-	for _, c := range e.grpcClients {
+	for i, c := range e.grpcClients {
 		if c.cfg.URL == cfg.URL {
-			return c, nil
+			cState := c.conn.GetState().String()
+
+			if cState == "READY" || cState == "CONNECTING" || cState == "IDLE" {
+				log.Debug().Msgf("found existing client to reuse, state: %s", cState)
+				return c, nil
+			}
+
+			log.Debug().Msgf("found client in state %s, removing from slice", cState)
+			e.grpcClients[i] = e.grpcClients[len(e.grpcClients)-1] // Copy last element to index i.
+			e.grpcClients[len(e.grpcClients)-1] = nil              // Erase last element (write zero value).
+			e.grpcClients = e.grpcClients[:len(e.grpcClients)-1]   // Truncate slice.
+
+			break
 		}
 	}
 
@@ -158,16 +171,6 @@ func (e *GRPCEgress) obtainGRPCClient(cfg *GRPCClientConfig) (*grpcClient, error
 	e.grpcClients = append(e.grpcClients, c)
 
 	return c, nil
-}
-
-// TODO
-func (e *GRPCEgress) clearIdleClients() {
-	// for {
-	// 	time.Sleep(1 * time.Second)
-	// 	for i, c := range e.grpcClients {
-	// 		log.Info().Msgf("Client %s:%d (index %d) is in state: %s", c.config.Host, c.config.Port, i, c.conn.GetState().String())
-	// 	}
-	// }
 }
 
 func (cfg *GRPCEgressConfig) validate() error {

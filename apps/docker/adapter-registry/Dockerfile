@@ -19,7 +19,7 @@ RUN npm run clean \
 ###################################
 FROM node:lts-alpine
 
-RUN adduser -D aasuser
+# RUN adduser -D aasuser
 
 WORKDIR /wdir
 
@@ -27,7 +27,7 @@ COPY --from=ts-builder /wdir/dist /wdir/dist
 COPY --from=ts-builder /production-dependencies/node_modules /wdir/node_modules
 COPY package.json /wdir
 
-USER aasuser
+# USER aasuser
 EXPOSE 4500
 
 ENTRYPOINT [ "npm", "start" ]

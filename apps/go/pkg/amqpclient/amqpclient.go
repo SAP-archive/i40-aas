@@ -54,7 +54,7 @@ func NewAMQPClient(cfg *Config) (*AMQPClient, error) {
 	return c, nil
 }
 
-// Connect TODO
+// Connect to the broker specified in the clients config
 func (c *AMQPClient) Connect() error {
 	var err error
 
@@ -110,7 +110,7 @@ func (c *AMQPClient) Connect() error {
 	return nil
 }
 
-// Close TODO
+// Close the AMQPClient
 func (c *AMQPClient) Close() error {
 	var err error
 
@@ -136,7 +136,7 @@ func (c *AMQPClient) Close() error {
 	return nil
 }
 
-// Listen TODO
+// Listen to a specified AMQP Queue by specifying a corresponding bindingKey and consumer tag
 func (c *AMQPClient) Listen(queueName string, bindingKey string, ctag string) <-chan amqp.Delivery {
 	deliveries := make(<-chan amqp.Delivery)
 
@@ -209,7 +209,7 @@ func (c *AMQPClient) Listen(queueName string, bindingKey string, ctag string) <-
 	return deliveries
 }
 
-// Publish TODO
+// Publish a payload with a desired routingKey
 func (c *AMQPClient) Publish(routingKey string, payload []byte) error {
 	if c.channel == nil {
 		log.Debug().Msg("channel is nil, calling connect() first")
