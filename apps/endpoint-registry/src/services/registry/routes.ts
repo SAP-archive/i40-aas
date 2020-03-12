@@ -11,6 +11,10 @@ import { RegistryApi } from './RegistryApi';
 
 var registryApi = new RegistryApi();
 
+function updateForConflict(error: any, res: Response) {
+  if (error.message.includes('duplicate key')) res.statusCode = 403;
+}
+
 export default [
   {
     path: '/assetadministrationshells',
@@ -24,15 +28,16 @@ export default [
         endpointsAssignmentArray.map(async aas => {
           try {
             await registryApi.register(aas);
+            console.log(
+              'Now sending back response of /administrationshells POST request'
+            );
+            res.json(req.body);
           } catch (e) {
+            updateForConflict(e, res);
             res.end(e.message);
           }
         })
       );
-      console.log(
-        'Now sending back response of /administrationshells POST request'
-      );
-      res.json(req.body);
     }
   },
   {
@@ -50,14 +55,14 @@ export default [
             console.log('Handling role ' + role.roleId);
             await registryApi.createRole(role);
             console.log('Role ' + role.roleId + ' successfully created.');
+            console.log('Now sending back response of /roles POST request');
+            res.json(req.body);
           } catch (e) {
             console.log('There was an error creating roles');
             res.end(e.message);
           }
         })
       );
-      console.log('Now sending back response of /roles POST request');
-      res.json(req.body);
     }
   },
   {
@@ -71,15 +76,15 @@ export default [
         assignmentArray.map(async assignment => {
           try {
             await registryApi.assignRolesToAAS(assignment);
+            console.log(
+              'Now sending back response of /roleassignment POST request'
+            );
+            res.json(req.body);
           } catch (e) {
-            //TODO: internal db exception messages should not be exposed to the client
-            //applied to all catch blocks
             res.end(e.message);
           }
         })
       );
-      console.log('Now sending back response of /roleassignment POST request');
-      res.json(req.body);
     }
   },
   {
@@ -109,7 +114,6 @@ export default [
         res.json(await registryApi.createAsset(asset));
         console.log('Sent back response of /asset POST request');
       } catch (e) {
-        //TODO: which status code is sent back, make consistent with others
         res.end(e.message);
       }
     }
