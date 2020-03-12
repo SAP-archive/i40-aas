@@ -114,20 +114,39 @@ func (r *EndpointResolver) Shutdown() error {
 	return nil
 }
 
-func (r *EndpointResolver) processGenericEgressMsg(d amqp.Delivery) (err error) {
+func (r *EndpointResolver) processGenericEgressMsg(d amqp.Delivery) error {
+	var (
+		err              error
+		receiverRole     string
+		receiverID       string
+		receiverIDType   string
+		semanticProtocol string
+	)
+
 	msg := d.Body
 	iMsg, err := interaction.NewInteractionMessage(msg)
 	if err != nil {
-		log.Error().Err(err).Msgf("unable to processGenericEgressMsg %v", msg)
+		log.Error().Err(err).Msgf("failed to processGenericEgressMsg: %v", msg)
 		return err
 	}
 
-	receiverRole := iMsg.Frame.Receiver.Role.Name
-	receiverID := iMsg.Frame.Receiver.Identification.Id
-	receiverIDType := iMsg.Frame.Receiver.Identification.IdType
-	semanticprotocol := iMsg.Frame.SemanticProtocol
+	if iMsg.Frame != nil && iMsg.Frame.Receiver != nil {
+		if iMsg.Frame.Receiver.Identification != nil {
+			receiverID = iMsg.Frame.Receiver.Identification.Id
+			receiverIDType = iMsg.Frame.Receiver.Identification.IdType
+		} else if iMsg.Frame.Receiver.Role != nil {
+			receiverRole = iMsg.Frame.Receiver.Role.Name
+			semanticProtocol = iMsg.Frame.SemanticProtocol
+		} else {
+			err = fmt.Errorf("(receiverId && receiverIdType) || (receiverRole && semanticProtocol) has not been specified correctly")
+			return err
+		}
+	} else {
+		err = fmt.Errorf("(receiverId && receiverIdType) || (receiverRole && semanticProtocol) has not been specified correctly")
+		return err
+	}
 
-	registryResp, err := queryEndpointRegistry(receiverID, receiverIDType, receiverRole, semanticprotocol, r.config.EndpointRegistryConfig)
+	registryResp, err := queryEndpointRegistry(receiverID, receiverIDType, receiverRole, semanticProtocol, r.config.EndpointRegistryConfig)
 	if err != nil {
 		err = fmt.Errorf("queryEndpointRegistry unsuccessful")
 		log.Error().Err(err).Msg("queryEndpointRegistry unsuccessful")
@@ -182,7 +201,12 @@ func (r *EndpointResolver) processGenericEgressMsg(d amqp.Delivery) (err error) 
 	return nil
 }
 
-func queryEndpointRegistry(receiverID string, receiverIDType string, receiverRole string, semanticProtocol string, reg *EndpointRegistryConfig) (bodyText []byte, err error) {
+func queryEndpointRegistry(receiverID string, receiverIDType string, receiverRole string, semanticProtocol string, reg *EndpointRegistryConfig) ([]byte, error) {
+	var (
+		err      error
+		bodyText []byte
+	)
+
 	client := &http.Client{}
 
 	registryURL := reg.Protocol + "://" + reg.Host + ":" + strconv.Itoa(reg.Port) + reg.Route
@@ -190,6 +214,7 @@ func queryEndpointRegistry(receiverID string, receiverIDType string, receiverRol
 	req, err := http.NewRequest("GET", registryURL, nil)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to create endpoint-registry request")
+		return nil, err
 	}
 	req.SetBasicAuth(reg.User, reg.Password)
 	req.Header.Add("Accept", "application/json")
