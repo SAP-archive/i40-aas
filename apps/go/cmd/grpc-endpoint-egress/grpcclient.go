@@ -24,9 +24,6 @@ type grpcClient struct {
 	cfg               *GRPCClientConfig
 	conn              *grpc.ClientConn
 	interactionClient interaction.InteractionIngressClient
-
-	// TODO
-	// - KeepAlive & Retry
 }
 
 func newGRPCClient(cfg *GRPCClientConfig) (*grpcClient, error) {

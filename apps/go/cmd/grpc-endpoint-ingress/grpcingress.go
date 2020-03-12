@@ -81,8 +81,6 @@ func (i *GRPCIngress) Init() error {
 				ia.Ack()
 			}
 		}
-
-		// TODO restart!
 	}()
 	return nil
 }
