@@ -13,9 +13,9 @@ import (
 	"github.com/SAP/i40-aas/src/go/pkg/logging"
 )
 
-var err error
-
 func main() {
+	var err error
+
 	output := os.Getenv("LOG_OUTPUT")
 	if output == "" {
 		output = "CONSOLE"
@@ -37,14 +37,14 @@ func main() {
 	}
 
 	var (
-		AMQPCfg        amqpclient.Config
-		GRPCSrvCfg     GRPCServerConfig
-		GRPCIngressCfg GRPCIngressConfig
-		GRPCIngress    GRPCIngress
+		amqpCfg    *amqpclient.Config
+		grpcSrvCfg *GRPCServerConfig
+		ingressCfg *GRPCIngressConfig
+		ingress    *GRPCIngress
 	)
 
 	amqpPort, _ := strconv.Atoi(os.Getenv("RABBITMQ_PORT"))
-	AMQPCfg = amqpclient.Config{
+	amqpCfg = &amqpclient.Config{
 		Host:     os.Getenv("RABBITMQ_HOST"),
 		Port:     amqpPort,
 		User:     os.Getenv("RABBITMQ_INGRESS_USER"),
@@ -53,20 +53,28 @@ func main() {
 	}
 
 	grpcPort, _ := strconv.Atoi(os.Getenv("GRPC_ENDPOINT_INGRESS_PORT"))
-	GRPCSrvCfg = GRPCServerConfig{
+	grpcSrvCfg = &GRPCServerConfig{
 		Port: grpcPort,
 		Cert: "",
 		Key:  "",
 	}
 
-	GRPCIngressCfg = GRPCIngressConfig{
-		AMQPConfig: AMQPCfg,
-		GRPCConfig: GRPCSrvCfg,
+	ingressCfg = &GRPCIngressConfig{
+		AMQPConfig:    amqpCfg,
+		GRPCSrvConfig: grpcSrvCfg,
 	}
 
-	GRPCIngress = NewGRPCIngress(GRPCIngressCfg)
+	ingress, err = NewGRPCIngress(ingressCfg)
+	if err != nil {
+		log.Error().Err(err).Msgf("failed to construct new GRPCIngress")
+		os.Exit(1)
+	}
 
-	GRPCIngress.Init()
+	err = ingress.Init()
+	if err != nil {
+		log.Error().Err(err).Msgf("failed to initialize GRPCIngress")
+		os.Exit(1)
+	}
 
 	interruptChan := make(chan os.Signal, 1)
 	signal.Notify(interruptChan, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
@@ -74,6 +82,11 @@ func main() {
 	// Block until we receive our signal.
 	<-interruptChan
 
-	GRPCIngress.Shutdown()
+	err = ingress.Shutdown()
+	if err != nil {
+		log.Error().Err(err).Msgf("unable to shut down gracefully")
+		os.Exit(1)
+	}
+	log.Debug().Msg("shut down gracefully")
 	os.Exit(0)
 }
