@@ -11,7 +11,7 @@ import { RegistryApi } from './RegistryApi';
 
 var registryApi = new RegistryApi();
 
-function updateForConflict(error: any, res: Response) {
+function updateResponseForConflict(error: any, res: Response) {
   if (error.message.includes('duplicate key')) res.statusCode = 403;
 }
 
@@ -33,7 +33,7 @@ export default [
             );
             res.json(req.body);
           } catch (e) {
-            updateForConflict(e, res);
+            updateResponseForConflict(e, res);
             res.end(e.message);
           }
         })
