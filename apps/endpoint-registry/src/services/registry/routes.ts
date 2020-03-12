@@ -15,6 +15,10 @@ function updateResponseForConflict(error: any, res: Response) {
   if (error.message.includes('duplicate key')) res.statusCode = 403;
 }
 
+//TODO: error prone error handling, not clear which statuses are sent back
+//need a better way to write a status code as soon as the error occurs
+//and send back any remaining exceptions as 500
+//Ideally send back response in one place, not so many places
 export default [
   {
     path: '/assetadministrationshells',
@@ -28,16 +32,17 @@ export default [
         endpointsAssignmentArray.map(async aas => {
           try {
             await registryApi.register(aas);
-            console.log(
-              'Now sending back response of /administrationshells POST request'
-            );
-            res.json(req.body);
           } catch (e) {
             updateResponseForConflict(e, res);
             res.end(e.message);
+            return;
           }
         })
       );
+      console.log(
+        'Now sending back response of /administrationshells POST request'
+      );
+      res.json(req.body);
     }
   },
   {
@@ -55,14 +60,15 @@ export default [
             console.log('Handling role ' + role.roleId);
             await registryApi.createRole(role);
             console.log('Role ' + role.roleId + ' successfully created.');
-            console.log('Now sending back response of /roles POST request');
-            res.json(req.body);
           } catch (e) {
             console.log('There was an error creating roles');
             res.end(e.message);
+            return;
           }
         })
       );
+      console.log('Now sending back response of /roles POST request');
+      res.json(req.body);
     }
   },
   {
@@ -76,15 +82,14 @@ export default [
         assignmentArray.map(async assignment => {
           try {
             await registryApi.assignRolesToAAS(assignment);
-            console.log(
-              'Now sending back response of /roleassignment POST request'
-            );
-            res.json(req.body);
           } catch (e) {
             res.end(e.message);
+            return;
           }
         })
       );
+      console.log('Now sending back response of /roleassignment POST request');
+      res.json(req.body);
     }
   },
   {
