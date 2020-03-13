@@ -1,4 +1,4 @@
-FROM node:lts-alpine as ts-builder
+FROM node:lts-alpine as builder
 
 WORKDIR /wdir
 
@@ -17,7 +17,7 @@ RUN npm run clean \
     && npm run build
 
 ###################################
-FROM node:lts-alpine
+FROM node:lts-alpine as prod
 
 RUN apk update && apk upgrade \
     && apk add --no-cache bash postgresql postgresql-contrib netcat-openbsd
@@ -26,8 +26,8 @@ RUN adduser -D aasuser
 
 WORKDIR /wdir
 
-COPY --from=ts-builder /wdir/dist /wdir/dist
-COPY --from=ts-builder /production-dependencies/node_modules /wdir/node_modules
+COPY --from=builder /wdir/dist /wdir/dist
+COPY --from=builder /production-dependencies/node_modules /wdir/node_modules
 COPY package.json /wdir
 
 COPY start.sh /wdir

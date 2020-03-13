@@ -3,7 +3,7 @@ FROM alpine
 RUN apk add --no-cache bash && \
     apk add --no-cache curl
 
-COPY docker/initializer/main.sh /
+COPY main.sh /
 
 RUN chmod +x main.sh
 
