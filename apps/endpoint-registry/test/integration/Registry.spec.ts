@@ -13,7 +13,6 @@ import { IEndpointRecord } from '../../src/services/registry/daos/interfaces/IQu
 import { fail } from 'assert';
 import e = require('express');
 import { RegistryFactory } from '../../src/services/registry/daos/postgres/RegistryFactory';
-import { IIdentifier } from 'i40-aas-objects';
 
 const { Pool } = require('pg');
 const _ = require('lodash');

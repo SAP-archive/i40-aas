@@ -28,17 +28,17 @@ export default [
       var endpointsAssignmentArray: IRegisterAas[] = req.body;
 
       //TODO: revise the array endpoints, the for loop should go to RegistryApi
-      await Promise.all(
-        endpointsAssignmentArray.map(async aas => {
-          try {
+      try {
+        await Promise.all(
+          endpointsAssignmentArray.map(async aas => {
             await registryApi.register(aas);
-          } catch (e) {
-            updateResponseForConflict(e, res);
-            res.end(e.message);
-            return;
-          }
-        })
-      );
+          })
+        );
+      } catch (e) {
+        updateResponseForConflict(e, res);
+        res.end(e.message);
+        return;
+      }
       console.log(
         'Now sending back response of /administrationshells POST request'
       );
@@ -54,19 +54,19 @@ export default [
       var rolesArray: ICreateRole[] = req.body;
       console.log('Received body:' + req.body);
       console.log('Body has ' + rolesArray.length + ' elements.');
-      await Promise.all(
-        rolesArray.map(async role => {
-          try {
+      try {
+        await Promise.all(
+          rolesArray.map(async role => {
             console.log('Handling role ' + role.roleId);
             await registryApi.createRole(role);
             console.log('Role ' + role.roleId + ' successfully created.');
-          } catch (e) {
-            console.log('There was an error creating roles');
-            res.end(e.message);
-            return;
-          }
-        })
-      );
+          })
+        );
+      } catch (e) {
+        console.log('There was an error creating roles');
+        res.end(e.message);
+        return;
+      }
       console.log('Now sending back response of /roles POST request');
       res.json(req.body);
     }
@@ -78,16 +78,16 @@ export default [
       console.log('/roleassignment POST request received');
       //console.log('try to create a role assignment to AAS');
       var assignmentArray: IAssignRoles[] = req.body;
-      await Promise.all(
-        assignmentArray.map(async assignment => {
-          try {
+      try {
+        await Promise.all(
+          assignmentArray.map(async assignment => {
             await registryApi.assignRolesToAAS(assignment);
-          } catch (e) {
-            res.end(e.message);
-            return;
-          }
-        })
-      );
+          })
+        );
+      } catch (e) {
+        res.end(e.message);
+        return;
+      }
       console.log('Now sending back response of /roleassignment POST request');
       res.json(req.body);
     }
