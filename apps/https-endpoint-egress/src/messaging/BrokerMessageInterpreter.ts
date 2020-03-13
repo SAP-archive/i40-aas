@@ -3,7 +3,7 @@ import { IMessageReceiver } from "./interfaces/IMessageReceiver";
 import { IInteractionMessage } from "i40-aas-objects";
 import { AmqpClient } from "./AMQPClient";
 import { IResolverMessage } from "./interfaces/IResolverMessage";
-import { AASConnector} from "./AASConnector";
+import { AASConnector } from "./AASConnector";
 import { WebClient } from "../WebClient/WebClient";
 import { logger } from "./../utils/log";
 
@@ -96,25 +96,19 @@ Decide what to do if the message can not be handled (eg. because receiver role i
         "[HTTP-Egress]: ReceiverURL is " + receiverURL
       );
 
-      let interactionMessageBase64 = resolverMessage.EgressPayload
-      let buff = Buffer.from(interactionMessageBase64, 'base64');
-      let interactionMessageString = JSON.stringify(JSON.parse(buff.toString('ascii')));
       //the interaction message should not be empty
+      //decode and parse the message received from the broker
+      //TODO: check how we can improve the decoding. Or place the decoding in th receive()
+      let interactionMessageString = JSON.parse(Buffer.from(resolverMessage.EgressPayload, 'base64').toString());
 
       if (!interactionMessageString) {
         this.handleUnactionableMessage(interactionMessageString, ["message.EgressPayload"]);
         return undefined;
       }
-
-      let b = Buffer.from(resolverMessage.EgressPayload, 'base64')
-      let json = JSON.parse(b.toString('ascii'));
-      logger.debug("OTHER CONVERTED: " + JSON.stringify(json));
-      logger.debug("SENDING: " + interactionMessageString)
-
       //POST the Interaction message to the Receiver AAS
       var AASResponse = await this.aasConn.sendInteractionReplyToAAS(receiverURL, interactionMessageString);
 
-      logger.info("[AAS Client]: Successfully posted message. AAS Response was:" + AASResponse);
+      logger.info(`[AAS Client]: Successfully posted message. AAS Response was: ${AASResponse.status}: ${AASResponse.statusText}`);
       //if ReceiverURL is missing
     } else {
       logger.error("[HTTP-Egress]: Error trying to read the ReceiverURL");
@@ -130,14 +124,9 @@ Decide what to do if the message can not be handled (eg. because receiver role i
 
     if (message) {
       //if validation successful, get the AAS receiver endpoint from AAS-registry service
-      logger.debug("HTTP-EGRESS: Received Msg " + JSON.stringify(message));
 
-      let b = Buffer.from(message.EgressPayload, 'base64')
-      let json = JSON.parse(b.toString('ascii'));
-      logger.debug("CONVERTED: " + JSON.stringify(json));
-
-      //logger.info("Received Msg params [" + message.EgressPayload.frame.sender.role.name + " , " + message.EgressPayload.frame.receiver.role.name + " , " + message.EgressPayload.frame.type + " , " + message.EgressPayload.frame.conversationId + "]");
-      await this.handleResolverMessage(message).catch(err => {logger.error("[AAS Client] Error posting to AAS Client : "+err)});
+      // logger.info("Received Msg [" + message.EgressPayload.frame.sender.role.name + " , " + message.EgressPayload.frame.receiver.role.name + " , " + message.EgressPayload.frame.type + " , " + message.EgressPayload.frame.conversationId + "]");
+      await this.handleResolverMessage(message).catch(err => { logger.error("[AAS Client] Error posting to AAS Client : " + err) });
 
     }
   }

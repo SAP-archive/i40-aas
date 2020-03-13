@@ -6,15 +6,15 @@ class WebClient {
 
   async postRequest<T>(
     baseUrl: string,
-    bo: any,
+    bo: string,
     urlSuffix?: string,
     username?: string,
     password?: string
   ): Promise<AxiosResponse<T>> {
     let url: string = baseUrl;
 
-    logger.debug(
-      "[AAS Client] Posting to " + url);
+   // logger.debug( "[AAS Client] Posting to " + url + " Message: "+ bo);
+    logger.debug( "[AAS Client] Posting to AAS " + url );
     //logger.debug(bo);
     var response;
     if (username && password) {
