@@ -5,7 +5,6 @@ import { IMessageDispatcher } from './IMessageDispatcher';
 
 import { ICommand } from '../../base/messaginginterface/ICommand';
 import { AxiosResponse } from 'axios';
-import { logger } from '../../log';
 
 class DeferredMessageDispatcher implements IMessageDispatcher {
   private commandCollector: CommandCollector = new CommandCollector();

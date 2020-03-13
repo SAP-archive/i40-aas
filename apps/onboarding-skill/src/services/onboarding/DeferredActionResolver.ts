@@ -25,8 +25,8 @@ class DeferredActionResolverFactory {
 
     retVal.commit = function() {
       let c: ICommand | undefined;
-      while ((c = this.commandCollector.pop()) !== undefined) {
-        this.interpret(c);
+      while ((c = retVal.commandCollector.pop()) !== undefined) {
+        retVal.interpret(c);
       }
     };
     return retVal;
