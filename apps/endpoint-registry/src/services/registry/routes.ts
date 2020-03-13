@@ -11,6 +11,14 @@ import { RegistryApi } from './RegistryApi';
 
 var registryApi = new RegistryApi();
 
+function updateResponseForConflict(error: any, res: Response) {
+  if (error.message.includes('duplicate key')) res.statusCode = 403;
+}
+
+//TODO: error prone error handling, not clear which statuses are sent back
+//need a better way to write a status code as soon as the error occurs
+//and send back any remaining exceptions as 500
+//Ideally send back response in one place, not so many places
 export default [
   {
     path: '/assetadministrationshells',
@@ -20,15 +28,17 @@ export default [
       var endpointsAssignmentArray: IRegisterAas[] = req.body;
 
       //TODO: revise the array endpoints, the for loop should go to RegistryApi
-      await Promise.all(
-        endpointsAssignmentArray.map(async aas => {
-          try {
+      try {
+        await Promise.all(
+          endpointsAssignmentArray.map(async aas => {
             await registryApi.register(aas);
-          } catch (e) {
-            res.end(e.message);
-          }
-        })
-      );
+          })
+        );
+      } catch (e) {
+        updateResponseForConflict(e, res);
+        res.end(e.message);
+        return;
+      }
       console.log(
         'Now sending back response of /administrationshells POST request'
       );
@@ -44,18 +54,19 @@ export default [
       var rolesArray: ICreateRole[] = req.body;
       console.log('Received body:' + req.body);
       console.log('Body has ' + rolesArray.length + ' elements.');
-      await Promise.all(
-        rolesArray.map(async role => {
-          try {
+      try {
+        await Promise.all(
+          rolesArray.map(async role => {
             console.log('Handling role ' + role.roleId);
             await registryApi.createRole(role);
             console.log('Role ' + role.roleId + ' successfully created.');
-          } catch (e) {
-            console.log('There was an error creating roles');
-            res.end(e.message);
-          }
-        })
-      );
+          })
+        );
+      } catch (e) {
+        console.log('There was an error creating roles');
+        res.end(e.message);
+        return;
+      }
       console.log('Now sending back response of /roles POST request');
       res.json(req.body);
     }
@@ -67,17 +78,16 @@ export default [
       console.log('/roleassignment POST request received');
       //console.log('try to create a role assignment to AAS');
       var assignmentArray: IAssignRoles[] = req.body;
-      await Promise.all(
-        assignmentArray.map(async assignment => {
-          try {
+      try {
+        await Promise.all(
+          assignmentArray.map(async assignment => {
             await registryApi.assignRolesToAAS(assignment);
-          } catch (e) {
-            //TODO: internal db exception messages should not be exposed to the client
-            //applied to all catch blocks
-            res.end(e.message);
-          }
-        })
-      );
+          })
+        );
+      } catch (e) {
+        res.end(e.message);
+        return;
+      }
       console.log('Now sending back response of /roleassignment POST request');
       res.json(req.body);
     }
@@ -109,7 +119,6 @@ export default [
         res.json(await registryApi.createAsset(asset));
         console.log('Sent back response of /asset POST request');
       } catch (e) {
-        //TODO: which status code is sent back, make consistent with others
         res.end(e.message);
       }
     }

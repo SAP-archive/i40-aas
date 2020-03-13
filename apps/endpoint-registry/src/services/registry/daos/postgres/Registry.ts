@@ -58,7 +58,7 @@ class Registry implements iRegistry {
       await this.client.query('BEGIN');
       //TODO: if error handling change, we can use createAsset here
       const insertAssetResult = await this.client.query(
-        ' INSERT INTO public.assets( "assetId", "idType") VALUES ($1, $2);',
+        ' INSERT INTO public.assets( "assetId", "idType") VALUES ($1, $2) ON CONFLICT DO NOTHING;',
         [record.assetId.id, record.assetId.idType]
       );
       const insertAasResult = await this.client.query(

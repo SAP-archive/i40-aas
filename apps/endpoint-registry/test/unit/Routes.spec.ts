@@ -56,7 +56,7 @@ describe('routes', function() {
           setTimeout(() => {
             callCounter();
             return resolve(<IRegistryResultSet>{});
-          }, 100);
+          }, 50);
         })
     );
     registryApi = new RegistryApi();
