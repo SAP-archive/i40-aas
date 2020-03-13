@@ -14,12 +14,12 @@ SVC_PREFIX = sapi40/i40-aas-
 ## build all images (in parallel) using the docker-compose.dev.yml file
 ## uses cache
 build:
-	TAG=latest docker-compose -f docker-compose.dev.yml build --parallel
+	DOCKER_BUILDKIT=1 COMPOSE_DOCKER_CLI_BUILD=1 TAG=latest docker-compose -f docker-compose.dev.yml build --parallel
 
 ## build all images (in parallel) using the docker-compose.dev.yml file
 ## skips cache
 no-cache:
-	TAG=latest docker-compose -f docker-compose.dev.yml build --no-cache --parallel
+	DOCKER_BUILDKIT=1 COMPOSE_DOCKER_CLI_BUILD=1 TAG=latest docker-compose -f docker-compose.dev.yml build --no-cache --parallel
 
 ## removes everything created by docker-compose and prunes everything in docker
 ## (!!) this includes all your work with docker, not just stuff
