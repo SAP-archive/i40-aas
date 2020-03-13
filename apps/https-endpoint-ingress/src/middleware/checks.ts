@@ -10,7 +10,7 @@ export const validateInteractionFrame = (
   res: Response,
   next: NextFunction
 ) => {
-    logger.debug("RECEIVED Message: " + req.body)
+    //logger.debug("RECEIVED Message: " + req.body)
 
     try {
       let interactionReq:IInteractionMessage = new InteractionMessage(req.body);

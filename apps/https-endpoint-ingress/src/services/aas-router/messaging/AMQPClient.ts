@@ -186,7 +186,7 @@ class AmqpClient implements IMessageBrokerClient {
         routingKey,
         Buffer.from(msg)
       );
-
+      /*
       logger.debug(
         "amqp client sent to exchange " +
         this.brokerExchange +
@@ -196,7 +196,7 @@ class AmqpClient implements IMessageBrokerClient {
         msg +
         "'"
       );
-
+*/
     } catch (error) {
       logger.error(
         "Error publishing, connection open but channel not ready (yet):"
