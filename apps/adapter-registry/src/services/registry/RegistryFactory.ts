@@ -14,5 +14,6 @@ class RegistryFactory {
 
     return new Registry(storage);
   }
+  
 }
 export { RegistryFactory };

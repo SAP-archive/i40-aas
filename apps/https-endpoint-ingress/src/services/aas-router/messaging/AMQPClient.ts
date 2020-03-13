@@ -31,24 +31,24 @@ class AmqpClient implements IMessageBrokerClient {
   public static MQTT_EXCHANGE = "amq.topic";
   public useMqtt = false;
   private destroyed: boolean = false;
-  private  ampqUrl:string;
+  private ampqUrl: string;
 
   //private subscription: Subscription | undefined;
 
   constructor(
     private brokerHost: string,
     private brokerPort: string,
-        private brokerExchange: string,
+    private brokerExchange: string,
     private brokerUser: string,
     private brokerPass: string,
     private reconnectAfterMilliSecs?: number
   ) {
-    this.ampqUrl = "amqp://"+brokerHost+":"+brokerPort ,
+    this.ampqUrl = "amqp://" + brokerHost + ":" + brokerPort,
 
-    this.start = Date.now();
+      this.start = Date.now();
     logger.debug("AmpqClient created");
     let that = this;
-    process.on("SIGINT", function() {
+    process.on("SIGINT", function () {
       that.cleanup();
     });
   }
@@ -81,13 +81,13 @@ class AmqpClient implements IMessageBrokerClient {
     logger.debug("Connecting to " + url);
     var that = this;
     try {
-      this.connectToBroker(url, opt, async function(err, conn: Connection) {
+      this.connectToBroker(url, opt, async function (err, conn: Connection) {
         if (err) {
           logger.error("[AMQP] Error:" + err.message);
           logger.info("Waiting to reconnect");
           let timeout: number;
           if (that.reconnectAfterMilliSecs)
-                    timeout = that.reconnectAfterMilliSecs;
+            timeout = that.reconnectAfterMilliSecs;
           else timeout = 6000;
           await AmqpClient.sleep(timeout);
           logger.info("reconnecting. Call count:" + that.retryCounter++);
@@ -98,22 +98,22 @@ class AmqpClient implements IMessageBrokerClient {
         logger.info("[AMQP] definitely connected");
         that.myConn.connection = conn;
         that.myConn.connectionClosed = false;
-        conn.on("close", async function() {
+        conn.on("close", async function () {
           if (that.destroyed) return;
           logger.error(
-                    "[AMQP] connection lost, reconnecting. Time:" +
-                    (Date.now() - that.start)
+            "[AMQP] connection lost, reconnecting. Time:" +
+            (Date.now() - that.start)
           );
           that.myConn.connectionClosed = true;
           that.connectAndDoSubscription(() => {
-                    that.setupPublishing(() =>
-                    logger.info(
-                    "Successfully connected after drop count:" +
-                    ++that.successCounter +
-                    ". Time:" +
-                    (Date.now() - that.start)
-                    )
-                    );
+            that.setupPublishing(() =>
+              logger.info(
+                "Successfully connected after drop count:" +
+                ++that.successCounter +
+                ". Time:" +
+                (Date.now() - that.start)
+              )
+            );
           });
         });
         //}
@@ -127,7 +127,7 @@ class AmqpClient implements IMessageBrokerClient {
   //==1.connect and 2.subscribe
   private connectAndDoSubscription(cb?: () => void) {
     if (this.myConn.connection == undefined || this.myConn.connectionClosed) {
-      this.connect(() => {});
+      this.connect(() => { });
     } else {
     }
   }
@@ -142,7 +142,7 @@ class AmqpClient implements IMessageBrokerClient {
         );
       }
       logger.debug("Creating channel");
-      that.myConn.connection.createChannel(function(err: any, ch: Channel) {
+      that.myConn.connection.createChannel(function (err: any, ch: Channel) {
         if (err) {
           logger.error("Error thrown:" + err.message);
           return;
@@ -186,15 +186,17 @@ class AmqpClient implements IMessageBrokerClient {
         routingKey,
         Buffer.from(msg)
       );
+
       logger.debug(
         "amqp client sent to exchange " +
-          this.brokerExchange +
-          " with topic " +
-          routingKey +
-          " the following message'" +
-          msg +
-          "'"
+        this.brokerExchange +
+        " with topic " +
+        routingKey +
+        " the following message'" +
+        msg +
+        "'"
       );
+
     } catch (error) {
       logger.error(
         "Error publishing, connection open but channel not ready (yet):"
