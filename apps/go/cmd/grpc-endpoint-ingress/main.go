@@ -1,23 +1,34 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"os/signal"
 	"strconv"
-	"strings"
 	"syscall"
-	"time"
 
 	"github.com/joho/godotenv"
-	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
-	"../../pkg/amqpclient"
-	"../../pkg/grpcendpoint"
+	"github.com/SAP/i40-aas/src/go/pkg/amqpclient"
+	"github.com/SAP/i40-aas/src/go/pkg/logging"
 )
 
 func main() {
+	var err error
+
+	output := os.Getenv("LOG_OUTPUT")
+	if output == "" {
+		output = "CONSOLE"
+	}
+	level := os.Getenv("LOG_LEVEL")
+	if level == "" {
+		level = "DEBUG"
+	}
+	log.Logger, err = logging.SetupLogging(output, level)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to configure global logger")
+	}
+
 	if os.Getenv("HOME") != "/home/aasuser" {
 		err := godotenv.Load(".env")
 		if err == nil {
@@ -25,41 +36,15 @@ func main() {
 		}
 	}
 
-	// Configure logging TimeField and line numbers
-	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
-	log.Logger = log.With().Caller().Logger()
-
-	if os.Getenv("LOG_OUTPUT") == "CONSOLE" {
-		output := zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339}
-		output.FormatMessage = func(i interface{}) string {
-			return fmt.Sprintf("%s", i)
-		}
-		output.FormatFieldName = func(i interface{}) string {
-			return fmt.Sprintf("%s:", i)
-		}
-		output.FormatFieldValue = func(i interface{}) string {
-			return strings.ToUpper(fmt.Sprintf("%s", i))
-		}
-
-		log.Logger = log.Output(output)
-	}
-
-	if os.Getenv("LOG_LEVEL") == "DEBUG" {
-		log.Debug().Msg("LOG_LEVEL has been set to DEBUG")
-		zerolog.SetGlobalLevel(zerolog.DebugLevel)
-	} else {
-		zerolog.SetGlobalLevel(zerolog.InfoLevel)
-	}
-
 	var (
-		AMQPCfg        amqpclient.Config
-		GRPCSrvCfg     grpcendpoint.GRPCServerConfig
-		GRPCIngressCfg grpcendpoint.GRPCIngressConfig
-		GRPCIngress    grpcendpoint.GRPCIngress
+		amqpCfg    *amqpclient.Config
+		grpcSrvCfg *GRPCServerConfig
+		ingressCfg *GRPCIngressConfig
+		ingress    *GRPCIngress
 	)
 
 	amqpPort, _ := strconv.Atoi(os.Getenv("RABBITMQ_PORT"))
-	AMQPCfg = amqpclient.Config{
+	amqpCfg = &amqpclient.Config{
 		Host:     os.Getenv("RABBITMQ_HOST"),
 		Port:     amqpPort,
 		User:     os.Getenv("RABBITMQ_INGRESS_USER"),
@@ -68,20 +53,28 @@ func main() {
 	}
 
 	grpcPort, _ := strconv.Atoi(os.Getenv("GRPC_ENDPOINT_INGRESS_PORT"))
-	GRPCSrvCfg = grpcendpoint.GRPCServerConfig{
+	grpcSrvCfg = &GRPCServerConfig{
 		Port: grpcPort,
 		Cert: "",
 		Key:  "",
 	}
 
-	GRPCIngressCfg = grpcendpoint.GRPCIngressConfig{
-		AMQPConfig: AMQPCfg,
-		GRPCConfig: GRPCSrvCfg,
+	ingressCfg = &GRPCIngressConfig{
+		AMQPConfig:    amqpCfg,
+		GRPCSrvConfig: grpcSrvCfg,
 	}
 
-	GRPCIngress = grpcendpoint.NewGRPCIngress(GRPCIngressCfg)
+	ingress, err = NewGRPCIngress(ingressCfg)
+	if err != nil {
+		log.Error().Err(err).Msgf("failed to construct new GRPCIngress")
+		os.Exit(1)
+	}
 
-	GRPCIngress.Init()
+	err = ingress.Init()
+	if err != nil {
+		log.Error().Err(err).Msgf("failed to initialize GRPCIngress")
+		os.Exit(1)
+	}
 
 	interruptChan := make(chan os.Signal, 1)
 	signal.Notify(interruptChan, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
@@ -89,6 +82,11 @@ func main() {
 	// Block until we receive our signal.
 	<-interruptChan
 
-	GRPCIngress.Shutdown()
+	err = ingress.Shutdown()
+	if err != nil {
+		log.Error().Err(err).Msgf("unable to shut down gracefully")
+		os.Exit(1)
+	}
+	log.Debug().Msg("shut down gracefully")
 	os.Exit(0)
 }

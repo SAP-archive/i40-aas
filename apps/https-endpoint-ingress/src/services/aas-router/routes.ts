@@ -17,7 +17,7 @@ export default [
 
         try {
           //TODO: consider if we need confirmation of publishing the request to broker
-
+          let topicPrefix = "ingress";
           let interactionReq: IInteractionMessage = new InteractionMessage(req.body);
           let semanticProtocol = interactionReq.frame.semanticProtocol;
           let receiverRole: string = interactionReq.frame.receiver.role.name;
@@ -29,6 +29,7 @@ export default [
           * */
 
           let topicName = new BrokerInteractionTopic(
+                    topicPrefix,
                     semanticProtocol,
                     receiverRole,
                     type

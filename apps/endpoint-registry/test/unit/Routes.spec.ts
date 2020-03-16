@@ -43,10 +43,6 @@ function makeDummyRole(tag: string) {
   };
 }
 
-function wait(ms: number) {
-  return new Promise(res => setTimeout(res, ms));
-}
-
 describe('routes', function() {
   var registryRoutes: any;
   var handlerMap: any = {};
@@ -60,7 +56,7 @@ describe('routes', function() {
           setTimeout(() => {
             callCounter();
             return resolve(<IRegistryResultSet>{});
-          }, 100);
+          }, 50);
         })
     );
     registryApi = new RegistryApi();

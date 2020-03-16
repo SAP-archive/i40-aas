@@ -1,27 +1,31 @@
-FROM node:lts-alpine as ts-builder
+FROM node:lts-alpine as builder
 
-WORKDIR /service
+WORKDIR /wdir
 
-# Install required modules from package.json first to avoid frequent reinstallation
-COPY package.json /service
+## copy package.json first and proceed to install dependencies to leverage caching as much as possible
+##   1. install production dependencies and create a copy of node_modules to be reused in prod stage below
+##   2. install dev dependencies
+COPY package.json /wdir
+RUN npm install --production \
+    && mkdir /production-dependencies/ \
+    && cp -R node_modules /production-dependencies/
 RUN npm install
 
 # Add & compile sourcecode
-COPY . /service
+COPY . /wdir
 RUN npm run clean \
     && npm run build
 
 ###################################
-FROM node:lts-alpine
+FROM node:lts-alpine as prod
 
 RUN adduser -D aasuser
 
-WORKDIR /service
+WORKDIR /wdir
 
-COPY --from=ts-builder /service/dist /service/dist
-COPY package.json /service
-
-RUN npm install --production
+COPY --from=builder /wdir/dist /wdir/dist
+COPY --from=builder /production-dependencies/node_modules /wdir/node_modules
+COPY package.json /wdir
 
 USER aasuser
 EXPOSE 2000

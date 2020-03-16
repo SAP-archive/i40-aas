@@ -2,6 +2,7 @@ For internal communication between the parts within the AAS Service we mainly us
 
 We deciced for AMQP (v0.9.1) as our messaging protocol and deploy the open source [RabbitMQ](https://www.rabbitmq.com/) to handle the messaging.  
 
+
 ## Message Flow 
 
 (For an introduction about RabbitMQ exchanges and queues, routing keys and bindings see for instance [this blog](https://www.cloudamqp.com/blog/2015-09-03-part4-rabbitmq-for-beginners-exchanges-routing-keys-bindings.html))

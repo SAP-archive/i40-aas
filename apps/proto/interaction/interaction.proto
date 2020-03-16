@@ -12,13 +12,13 @@ service InteractionIngress {
 }
 
 message InteractionStatus {
-  InteractionStatusCode Code = 1;
+  InteractionStatusCode code = 1;
 }
 
 enum InteractionStatusCode {
-  Unknown = 0;
-  Ok = 1;
-  Failed = 2;
+  UNKNOWN = 0;
+  OK = 200;
+  FAILED = 500;
 }
 
 message InteractionMessage {

@@ -1,34 +1,38 @@
-FROM node:lts-alpine as ts-builder
+FROM node:lts-alpine as builder
 
-WORKDIR /registry
+WORKDIR /wdir
 
-# Install required modules from package.json first to avoid frequent reinstallation
-COPY package.json /registry
+## copy package.json first and proceed to install dependencies to leverage caching as much as possible
+##   1. install production dependencies and create a copy of node_modules to be reused in prod stage below
+##   2. install dev dependencies
+COPY package.json /wdir
+RUN npm install --production \
+    && mkdir /production-dependencies/ \
+    && cp -R node_modules /production-dependencies/
 RUN npm install
 
 # Add & compile sourcecode
-COPY . /registry
+COPY . /wdir
 RUN npm run clean \
     && npm run build
 
 ###################################
-FROM node:lts-alpine
+FROM node:lts-alpine as prod
 
-RUN apk update && apk upgrade && \	
-    apk add --no-cache bash postgresql postgresql-contrib netcat-openbsd
+RUN apk update && apk upgrade \
+    && apk add --no-cache bash postgresql postgresql-contrib netcat-openbsd
 
 RUN adduser -D aasuser
 
-WORKDIR /registry
+WORKDIR /wdir
 
-COPY --from=ts-builder /registry/dist /registry/dist
-COPY package.json /registry
+COPY --from=builder /wdir/dist /wdir/dist
+COPY --from=builder /production-dependencies/node_modules /wdir/node_modules
+COPY package.json /wdir
 
-COPY start.sh /registry
-COPY prepareDB.sh /registry
-COPY sql/* /registry/sql/
-
-RUN npm install --production
+COPY start.sh /wdir
+COPY prepareDB.sh /wdir
+COPY sql/* /wdir/sql/
 
 USER aasuser
 EXPOSE 4400

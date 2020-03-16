@@ -3,7 +3,12 @@ require('dotenv').config({ path: 'test/env.list' });
 import { expect } from 'chai';
 
 import { RegistryApi } from '../../src/services/registry/RegistryApi';
-import { IRegisterAas } from '../../src/services/registry/daos/interfaces/IApiRequests';
+import {
+  IRegisterAas,
+  ICreateAsset,
+  ICreateSemanticProtocol,
+  IAssignRoles
+} from '../../src/services/registry/daos/interfaces/IApiRequests';
 import { IEndpointRecord } from '../../src/services/registry/daos/interfaces/IQueryResults';
 import { fail } from 'assert';
 import e = require('express');
@@ -27,7 +32,7 @@ function execShellCommand(cmd: any) {
   });
 }
 
-function makeDummyAASForRegistry(tag: string) {
+function makeDummyAAS(tag: string) {
   return <IRegisterAas>{
     aasId: {
       id: 'aasId' + tag,
@@ -40,6 +45,31 @@ function makeDummyAASForRegistry(tag: string) {
       id: 'assetId' + tag,
       idType: 'IRI'
     }
+  };
+}
+
+function makeDummyAsset(tag: string): ICreateAsset {
+  return {
+    assetId: {
+      id: 'assetId' + tag,
+      idType: 'IRI'
+    }
+  };
+}
+
+function makeDummySemanticProtocol(tag: string): ICreateSemanticProtocol {
+  return {
+    semanticProtocol: 'semanticProtocol' + tag
+  };
+}
+
+function makeDummyRoleAssignment(tag: string): IAssignRoles {
+  return {
+    aasId: {
+      id: 'aasId' + tag,
+      idType: 'IRI'
+    },
+    roleId: 'roleId' + tag
   };
 }
 
@@ -65,6 +95,7 @@ async function insertIntoRoles(roleId: string, protocolId: string) {
       [roleId, protocolId]
     );
   } catch (error) {
+    console.log(error.message);
     throw e;
   } finally {
     dbClient.release();
@@ -239,9 +270,77 @@ describe('Tests with a simple data model', function() {
     expect(x[0].endpoints[0]).to.have.property('target', 'cloud');
   });
 
+  it('creates an asset correctly', async function() {
+    var uniqueTestId = 'createAsset';
+    var createAssetJson: ICreateAsset = makeDummyAsset(uniqueTestId);
+    await new RegistryApi().createAsset(createAssetJson);
+    var s = 'SELECT  * FROM  public.assets WHERE "assetId" = $1;';
+    const dbClient = await pool.connect();
+    try {
+      const resultOfAssetQuery = await dbClient.query(s, [
+        'assetId' + uniqueTestId
+      ]);
+      expect(resultOfAssetQuery.rows.length == 1);
+    } catch (error) {
+      fail('Exception thrown');
+    } finally {
+      dbClient.release();
+    }
+  });
+
+  it('creates a semantic protocol correctly', async function() {
+    var uniqueTestId = 'createSemanticProtocol';
+    var createSemanticProtocolJson: ICreateSemanticProtocol = makeDummySemanticProtocol(
+      uniqueTestId
+    );
+    await new RegistryApi().createSemanticProtocol(createSemanticProtocolJson);
+    var s =
+      'SELECT  * FROM  public.semantic_protocols WHERE "protocolId" = $1;';
+    const dbClient = await pool.connect();
+    try {
+      const resultOfAssetQuery = await dbClient.query(s, [
+        'semanticProtocol' + uniqueTestId
+      ]);
+      expect(resultOfAssetQuery.rows.length == 1);
+    } catch (error) {
+      fail('Exception thrown');
+    } finally {
+      dbClient.release();
+    }
+  });
+
+  it('assigns roles correctly', async function() {
+    var uniqueTestId = 'assignRoles';
+    var roleAssignmentJson: IAssignRoles = makeDummyRoleAssignment(
+      uniqueTestId
+    );
+    await insertIntoSemanticProtocols('protocolId' + uniqueTestId);
+    await insertIntoRoles('roleId' + uniqueTestId, 'protocolId' + uniqueTestId);
+    await insertIntoAssets('assetId' + uniqueTestId, 'IRI');
+    await insertIntoAssetAdministrationShells(
+      'aasId' + uniqueTestId,
+      'idType' + uniqueTestId,
+      'assetId' + uniqueTestId
+    );
+    await new RegistryApi().assignRolesToAAS(roleAssignmentJson);
+
+    const dbClient = await pool.connect();
+    try {
+      const resultOfAssetQuery = await dbClient.query(
+        'SELECT  * FROM  public.aas_role WHERE "aasId" = $1 AND "roleId" = $2;',
+        [roleAssignmentJson.aasId.id, roleAssignmentJson.roleId]
+      );
+      expect(resultOfAssetQuery.rows.length == 1);
+    } catch (error) {
+      fail('Exception thrown:' + error.message);
+    } finally {
+      dbClient.release();
+    }
+  });
+
   it('registers AASs correctly', async function() {
     var uniqueTestId = 'registerAas';
-    var registerJson: IRegisterAas = makeDummyAASForRegistry(uniqueTestId);
+    var registerJson: IRegisterAas = makeDummyAAS(uniqueTestId);
     await new RegistryApi().register(registerJson);
     var s = `SELECT  * FROM  public.endpoints`;
     const dbClient = await pool.connect();
@@ -267,6 +366,55 @@ describe('Tests with a simple data model', function() {
     }
   });
 
+  it('removes all traces of an AAS on deleteAasByAasId', async function() {
+    var uniqueTestId = 'deleteAasByAasId';
+    var registerJson: IRegisterAas = makeDummyAAS(uniqueTestId);
+    var registryApi = new RegistryApi();
+    await registryApi.register(registerJson);
+    const dbClient = await pool.connect();
+    try {
+      const resultOfAssetQuery = await dbClient.query(
+        `SELECT  * FROM  public.asset_administration_shells WHERE "aasId"=$1`,
+        [registerJson.aasId.id]
+      );
+
+      expect(resultOfAssetQuery.rows.length == 1).to.be.true;
+
+      await registryApi.deleteRecordByIdentifier(registerJson.aasId);
+
+      const resultOfAssetQueryPostDelete = await dbClient.query(
+        'SELECT  * FROM  public.assets WHERE "assetId" = $1;',
+        [registerJson.assetId.id]
+      );
+      //asset should not be deleted
+      expect(resultOfAssetQueryPostDelete.rows.length == 1).to.be.true;
+      const resultOfAasQueryPostDelete = await dbClient.query(
+        'SELECT  * FROM  public.asset_administration_shells WHERE "aasId" = $1;',
+        [registerJson.aasId.id]
+      );
+      //asset administration shell should  be deleted
+      expect(resultOfAasQueryPostDelete.rows.length == 0).to.be.true;
+
+      const resultOfEndpointsQueryPostDelete = await dbClient.query(
+        'SELECT  * FROM  public.endpoints WHERE "aasId" = $1;',
+        [registerJson.aasId.id]
+      );
+      //endpoints should be deleted
+      expect(resultOfEndpointsQueryPostDelete.rows.length == 0).to.be.true;
+
+      const resultOfRoleAssignmentQueryPostDelete = await dbClient.query(
+        'SELECT  * FROM  public.aas_role WHERE "aasId" = $1;',
+        [registerJson.aasId.id]
+      );
+      //role assignments should be deleted
+      expect(resultOfRoleAssignmentQueryPostDelete.rows.length == 0).to.be.true;
+    } catch (error) {
+      fail('Exception thrown:' + error.message);
+    } finally {
+      dbClient.release();
+    }
+  });
+
   it('rolls back if there is an error when registering', async function() {
     var uniqueTestId = 'registerAasWithProblem';
 
@@ -282,7 +430,7 @@ describe('Tests with a simple data model', function() {
     //with 'x' at then end. But writing to asset_administration_shells
     //should fail because it has PK aasId = 'aasId' + uniqueTestId
 
-    var registerJson: IRegisterAas = makeDummyAASForRegistry(uniqueTestId);
+    var registerJson: IRegisterAas = makeDummyAAS(uniqueTestId);
     try {
       await new RegistryApi().register(registerJson);
     } catch (error) {
@@ -313,5 +461,38 @@ describe('Tests with a simple data model', function() {
       }
     }
     fail('This test should have resulted in a duplicate key exception');
+  });
+
+  it('should be possible to register a new aas on an existing asset', async function() {
+    var uniqueTestId = 'registerAasWithExistingAsset';
+
+    //existing asset
+    await insertIntoAssets('assetId' + uniqueTestId, 'IRI');
+
+    var registerJson: IRegisterAas = makeDummyAAS(uniqueTestId);
+    await new RegistryApi().register(registerJson);
+    const dbClient = await pool.connect();
+    try {
+      const resultOfQuery = await dbClient.query(
+        `SELECT  * FROM  public.endpoints`
+      );
+      const queryResultRows: Array<IEndpointRecord> = resultOfQuery.rows;
+      expect(
+        _.some(
+          queryResultRows,
+          (e: IEndpointRecord) => e.aasId == 'aasId' + uniqueTestId
+        )
+      ).to.be.true;
+      expect(
+        _.some(
+          queryResultRows,
+          (e: IEndpointRecord) => e.protocol_name == 'protocol' + uniqueTestId
+        )
+      ).to.be.true;
+    } catch (error) {
+      fail('Exception thrown');
+    } finally {
+      dbClient.release();
+    }
   });
 });
