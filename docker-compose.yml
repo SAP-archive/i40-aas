@@ -42,7 +42,7 @@ services:
   i40-aas-https-endpoint-ingress:
     image: sapi40/i40-aas-https-endpoint-ingress
     ports:
-      - "2000:2000"
+      - "${CORE_INGRESS_HTTP_PORT}:${CORE_INGRESS_HTTP_PORT}"
     environment:
       ## logging
       - LOG_LEVEL=${LOG_LEVEL}
@@ -87,66 +87,52 @@ services:
   i40-aas-grpc-endpoint-ingress:
     image: sapi40/i40-aas-grpc-endpoint-ingress
     ports:
-      - "8384:8384"
-    volumes:
-      - .compose/volumes/grpc-endpoint-ingress:/grpc-endpoint-ingress
+      - "${CORE_INGRESS_GRPC_PORT}:${CORE_INGRESS_GRPC_PORT}"
     environment:
-      ## logging
-      - LOG_LEVEL=${LOG_LEVEL}
-      - LOG_OUTPUT=${LOG_OUTPUT}
-      ## rabbitmq
-      - RABBITMQ_HOST=${RABBITMQ_HOST}
-      - RABBITMQ_PORT=${RABBITMQ_PORT}
-      - RABBITMQ_INGRESS_USER=${RABBITMQ_INGRESS_USER}
-      - RABBITMQ_INGRESS_PASSWORD=${RABBITMQ_INGRESS_PASSWORD}
-      - RABBITMQ_INGRESS_EXCHANGE=${RABBITMQ_INGRESS_EXCHANGE}
-      ## grpc-endpoint-ingress
-      - GRPC_ENDPOINT_INGRESS_PORT=${GRPC_ENDPOINT_INGRESS_PORT}
-  # ##########################################
+      - LOGGING_LOGLEVEL=${LOGGING_LOGLEVEL}
+      - LOGGING_LOGOUTPUT=${LOGGING_LOGOUTPUT}
+      - CORE_BROKER_HOST=rabbitmq
+      - CORE_BROKER_PORT=${CORE_BROKER_PORT}
+      - CORE_INGRESS_USER=${CORE_INGRESS_USER}
+      - CORE_INGRESS_PASSWORD=${CORE_INGRESS_PASSWORD}
+      - CORE_INGRESS_EXCHANGE=${CORE_INGRESS_EXCHANGE}
+      - CORE_INGRESS_GRPC_PORT=${CORE_INGRESS_GRPC_PORT}
+  ##########################################
   i40-aas-grpc-endpoint-egress:
     image: sapi40/i40-aas-grpc-endpoint-egress
-    volumes:
-      - .compose/volumes/grpc-endpoint-egress:/grpc-endpoint-egress
     environment:
-      ## logging
-      - LOG_LEVEL=${LOG_LEVEL}
-      - LOG_OUTPUT=${LOG_OUTPUT}
-      ## rabbitmq
-      - RABBITMQ_HOST=${RABBITMQ_HOST}
-      - RABBITMQ_PORT=${RABBITMQ_PORT}
-      - RABBITMQ_EGRESS_USER=${RABBITMQ_EGRESS_USER}
-      - RABBITMQ_EGRESS_PASSWORD=${RABBITMQ_EGRESS_PASSWORD}
-      - RABBITMQ_EGRESS_EXCHANGE=${RABBITMQ_EGRESS_EXCHANGE}
-      ## grpc-endpoint-egress
-      - GRPC_ENDPOINT_EGRESS_AMQP_QUEUE=${GRPC_ENDPOINT_EGRESS_AMQP_QUEUE}
-      - GRPC_ENDPOINT_EGRESS_AMQP_CTAG=${GRPC_ENDPOINT_EGRESS_AMQP_CTAG}
-  # ##########################################
+      - LOGGING_LOGLEVEL=${LOGGING_LOGLEVEL}
+      - LOGGING_LOGOUTPUT=${LOGGING_LOGOUTPUT}
+      - CORE_BROKER_HOST=rabbitmq
+      - CORE_BROKER_PORT=${CORE_BROKER_PORT}
+      - CORE_EGRESS_USER=${CORE_EGRESS_USER}
+      - CORE_EGRESS_PASSWORD=${CORE_EGRESS_PASSWORD}
+      - CORE_EGRESS_EXCHANGE=${CORE_EGRESS_EXCHANGE}
+      - CORE_EGRESS_GRPC_QUEUE=${CORE_EGRESS_GRPC_QUEUE}
+      - CORE_EGRESS_GRPC_CTAG=${CORE_EGRESS_GRPC_CTAG}
+  ##########################################
   i40-aas-endpoint-resolver:
     image: sapi40/i40-aas-endpoint-resolver
     environment:
-      ## logging
-      - LOG_LEVEL=${LOG_LEVEL}
-      - LOG_OUTPUT=${LOG_OUTPUT}
-      ## rabbitmq
-      - RABBITMQ_HOST=${RABBITMQ_HOST}
-      - RABBITMQ_PORT=${RABBITMQ_PORT}
-      - RABBITMQ_EGRESS_USER=${RABBITMQ_EGRESS_USER}
-      - RABBITMQ_EGRESS_PASSWORD=${RABBITMQ_EGRESS_PASSWORD}
-      - RABBITMQ_EGRESS_EXCHANGE=${RABBITMQ_EGRESS_EXCHANGE}
-      ## endpoint-resolver
-      - ENDPOINT_RESOLVER_AMQP_QUEUE=${ENDPOINT_RESOLVER_AMQP_QUEUE}
-      ## endpoint-registry
-      - ENDPOINT_REGISTRY_PROTOCOL=${ENDPOINT_REGISTRY_PROTOCOL}
-      - ENDPOINT_REGISTRY_HOST=${ENDPOINT_REGISTRY_HOST}
-      - ENDPOINT_REGISTRY_PORT=${ENDPOINT_REGISTRY_PORT}
-      - ENDPOINT_REGISTRY_URL_SUFFIX=${ENDPOINT_REGISTRY_URL_SUFFIX}
-      - ENDPOINT_REGISTRY_ADMIN_USER=${ENDPOINT_REGISTRY_ADMIN_USER}
-      - ENDPOINT_REGISTRY_ADMIN_PASSWORD=${ENDPOINT_REGISTRY_ADMIN_PASSWORD}
+      - LOGGING_LOGLEVEL=${LOGGING_LOGLEVEL}
+      - LOGGING_LOGOUTPUT=${LOGGING_LOGOUTPUT}
+      - CORE_BROKER_HOST=rabbitmq
+      - CORE_BROKER_PORT=${CORE_BROKER_PORT}
+      - CORE_EGRESS_USER=${CORE_EGRESS_USER}
+      - CORE_EGRESS_PASSWORD=${CORE_EGRESS_PASSWORD}
+      - CORE_EGRESS_EXCHANGE=${CORE_EGRESS_EXCHANGE}
+      - CORE_ENDPOINT_RESOLVER_CTAG=${CORE_ENDPOINT_RESOLVER_CTAG}
+      - CORE_ENDPOINT_RESOLVER_QUEUE=${CORE_ENDPOINT_RESOLVER_QUEUE}
+      - CORE_REGISTRIES_ENDPOINTS_HOST=i40-aas-endpoint-registry
+      - CORE_REGISTRIES_ENDPOINTS_PORT=${CORE_REGISTRIES_ENDPOINTS_PORT}
+      - CORE_REGISTRIES_ENDPOINTS_URL_SUFFIX=${CORE_REGISTRIES_ENDPOINTS_URL_SUFFIX}
+      - CORE_REGISTRIES_ENDPOINTS_USER=${CORE_REGISTRIES_ENDPOINTS_USER}
+      - CORE_REGISTRIES_ENDPOINTS_PASSWORD=${CORE_REGISTRIES_ENDPOINTS_PASSWORD}
   ##########################################
   i40-aas-data-manager:
     image: sapi40/i40-aas-data-manager
     ports:
-      - "4000:4000"
+      - "${CORE_DATA_MANAGER_PORT}:${CORE_DATA_MANAGER_PORT}"
     environment:
       ## logging
       - LOG_LEVEL=${LOG_LEVEL}
@@ -169,7 +155,7 @@ services:
   i40-aas-endpoint-registry:
     image: sapi40/i40-aas-endpoint-registry
     ports:
-      - "4400:4400"
+      - "${CORE_REGISTRIES_ENDPOINTS_PORT}:${CORE_REGISTRIES_ENDPOINTS_PORT}"
     environment:
       ## logging
       - LOG_LEVEL=${LOG_LEVEL}
@@ -191,7 +177,7 @@ services:
   i40-aas-adapter-registry:
     image: sapi40/i40-aas-adapter-registry
     ports:
-      - "4500:4500"
+      - "${CORE_REGISTRIES_ADAPTERS_PORT}:${CORE_REGISTRIES_ADAPTERS_PORT}"
     environment:
       ## logging
       - LOG_LEVEL=${LOG_LEVEL}
@@ -207,7 +193,7 @@ services:
   i40-aas-storage-adapter-mongodb:
     image: sapi40/i40-aas-storage-adapter-mongodb
     ports:
-      - "3100:3100"
+      - "${APPLICATION_ADAPTERS_MONGODB_PORT}:${APPLICATION_ADAPTERS_MONGODB_PORT}"
     environment:
       ## logging
       - LOG_LEVEL=${LOG_LEVEL}
@@ -227,45 +213,37 @@ services:
     volumes:
       - .compose/volumes/initializer/:/initializer
     environment:
-      ## logging
-      - LOG_LEVEL=${LOG_LEVEL}
-      - LOG_OUTPUT=${LOG_OUTPUT}
-      ## postgres
-      - ENDPOINT_REGISTRY_POSTGRES_HOST=${ENDPOINT_REGISTRY_POSTGRES_HOST}
-      - ENDPOINT_REGISTRY_POSTGRES_PORT=${ENDPOINT_REGISTRY_POSTGRES_PORT}
-      ## rabbitmq
-      - RABBITMQ_AMQP_HOST=${RABBITMQ_AMQP_HOST}
-      - RABBITMQ_AMQP_PORT=${RABBITMQ_AMQP_PORT}
-      ## mongodb
-      - MONGODB_HOST=${MONGODB_HOST}
-      - MONGODB_PORT=${MONGODB_PORT}
-      ## data-manager
-      - DATA_MANAGER_HOST=${DATA_MANAGER_HOST}
-      - DATA_MANAGER_PORT=${DATA_MANAGER_PORT}
-      ## adapter-registry
-      - ADAPTER_REGISTRY_HOST=${ADAPTER_REGISTRY_HOST}
-      - ADAPTER_REGISTRY_PORT=${ADAPTER_REGISTRY_PORT}
-      ## endpoint-registry
-      - ENDPOINT_REGISTRY_HOST=${ENDPOINT_REGISTRY_HOST}
-      - ENDPOINT_REGISTRY_PORT=${ENDPOINT_REGISTRY_PORT}
-      ## endpoint-resolver
-      # - =${}
-      ## https-endpoint-ingress
-      - HTTPS_ENDPOINT_INGRESS_HOST=${HTTPS_ENDPOINT_INGRESS_HOST}
-      - HTTPS_ENDPOINT_INGRESS_PORT=${HTTPS_ENDPOINT_INGRESS_PORT}
-      ## grpc-endpoint-ingress
-      - GRPC_ENDPOINT_INGRESS_HOST=${GRPC_ENDPOINT_INGRESS_HOST}
-      - GRPC_ENDPOINT_INGRESS_PORT=${GRPC_ENDPOINT_INGRESS_PORT}
-      ## grpc-endpoint-egress
+      - LOGGING_LOGLEVEL=${LOGGING_LOGLEVEL}
+      - LOGGING_LOGOUTPUT=${LOGGING_LOGOUTPUT}
+      - CORE_BROKER_HOST=rabbitmq
+      - CORE_BROKER_PORT=${CORE_BROKER_PORT}
+      - CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST=endpoint-registry-postgres
+      - CORE_REGISTRIES_ENDPOINTS_DATABASE_PORT=${CORE_REGISTRIES_ENDPOINTS_DATABASE_PORT}
+      - CORE_REGISTRIES_ENDPOINTS_HOST=i40-aas-endpoint-registry
+      - CORE_REGISTRIES_ENDPOINTS_PORT=${CORE_REGISTRIES_ENDPOINTS_PORT}
+      - CORE_DATA_MANAGER_HOST=i40-aas-data-manager
+      - CORE_DATA_MANAGER_PORT=${CORE_DATA_MANAGER_PORT}
+      - APPLICATION_ADAPTERS_MONGODB_HOST=mongodb
+      - APPLICATION_ADAPTERS_MONGODB_PORT=${APPLICATION_ADAPTERS_MONGODB_PORT}
+      - CORE_REGISTRIES_ADAPTERS_HOST=i40-aas-adapter-registry
+      - CORE_REGISTRIES_ADAPTERS_PORT=${CORE_REGISTRIES_ADAPTERS_PORT}
+      - CORE_INGRESS_HTTP_HOST=i40-aas-https-endpoint-ingress
+      - CORE_INGRESS_HTTP_PORT=${CORE_INGRESS_HTTP_PORT}
+      - CORE_INGRESS_GRPC_HOST=i40-aas-grpc-endpoint-ingress
+      - CORE_INGRESS_GRPC_PORT=${CORE_INGRESS_GRPC_PORT}
+      ## TODO: add endpoint-resolver, http-endpoint-egress and grpc-endpoint-egress
+      ## once healthchecks are added
       # - =${}
 
+
+
   ########################################################
-  #### third party services
+  #### third party containers
   ##########################################
   mongodb:
     image: mongo
     ports:
-      - "27017:27017"
+      - "${SKILLS_ONBOARDING_DATABASE_PORT}:${SKILLS_ONBOARDING_DATABASE_PORT}"
     environment:
       ## mongodb
       - MONGODB_HOST=${MONGODB_HOST}
@@ -274,20 +252,19 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
       - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
   ##########################################
-  postgres:
+  endpoint-registry-postgres:
     image: postgres:alpine
     ports:
-      - "5432:5432"
+      - "${CORE_REGISTRIES_ENDPOINTS_DATABASE_PORT}:${CORE_REGISTRIES_ENDPOINTS_DATABASE_PORT}"
     environment:
-      ## postgres
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_USER=${CORE_REGISTRIES_ENDPOINTS_DATABASE_SUPER_USER}
+      - POSTGRES_PASSWORD=${CORE_REGISTRIES_ENDPOINTS_DATABASE_SUPER_PASSWORD}
   ##########################################
   rabbitmq:
     image: rabbitmq:3-management
     ports:
-      - "5672:5672"
-      - "15672:15672"
-      - "1883:1883"
+      - "${CORE_BROKER_PORT}:${CORE_BROKER_PORT}"
+      - "${CORE_BROKER_PORT_UI}:${CORE_BROKER_PORT_UI}"
+      - "${CORE_BROKER_PORT_MQTT}:${CORE_BROKER_PORT_MQTT}"
     volumes:
       - .compose/volumes/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins

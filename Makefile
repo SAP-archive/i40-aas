@@ -1,4 +1,4 @@
-TAG = $(shell cat .git/refs/heads/master)
+BUILD_TAG = $(shell cat .git/refs/heads/master)
 SVC_PREFIX = sapi40/i40-aas-
 
 .PHONY: build
@@ -14,12 +14,12 @@ SVC_PREFIX = sapi40/i40-aas-
 ## build all images (in parallel) using the docker-compose.dev.yml file
 ## uses cache
 build:
-	DOCKER_BUILDKIT=1 COMPOSE_DOCKER_CLI_BUILD=1 TAG=latest docker-compose -f docker-compose.dev.yml build --parallel
+	DOCKER_BUILDKIT=1 COMPOSE_DOCKER_CLI_BUILD=1 BUILD_TAG=latest docker-compose -f docker-compose.dev.yml build --parallel
 
 ## build all images (in parallel) using the docker-compose.dev.yml file
 ## skips cache
 no-cache:
-	DOCKER_BUILDKIT=1 COMPOSE_DOCKER_CLI_BUILD=1 TAG=latest docker-compose -f docker-compose.dev.yml build --no-cache --parallel
+	DOCKER_BUILDKIT=1 COMPOSE_DOCKER_CLI_BUILD=1 BUILD_TAG=latest docker-compose -f docker-compose.dev.yml build --no-cache --parallel
 
 ## removes everything created by docker-compose and prunes everything in docker
 ## (!!) this includes all your work with docker, not just stuff
@@ -38,10 +38,10 @@ dev:
 
 ## Travis CI instruction (separate build & push per service)
 build-single:
-	TAG=$(TAG) docker-compose -f docker-compose.dev.yml build i40-aas-$(SERVICE)
-	TAG=$(TAG) docker tag $(SVC_PREFIX)$(SERVICE):$(TAG) $(SVC_PREFIX)$(SERVICE):latest
+	BUILD_TAG=$(BUILD_TAG) docker-compose -f docker-compose.dev.yml build i40-aas-$(SERVICE)
+	BUILD_TAG=$(BUILD_TAG) docker BUILD_TAG $(SVC_PREFIX)$(SERVICE):$(BUILD_TAG) $(SVC_PREFIX)$(SERVICE):latest
 
 ## Travis CI instruction (separate build & push per service)
 push-single:
-	TAG=$(TAG) docker push $(SVC_PREFIX)$(SERVICE):$(TAG)
-	TAG=$(TAG) docker push $(SVC_PREFIX)$(SERVICE):latest
+	BUILD_TAG=$(BUILD_TAG) docker push $(SVC_PREFIX)$(SERVICE):$(BUILD_TAG)
+	BUILD_TAG=$(BUILD_TAG) docker push $(SVC_PREFIX)$(SERVICE):latest
