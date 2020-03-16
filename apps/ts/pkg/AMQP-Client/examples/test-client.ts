@@ -1,7 +1,5 @@
 import { IMessageBrokerClient, IMessageReceiver, Subscription, AmqpClient } from '../src/AMQPClient';
 
-
-const initializeLogger = require('../log');
 let amqpClientSender: AmqpClient;
 let amqpClientReceiver: AmqpClient;
 let AMQP_URL = process.env.RABBITMQ_AMQP_HOST;
