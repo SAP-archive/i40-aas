@@ -8,6 +8,7 @@ import { SimpleMongoDbClient } from './base/persistence/SimpleMongoDbClient';
 import { IDatabaseClient } from './base/persistenceinterface/IDatabaseClient';
 import { logger } from './log';
 import { TIdType, IdTypeEnum } from 'i40-aas-objects/dist/src/types/IdTypeEnum';
+import { RestClient } from './services/onboarding/RestClient';
 
 function checkEnvVar(variableName: string): string {
   let retVal: string | undefined = process.env[variableName];
@@ -73,13 +74,7 @@ let messageDispatcher: MessageDispatcher = new MessageDispatcher(
       }
     },
     HTTPS_ENDPOINT_ROUTING_KEY
-  ),
-  new WebClient(
-    DATA_MANAGER_BASE_URL,
-    DATA_MANAGER_USER,
-    DATA_MANAGER_PASSWORD
-  ),
-  DATA_MANAGER_URL_SUFFIX
+  )
 );
 
 let dbClient: IDatabaseClient = new SimpleMongoDbClient(
@@ -91,14 +86,26 @@ let dbClient: IDatabaseClient = new SimpleMongoDbClient(
   MONGO_INITDB_ROOT_PASSWORD
 );
 
-let skill = new Skill(messageDispatcher, dbClient, {
-  askForApproval: process.env.ONBOARDING_SKILL_REQUEST_APPROVAL
-    ? eval(process.env.ONBOARDING_SKILL_REQUEST_APPROVAL)
-    : false,
-  askForType: process.env.ONBOARDING_SKILL_REQUEST_TYPE
-    ? eval(process.env.ONBOARDING_SKILL_REQUEST_TYPE)
-    : false
-});
+let skill = new Skill(
+  messageDispatcher,
+  new RestClient(
+    new WebClient(
+      DATA_MANAGER_BASE_URL,
+      DATA_MANAGER_USER,
+      DATA_MANAGER_PASSWORD
+    ),
+    DATA_MANAGER_URL_SUFFIX
+  ),
+  dbClient,
+  {
+    askForApproval: process.env.ONBOARDING_SKILL_REQUEST_APPROVAL
+      ? eval(process.env.ONBOARDING_SKILL_REQUEST_APPROVAL)
+      : false,
+    askForType: process.env.ONBOARDING_SKILL_REQUEST_TYPE
+      ? eval(process.env.ONBOARDING_SKILL_REQUEST_TYPE)
+      : false
+  }
+);
 
 //TODO: no need to share amqpClient amongst sender and receiver
 let messageInterpreter: MessageInterpreter = new MessageInterpreter(

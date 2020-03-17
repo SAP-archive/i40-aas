@@ -5,8 +5,13 @@ import { InteractionMessage } from 'i40-aas-objects';
 import { ISkillContext } from '../../base/statemachineinterface/ISkillContext';
 import { Utils } from '../../base/Utils';
 
+import { RestClient } from './RestClient';
+
 class SkillActionMap {
-  constructor(private messageDispatcher: IMessageDispatcher) {}
+  constructor(
+    private messageDispatcher: IMessageDispatcher,
+    private restClient: RestClient
+  ) {}
 
   sendCreationErrorToOperator(context: ISkillContext, event: any) {
     logger.debug('Received error. Now sending error back');
@@ -43,9 +48,14 @@ class SkillActionMap {
     this.messageDispatcher.requestTypeFromManufacturer('', {});
     //TODO:send actual type to actual url
   }
-  createInstance(context: ISkillContext, event: any): Promise<AxiosResponse> {
+
+  async createInstance(
+    context: ISkillContext,
+    event: any
+  ): Promise<AxiosResponse> {
     logger.debug('SkillActionMap::createInstance called');
-    return this.messageDispatcher.createInstanceOnCAR(
+
+    return this.restClient.createInstanceOnCAR(
       context.message.interactionElements
     );
   }

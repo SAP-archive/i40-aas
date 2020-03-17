@@ -1,5 +1,4 @@
 import { IMessageSender } from '../../base/messaginginterface/IMessageSender';
-import * as logger from 'winston';
 
 import { WebClient } from '../../web/WebClient';
 import { AxiosResponse } from 'axios';
@@ -37,19 +36,16 @@ class MessageDispatcher implements IMessageDispatcher {
     );
   }
 
-  constructor(
-    private messageSender: IMessageSender,
-    private webClient: WebClient,
-    private dataManagerUrlSuffix: string
-  ) {}
+  constructor(private messageSender: IMessageSender) {}
 
+  /*
   async createInstanceOnCAR(submodels: Submodel[]): Promise<AxiosResponse> {
     logger.debug('MessageDispatcher:createInstanceOnCAR called');
     return await this.webClient.postRequest(
       this.dataManagerUrlSuffix,
       submodels
     );
-  }
+  }*/
 
   replyRequestRefused(message: InteractionMessage) {
     this.messageSender.replyTo(message.frame, MessageTypes.REQUEST_REFUSED);

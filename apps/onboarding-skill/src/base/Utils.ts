@@ -28,6 +28,17 @@ class Utils {
     //all relevant fields have been logged, no need to log entire error again
     //logger.debug(error);
   }
+
+  static getMethods = (obj: any) => {
+    let properties = new Set<string>();
+    let currentObj = obj;
+    do {
+      Object.getOwnPropertyNames(currentObj).map(item => properties.add(item));
+    } while ((currentObj = Object.getPrototypeOf(currentObj)));
+    return [...properties.keys()].filter(
+      item => typeof obj[item] === 'function'
+    );
+  };
 }
 
 export { Utils };

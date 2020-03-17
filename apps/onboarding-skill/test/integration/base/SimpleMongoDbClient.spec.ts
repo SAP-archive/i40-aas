@@ -25,7 +25,7 @@ function checkEnvVar(variableName: string): string {
   }
 }
 
-describe('SimpleMongoDbClient', function() {
+xdescribe('SimpleMongoDbClient', function() {
   const uuidv1 = require('uuid/v1');
   let mongoDbClient: SimpleMongoDbClient;
   let collectionName: string = 'tests' + uuidv1();

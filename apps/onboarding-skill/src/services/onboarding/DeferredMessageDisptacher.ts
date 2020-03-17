@@ -12,9 +12,9 @@ class DeferredMessageDispatcher implements IMessageDispatcher {
   constructor(private messageDispatcher: IMessageDispatcher) {}
 
   //no need to defer this, as no database commit involved
-  createInstanceOnCAR(submodels: Submodel[]): Promise<AxiosResponse> {
-    return this.messageDispatcher.createInstanceOnCAR(submodels);
-  }
+  //createInstanceOnCAR(submodels: Submodel[]): Promise<AxiosResponse> {
+  //  return this.messageDispatcher.createInstanceOnCAR(submodels);
+  //}
 
   sendErrorToOperator(message: InteractionMessage): void {
     var that = this;

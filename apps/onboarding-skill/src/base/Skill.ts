@@ -12,7 +12,9 @@ import { DeferredMessageDispatcher } from '../services/onboarding/DeferredMessag
 import * as _ from 'lodash';
 import { InteractionMessage } from 'i40-aas-objects';
 import { ISkillContext } from './statemachineinterface/ISkillContext';
-import { DeferredActionResolverFactory } from '../services/onboarding/DeferredActionResolver';
+import { DeferredActionResolverFactory } from '../services/onboarding/DeferredActionResolverFactory';
+import { MessageDispatcher } from '../services/onboarding/MessageDispatcher';
+import { RestClient } from '../services/onboarding/RestClient';
 
 //Try to keep this generic. Do not mention roles or message types. Do not perform actions that
 //should be modelled in the state machine. This class should remain relatively constant. It
@@ -22,6 +24,8 @@ class Skill {
 
   constructor(
     private messageDispatcher: IMessageDispatcher,
+    //TODO: Interface?
+    private restClient: RestClient,
     private dbClient: IDatabaseClient,
     private configuration: object
   ) {}
@@ -74,7 +78,7 @@ class Skill {
   ): ISkillContext {
     return {
       message: message,
-      actionMap: new SkillActionMap(messageDispatcher),
+      actionMap: new SkillActionMap(messageDispatcher, this.restClient),
       configuration: this.configuration
     };
   }
@@ -102,7 +106,7 @@ class Skill {
     //let deferredMessageDispatcher = new DeferredMessageDispatcher(
     // this.messageDispatcher
     //);
-    let deferredMessageDispatcher = DeferredActionResolverFactory.getDeferredExecutor(
+    let deferredMessageDispatcher = DeferredActionResolverFactory.getInstance(
       this.messageDispatcher
     );
     let context = this.createContextForStateMachine(

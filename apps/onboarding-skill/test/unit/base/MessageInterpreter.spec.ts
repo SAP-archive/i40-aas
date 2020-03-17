@@ -8,6 +8,7 @@ import { MessageInterpreter } from '../../../src/base/messaging/MessageInterpret
 import { AmqpClient } from '../../../src/base/messaging/AmqpClient';
 import { InteractionMessage } from 'i40-aas-objects';
 import { logger } from '../../../src/log';
+import { RestClient } from '../../../src/services/onboarding/RestClient';
 
 var chai = require('chai');
 var chaiAsPromised = require('chai-as-promised');
@@ -75,18 +76,21 @@ describe('validation process', function() {
       interactionElements: [{}]
     };
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      <IMessageSender>{},
-      <WebClient>{},
-      'data-manager'
+      <IMessageSender>{}
     );
-
+    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
     let fakeReplyNotUnderstood = sinon.fake();
     sinon.replace(
       messageDispatcher,
       'replyNotUnderstood',
       fakeReplyNotUnderstood
     );
-    let skill: Skill = new Skill(messageDispatcher, makeFakeDbClient(), {});
+    let skill: Skill = new Skill(
+      messageDispatcher,
+      restClient,
+      makeFakeDbClient(),
+      {}
+    );
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
       new AmqpClient('a', 'b', 'c', 'd', '')
@@ -124,12 +128,15 @@ describe('validation process', function() {
       interactionElements: [{}]
     };
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      <IMessageSender>{},
-      <WebClient>{},
-      'data-manager'
+      <IMessageSender>{}
     );
-
-    let skill: Skill = new Skill(messageDispatcher, makeFakeDbClient(), {});
+    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let skill: Skill = new Skill(
+      messageDispatcher,
+      restClient,
+      makeFakeDbClient(),
+      {}
+    );
 
     let fakeapplyEvent = sinon.fake();
     sinon.replace(skill, 'applyEvent', fakeapplyEvent);
@@ -171,12 +178,16 @@ describe('validation process', function() {
       interactionElements: [{}]
     };
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      <IMessageSender>{},
-      <WebClient>{},
-      'data-manager'
+      <IMessageSender>{}
     );
 
-    let skill: Skill = new Skill(messageDispatcher, makeFakeDbClient(), {});
+    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let skill: Skill = new Skill(
+      messageDispatcher,
+      restClient,
+      makeFakeDbClient(),
+      {}
+    );
 
     let fakeapplyEvent = sinon.fake();
     sinon.replace(skill, 'applyEvent', fakeapplyEvent);
@@ -216,12 +227,15 @@ describe('validation process', function() {
       interactionElements: [{}]
     };
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      <IMessageSender>{},
-      <WebClient>{},
-      'data-manager'
+      <IMessageSender>{}
     );
-
-    let skill: Skill = new Skill(messageDispatcher, makeFakeDbClient(), {});
+    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let skill: Skill = new Skill(
+      messageDispatcher,
+      restClient,
+      makeFakeDbClient(),
+      {}
+    );
 
     let fakeapplyEvent = sinon.fake();
     sinon.replace(skill, 'applyEvent', fakeapplyEvent);
@@ -263,18 +277,21 @@ describe('validation process', function() {
       interactionElements: [{}]
     };
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      <IMessageSender>{},
-      <WebClient>{},
-      'data-manager'
+      <IMessageSender>{}
     );
-
+    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
     let fakeReplyNotUnderstood = sinon.fake();
     sinon.replace(
       messageDispatcher,
       'replyNotUnderstood',
       fakeReplyNotUnderstood
     );
-    let skill: Skill = new Skill(messageDispatcher, makeFakeDbClient(), {});
+    let skill: Skill = new Skill(
+      messageDispatcher,
+      restClient,
+      makeFakeDbClient(),
+      {}
+    );
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
       new AmqpClient('a', 'b', 'c', 'd', '')
@@ -312,18 +329,21 @@ describe('validation process', function() {
       interactionElements: [{}]
     };
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      <IMessageSender>{},
-      <WebClient>{},
-      'data-manager'
+      <IMessageSender>{}
     );
-
+    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
     let fakeReplyNotUnderstood = sinon.fake();
     sinon.replace(
       messageDispatcher,
       'replyNotUnderstood',
       fakeReplyNotUnderstood
     );
-    let skill: Skill = new Skill(messageDispatcher, makeFakeDbClient(), {});
+    let skill: Skill = new Skill(
+      messageDispatcher,
+      restClient,
+      makeFakeDbClient(),
+      {}
+    );
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
       new AmqpClient('a', 'b', 'c', 'd', '')
@@ -360,18 +380,21 @@ describe('validation process', function() {
       interactionElements: [{}]
     };
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      <IMessageSender>{},
-      <WebClient>{},
-      'data-manager'
+      <IMessageSender>{}
     );
-
+    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
     let fakeReplyNotUnderstood = sinon.fake();
     sinon.replace(
       messageDispatcher,
       'replyNotUnderstood',
       fakeReplyNotUnderstood
     );
-    let skill: Skill = new Skill(messageDispatcher, makeFakeDbClient(), {});
+    let skill: Skill = new Skill(
+      messageDispatcher,
+      restClient,
+      makeFakeDbClient(),
+      {}
+    );
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
       new AmqpClient('a', 'b', 'c', 'd', '')
@@ -406,14 +429,17 @@ describe('validation process', function() {
       interactionElements: [{}]
     };
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      <IMessageSender>{},
-      <WebClient>{},
-      'data-manager'
+      <IMessageSender>{}
     );
-
+    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
     let fakeReplyError = sinon.fake();
     sinon.replace(messageDispatcher, 'replyError', fakeReplyError);
-    let skill: Skill = new Skill(messageDispatcher, makeFakeDbClient(), {});
+    let skill: Skill = new Skill(
+      messageDispatcher,
+      restClient,
+      makeFakeDbClient(),
+      {}
+    );
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
       new AmqpClient('a', 'b', 'c', 'd', '')
@@ -443,14 +469,17 @@ describe('validation process', function() {
       interactionElements: [{}]
     };
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      <IMessageSender>{},
-      <WebClient>{},
-      'data-manager'
+      <IMessageSender>{}
     );
-
+    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
     let fakeReplyError = sinon.fake();
     sinon.replace(messageDispatcher, 'replyError', fakeReplyError);
-    let skill: Skill = new Skill(messageDispatcher, makeFakeDbClient(), {});
+    let skill: Skill = new Skill(
+      messageDispatcher,
+      restClient,
+      makeFakeDbClient(),
+      {}
+    );
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
       new AmqpClient('a', 'b', 'c', 'd', '')
@@ -486,14 +515,17 @@ describe('validation process', function() {
       interactionElements: [{}]
     };
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      <IMessageSender>{},
-      <WebClient>{},
-      'data-manager'
+      <IMessageSender>{}
     );
-
+    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
     let fakeReplyError = sinon.fake();
     sinon.replace(messageDispatcher, 'replyError', fakeReplyError);
-    let skill: Skill = new Skill(messageDispatcher, makeFakeDbClient(), {});
+    let skill: Skill = new Skill(
+      messageDispatcher,
+      restClient,
+      makeFakeDbClient(),
+      {}
+    );
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
       new AmqpClient('a', 'b', 'c', 'd', '')
@@ -506,12 +538,15 @@ describe('validation process', function() {
 
   it('sets up a subscription and starts listening', async function() {
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      <IMessageSender>{},
-      <WebClient>{},
-      'data-manager'
+      <IMessageSender>{}
     );
-
-    let skill: Skill = new Skill(messageDispatcher, makeFakeDbClient(), {});
+    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let skill: Skill = new Skill(
+      messageDispatcher,
+      restClient,
+      makeFakeDbClient(),
+      {}
+    );
 
     let fakeapplyEvent = sinon.fake();
     sinon.replace(skill, 'applyEvent', fakeapplyEvent);

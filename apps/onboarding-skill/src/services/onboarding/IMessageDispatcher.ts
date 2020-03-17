@@ -2,7 +2,7 @@ import { AxiosResponse } from 'axios';
 import { InteractionMessage } from 'i40-aas-objects';
 
 interface IMessageDispatcher {
-  createInstanceOnCAR(submodels: object[]): Promise<AxiosResponse>;
+  //createInstanceOnCAR(submodels: object[]): Promise<AxiosResponse>;
 
   replyRequestRefused(message: InteractionMessage): void;
 

@@ -4,7 +4,7 @@ import { MessageSender } from '../../../src/base/messaging/MessageSender';
 import { AmqpClient } from '../../../src/base/messaging/AmqpClient';
 import { InteractionMessage } from 'i40-aas-objects';
 
-describe('replyTo', function() {
+xdescribe('replyTo', function() {
   this.beforeEach(function() {});
   this.afterEach(function() {
     sinon.restore();
