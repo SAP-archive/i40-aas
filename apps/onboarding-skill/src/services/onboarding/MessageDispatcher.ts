@@ -1,12 +1,10 @@
 import { IMessageSender } from '../../base/messaginginterface/IMessageSender';
 
-import { WebClient } from '../../web/WebClient';
-import { Submodel, InteractionMessage, IFrame } from 'i40-aas-objects';
-import { IMessageDispatcher } from './IMessageDispatcher';
+import { InteractionMessage, IFrame } from 'i40-aas-objects';
 import { Roles } from '../../base/messaginginterface/Roles';
 import { MessageTypes } from '../../base/messaginginterface/MessageTypes';
 
-class MessageDispatcher implements IMessageDispatcher {
+class MessageDispatcher {
   sendNextMessageInConversationTo(
     receiverRoleName: string,
     messageType: string,
@@ -47,7 +45,7 @@ class MessageDispatcher implements IMessageDispatcher {
 
   sendResponseInstanceToOperator(
     message: InteractionMessage,
-    submodel: Submodel
+    submodel: object
   ) {
     //TODO: an error here leads to unhandled rejection
     this.sendNextMessageInConversationTo(

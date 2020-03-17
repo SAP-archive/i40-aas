@@ -1,4 +1,3 @@
-import { IMessageDispatcher } from './IMessageDispatcher';
 import { logger } from '../../log';
 import { AxiosResponse } from 'axios';
 import { InteractionMessage } from 'i40-aas-objects';
@@ -6,10 +5,11 @@ import { ISkillContext } from '../../base/statemachineinterface/ISkillContext';
 import { Utils } from '../../base/Utils';
 
 import { RestClient } from './RestClient';
+import { MessageDispatcher } from './MessageDispatcher';
 
 class SkillActionMap {
   constructor(
-    private messageDispatcher: IMessageDispatcher,
+    private messageDispatcher: MessageDispatcher,
     private restClient: RestClient
   ) {}
 

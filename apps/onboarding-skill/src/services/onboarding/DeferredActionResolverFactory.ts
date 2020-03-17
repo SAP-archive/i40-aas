@@ -3,11 +3,11 @@ import { ICommand } from '../../base/messaginginterface/ICommand';
 import { logger } from '../../log';
 import { Utils } from '../../base/Utils';
 
-class DeferredActionResolverFactory {
-  static getInstance(actionResolver: any): any {
+class DeferredMessageDispatcherFactory {
+  static getInstance(messageDispatcher: any): any {
     var retVal: any = {};
     retVal.commandCollector = new CommandCollector();
-    var x: string[] = Utils.getMethods(actionResolver);
+    var x: string[] = Utils.getMethods(messageDispatcher);
     x.forEach(methodName => {
       retVal[methodName] = (...args: any) => {
         retVal.commandCollector.add({
@@ -15,7 +15,7 @@ class DeferredActionResolverFactory {
             logger.debug(
               'Calling ' + methodName + ' with args: ' + JSON.stringify(args)
             );
-            actionResolver[methodName].apply(actionResolver, args);
+            messageDispatcher[methodName].apply(messageDispatcher, args);
           }
         });
       };
@@ -33,4 +33,4 @@ class DeferredActionResolverFactory {
     return retVal;
   }
 }
-export { DeferredActionResolverFactory };
+export { DeferredMessageDispatcherFactory };

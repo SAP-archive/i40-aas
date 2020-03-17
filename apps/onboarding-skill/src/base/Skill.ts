@@ -5,15 +5,12 @@ import { IDatabaseClient } from './persistenceinterface/IDatabaseClient';
 import { IStateRecord } from './persistenceinterface/IStateRecord';
 import { SkillStateMachine } from '../services/onboarding/SkillStateMachineSpecification';
 
-import { IMessageDispatcher } from '../services/onboarding/IMessageDispatcher';
-
 import { SkillActionMap } from '../services/onboarding/SkillActionMap';
-import { DeferredMessageDispatcher } from '../services/onboarding/DeferredMessageDisptacher';
+
 import * as _ from 'lodash';
 import { InteractionMessage } from 'i40-aas-objects';
 import { ISkillContext } from './statemachineinterface/ISkillContext';
-import { DeferredActionResolverFactory } from '../services/onboarding/DeferredActionResolverFactory';
-import { MessageDispatcher } from '../services/onboarding/MessageDispatcher';
+import { DeferredMessageDispatcherFactory } from '../services/onboarding/DeferredActionResolverFactory';
 import { RestClient } from '../services/onboarding/RestClient';
 
 //Try to keep this generic. Do not mention roles or message types. Do not perform actions that
@@ -23,7 +20,7 @@ class Skill {
   private readonly stateMachineSpecification: SkillStateMachine = new SkillStateMachine();
 
   constructor(
-    private messageDispatcher: IMessageDispatcher,
+    private messageDispatcher: any,
     //TODO: Interface?
     private restClient: RestClient,
     private dbClient: IDatabaseClient,
@@ -74,7 +71,7 @@ class Skill {
 
   private createContextForStateMachine(
     message: InteractionMessage,
-    messageDispatcher: IMessageDispatcher
+    messageDispatcher: any
   ): ISkillContext {
     return {
       message: message,
@@ -106,7 +103,7 @@ class Skill {
     //let deferredMessageDispatcher = new DeferredMessageDispatcher(
     // this.messageDispatcher
     //);
-    let deferredMessageDispatcher = DeferredActionResolverFactory.getInstance(
+    let deferredMessageDispatcher = DeferredMessageDispatcherFactory.getInstance(
       this.messageDispatcher
     );
     let context = this.createContextForStateMachine(
