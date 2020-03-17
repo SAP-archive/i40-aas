@@ -106,7 +106,7 @@ class SkillStateMachineSpecification {
     services: {
       createInstance: async (context: any, event: any) => {
         logger.debug('service createInstance called');
-        return await context.actionMap.createInstance(context, event);
+        await context.actionMap.createInstance(context, event);
       }
     },
     guards: {

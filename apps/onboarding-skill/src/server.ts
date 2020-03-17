@@ -8,7 +8,7 @@ import { SimpleMongoDbClient } from './base/persistence/SimpleMongoDbClient';
 import { IDatabaseClient } from './base/persistenceinterface/IDatabaseClient';
 import { logger } from './log';
 import { TIdType, IdTypeEnum } from 'i40-aas-objects/dist/src/types/IdTypeEnum';
-import { RestClient } from './services/onboarding/RestClient';
+import { RestCallDispatcher } from './services/onboarding/RestCallDispatcher';
 
 function checkEnvVar(variableName: string): string {
   let retVal: string | undefined = process.env[variableName];
@@ -88,7 +88,7 @@ let dbClient: IDatabaseClient = new SimpleMongoDbClient(
 
 let skill = new Skill(
   messageDispatcher,
-  new RestClient(
+  new RestCallDispatcher(
     new WebClient(
       DATA_MANAGER_BASE_URL,
       DATA_MANAGER_USER,

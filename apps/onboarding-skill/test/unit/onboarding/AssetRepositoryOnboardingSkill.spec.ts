@@ -13,7 +13,7 @@ import Axios, { AxiosError } from 'axios';
 import { AmqpClient } from '../../../src/base/messaging/AmqpClient';
 import { InteractionMessage } from 'i40-aas-objects';
 import { IConversationMember } from 'i40-aas-objects/dist/src/interaction/ConversationMember';
-import { RestClient } from '../../../src/services/onboarding/RestClient';
+import { RestCallDispatcher } from '../../../src/services/onboarding/RestCallDispatcher';
 
 const initializeLogger = require('../../../src/log');
 
@@ -85,7 +85,7 @@ describe('applyEvent', function() {
       let messageDispatcher: MessageDispatcher = new MessageDispatcher(
         <IMessageSender>{}
       );
-      let restClient: RestClient = new RestClient(
+      let restClient: RestCallDispatcher = new RestCallDispatcher(
         <WebClient>{},
         'data-manager'
       );
@@ -153,7 +153,10 @@ describe('applyEvent', function() {
       messageSender
     );
 
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
+      <WebClient>{},
+      'data-manager'
+    );
 
     let dbClient = makeMockDbClient();
 
@@ -234,7 +237,10 @@ describe('applyEvent', function() {
       messageSender
     );
     let dbClient = makeMockDbClient();
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
+      <WebClient>{},
+      'data-manager'
+    );
     let fakeStoreInDb = sinon.fake.resolves({ result: 'ok' });
 
     sinon.replace(dbClient, 'connect', sinon.fake.resolves({}));
@@ -329,7 +335,10 @@ describe('applyEvent', function() {
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
       messageSender
     );
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
+      <WebClient>{},
+      'data-manager'
+    );
     let dbClient = makeMockDbClient();
 
     let fakeStoreInDb = sinon.fake.resolves({ result: 'ok' });
@@ -418,7 +427,10 @@ describe('applyEvent', function() {
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
       messageSender
     );
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
+      <WebClient>{},
+      'data-manager'
+    );
     let dbClient = makeMockDbClient();
 
     let fakeStoreInDb = sinon.fake.resolves({ result: 'ok' });
@@ -516,7 +528,10 @@ describe('applyEvent', function() {
       messageSender
     );
     let dbClient = makeMockDbClient();
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
+      <WebClient>{},
+      'data-manager'
+    );
 
     let fakeStoreInDb = sinon.fake.resolves({ result: 'ok' });
 
@@ -605,7 +620,10 @@ describe('applyEvent', function() {
       messageSender
     );
     let dbClient = makeMockDbClient();
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
+      <WebClient>{},
+      'data-manager'
+    );
     let fakeStoreInDb = sinon.fake.resolves({ result: 'ok' });
 
     sinon.replace(dbClient, 'connect', sinon.fake.resolves({}));
@@ -693,7 +711,10 @@ describe('applyEvent', function() {
       messageSender
     );
     let dbClient = makeMockDbClient();
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
+      <WebClient>{},
+      'data-manager'
+    );
     let fakeStoreInDb = sinon.fake.resolves({ result: 'ok' });
 
     sinon.replace(dbClient, 'connect', sinon.fake.resolves({}));
@@ -789,7 +810,10 @@ describe('applyEvent', function() {
       messageSender
     );
     let dbClient = makeMockDbClient();
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
+      <WebClient>{},
+      'data-manager'
+    );
     let fakeStoreInDb = sinon.fake.resolves({ result: 'ok' });
 
     sinon.replace(dbClient, 'connect', sinon.fake.resolves({}));
@@ -884,7 +908,10 @@ describe('applyEvent', function() {
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
       messageSender
     );
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
+      <WebClient>{},
+      'data-manager'
+    );
     let dbClient = makeMockDbClient();
 
     let fakeStoreInDb = sinon.fake.resolves({ result: 'ok' });
@@ -949,7 +976,10 @@ describe('applyEvent', function() {
       <IMessageSender>{}
     );
     let dbClient = makeMockDbClient();
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
+      <WebClient>{},
+      'data-manager'
+    );
     let fakeStoreInDb = sinon.fake.resolves({ result: 'ok' });
     sinon.replace(dbClient, 'connect', sinon.fake.resolves({}));
     sinon.replace(dbClient, 'disconnect', sinon.fake.resolves({}));
@@ -1010,7 +1040,10 @@ describe('applyEvent', function() {
         'routingKey'
       )
     );
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
+      <WebClient>{},
+      'data-manager'
+    );
     let dbClient = makeMockDbClient();
     sinon.replace(dbClient, 'connect', sinon.fake.resolves({}));
     sinon.replace(dbClient, 'disconnect', sinon.fake.resolves({}));
@@ -1049,7 +1082,10 @@ describe('applyEvent', function() {
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
       <IMessageSender>{}
     );
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
+      <WebClient>{},
+      'data-manager'
+    );
     let dbClient = makeMockDbClient();
     sinon.replace(dbClient, 'connect', sinon.fake.resolves({}));
     sinon.replace(dbClient, 'disconnect', sinon.fake.resolves({}));
@@ -1088,7 +1124,10 @@ describe('applyEvent', function() {
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
       <IMessageSender>{}
     );
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
+      <WebClient>{},
+      'data-manager'
+    );
     let dbClient = makeMockDbClient();
     sinon.replace(dbClient, 'connect', sinon.fake.resolves({}));
     sinon.replace(dbClient, 'disconnect', sinon.fake.resolves({}));
@@ -1133,7 +1172,10 @@ describe('applyEvent', function() {
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
       messageSender
     );
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
+      <WebClient>{},
+      'data-manager'
+    );
     let dbClient = makeMockDbClient();
     sinon.replace(dbClient, 'connect', sinon.fake.resolves({}));
     sinon.replace(dbClient, 'disconnect', sinon.fake.resolves({}));
@@ -1181,7 +1223,10 @@ describe('applyEvent', function() {
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
       <IMessageSender>{}
     );
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
+      <WebClient>{},
+      'data-manager'
+    );
     let dbClient = makeMockDbClient();
 
     let fakeStoreInDb = sinon.fake.rejects({ result: 'error' });
@@ -1230,7 +1275,7 @@ describe('applyEvent', function() {
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
       messageSender
     );
-    let restClient: RestClient = new RestClient(
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
       new WebClient('http://base.com', 'user', 'password'),
       'data-manager'
     );
@@ -1285,7 +1330,10 @@ describe('applyEvent', function() {
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
       messageSender
     );
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
+      <WebClient>{},
+      'data-manager'
+    );
     let dbClient = makeMockDbClient();
 
     sinon.replace(dbClient, 'connect', sinon.fake.resolves({}));
@@ -1337,7 +1385,10 @@ describe('applyEvent', function() {
       messageSender
     );
     let dbClient = makeMockDbClient();
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
+      <WebClient>{},
+      'data-manager'
+    );
     sinon.replace(dbClient, 'connect', sinon.fake.resolves({}));
     sinon.replace(dbClient, 'disconnect', sinon.fake.resolves({}));
     sinon.replace(dbClient, 'update', sinon.fake.resolves({}));
@@ -1379,7 +1430,10 @@ describe('applyEvent', function() {
       messageSender
     );
     let dbClient = makeMockDbClient();
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
+      <WebClient>{},
+      'data-manager'
+    );
     sinon.replace(dbClient, 'connect', sinon.fake.resolves({}));
     sinon.replace(dbClient, 'disconnect', sinon.fake.resolves({}));
     sinon.replace(dbClient, 'update', sinon.fake.resolves({}));
@@ -1439,7 +1493,10 @@ describe('applyEvent', function() {
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
       messageSender
     );
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
+      <WebClient>{},
+      'data-manager'
+    );
     let dbClient = makeMockDbClient();
 
     sinon.replace(dbClient, 'connect', sinon.fake.resolves({}));
@@ -1489,7 +1546,10 @@ describe('applyEvent', function() {
       messageSender
     );
     let dbClient = makeMockDbClient();
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
+      <WebClient>{},
+      'data-manager'
+    );
     sinon.replace(dbClient, 'connect', sinon.fake.resolves({}));
     sinon.replace(dbClient, 'disconnect', sinon.fake.resolves({}));
     sinon.replace(dbClient, 'update', sinon.fake.resolves({}));
@@ -1536,7 +1596,10 @@ describe('applyEvent', function() {
       messageSender
     );
     let dbClient = makeMockDbClient();
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
+      <WebClient>{},
+      'data-manager'
+    );
     sinon.replace(dbClient, 'connect', sinon.fake.resolves({}));
     sinon.replace(dbClient, 'disconnect', sinon.fake.resolves({}));
     sinon.replace(dbClient, 'update', sinon.fake.resolves({}));

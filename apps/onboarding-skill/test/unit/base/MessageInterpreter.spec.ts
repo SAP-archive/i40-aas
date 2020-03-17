@@ -8,7 +8,7 @@ import { MessageInterpreter } from '../../../src/base/messaging/MessageInterpret
 import { AmqpClient } from '../../../src/base/messaging/AmqpClient';
 import { InteractionMessage } from 'i40-aas-objects';
 import { logger } from '../../../src/log';
-import { RestClient } from '../../../src/services/onboarding/RestClient';
+import { RestCallDispatcher } from '../../../src/services/onboarding/RestCallDispatcher';
 
 var chai = require('chai');
 var chaiAsPromised = require('chai-as-promised');
@@ -78,7 +78,10 @@ describe('validation process', function() {
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
       <IMessageSender>{}
     );
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
+      <WebClient>{},
+      'data-manager'
+    );
     let fakeReplyNotUnderstood = sinon.fake();
     sinon.replace(
       messageDispatcher,
@@ -130,7 +133,10 @@ describe('validation process', function() {
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
       <IMessageSender>{}
     );
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
+      <WebClient>{},
+      'data-manager'
+    );
     let skill: Skill = new Skill(
       messageDispatcher,
       restClient,
@@ -181,7 +187,10 @@ describe('validation process', function() {
       <IMessageSender>{}
     );
 
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
+      <WebClient>{},
+      'data-manager'
+    );
     let skill: Skill = new Skill(
       messageDispatcher,
       restClient,
@@ -229,7 +238,10 @@ describe('validation process', function() {
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
       <IMessageSender>{}
     );
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
+      <WebClient>{},
+      'data-manager'
+    );
     let skill: Skill = new Skill(
       messageDispatcher,
       restClient,
@@ -279,7 +291,10 @@ describe('validation process', function() {
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
       <IMessageSender>{}
     );
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
+      <WebClient>{},
+      'data-manager'
+    );
     let fakeReplyNotUnderstood = sinon.fake();
     sinon.replace(
       messageDispatcher,
@@ -331,7 +346,10 @@ describe('validation process', function() {
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
       <IMessageSender>{}
     );
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
+      <WebClient>{},
+      'data-manager'
+    );
     let fakeReplyNotUnderstood = sinon.fake();
     sinon.replace(
       messageDispatcher,
@@ -382,7 +400,10 @@ describe('validation process', function() {
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
       <IMessageSender>{}
     );
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
+      <WebClient>{},
+      'data-manager'
+    );
     let fakeReplyNotUnderstood = sinon.fake();
     sinon.replace(
       messageDispatcher,
@@ -431,7 +452,10 @@ describe('validation process', function() {
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
       <IMessageSender>{}
     );
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
+      <WebClient>{},
+      'data-manager'
+    );
     let fakeReplyError = sinon.fake();
     sinon.replace(messageDispatcher, 'replyError', fakeReplyError);
     let skill: Skill = new Skill(
@@ -471,7 +495,10 @@ describe('validation process', function() {
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
       <IMessageSender>{}
     );
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
+      <WebClient>{},
+      'data-manager'
+    );
     let fakeReplyError = sinon.fake();
     sinon.replace(messageDispatcher, 'replyError', fakeReplyError);
     let skill: Skill = new Skill(
@@ -517,7 +544,10 @@ describe('validation process', function() {
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
       <IMessageSender>{}
     );
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
+      <WebClient>{},
+      'data-manager'
+    );
     let fakeReplyError = sinon.fake();
     sinon.replace(messageDispatcher, 'replyError', fakeReplyError);
     let skill: Skill = new Skill(
@@ -540,7 +570,10 @@ describe('validation process', function() {
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
       <IMessageSender>{}
     );
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestCallDispatcher = new RestCallDispatcher(
+      <WebClient>{},
+      'data-manager'
+    );
     let skill: Skill = new Skill(
       messageDispatcher,
       restClient,

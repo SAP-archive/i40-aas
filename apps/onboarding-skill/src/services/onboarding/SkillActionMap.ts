@@ -4,13 +4,13 @@ import { InteractionMessage } from 'i40-aas-objects';
 import { ISkillContext } from '../../base/statemachineinterface/ISkillContext';
 import { Utils } from '../../base/Utils';
 
-import { RestClient } from './RestClient';
+import { RestCallDispatcher } from './RestCallDispatcher';
 import { MessageDispatcher } from './MessageDispatcher';
 
 class SkillActionMap {
   constructor(
     private messageDispatcher: MessageDispatcher,
-    private restClient: RestClient
+    private restClient: RestCallDispatcher
   ) {}
 
   sendCreationErrorToOperator(context: ISkillContext, event: any) {

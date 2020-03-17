@@ -3,7 +3,7 @@ import { Submodel } from 'i40-aas-objects';
 import { AxiosResponse } from 'axios';
 import { logger } from '../../log';
 
-class RestClient {
+class RestCallDispatcher {
   constructor(
     private webClient: WebClient,
     private dataManagerUrlSuffix: string
@@ -14,4 +14,4 @@ class RestClient {
   }
 }
 
-export { RestClient };
+export { RestCallDispatcher };

@@ -11,7 +11,7 @@ import * as _ from 'lodash';
 import { InteractionMessage } from 'i40-aas-objects';
 import { ISkillContext } from './statemachineinterface/ISkillContext';
 import { DeferredMessageDispatcherFactory } from './DeferredMessageDispatcherFactory';
-import { RestClient } from '../services/onboarding/RestClient';
+import { RestCallDispatcher } from '../services/onboarding/RestCallDispatcher';
 
 //Try to keep this generic. Do not mention roles or message types. Do not perform actions that
 //should be modelled in the state machine. This class should remain relatively constant. It
@@ -22,7 +22,7 @@ class Skill {
   constructor(
     private messageDispatcher: any,
     //TODO: Interface?
-    private restClient: RestClient,
+    private restClient: RestCallDispatcher,
     private dbClient: IDatabaseClient,
     private configuration: object
   ) {}
@@ -100,9 +100,6 @@ class Skill {
     fnOnTransitionDone?: (state: State<ISkillContext, EventObject>) => void,
     fnOnTransitionError?: (state: State<ISkillContext, EventObject>) => void
   ) {
-    //let deferredMessageDispatcher = new DeferredMessageDispatcher(
-    // this.messageDispatcher
-    //);
     let deferredMessageDispatcher = DeferredMessageDispatcherFactory.getInstance(
       this.messageDispatcher
     );
