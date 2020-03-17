@@ -18,7 +18,7 @@ const chai = ChaiPluginAssertType.install();
 const dotenv = require("dotenv");
 dotenv.config();
 
-var DATA_MANAGER_USER = process.env.DATA_MANAGER_USER;
+var CORE_DATA_MANAGER_USER = process.env.CORE_DATA_MANAGER_USER;
 var DATA_MANAGER_PASS = process.env.DATA_MANAGER_PASS;
 
 
