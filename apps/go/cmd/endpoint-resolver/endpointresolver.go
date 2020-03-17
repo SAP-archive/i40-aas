@@ -77,6 +77,7 @@ func (r *EndpointResolver) Init() error {
 		return err
 	}
 
+	// TODO: move to main.go and pass down
 	queue := os.Getenv("CORE_ENDPOINT_RESOLVER_QUEUE")
 	bindingKey := r.config.AMQPConfig.Exchange + "." + queue
 	ctag := os.Getenv("CORE_ENDPOINT_RESOLVER_CTAG")
