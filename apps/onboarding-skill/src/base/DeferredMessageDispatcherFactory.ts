@@ -1,7 +1,7 @@
-import { CommandCollector } from '../../base/messaging/CommandCollector';
-import { ICommand } from '../../base/messaginginterface/ICommand';
-import { logger } from '../../log';
-import { Utils } from '../../base/Utils';
+import { CommandCollector } from './messaging/CommandCollector';
+import { ICommand } from './messaginginterface/ICommand';
+import { logger } from '../log';
+import { Utils } from './Utils';
 
 class DeferredMessageDispatcherFactory {
   static getInstance(messageDispatcher: any): any {

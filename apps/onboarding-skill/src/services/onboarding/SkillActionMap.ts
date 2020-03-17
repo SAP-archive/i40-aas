@@ -55,7 +55,7 @@ class SkillActionMap {
   ): Promise<AxiosResponse> {
     logger.debug('SkillActionMap::createInstance called');
     //TODO await?
-    return await this.restClient.createInstanceOnCAR(
+    return this.restClient.createInstanceOnCAR(
       context.message.interactionElements
     );
   }

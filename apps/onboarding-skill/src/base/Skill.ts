@@ -10,7 +10,7 @@ import { SkillActionMap } from '../services/onboarding/SkillActionMap';
 import * as _ from 'lodash';
 import { InteractionMessage } from 'i40-aas-objects';
 import { ISkillContext } from './statemachineinterface/ISkillContext';
-import { DeferredMessageDispatcherFactory } from '../services/onboarding/DeferredActionResolverFactory';
+import { DeferredMessageDispatcherFactory } from './DeferredMessageDispatcherFactory';
 import { RestClient } from '../services/onboarding/RestClient';
 
 //Try to keep this generic. Do not mention roles or message types. Do not perform actions that
