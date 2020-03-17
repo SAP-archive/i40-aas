@@ -10,10 +10,7 @@ class RestClient {
   ) {}
   async createInstanceOnCAR(submodels: object[]): Promise<AxiosResponse> {
     logger.debug('MessageDispatcher:createInstanceOnCAR called');
-    return await this.webClient.postRequest(
-      this.dataManagerUrlSuffix,
-      submodels
-    );
+    return this.webClient.postRequest(this.dataManagerUrlSuffix, submodels); //TODO:await?
   }
 }
 

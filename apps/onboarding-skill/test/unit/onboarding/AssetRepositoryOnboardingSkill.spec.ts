@@ -140,7 +140,7 @@ describe('applyEvent', function() {
       );
     }
   );
-  xit('moves into WaitForApproval when requestApproval is set, sending out the correct messages', function(done) {
+  it('moves into WaitForApproval when requestApproval is set, sending out the correct messages', function(done) {
     //process.env['ONBOARDING_SKILL_REQUEST_APPROVAL'] = 'true';
 
     let conversationId = 'abcd1234';
@@ -193,7 +193,7 @@ describe('applyEvent', function() {
     );
   });
 
-  xit('moves into CreatingInstance from WaitForApproval on receipt of APPROVED_FROM_APPROVER (when requestApproval is set), sending out the correct messages', function(done) {
+  it('moves into CreatingInstance from WaitForApproval on receipt of APPROVED_FROM_APPROVER (when requestApproval is set), sending out the correct messages', function(done) {
     //process.env['ONBOARDING_SKILL_REQUEST_APPROVAL'] = 'true';
 
     let messageFromApprover = <InteractionMessage>{
@@ -272,7 +272,7 @@ describe('applyEvent', function() {
       conversationId,
       messageFromApprover,
       state => {
-        if (state.value === 'CreatingInstance') {
+        if (state.value === 'InstancePublished') {
           sinon.assert.notCalled(fakeReplyTo);
           sinon.assert.calledOnce(fakecreateInstanceOnCAR);
           sinon.assert.calledWith(
@@ -289,7 +289,7 @@ describe('applyEvent', function() {
     );
   });
 
-  xit('sends back a requestRefused on receipt of REQUESTREFUSED_FROM_APPROVER (when requestApproval is set)', function(done) {
+  it('sends back a requestRefused on receipt of REQUESTREFUSED_FROM_APPROVER (when requestApproval is set)', function(done) {
     //process.env['ONBOARDING_SKILL_REQUEST_APPROVAL'] = 'true';
 
     let messageFromApprover = <InteractionMessage>{
@@ -378,7 +378,7 @@ describe('applyEvent', function() {
     );
   });
 
-  xit('sends error to the right role, if there is an error creating an instance after approval', function(done) {
+  it('sends error to the right role, if there is an error creating an instance after approval', function(done) {
     //process.env['ONBOARDING_SKILL_REQUEST_APPROVAL'] = 'true';
 
     let messageFromApprover = <InteractionMessage>{
@@ -458,7 +458,7 @@ describe('applyEvent', function() {
       conversationId,
       messageFromApprover,
       state => {
-        if (state.value === 'CreatingInstance') {
+        if (state.value === 'OperationFailed') {
           sinon.assert.notCalled(fakeReplyTo);
           sinon.assert.calledOnce(fakecreateInstanceOnCAR);
           sinon.assert.calledWith(
@@ -475,7 +475,7 @@ describe('applyEvent', function() {
     );
   });
 
-  xit('sends back a requestRefused on receipt of NOTUNDERSTOOD_FROM_APPROVER (when requestApproval is set)', function(done) {
+  it('sends back a requestRefused on receipt of NOTUNDERSTOOD_FROM_APPROVER (when requestApproval is set)', function(done) {
     //process.env['ONBOARDING_SKILL_REQUEST_APPROVAL'] = 'true';
 
     let messageFromApprover = <InteractionMessage>{
@@ -564,7 +564,7 @@ describe('applyEvent', function() {
     );
   });
 
-  xit('sends back a requestRefused on receipt of ERROR_FROM_APPROVER (when requestApproval is set)', function(done) {
+  it('sends back a requestRefused on receipt of ERROR_FROM_APPROVER (when requestApproval is set)', function(done) {
     //process.env['ONBOARDING_SKILL_REQUEST_APPROVAL'] = 'true';
 
     let messageFromApprover = <InteractionMessage>{
@@ -652,7 +652,7 @@ describe('applyEvent', function() {
     );
   });
 
-  xit('sends a notUnderstood to the right role, if there is a 400 error creating an instance after approval', function(done) {
+  it('sends a notUnderstood to the right role, if there is a 400 error creating an instance after approval', function(done) {
     //process.env['ONBOARDING_SKILL_REQUEST_APPROVAL'] = 'true';
 
     let messageFromApprover = <InteractionMessage>{
@@ -731,7 +731,7 @@ describe('applyEvent', function() {
       conversationId,
       messageFromApprover,
       state => {
-        if (state.value === 'CreatingInstance') {
+        if (state.value === 'OperationFailed') {
           sinon.assert.notCalled(fakeReplyTo);
           sinon.assert.calledOnce(fakecreateInstanceOnCAR);
           sinon.assert.calledWith(
@@ -748,7 +748,7 @@ describe('applyEvent', function() {
     );
   });
 
-  xit('sends a requestRefused to the right role, if there is a 401 error creating an instance after approval', function(done) {
+  it('sends a requestRefused to the right role, if there is a 401 error creating an instance after approval', function(done) {
     //process.env['ONBOARDING_SKILL_REQUEST_APPROVAL'] = 'true';
 
     let messageFromApprover = <InteractionMessage>{
@@ -827,7 +827,7 @@ describe('applyEvent', function() {
       conversationId,
       messageFromApprover,
       state => {
-        if (state.value === 'CreatingInstance') {
+        if (state.value === 'OperationFailed') {
           sinon.assert.notCalled(fakeReplyTo);
           sinon.assert.calledOnce(fakecreateInstanceOnCAR);
           sinon.assert.calledWith(
@@ -844,7 +844,7 @@ describe('applyEvent', function() {
     );
   });
 
-  xit('sends a error to the right role, if there is a 500 error creating an instance after approval', function(done) {
+  it('sends a error to the right role, if there is a 500 error creating an instance after approval', function(done) {
     //process.env['ONBOARDING_SKILL_REQUEST_APPROVAL'] = 'true';
 
     let messageFromApprover = <InteractionMessage>{
@@ -924,7 +924,7 @@ describe('applyEvent', function() {
       conversationId,
       messageFromApprover,
       state => {
-        if (state.value === 'CreatingInstance') {
+        if (state.value === 'OperationFailed') {
           sinon.assert.notCalled(fakeReplyTo);
           sinon.assert.calledOnce(fakecreateInstanceOnCAR);
           sinon.assert.calledWith(
@@ -941,7 +941,7 @@ describe('applyEvent', function() {
     );
   });
 
-  xit('moves into WaitingForType if requestType is set, sending out the correct messages', function(done) {
+  it('moves into WaitingForType if requestType is set, sending out the correct messages', function(done) {
     //process.env['ONBOARDING_SKILL_REQUEST_TYPE'] = 'true';
 
     let conversationId = 'abcd1234';
@@ -992,7 +992,7 @@ describe('applyEvent', function() {
     );
   });
 
-  xit('switches sender to receiver when replying to a message', async function() {
+  it('switches sender to receiver when replying to a message', async function() {
     let conversationId = 'abcd1234';
     let amqpClient = new AmqpClient('a', 'b', 'c', 'd', '');
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
@@ -1044,7 +1044,7 @@ describe('applyEvent', function() {
     );
   });
 
-  xit('sends out not understood if it receives a publish instance message when in state InstancePublished', async function() {
+  it('sends out not understood if it receives a publish instance message when in state InstancePublished', async function() {
     let conversationId = 'abcd1234';
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
       <IMessageSender>{}
@@ -1083,7 +1083,7 @@ describe('applyEvent', function() {
     sinon.assert.calledOnce(fakereplyNotUnderstood);
   });
 
-  xit('sends out not understood if it receives an illegal interaction', async function() {
+  it('sends out not understood if it receives an illegal interaction', async function() {
     let conversationId = 'abcd1234';
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
       <IMessageSender>{}
@@ -1123,7 +1123,7 @@ describe('applyEvent', function() {
     sinon.assert.calledOnce(fakereplyNotUnderstood);
   });
 
-  xit('reacts correctly if a state is loaded from persistent store', function(done) {
+  it('reacts correctly if a state is loaded from persistent store', function(done) {
     let conversationId = 'abcd1234';
     let messageSender: MessageSender = new MessageSender(
       <AmqpClient>{},
@@ -1176,7 +1176,7 @@ describe('applyEvent', function() {
     );
   });
 
-  xit('does not send out a responseInstance if there was an error in writing to the database after entering InstancePublished', function(done) {
+  it('does not send out a responseInstance if there was an error in writing to the database after entering InstancePublished', function(done) {
     let conversationId = 'abcd1234';
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
       <IMessageSender>{}
@@ -1220,7 +1220,7 @@ describe('applyEvent', function() {
     );
   });
 
-  xit('responds with notUnderstood if a 400 error takes place in creating an instance', function(done) {
+  it('responds with notUnderstood if a 400 error takes place in creating an instance', function(done) {
     let conversationId = 'abcd1234';
     let messageSender: MessageSender = new MessageSender(
       <AmqpClient>{},
@@ -1230,7 +1230,10 @@ describe('applyEvent', function() {
     let messageDispatcher: MessageDispatcher = new MessageDispatcher(
       messageSender
     );
-    let restClient: RestClient = new RestClient(<WebClient>{}, 'data-manager');
+    let restClient: RestClient = new RestClient(
+      new WebClient('http://base.com', 'user', 'password'),
+      'data-manager'
+    );
     let dbClient = makeMockDbClient();
 
     let fakeStoreInDb = sinon.fake();
@@ -1272,7 +1275,7 @@ describe('applyEvent', function() {
     );
   });
 
-  xit('responds with requestRefused in case it receives a 401 from the storage adapter', function(done) {
+  it('responds with requestRefused in case it receives a 401 from the storage adapter', function(done) {
     let conversationId = 'abcd1234';
     let messageSender: MessageSender = new MessageSender(
       <AmqpClient>{},
@@ -1323,7 +1326,7 @@ describe('applyEvent', function() {
     );
   });
 
-  xit('responds with error in case it receives a 500 from the storage adapter', function(done) {
+  it('responds with error in case it receives a 500 from the storage adapter', function(done) {
     let conversationId = 'abcd1234';
     let messageSender: MessageSender = new MessageSender(
       <AmqpClient>{},
@@ -1365,7 +1368,7 @@ describe('applyEvent', function() {
     );
   });
 
-  xit('replies with an error to whoever sent the last message if a programming error occurs during transition', async function() {
+  it('replies with an error to whoever sent the last message if a programming error occurs during transition', async function() {
     let conversationId = 'abcd1234';
     let messageSender: MessageSender = new MessageSender(
       <AmqpClient>{},
@@ -1426,7 +1429,7 @@ describe('applyEvent', function() {
     );*/
   });
 
-  xit('moves into InstancePublished if the manufacturer refuses the type request', function(done) {
+  it('moves into InstancePublished if the manufacturer refuses the type request', function(done) {
     let conversationId = 'abcd1234';
     let messageSender: MessageSender = new MessageSender(
       <AmqpClient>{},
@@ -1475,7 +1478,7 @@ describe('applyEvent', function() {
     );
   });
 
-  xit('moves into InstancePublished if the manufacturer replies with notUnderstood', function(done) {
+  it('moves into InstancePublished if the manufacturer replies with notUnderstood', function(done) {
     let conversationId = 'abcd1234';
     let messageSender: MessageSender = new MessageSender(
       <AmqpClient>{},
@@ -1522,7 +1525,7 @@ describe('applyEvent', function() {
       }
     );
   });
-  xit('moves into InstancePublished if the manufacturer replies with error', function(done) {
+  it('moves into InstancePublished if the manufacturer replies with error', function(done) {
     let conversationId = 'abcd1234';
     let messageSender: MessageSender = new MessageSender(
       <AmqpClient>{},

@@ -1,7 +1,6 @@
 import { IMessageSender } from '../../base/messaginginterface/IMessageSender';
 
 import { WebClient } from '../../web/WebClient';
-import { AxiosResponse } from 'axios';
 import { Submodel, InteractionMessage, IFrame } from 'i40-aas-objects';
 import { IMessageDispatcher } from './IMessageDispatcher';
 import { Roles } from '../../base/messaginginterface/Roles';
@@ -37,15 +36,6 @@ class MessageDispatcher implements IMessageDispatcher {
   }
 
   constructor(private messageSender: IMessageSender) {}
-
-  /*
-  async createInstanceOnCAR(submodels: Submodel[]): Promise<AxiosResponse> {
-    logger.debug('MessageDispatcher:createInstanceOnCAR called');
-    return await this.webClient.postRequest(
-      this.dataManagerUrlSuffix,
-      submodels
-    );
-  }*/
 
   replyRequestRefused(message: InteractionMessage) {
     this.messageSender.replyTo(message.frame, MessageTypes.REQUEST_REFUSED);

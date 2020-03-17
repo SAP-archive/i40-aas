@@ -12,7 +12,7 @@ var expect = chai.expect;
 // or:
 chai.should();
 
-xdescribe('AmqpClient', function() {
+describe('AmqpClient', function() {
   this.beforeEach(function() {});
   this.afterEach(function() {
     sinon.restore();

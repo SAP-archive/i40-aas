@@ -54,11 +54,12 @@ class SkillActionMap {
     event: any
   ): Promise<AxiosResponse> {
     logger.debug('SkillActionMap::createInstance called');
-
-    return this.restClient.createInstanceOnCAR(
+    //TODO await?
+    return await this.restClient.createInstanceOnCAR(
       context.message.interactionElements
     );
   }
+
   sendResponseInstanceToOperator(context: ISkillContext, event: any) {
     logger.debug('onDone called');
     return this.messageDispatcher.sendResponseInstanceToOperator(

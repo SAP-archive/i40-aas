@@ -104,9 +104,9 @@ class SkillStateMachineSpecification {
     MachineOptions<ISkillContext, EventObject>
   > = {
     services: {
-      createInstance: (context: any, event: any) => {
+      createInstance: async (context: any, event: any) => {
         logger.debug('service createInstance called');
-        return context.actionMap.createInstance(context, event);
+        return await context.actionMap.createInstance(context, event);
       }
     },
     guards: {

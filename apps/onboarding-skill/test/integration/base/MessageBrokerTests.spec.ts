@@ -17,7 +17,7 @@ chai.should();
 
 //If these tests do not work reliably some of these can be converted into useful unit tests
 
-xdescribe('AmpqClient', function() {
+describe('AmpqClient', function() {
   let amqpClientSender: AmqpClient;
   let amqpClientReceiver: AmqpClient;
   let AMQP_URL = process.env.RABBITMQ_AMQP_HOST;
