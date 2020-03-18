@@ -181,12 +181,14 @@ describe('AmpqClient', function() {
         'test2.*',
         new (class MyMessageReceiver implements IMessageReceiver {
           receive(cm: string) {
-            testRunning = false;
-            logger.debug(listenerId + ' got message:' + cm);
-            expect(cm).to.include('ping');
-            sinon.assert.called(fakeConnect);
-            logger.debug('Test 2 done');
-            done();
+            if (testRunning) {
+              testRunning = false;
+              logger.debug(listenerId + ' got message:' + cm);
+              expect(cm).to.include('ping');
+              sinon.assert.called(fakeConnect);
+              logger.debug('Test 2 done');
+              done();
+            }
           }
         })()
       )
