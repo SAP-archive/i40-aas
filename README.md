@@ -7,15 +7,17 @@ __i40-aas__ is currently in alpha and open to [contributions](#contributing). Pl
 ---
 
 ## Contents:
-1. [Description](#description)
-1. [Requirements](#requirements)
-1. [Download and Installation](#download-and-installation)
-1. [Configuration](#configuration)
-1. [Known Issues](#known-issues)
-1. [How to obtain support](#how-to-obtain-support)
-1. [Contributing](#contributing)
-1. [Upcoming Changes](#upcoming-changes)
-1. [License](#license)
+- [i40-aas](#i40-aas)
+  - [Contents:](#contents)
+- [Description](#description)
+- [Requirements](#requirements)
+- [Download and Installation](#download-and-installation)
+- [Configuration](#configuration)
+- [Known Issues](#known-issues)
+- [How to obtain support](#how-to-obtain-support)
+- [Contributing](#contributing)
+- [Upcoming changes](#upcoming-changes)
+- [License](#license)
 
 # Description
 
@@ -33,19 +35,6 @@ This service is orchestrated in containers and can be deployed anywhere, where c
 
 # Requirements
 
-You need to download and install [Node.js](https://nodejs.org/en/) and its packagemanager NPM.
-
-Enter `node --version` and `npm --version` in your command line to test your installation.
-You should see:
-
-```
-$ node --version
-// min version: v8.12.0
-
-$ npm --version
-// min version: 6.4.1
-```
-
 You need to download and install [Docker](https://www.docker.com) to manage containers and [Docker Compose](https://docs.docker.com/compose/), which comes with Docker Desktop for Mac and Windows ([check here for Linux](https://docs.docker.com/compose/install/)).
 
 Enter `docker --version` in your command line to test your installation.
@@ -53,13 +42,15 @@ Your should see:
 
 ```
 $ docker --version
-// for example: Docker version 19.03.2, build 6a30dfc
+// tested with Docker version 19.03.8
 
 $ docker-compose version
-// for example: docker-compose version 1.24.1, build 4667896b
+// tested with docker-compose version 1.25.4
 ```
 
-Additionally, you can download and install [Postman](https://www.getpostman.com) to test the services.
+For easier usage, install GNU Make (tested with GNU Make 3.81).
+
+Optionally, you can download and install [Postman](https://www.getpostman.com) to test the services.
 
 # Download and Installation
 
@@ -67,22 +58,19 @@ Service interactions can be tested and developed locally using Docker Compose.
 
 1. Open a terminal and go into the project folders root directory
 
-2. Initiate the download or build of the docker images and subsequent creation of containers (can take some minutes)
+2. Download or build the docker images and deploy containers locally (can take some minutes)
 
 ```bash
 ## Option 1
 ## Use images from Docker Hub (https://hub.docker.com/orgs/sapi40/repositories)
-$ docker-compose pull
-$ docker-compose up
-
-
+$ make install
 
 ## Option 2
 ## Build & use images from this repository via Compose file extension
 ## ref.:
 ##  - https://docs.docker.com/compose/extends/
 ##  - https://docs.docker.com/compose/compose-file/#image
-$ docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+$ make && make dev
 ```
 
 3. If you want to test the running service follow [these](docs/README_Test.md#Test) steps.
@@ -95,7 +83,6 @@ Or kill all containers:
 ```bash
 docker kill $(docker ps -q)
 ```
-
 
 Refer to [this](docs/README_Minikube.md) how to run the AAS Service on a local cluster (e.g. Minikube).
 
