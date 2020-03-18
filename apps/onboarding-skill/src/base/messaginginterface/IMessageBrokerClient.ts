@@ -1,8 +1,8 @@
 import { IMessageReceiver } from './IMessageReceiver';
-import { Subscription } from './Subscription';
+import { SubscriptionDto } from './SubscriptionDto';
 
 interface IMessageBrokerClient {
-  addSubscriptionData(subscription: Subscription): void;
+  addSubscriptionData(subscription: SubscriptionDto): void;
   startListening(cb?: () => void): void;
   publish(routingKey: string, msg: string): void;
   setupPublishing(cb?: () => void): void;

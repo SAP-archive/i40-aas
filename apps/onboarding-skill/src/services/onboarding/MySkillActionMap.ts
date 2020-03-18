@@ -4,13 +4,13 @@ import { InteractionMessage } from 'i40-aas-objects';
 import { ISkillContext } from '../../base/statemachineinterface/ISkillContext';
 import { Utils } from '../../base/Utils';
 
-import { ExternalRestServiceCaller } from './ExternalRestServiceCaller';
-import { AasMessageDispatcher } from './AasMessageDispatcher';
+import { MyExternalRestServiceCaller } from './MyExternalRestServiceCaller';
+import { MyAasMessageDispatcher } from './MyAasMessageDispatcher';
 
-class SkillActionMap {
+class MySkillActionMap {
   constructor(
-    private messageDispatcher: AasMessageDispatcher,
-    private restClient: ExternalRestServiceCaller
+    private messageDispatcher: MyAasMessageDispatcher,
+    private restClient: MyExternalRestServiceCaller
   ) {}
 
   sendCreationErrorToOperator(context: ISkillContext, event: any) {
@@ -85,4 +85,4 @@ class SkillActionMap {
     this.messageDispatcher.sendResponseTypeToOperator(message, {});
   }
 }
-export { SkillActionMap };
+export { MySkillActionMap };

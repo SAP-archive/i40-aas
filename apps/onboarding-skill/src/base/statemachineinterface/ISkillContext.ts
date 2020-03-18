@@ -1,11 +1,11 @@
 import { ISubmodel, InteractionMessage } from 'i40-aas-objects';
 
-import { SkillActionMap } from '../../services/onboarding/SkillActionMap';
+import { MySkillActionMap } from '../../services/onboarding/MySkillActionMap';
 
 interface ISkillContext {
   responseInstance?: ISubmodel;
   message: InteractionMessage;
-  actionMap: SkillActionMap;
+  actionMap: MySkillActionMap;
   configuration: object;
 }
 export { ISkillContext };

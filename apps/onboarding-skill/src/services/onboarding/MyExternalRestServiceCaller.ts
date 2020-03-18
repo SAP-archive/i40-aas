@@ -2,7 +2,7 @@ import { WebClient } from '../../web/WebClient';
 import { AxiosResponse } from 'axios';
 import { logger } from '../../log';
 
-class ExternalRestServiceCaller {
+class MyExternalRestServiceCaller {
   constructor(
     private webClient: WebClient,
     private dataManagerUrlSuffix: string
@@ -13,4 +13,4 @@ class ExternalRestServiceCaller {
   }
 }
 
-export { ExternalRestServiceCaller };
+export { MyExternalRestServiceCaller };

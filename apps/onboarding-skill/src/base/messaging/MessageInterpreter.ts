@@ -3,14 +3,14 @@ import { Skill } from '../Skill';
 import { AmqpClient } from './AmqpClient';
 import { InteractionMessage } from 'i40-aas-objects';
 import { IMessageReceiver } from '../messaginginterface/IMessageReceiver';
-import { Subscription } from '../messaginginterface/Subscription';
+import { SubscriptionDto } from '../messaginginterface/SubscriptionDto';
 import { logger } from '../../log';
 
 class MessageInterpreter implements IMessageReceiver {
   constructor(private skill: Skill, private amqpClient: AmqpClient) {}
 
   start(topic: string) {
-    this.amqpClient.addSubscriptionData(new Subscription(topic, this));
+    this.amqpClient.addSubscriptionData(new SubscriptionDto(topic, this));
     this.amqpClient.startListening();
   }
 

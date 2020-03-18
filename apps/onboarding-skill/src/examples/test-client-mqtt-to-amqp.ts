@@ -3,7 +3,7 @@ import { SapMqttClient } from './SapMqttClient';
 import { IMessageReceiver } from '../base/messaging/MessageInterpreter';
 import { logger } from '../log';
 import { IMessageBrokerClient } from '../base/messaginginterface/IMessageBrokerClient';
-import { Subscription } from '../base/messaginginterface/Subscription';
+import { SubscriptionDto } from '../base/messaginginterface/SubscriptionDto';
 
 const initializeLogger = require('../log');
 let sender: IMessageBrokerClient;
@@ -28,7 +28,7 @@ function start() {
 
   let clockSet: boolean = false;
   receiver.addSubscriptionData(
-    new Subscription(
+    new SubscriptionDto(
       'skill.*',
       new (class MyMessageReceiver implements IMessageReceiver {
         receive(msg: string) {

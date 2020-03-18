@@ -8,13 +8,13 @@ import {
   Message
 } from 'amqplib/callback_api';
 import { IMessageBrokerClient } from '../messaginginterface/IMessageBrokerClient';
-import { Subscription } from '../messaginginterface/Subscription';
+import { SubscriptionDto } from '../messaginginterface/SubscriptionDto';
 
 class AmqpConnectionDetails {
   connection: Connection | undefined;
   connectionClosed: boolean = true;
   pubChannel: Channel | undefined;
-  subscription: Subscription | undefined;
+  subscription: SubscriptionDto | undefined;
 }
 
 //TODO: set proper time gap for connection retries (6s currently).
@@ -122,7 +122,7 @@ class AmqpClient implements IMessageBrokerClient {
     }
   }
 
-  addSubscriptionData(subscription: Subscription) {
+  addSubscriptionData(subscription: SubscriptionDto) {
     this.myConn.subscription = subscription;
   }
 

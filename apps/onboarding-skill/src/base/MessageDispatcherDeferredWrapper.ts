@@ -3,8 +3,8 @@ import { ICommand } from './messaginginterface/ICommand';
 import { logger } from '../log';
 import { Utils } from './Utils';
 
-class DeferredMessageDispatcherFactory {
-  static getInstance(messageDispatcher: any): any {
+class MessageDispatcherDeferredWrapper {
+  static wrap(messageDispatcher: any): any {
     var retVal: any = {};
     retVal.commandCollector = new CommandCollector();
     var x: string[] = Utils.getMethods(messageDispatcher);
@@ -33,4 +33,4 @@ class DeferredMessageDispatcherFactory {
     return retVal;
   }
 }
-export { DeferredMessageDispatcherFactory };
+export { MessageDispatcherDeferredWrapper };

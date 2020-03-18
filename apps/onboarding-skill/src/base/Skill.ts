@@ -2,18 +2,18 @@ import { interpret, State, Interpreter, EventObject } from 'xstate';
 import * as logger from 'winston';
 import { IDatabaseClient } from './persistenceinterface/IDatabaseClient';
 import { IStateRecord } from './persistenceinterface/IStateRecord';
-import { SkillStateMachineSpecification } from '../services/onboarding/SkillStateMachineSpecification';
+import { MySkillStateMachineSpecification } from '../services/onboarding/MySkillStateMachineSpecification';
 import * as _ from 'lodash';
 import { InteractionMessage } from 'i40-aas-objects';
 import { ISkillContext } from './statemachineinterface/ISkillContext';
-import { DeferredMessageDispatcherFactory } from './DeferredMessageDispatcherFactory';
+import { MessageDispatcherDeferredWrapper } from './MessageDispatcherDeferredWrapper';
 import { IInitializer } from './statemachineinterface/IInitializer';
 
 //Try to keep this generic. Do not mention roles or message types. Do not perform actions that
 //should be modelled in the state machine. This class should remain relatively constant. It
 //could be any skill
 class Skill {
-  private readonly stateMachineSpecification: SkillStateMachineSpecification = new SkillStateMachineSpecification();
+  private readonly stateMachineSpecification: MySkillStateMachineSpecification = new MySkillStateMachineSpecification();
 
   constructor(
     //private messageDispatcher: IAasMessageDispatcher,
@@ -85,7 +85,7 @@ class Skill {
     fnOnTransitionDone?: (state: State<ISkillContext, EventObject>) => void,
     fnOnTransitionError?: (state: State<ISkillContext, EventObject>) => void
   ) {
-    let deferredMessageDispatcher = DeferredMessageDispatcherFactory.getInstance(
+    let deferredMessageDispatcher = MessageDispatcherDeferredWrapper.wrap(
       this.initializer.getPlainAasMessageDispatcher()
     );
     let context = this.initializer.createContextForStateMachine(

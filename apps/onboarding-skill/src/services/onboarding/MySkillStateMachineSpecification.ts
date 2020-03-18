@@ -9,7 +9,7 @@ import { ISkillContext } from '../../base/statemachineinterface/ISkillContext';
 //leads to
 //OperationFailed, resulting in a message sent to the operator
 //this is currently not the case
-class SkillStateMachineSpecification {
+class MySkillStateMachineSpecification {
   private readonly machineDescription = {
     id: 'onboarding-central-asset-repository',
     initial: 'WaitingForOnboardingRequest',
@@ -150,4 +150,4 @@ class SkillStateMachineSpecification {
   }
 }
 
-export { SkillStateMachineSpecification };
+export { MySkillStateMachineSpecification };

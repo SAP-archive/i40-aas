@@ -1,15 +1,15 @@
 import { AmqpClient } from './base/messaging/AmqpClient';
 import { MessageInterpreter } from './base/messaging/MessageInterpreter';
 import { Skill } from './base/Skill';
-import { AasMessageDispatcher } from './services/onboarding/AasMessageDispatcher';
+import { MyAasMessageDispatcher } from './services/onboarding/MyAasMessageDispatcher';
 import { MessageSender } from './base/messaging/MessageSender';
 import { WebClient } from './web/WebClient';
 import { SimpleMongoDbClient } from './base/persistence/SimpleMongoDbClient';
 import { IDatabaseClient } from './base/persistenceinterface/IDatabaseClient';
 import { logger } from './log';
 import { TIdType, IdTypeEnum } from 'i40-aas-objects/dist/src/types/IdTypeEnum';
-import { ExternalRestServiceCaller } from './services/onboarding/ExternalRestServiceCaller';
-import { Initializer } from './services/onboarding/Initializer';
+import { MyExternalRestServiceCaller } from './services/onboarding/MyExternalRestServiceCaller';
+import { MyInitializer } from './services/onboarding/MyInitializer';
 
 function checkEnvVar(variableName: string): string {
   let retVal: string | undefined = process.env[variableName];
@@ -62,7 +62,7 @@ let amqpClient = new AmqpClient(
   ROOT_TOPIC
 );
 
-let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
+let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
   new MessageSender(
     amqpClient,
     {
@@ -88,9 +88,9 @@ let dbClient: IDatabaseClient = new SimpleMongoDbClient(
 );
 
 let skill = new Skill(
-  new Initializer(
+  new MyInitializer(
     messageDispatcher,
-    new ExternalRestServiceCaller(
+    new MyExternalRestServiceCaller(
       new WebClient(
         DATA_MANAGER_BASE_URL,
         DATA_MANAGER_USER,

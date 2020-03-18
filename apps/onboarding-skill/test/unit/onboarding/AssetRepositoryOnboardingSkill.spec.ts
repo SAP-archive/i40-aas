@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { logger } from '../../../src/log';
 import { Skill } from '../../../src/base/Skill';
 import sinon from 'sinon';
-import { AasMessageDispatcher } from '../../../src/services/onboarding/AasMessageDispatcher';
+import { MyAasMessageDispatcher } from '../../../src/services/onboarding/MyAasMessageDispatcher';
 import { WebClient } from '../../../src/web/WebClient';
 import fs from 'fs';
 import { MessageSender } from '../../../src/base/messaging/MessageSender';
@@ -13,8 +13,8 @@ import Axios, { AxiosError } from 'axios';
 import { AmqpClient } from '../../../src/base/messaging/AmqpClient';
 import { InteractionMessage } from 'i40-aas-objects';
 import { IConversationMember } from 'i40-aas-objects/dist/src/interaction/ConversationMember';
-import { ExternalRestServiceCaller } from '../../../src/services/onboarding/ExternalRestServiceCaller';
-import { Initializer } from '../../../src/services/onboarding/Initializer';
+import { MyExternalRestServiceCaller } from '../../../src/services/onboarding/MyExternalRestServiceCaller';
+import { MyInitializer } from '../../../src/services/onboarding/MyInitializer';
 
 const initializeLogger = require('../../../src/log');
 
@@ -83,10 +83,10 @@ describe('applyEvent', function() {
       'InstancePublished via CreatingInstance, counting up versions correctly',
     function(done) {
       let conversationId = 'abcd1234';
-      let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
+      let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
         <IMessageSender>{}
       );
-      let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
+      let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
         <WebClient>{},
         'data-manager'
       );
@@ -110,7 +110,7 @@ describe('applyEvent', function() {
       sinon.replace(restClient, 'createInstanceOnCAR', fakecreateInstanceOnCAR);
 
       let skill: Skill = new Skill(
-        new Initializer(messageDispatcher, restClient, {}),
+        new MyInitializer(messageDispatcher, restClient, {}),
         dbClient
       );
       skill.applyEvent(
@@ -153,11 +153,11 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
       messageSender
     );
 
-    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -175,7 +175,7 @@ describe('applyEvent', function() {
     //sinon.replace(messageSender, "replyTo", sinon.fake());
 
     let skill: Skill = new Skill(
-      new Initializer(messageDispatcher, restClient, {
+      new MyInitializer(messageDispatcher, restClient, {
         askForApproval: true
       }),
       dbClient
@@ -240,11 +240,11 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
       messageSender
     );
     let dbClient = makeMockDbClient();
-    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -277,7 +277,7 @@ describe('applyEvent', function() {
     sinon.replace(messageSender, 'sendTo', fakeSendTo);
 
     let skill: Skill = new Skill(
-      new Initializer(messageDispatcher, restClient, {
+      new MyInitializer(messageDispatcher, restClient, {
         askForApproval: true
       }),
       dbClient
@@ -342,10 +342,10 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
       messageSender
     );
-    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -374,7 +374,7 @@ describe('applyEvent', function() {
     sinon.replace(messageSender, 'sendTo', fakeSendTo);
 
     let skill: Skill = new Skill(
-      new Initializer(messageDispatcher, restClient, {
+      new MyInitializer(messageDispatcher, restClient, {
         askForApproval: true
       }),
       dbClient
@@ -437,10 +437,10 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
       messageSender
     );
-    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -475,7 +475,7 @@ describe('applyEvent', function() {
     sinon.replace(messageSender, 'sendTo', fakeSendTo);
 
     let skill: Skill = new Skill(
-      new Initializer(messageDispatcher, restClient, {
+      new MyInitializer(messageDispatcher, restClient, {
         askForApproval: true
       }),
       dbClient
@@ -540,11 +540,11 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
       messageSender
     );
     let dbClient = makeMockDbClient();
-    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -572,7 +572,7 @@ describe('applyEvent', function() {
     sinon.replace(messageSender, 'sendTo', fakeSendTo);
 
     let skill: Skill = new Skill(
-      new Initializer(messageDispatcher, restClient, {
+      new MyInitializer(messageDispatcher, restClient, {
         askForApproval: true
       }),
       dbClient
@@ -635,11 +635,11 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
       messageSender
     );
     let dbClient = makeMockDbClient();
-    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -666,7 +666,7 @@ describe('applyEvent', function() {
     sinon.replace(messageSender, 'sendTo', fakeSendTo);
 
     let skill: Skill = new Skill(
-      new Initializer(messageDispatcher, restClient, {
+      new MyInitializer(messageDispatcher, restClient, {
         askForApproval: true
       }),
       dbClient
@@ -729,11 +729,11 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
       messageSender
     );
     let dbClient = makeMockDbClient();
-    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -766,7 +766,7 @@ describe('applyEvent', function() {
     sinon.replace(messageSender, 'sendTo', fakeSendTo);
 
     let skill: Skill = new Skill(
-      new Initializer(messageDispatcher, restClient, {
+      new MyInitializer(messageDispatcher, restClient, {
         askForApproval: true
       }),
       dbClient
@@ -831,11 +831,11 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
       messageSender
     );
     let dbClient = makeMockDbClient();
-    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -868,7 +868,7 @@ describe('applyEvent', function() {
     sinon.replace(messageSender, 'sendTo', fakeSendTo);
 
     let skill: Skill = new Skill(
-      new Initializer(messageDispatcher, restClient, {
+      new MyInitializer(messageDispatcher, restClient, {
         askForApproval: true
       }),
       dbClient
@@ -933,10 +933,10 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
       messageSender
     );
-    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -971,7 +971,7 @@ describe('applyEvent', function() {
     sinon.replace(messageSender, 'sendTo', fakeSendTo);
 
     let skill: Skill = new Skill(
-      new Initializer(messageDispatcher, restClient, {
+      new MyInitializer(messageDispatcher, restClient, {
         askForApproval: true
       }),
       dbClient
@@ -1003,11 +1003,11 @@ describe('applyEvent', function() {
     //process.env['ONBOARDING_SKILL_REQUEST_TYPE'] = 'true';
 
     let conversationId = 'abcd1234';
-    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
       <IMessageSender>{}
     );
     let dbClient = makeMockDbClient();
-    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -1035,7 +1035,7 @@ describe('applyEvent', function() {
     sinon.replace(restClient, 'createInstanceOnCAR', fakecreateInstanceOnCAR);
 
     let skill: Skill = new Skill(
-      new Initializer(messageDispatcher, restClient, {
+      new MyInitializer(messageDispatcher, restClient, {
         askForType: true
       }),
       dbClient
@@ -1059,7 +1059,7 @@ describe('applyEvent', function() {
   it('switches sender to receiver when replying to a message', async function() {
     let conversationId = 'abcd1234';
     let amqpClient = new AmqpClient('a', 'b', 'c', 'd', '');
-    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
       new MessageSender(
         amqpClient,
         {
@@ -1074,7 +1074,7 @@ describe('applyEvent', function() {
         'routingKey'
       )
     );
-    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -1098,7 +1098,7 @@ describe('applyEvent', function() {
     sinon.replace(amqpClient, 'publish', fakePublish);
 
     let skill: Skill = new Skill(
-      new Initializer(messageDispatcher, restClient, {}),
+      new MyInitializer(messageDispatcher, restClient, {}),
       dbClient
     );
 
@@ -1116,10 +1116,10 @@ describe('applyEvent', function() {
 
   it('sends out not understood if it receives a publish instance message when in state InstancePublished', async function() {
     let conversationId = 'abcd1234';
-    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
       <IMessageSender>{}
     );
-    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -1147,7 +1147,7 @@ describe('applyEvent', function() {
     );
 
     let skill: Skill = new Skill(
-      new Initializer(messageDispatcher, restClient, {}),
+      new MyInitializer(messageDispatcher, restClient, {}),
       dbClient
     );
 
@@ -1161,10 +1161,10 @@ describe('applyEvent', function() {
 
   it('sends out not understood if it receives an illegal interaction', async function() {
     let conversationId = 'abcd1234';
-    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
       <IMessageSender>{}
     );
-    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -1193,7 +1193,7 @@ describe('applyEvent', function() {
     );
 
     let skill: Skill = new Skill(
-      new Initializer(messageDispatcher, restClient, {}),
+      new MyInitializer(messageDispatcher, restClient, {}),
       dbClient
     );
 
@@ -1212,10 +1212,10 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
       messageSender
     );
-    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -1240,7 +1240,7 @@ describe('applyEvent', function() {
     sinon.replace(messageSender, 'sendTo', fakeSendTo);
 
     let skill: Skill = new Skill(
-      new Initializer(messageDispatcher, restClient, {
+      new MyInitializer(messageDispatcher, restClient, {
         askForType: true
       }),
       dbClient
@@ -1266,10 +1266,10 @@ describe('applyEvent', function() {
 
   it('does not send out a responseInstance if there was an error in writing to the database after entering InstancePublished', function(done) {
     let conversationId = 'abcd1234';
-    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
       <IMessageSender>{}
     );
-    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -1295,7 +1295,7 @@ describe('applyEvent', function() {
     sinon.replace(restClient, 'createInstanceOnCAR', fakecreateInstanceOnCAR);
 
     let skill: Skill = new Skill(
-      new Initializer(messageDispatcher, restClient, {}),
+      new MyInitializer(messageDispatcher, restClient, {}),
       dbClient
     );
 
@@ -1321,10 +1321,10 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
       messageSender
     );
-    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       new WebClient('http://base.com', 'user', 'password'),
       'data-manager'
     );
@@ -1350,7 +1350,7 @@ describe('applyEvent', function() {
     sinon.replace(Axios, 'post', fakePost);
 
     let skill: Skill = new Skill(
-      new Initializer(messageDispatcher, restClient, {}),
+      new MyInitializer(messageDispatcher, restClient, {}),
       dbClient
     );
 
@@ -1379,10 +1379,10 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
       messageSender
     );
-    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -1407,7 +1407,7 @@ describe('applyEvent', function() {
     );
 
     let skill: Skill = new Skill(
-      new Initializer(messageDispatcher, restClient, {}),
+      new MyInitializer(messageDispatcher, restClient, {}),
       dbClient
     );
 
@@ -1436,11 +1436,11 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
       messageSender
     );
     let dbClient = makeMockDbClient();
-    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -1456,7 +1456,7 @@ describe('applyEvent', function() {
     sinon.replace(messageSender, 'sendTo', sendTo);
 
     let skill: Skill = new Skill(
-      new Initializer(messageDispatcher, restClient, {}),
+      new MyInitializer(messageDispatcher, restClient, {}),
       dbClient
     );
 
@@ -1484,11 +1484,11 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
       messageSender
     );
     let dbClient = makeMockDbClient();
-    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -1517,7 +1517,7 @@ describe('applyEvent', function() {
     //sinon.replace(messageSender, "sendTo", sendTo);
 
     let skill: Skill = new Skill(
-      new Initializer(messageDispatcher, restClient, {}),
+      new MyInitializer(messageDispatcher, restClient, {}),
       dbClient
     );
     let fakecreateAndStartMaschineServiceFromPreviousWithCurrentContext = sinon.fake.throws(
@@ -1551,10 +1551,10 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
       messageSender
     );
-    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -1581,7 +1581,7 @@ describe('applyEvent', function() {
     sinon.replace(messageSender, 'sendTo', sendTo);
 
     let skill: Skill = new Skill(
-      new Initializer(messageDispatcher, restClient, {}),
+      new MyInitializer(messageDispatcher, restClient, {}),
       dbClient
     );
 
@@ -1606,11 +1606,11 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
       messageSender
     );
     let dbClient = makeMockDbClient();
-    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -1635,7 +1635,7 @@ describe('applyEvent', function() {
     sinon.replace(messageSender, 'sendTo', sendTo);
 
     let skill: Skill = new Skill(
-      new Initializer(messageDispatcher, restClient, {}),
+      new MyInitializer(messageDispatcher, restClient, {}),
       dbClient
     );
 
@@ -1659,11 +1659,11 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
       messageSender
     );
     let dbClient = makeMockDbClient();
-    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -1688,7 +1688,7 @@ describe('applyEvent', function() {
     sinon.replace(messageSender, 'sendTo', sendTo);
 
     let skill: Skill = new Skill(
-      new Initializer(messageDispatcher, restClient, {}),
+      new MyInitializer(messageDispatcher, restClient, {}),
       dbClient
     );
 

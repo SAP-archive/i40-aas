@@ -1,16 +1,16 @@
 import { IMessageBrokerClient } from '../base/messaginginterface/IMessageBrokerClient';
 import { IMessageReceiver } from '../base/messaginginterface/IMessageReceiver';
-import { Subscription } from '../base/messaginginterface/Subscription';
+import { SubscriptionDto } from '../base/messaginginterface/SubscriptionDto';
 import { Client } from 'mqtt';
 import * as logger from 'winston';
 
 var mqtt = require('mqtt');
 
 class SapMqttClient implements IMessageBrokerClient {
-  private subscription: Subscription | undefined;
+  private subscription: SubscriptionDto | undefined;
   private client: Client;
 
-  addSubscriptionData(subscription: Subscription) {
+  addSubscriptionData(subscription: SubscriptionDto) {
     this.subscription = subscription;
   }
 

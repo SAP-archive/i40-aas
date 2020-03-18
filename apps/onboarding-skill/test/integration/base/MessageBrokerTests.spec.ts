@@ -1,6 +1,6 @@
 import { AmqpClient } from '../../../src/base/messaging/AmqpClient';
 import { IMessageReceiver } from '../../../src/base/messaging/MessageInterpreter';
-import { Subscription } from '../../../src/base/messaginginterface/Subscription';
+import { SubscriptionDto } from '../../../src/base/messaginginterface/SubscriptionDto';
 import { SapMqttClient } from '../../../src/examples/SapMqttClient';
 import { logger } from '../../../src/log';
 import sinon from 'sinon';
@@ -47,7 +47,7 @@ describe('AmpqClient', function() {
       listenerId
     );
     amqpClientReceiver.addSubscriptionData(
-      new Subscription(
+      new SubscriptionDto(
         'test1.*',
         new (class MyMessageReceiver implements IMessageReceiver {
           receive(cm: string) {
@@ -88,7 +88,7 @@ describe('AmpqClient', function() {
     );
 
     amqpClientReceiver.addSubscriptionData(
-      new Subscription(
+      new SubscriptionDto(
         'test1b.*',
         new (class MyMessageReceiver implements IMessageReceiver {
           receive(cm: string) {
@@ -123,7 +123,7 @@ describe('AmpqClient', function() {
     );
 
     mqttReceiver.addSubscriptionData(
-      new Subscription(
+      new SubscriptionDto(
         'test1c/x',
         new (class MyMessageReceiver implements IMessageReceiver {
           receive(cm: string) {
@@ -177,7 +177,7 @@ describe('AmpqClient', function() {
     }, 300);
 
     amqpClientReceiver.addSubscriptionData(
-      new Subscription(
+      new SubscriptionDto(
         'test2.*',
         new (class MyMessageReceiver implements IMessageReceiver {
           receive(cm: string) {
@@ -242,7 +242,7 @@ describe('AmpqClient', function() {
     }, 400);
 
     amqpClientReceiver.addSubscriptionData(
-      new Subscription(
+      new SubscriptionDto(
         'test3.*',
         new (class MyMessageReceiver implements IMessageReceiver {
           receive(numberAsString: string) {

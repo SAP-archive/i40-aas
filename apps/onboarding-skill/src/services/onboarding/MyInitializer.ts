@@ -4,18 +4,18 @@ import { InteractionMessage } from 'i40-aas-objects';
 
 import { ISkillContext } from '../../base/statemachineinterface/ISkillContext';
 
-import { SkillActionMap } from './SkillActionMap';
-import { ExternalRestServiceCaller } from './ExternalRestServiceCaller';
+import { MySkillActionMap } from './MySkillActionMap';
+import { MyExternalRestServiceCaller } from './MyExternalRestServiceCaller';
 import { IAasMessageDispatcher } from '../../base/messaginginterface/IAasMessageDispatcher';
-import { AasMessageDispatcher } from './AasMessageDispatcher';
+import { MyAasMessageDispatcher } from './MyAasMessageDispatcher';
 
-class Initializer implements IInitializer {
+class MyInitializer implements IInitializer {
   getPlainAasMessageDispatcher(): IAasMessageDispatcher {
     return this.plainMessageDispatcher;
   }
   constructor(
-    private plainMessageDispatcher: AasMessageDispatcher,
-    private restClient: ExternalRestServiceCaller,
+    private plainMessageDispatcher: MyAasMessageDispatcher,
+    private restClient: MyExternalRestServiceCaller,
     private configuration: object
   ) {}
   public createContextForStateMachine(
@@ -24,9 +24,12 @@ class Initializer implements IInitializer {
   ): ISkillContext {
     return {
       message: message,
-      actionMap: new SkillActionMap(wrappedMessageDispatcher, this.restClient),
+      actionMap: new MySkillActionMap(
+        wrappedMessageDispatcher,
+        this.restClient
+      ),
       configuration: this.configuration
     };
   }
 }
-export { Initializer };
+export { MyInitializer };
