@@ -16,7 +16,7 @@ class AmqpConnectionDetails {
 }
 
 class Subscription {
-  constructor(public topic: string, public messageReceiver: IMessageReceiver) {}
+  constructor(public topic: string, public messageReceiver: IMessageReceiver) { }
 }
 interface IMessageReceiver {
   //TODO: localization of string when converting from bytes
@@ -27,7 +27,7 @@ interface IMessageBrokerClient {
   startListening(cb?: () => void): void;
   publish(routingKey: string, msg: string): void;
   setupPublishing(cb?: () => void): void;
-  isConnected():boolean;
+  isConnected(): boolean;
 
 }
 
@@ -57,15 +57,15 @@ class AmqpClient implements IMessageBrokerClient {
     private brokerExchange: string,
     private brokerUser: string,
     private brokerPass: string,
-    private uniqueListenerId: string,
+    private listenerQueue: string,
     useMqtt?: boolean,
     private reconnectAfterMilliSecs?: number
   ) {
     this.start = Date.now();
-    this.listenerQName = uniqueListenerId + ':submodels:publishRequests';
+    this.listenerQName = listenerQueue;
     console.debug('AmpqClient created');
     let that = this;
-    process.on('SIGINT', function() {
+    process.on('SIGINT', function () {
       that.cleanup();
     });
     if (useMqtt !== undefined) {
@@ -101,7 +101,7 @@ class AmqpClient implements IMessageBrokerClient {
     console.debug('Connecting to ' + url);
     var that = this;
     try {
-      this.connectToBroker(url, opt, async function(err, conn: Connection) {
+      this.connectToBroker(url, opt, async function (err, conn: Connection) {
         if (err) {
           console.error('[AMQP] Error:' + err.message);
           console.info('Waiting to reconnect');
@@ -118,20 +118,20 @@ class AmqpClient implements IMessageBrokerClient {
         console.info('[AMQP] definitely connected');
         that.myConn.connection = conn;
         that.myConn.connectionClosed = false;
-        conn.on('close', async function() {
+        conn.on('close', async function () {
           if (that.destroyed) return;
           console.error(
             '[AMQP] connection lost, reconnecting. Time:' +
-              (Date.now() - that.start)
+            (Date.now() - that.start)
           );
           that.myConn.connectionClosed = true;
           that.connectAndDoSubscription(() => {
             that.setupPublishing(() =>
-            console.info(
+              console.info(
                 'Successfully connected after drop count:' +
-                  ++that.successCounter +
-                  '. Time:' +
-                  (Date.now() - that.start)
+                ++that.successCounter +
+                '. Time:' +
+                (Date.now() - that.start)
               )
             );
           });
@@ -164,7 +164,7 @@ class AmqpClient implements IMessageBrokerClient {
       );
     }
     var that = this;
-    this.myConn.connection.createChannel(function(err, ch: Channel) {
+    this.myConn.connection.createChannel(function (err, ch: Channel) {
       if (err) {
         console.error('Error thrown:' + err.message);
         throw err;
@@ -183,7 +183,7 @@ class AmqpClient implements IMessageBrokerClient {
         );
       }
 
-      ch.assertQueue(that.listenerQName, { exclusive: false }, function(
+      ch.assertQueue(that.listenerQName, { exclusive: false }, function (
         error2,
         q
       ) {
@@ -196,19 +196,19 @@ class AmqpClient implements IMessageBrokerClient {
         if (that.myConn.subscription) {
           console.info(
             'Listener started. Waiting for messages in ' +
-              q.queue +
-              ' for topic ' +
-              that.myConn.subscription.topic +
-              '. Call count: ' +
-              ++that.listenerCounter
+            q.queue +
+            ' for topic ' +
+            that.myConn.subscription.topic +
+            '. Call count: ' +
+            ++that.listenerCounter
           );
           console.debug(
             'Binding ' +
-              q.queue +
-              ' to exchange ' +
-              that.brokerExchange +
-              ' for topic ' +
-              that.myConn.subscription.topic
+            q.queue +
+            ' to exchange ' +
+            that.brokerExchange +
+            ' for topic ' +
+            that.myConn.subscription.topic
           );
           ch.bindQueue(
             q.queue,
@@ -221,12 +221,12 @@ class AmqpClient implements IMessageBrokerClient {
           );
           ch.consume(
             q.queue,
-            function(msg: Message | null) {
+            function (msg: Message | null) {
               if (msg === null) {
                 throw Error('Null message received!');
               }
               console.debug(
-                that.uniqueListenerId + ' received message on queue ' + q.queue
+                that.listenerQueue + ' received message on queue ' + q.queue
               );
 
               if (that.myConn.subscription) {
@@ -279,7 +279,7 @@ class AmqpClient implements IMessageBrokerClient {
         );
       }
       console.debug('Creating channel');
-      that.myConn.connection.createChannel(function(err: any, ch: Channel) {
+      that.myConn.connection.createChannel(function (err: any, ch: Channel) {
         if (err) {
           throw new Error(err.message);
         }
@@ -309,9 +309,9 @@ class AmqpClient implements IMessageBrokerClient {
             () => {
               console.debug(
                 'bound exchange. All messages arriving at ' +
-                  that.brokerExchange +
-                  ' will be forwarded to ' +
-                  AmqpClient.MQTT_EXCHANGE
+                that.brokerExchange +
+                ' will be forwarded to ' +
+                AmqpClient.MQTT_EXCHANGE
               );
               console.debug('Calling publish callback');
               if (cb) cb();
@@ -350,12 +350,12 @@ class AmqpClient implements IMessageBrokerClient {
     );
     console.debug(
       'amqp client sent to exchange ' +
-        this.brokerExchange +
-        ' with topic ' +
-        routingKey +
-        " the following message'" +
-        msg +
-        "'"
+      this.brokerExchange +
+      ' with topic ' +
+      routingKey +
+      " the following message'" +
+      msg +
+      "'"
     );
   }
 
@@ -370,4 +370,4 @@ class AmqpClient implements IMessageBrokerClient {
   }
 }
 
-export{IMessageReceiver,IMessageBrokerClient, AmqpClient, Subscription }
+export { IMessageReceiver, IMessageBrokerClient, AmqpClient, Subscription }

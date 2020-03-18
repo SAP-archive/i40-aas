@@ -34,6 +34,7 @@ let DATA_MANAGER_BASE_URL =
   checkEnvVar('DATA_MANAGER_HOST') +
   ':' +
   checkEnvVar('DATA_MANAGER_PORT');
+let BROCKER_QUEUE = "onboarding-skill-queue"; //TODO: here also from env variable??
 
 let ROOT_TOPIC = checkEnvVar('ONBOARDING_SKILL_ROOT_TOPIC');
 let TOPIC = ROOT_TOPIC + '.*';
@@ -61,7 +62,7 @@ let amqpClient = new AmqpClient(
   BROKER_EXCHANGE,
   BROKER_USER,
   BROKER_PASSWORD,
-  ROOT_TOPIC
+  BROCKER_QUEUE
 );
 
 let messageDispatcher: MessageDispatcher = new MessageDispatcher(

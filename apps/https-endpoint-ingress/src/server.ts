@@ -14,11 +14,11 @@ import routes from "./services";
 const dotenv = require("dotenv");
 dotenv.config();
 
-let RABBITMQ_AMQP_HOST = process.env.RABBITMQ_AMQP_HOST;
-let RABBITMQ_AMQP_PORT = process.env.RABBITMQ_AMQP_PORT;
+let BROKER_URL = process.env.RABBITMQ_AMQP_HOST;
 var RABBITMQ_BROKER_EXCHANGE = process.env.RABBITMQ_BROKER_EXCHANGE;
 var RABBITMQ_BROKER_USER = process.env.RABBITMQ_BROKER_USER;
 var RABBITMQ_BROKER_PASSWORD = process.env.RABBITMQ_BROKER_PASSWORD;
+let BROCKER_QUEUE = "http-ingress-queue"; //TODO: here also from env variable??
 
 //avoid crashing the process when an unhandled Exception occurs
 process.on("uncaughtException", e => {
@@ -46,18 +46,18 @@ applyRoutes(routes, router);
 applyMiddleware(errorHandlers, router);
 
 if (
-  RABBITMQ_AMQP_HOST &&
-  RABBITMQ_AMQP_PORT &&
+  BROKER_URL &&
   RABBITMQ_BROKER_EXCHANGE &&
   RABBITMQ_BROKER_USER &&
-  RABBITMQ_BROKER_PASSWORD
+  RABBITMQ_BROKER_PASSWORD &&
+  BROCKER_QUEUE
 ) {
   let brokerClient = new AmqpClient(
-    RABBITMQ_AMQP_HOST,
-    RABBITMQ_AMQP_PORT,
+    BROKER_URL,
     RABBITMQ_BROKER_EXCHANGE,
     RABBITMQ_BROKER_USER,
-    RABBITMQ_BROKER_PASSWORD
+    RABBITMQ_BROKER_PASSWORD,
+    BROCKER_QUEUE
   );
 
   initiateBroker(brokerClient);
