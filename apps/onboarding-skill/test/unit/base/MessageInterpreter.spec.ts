@@ -1,5 +1,5 @@
 import { Skill } from '../../../src/base/Skill';
-import { MessageDispatcher } from '../../../src/services/onboarding/MessageDispatcher';
+import { AasMessageDispatcher } from '../../../src/services/onboarding/AasMessageDispatcher';
 import { IMessageSender } from '../../../src/base/messaginginterface/IMessageSender';
 import { WebClient } from '../../../src/web/WebClient';
 import { SimpleMongoDbClient } from '../../../src/base/persistence/SimpleMongoDbClient';
@@ -8,7 +8,8 @@ import { MessageInterpreter } from '../../../src/base/messaging/MessageInterpret
 import { AmqpClient } from '../../../src/base/messaging/AmqpClient';
 import { InteractionMessage } from 'i40-aas-objects';
 import { logger } from '../../../src/log';
-import { RestCallDispatcher } from '../../../src/services/onboarding/RestCallDispatcher';
+import { ExternalRestServiceCaller } from '../../../src/services/onboarding/ExternalRestServiceCaller';
+import { Initializer } from '../../../src/services/onboarding/Initializer';
 
 var chai = require('chai');
 var chaiAsPromised = require('chai-as-promised');
@@ -75,10 +76,10 @@ describe('validation process', function() {
       },
       interactionElements: [{}]
     };
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
+    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
       <IMessageSender>{}
     );
-    let restClient: RestCallDispatcher = new RestCallDispatcher(
+    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -89,10 +90,8 @@ describe('validation process', function() {
       fakeReplyNotUnderstood
     );
     let skill: Skill = new Skill(
-      messageDispatcher,
-      restClient,
-      makeFakeDbClient(),
-      {}
+      new Initializer(messageDispatcher, restClient, {}),
+      makeFakeDbClient()
     );
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
@@ -130,18 +129,16 @@ describe('validation process', function() {
       },
       interactionElements: [{}]
     };
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
+    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
       <IMessageSender>{}
     );
-    let restClient: RestCallDispatcher = new RestCallDispatcher(
+    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
     let skill: Skill = new Skill(
-      messageDispatcher,
-      restClient,
-      makeFakeDbClient(),
-      {}
+      new Initializer(messageDispatcher, restClient, {}),
+      makeFakeDbClient()
     );
 
     let fakeapplyEvent = sinon.fake();
@@ -183,19 +180,17 @@ describe('validation process', function() {
       },
       interactionElements: [{}]
     };
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
+    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
       <IMessageSender>{}
     );
 
-    let restClient: RestCallDispatcher = new RestCallDispatcher(
+    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
     let skill: Skill = new Skill(
-      messageDispatcher,
-      restClient,
-      makeFakeDbClient(),
-      {}
+      new Initializer(messageDispatcher, restClient, {}),
+      makeFakeDbClient()
     );
 
     let fakeapplyEvent = sinon.fake();
@@ -235,18 +230,16 @@ describe('validation process', function() {
       },
       interactionElements: [{}]
     };
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
+    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
       <IMessageSender>{}
     );
-    let restClient: RestCallDispatcher = new RestCallDispatcher(
+    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
     let skill: Skill = new Skill(
-      messageDispatcher,
-      restClient,
-      makeFakeDbClient(),
-      {}
+      new Initializer(messageDispatcher, restClient, {}),
+      makeFakeDbClient()
     );
 
     let fakeapplyEvent = sinon.fake();
@@ -288,10 +281,10 @@ describe('validation process', function() {
       },
       interactionElements: [{}]
     };
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
+    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
       <IMessageSender>{}
     );
-    let restClient: RestCallDispatcher = new RestCallDispatcher(
+    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -302,10 +295,8 @@ describe('validation process', function() {
       fakeReplyNotUnderstood
     );
     let skill: Skill = new Skill(
-      messageDispatcher,
-      restClient,
-      makeFakeDbClient(),
-      {}
+      new Initializer(messageDispatcher, restClient, {}),
+      makeFakeDbClient()
     );
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
@@ -343,10 +334,10 @@ describe('validation process', function() {
       },
       interactionElements: [{}]
     };
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
+    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
       <IMessageSender>{}
     );
-    let restClient: RestCallDispatcher = new RestCallDispatcher(
+    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -357,10 +348,8 @@ describe('validation process', function() {
       fakeReplyNotUnderstood
     );
     let skill: Skill = new Skill(
-      messageDispatcher,
-      restClient,
-      makeFakeDbClient(),
-      {}
+      new Initializer(messageDispatcher, restClient, {}),
+      makeFakeDbClient()
     );
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
@@ -397,10 +386,10 @@ describe('validation process', function() {
       },
       interactionElements: [{}]
     };
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
+    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
       <IMessageSender>{}
     );
-    let restClient: RestCallDispatcher = new RestCallDispatcher(
+    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -411,10 +400,8 @@ describe('validation process', function() {
       fakeReplyNotUnderstood
     );
     let skill: Skill = new Skill(
-      messageDispatcher,
-      restClient,
-      makeFakeDbClient(),
-      {}
+      new Initializer(messageDispatcher, restClient, {}),
+      makeFakeDbClient()
     );
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
@@ -449,20 +436,18 @@ describe('validation process', function() {
       },
       interactionElements: [{}]
     };
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
+    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
       <IMessageSender>{}
     );
-    let restClient: RestCallDispatcher = new RestCallDispatcher(
+    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
     let fakeReplyError = sinon.fake();
     sinon.replace(messageDispatcher, 'replyError', fakeReplyError);
     let skill: Skill = new Skill(
-      messageDispatcher,
-      restClient,
-      makeFakeDbClient(),
-      {}
+      new Initializer(messageDispatcher, restClient, {}),
+      makeFakeDbClient()
     );
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
@@ -492,20 +477,18 @@ describe('validation process', function() {
       },
       interactionElements: [{}]
     };
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
+    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
       <IMessageSender>{}
     );
-    let restClient: RestCallDispatcher = new RestCallDispatcher(
+    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
     let fakeReplyError = sinon.fake();
     sinon.replace(messageDispatcher, 'replyError', fakeReplyError);
     let skill: Skill = new Skill(
-      messageDispatcher,
-      restClient,
-      makeFakeDbClient(),
-      {}
+      new Initializer(messageDispatcher, restClient, {}),
+      makeFakeDbClient()
     );
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
@@ -541,20 +524,18 @@ describe('validation process', function() {
       },
       interactionElements: [{}]
     };
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
+    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
       <IMessageSender>{}
     );
-    let restClient: RestCallDispatcher = new RestCallDispatcher(
+    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
     let fakeReplyError = sinon.fake();
     sinon.replace(messageDispatcher, 'replyError', fakeReplyError);
     let skill: Skill = new Skill(
-      messageDispatcher,
-      restClient,
-      makeFakeDbClient(),
-      {}
+      new Initializer(messageDispatcher, restClient, {}),
+      makeFakeDbClient()
     );
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
@@ -567,18 +548,16 @@ describe('validation process', function() {
   });
 
   it('sets up a subscription and starts listening', async function() {
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
+    let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
       <IMessageSender>{}
     );
-    let restClient: RestCallDispatcher = new RestCallDispatcher(
+    let restClient: ExternalRestServiceCaller = new ExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
     let skill: Skill = new Skill(
-      messageDispatcher,
-      restClient,
-      makeFakeDbClient(),
-      {}
+      new Initializer(messageDispatcher, restClient, {}),
+      makeFakeDbClient()
     );
 
     let fakeapplyEvent = sinon.fake();

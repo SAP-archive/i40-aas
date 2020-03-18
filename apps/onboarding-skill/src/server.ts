@@ -1,14 +1,15 @@
 import { AmqpClient } from './base/messaging/AmqpClient';
 import { MessageInterpreter } from './base/messaging/MessageInterpreter';
 import { Skill } from './base/Skill';
-import { MessageDispatcher } from './services/onboarding/MessageDispatcher';
+import { AasMessageDispatcher } from './services/onboarding/AasMessageDispatcher';
 import { MessageSender } from './base/messaging/MessageSender';
 import { WebClient } from './web/WebClient';
 import { SimpleMongoDbClient } from './base/persistence/SimpleMongoDbClient';
 import { IDatabaseClient } from './base/persistenceinterface/IDatabaseClient';
 import { logger } from './log';
 import { TIdType, IdTypeEnum } from 'i40-aas-objects/dist/src/types/IdTypeEnum';
-import { RestCallDispatcher } from './services/onboarding/RestCallDispatcher';
+import { ExternalRestServiceCaller } from './services/onboarding/ExternalRestServiceCaller';
+import { Initializer } from './services/onboarding/Initializer';
 
 function checkEnvVar(variableName: string): string {
   let retVal: string | undefined = process.env[variableName];
@@ -61,7 +62,7 @@ let amqpClient = new AmqpClient(
   ROOT_TOPIC
 );
 
-let messageDispatcher: MessageDispatcher = new MessageDispatcher(
+let messageDispatcher: AasMessageDispatcher = new AasMessageDispatcher(
   new MessageSender(
     amqpClient,
     {
@@ -87,24 +88,26 @@ let dbClient: IDatabaseClient = new SimpleMongoDbClient(
 );
 
 let skill = new Skill(
-  messageDispatcher,
-  new RestCallDispatcher(
-    new WebClient(
-      DATA_MANAGER_BASE_URL,
-      DATA_MANAGER_USER,
-      DATA_MANAGER_PASSWORD
+  new Initializer(
+    messageDispatcher,
+    new ExternalRestServiceCaller(
+      new WebClient(
+        DATA_MANAGER_BASE_URL,
+        DATA_MANAGER_USER,
+        DATA_MANAGER_PASSWORD
+      ),
+      DATA_MANAGER_URL_SUFFIX
     ),
-    DATA_MANAGER_URL_SUFFIX
+    {
+      askForApproval: process.env.ONBOARDING_SKILL_REQUEST_APPROVAL
+        ? eval(process.env.ONBOARDING_SKILL_REQUEST_APPROVAL)
+        : false,
+      askForType: process.env.ONBOARDING_SKILL_REQUEST_TYPE
+        ? eval(process.env.ONBOARDING_SKILL_REQUEST_TYPE)
+        : false
+    }
   ),
-  dbClient,
-  {
-    askForApproval: process.env.ONBOARDING_SKILL_REQUEST_APPROVAL
-      ? eval(process.env.ONBOARDING_SKILL_REQUEST_APPROVAL)
-      : false,
-    askForType: process.env.ONBOARDING_SKILL_REQUEST_TYPE
-      ? eval(process.env.ONBOARDING_SKILL_REQUEST_TYPE)
-      : false
-  }
+  dbClient
 );
 
 //TODO: no need to share amqpClient amongst sender and receiver

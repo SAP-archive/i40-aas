@@ -150,4 +150,4 @@ class SkillStateMachineSpecification {
   }
 }
 
-export { SkillStateMachineSpecification as SkillStateMachine };
+export { SkillStateMachineSpecification };

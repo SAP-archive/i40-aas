@@ -1,9 +1,8 @@
 import { WebClient } from '../../web/WebClient';
-import { Submodel } from 'i40-aas-objects';
 import { AxiosResponse } from 'axios';
 import { logger } from '../../log';
 
-class RestCallDispatcher {
+class ExternalRestServiceCaller {
   constructor(
     private webClient: WebClient,
     private dataManagerUrlSuffix: string
@@ -14,4 +13,4 @@ class RestCallDispatcher {
   }
 }
 
-export { RestCallDispatcher };
+export { ExternalRestServiceCaller };

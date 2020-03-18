@@ -1,38 +1,34 @@
 import { interpret, State, Interpreter, EventObject } from 'xstate';
 import * as logger from 'winston';
-
 import { IDatabaseClient } from './persistenceinterface/IDatabaseClient';
 import { IStateRecord } from './persistenceinterface/IStateRecord';
-import { SkillStateMachine } from '../services/onboarding/SkillStateMachineSpecification';
-
-import { SkillActionMap } from '../services/onboarding/SkillActionMap';
-
+import { SkillStateMachineSpecification } from '../services/onboarding/SkillStateMachineSpecification';
 import * as _ from 'lodash';
 import { InteractionMessage } from 'i40-aas-objects';
 import { ISkillContext } from './statemachineinterface/ISkillContext';
 import { DeferredMessageDispatcherFactory } from './DeferredMessageDispatcherFactory';
-import { RestCallDispatcher } from '../services/onboarding/RestCallDispatcher';
+import { IInitializer } from './statemachineinterface/IInitializer';
 
 //Try to keep this generic. Do not mention roles or message types. Do not perform actions that
 //should be modelled in the state machine. This class should remain relatively constant. It
 //could be any skill
 class Skill {
-  private readonly stateMachineSpecification: SkillStateMachine = new SkillStateMachine();
+  private readonly stateMachineSpecification: SkillStateMachineSpecification = new SkillStateMachineSpecification();
 
   constructor(
-    private messageDispatcher: any,
+    //private messageDispatcher: IAasMessageDispatcher,
     //TODO: Interface?
-    private restClient: RestCallDispatcher,
-    private dbClient: IDatabaseClient,
-    private configuration: object
+    private initializer: IInitializer,
+    private dbClient: IDatabaseClient
   ) {}
 
   receivedUnintelligibleMessage(message: InteractionMessage): void {
-    this.messageDispatcher.replyNotUnderstood(message);
+    //TODO:without getter, ask initializer to do it
+    this.initializer.getPlainAasMessageDispatcher().replyNotUnderstood(message);
   }
 
   preprocessingError(message: InteractionMessage): void {
-    this.messageDispatcher.replyError(message);
+    this.initializer.getPlainAasMessageDispatcher().replyError(message);
   }
 
   private async getPreviousStateFromDb(
@@ -69,17 +65,6 @@ class Skill {
     else return false;
   }
 
-  private createContextForStateMachine(
-    message: InteractionMessage,
-    messageDispatcher: any
-  ): ISkillContext {
-    return {
-      message: message,
-      actionMap: new SkillActionMap(messageDispatcher, this.restClient),
-      configuration: this.configuration
-    };
-  }
-
   private removeNonPersistentPartsOfState(
     state: State<ISkillContext, EventObject>
   ) {
@@ -101,9 +86,9 @@ class Skill {
     fnOnTransitionError?: (state: State<ISkillContext, EventObject>) => void
   ) {
     let deferredMessageDispatcher = DeferredMessageDispatcherFactory.getInstance(
-      this.messageDispatcher
+      this.initializer.getPlainAasMessageDispatcher()
     );
-    let context = this.createContextForStateMachine(
+    let context = this.initializer.createContextForStateMachine(
       message,
       deferredMessageDispatcher
     );
@@ -125,7 +110,9 @@ class Skill {
           logger.debug(
             'This interaction refers to a previously closed conversation.'
           );
-          this.messageDispatcher.replyNotUnderstood(message);
+          this.initializer
+            .getPlainAasMessageDispatcher()
+            .replyNotUnderstood(message);
           return;
         }
       } else {
@@ -169,7 +156,7 @@ class Skill {
           logger.error(error.stack);
           //only respond to external trigger (once)
           if (state.event.type === event)
-            this.messageDispatcher.replyError(message);
+            this.initializer.getPlainAasMessageDispatcher().replyError(message);
           if (fnOnTransitionError) fnOnTransitionError(state);
         }
       });
@@ -182,12 +169,16 @@ class Skill {
           'Asset repository skill cannot is missing in its context the message to reply to with an error!'
         );
       } else if (Skill.isInvalidTransition(error)) {
-        this.messageDispatcher.replyNotUnderstood(context.message);
+        this.initializer
+          .getPlainAasMessageDispatcher()
+          .replyNotUnderstood(context.message);
       } else {
         //TODO: a valid transition cannot take place. The state machine is probably now useless.
         //Need to move it into a failed state, or handle otherwise.
         logger.error('SEVERE: A valid transition could not take place.');
-        this.messageDispatcher.replyError(context.message);
+        this.initializer
+          .getPlainAasMessageDispatcher()
+          .replyError(context.message);
       }
     }
   }

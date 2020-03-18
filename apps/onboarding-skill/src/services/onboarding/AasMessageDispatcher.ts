@@ -1,10 +1,10 @@
 import { IMessageSender } from '../../base/messaginginterface/IMessageSender';
-
+import { IAasMessageDispatcher } from '../../base/messaginginterface/IAasMessageDispatcher';
 import { InteractionMessage, IFrame } from 'i40-aas-objects';
 import { Roles } from '../../base/messaginginterface/Roles';
 import { MessageTypes } from '../../base/messaginginterface/MessageTypes';
 
-class MessageDispatcher {
+class AasMessageDispatcher implements IAasMessageDispatcher {
   sendNextMessageInConversationTo(
     receiverRoleName: string,
     messageType: string,
@@ -101,4 +101,4 @@ class MessageDispatcher {
   }
 }
 
-export { MessageDispatcher };
+export { AasMessageDispatcher };
