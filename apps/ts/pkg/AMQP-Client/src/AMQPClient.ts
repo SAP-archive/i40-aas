@@ -27,6 +27,8 @@ interface IMessageBrokerClient {
   startListening(cb?: () => void): void;
   publish(routingKey: string, msg: string): void;
   setupPublishing(cb?: () => void): void;
+  isConnected():boolean;
+
 }
 
 
@@ -43,6 +45,11 @@ class AmqpClient implements IMessageBrokerClient {
   public static MQTT_EXCHANGE = 'amq.topic';
   public useMqtt = false;
   private destroyed: boolean = false;
+
+
+  isConnected(): boolean {
+    return this.myConn.connectionClosed ? false : true;
+  }
 
   //TODO: make a parameter object
   constructor(

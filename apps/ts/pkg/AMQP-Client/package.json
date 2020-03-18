@@ -1,8 +1,7 @@
 {
   "name": "AMQP-Client",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "1.0.4",
+  "description": "An AMQP Client with reconnect capabilities",
   "scripts": {
     "test": "mocha --require ts-node/register --exit test/**/*.spec.ts",
     "build": "tsc",

@@ -4,6 +4,11 @@ import { Client } from 'mqtt';
 var mqtt = require('mqtt');
 
 class SapMqttClient implements IMessageBrokerClient {
+
+
+  isConnected(): boolean {
+    throw new Error("Method not implemented.");
+  }
   private subscription: Subscription | undefined;
   private client: Client;
 
