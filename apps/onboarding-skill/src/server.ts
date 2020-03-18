@@ -7,8 +7,11 @@ import { SimpleMongoDbClient } from './base/persistence/SimpleMongoDbClient';
 import { IDatabaseClient } from './base/persistenceinterface/IDatabaseClient';
 import { logger } from './log';
 import { TIdType, IdTypeEnum } from 'i40-aas-objects/dist/src/types/IdTypeEnum';
+import { AmqpClient } from 'AMQP-Client/lib/src/AMQPClient';
 
-var AmqpClient = require('AMQP-Client/lib/src/AMQPClient');
+
+const dotenv = require("dotenv");
+dotenv.config();
 
 function checkEnvVar(variableName: string): string {
   let retVal: string | undefined = process.env[variableName];
