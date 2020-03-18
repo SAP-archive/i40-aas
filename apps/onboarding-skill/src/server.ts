@@ -1,4 +1,3 @@
-import { AmqpClient } from './base/messaging/AmqpClient';
 import { MessageInterpreter } from './base/messaging/MessageInterpreter';
 import { Skill } from './base/Skill';
 import { MessageDispatcher } from './services/onboarding/MessageDispatcher';
@@ -8,6 +7,8 @@ import { SimpleMongoDbClient } from './base/persistence/SimpleMongoDbClient';
 import { IDatabaseClient } from './base/persistenceinterface/IDatabaseClient';
 import { logger } from './log';
 import { TIdType, IdTypeEnum } from 'i40-aas-objects/dist/src/types/IdTypeEnum';
+
+var AmqpClient = require('AMQP-Client/lib/src/AMQPClient');
 
 function checkEnvVar(variableName: string): string {
   let retVal: string | undefined = process.env[variableName];
