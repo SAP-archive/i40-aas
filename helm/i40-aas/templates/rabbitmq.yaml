@@ -74,9 +74,15 @@ spec:
         imagePullPolicy: "IfNotPresent"
         env:
         - name: RABBITMQ_DEFAULT_USER
-          value: {{ .Values.core.broker.admin.user }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-core-broker-admin
+              key: CORE_BROKER_ADMIN_USER
         - name: RABBITMQ_DEFAULT_PASS
-          value: {{ .Values.core.broker.admin.password }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-core-broker-admin
+              key: CORE_BROKER_ADMIN_PASSWORD
         ports:
         - name: messages
           containerPort: 5672

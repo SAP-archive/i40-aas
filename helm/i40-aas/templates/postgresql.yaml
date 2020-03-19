@@ -61,9 +61,15 @@ spec:
               containerPort: 5432
           env:
             - name: POSTGRES_USER
-              value: {{ .Values.core.registries.endpoints.database.super.user }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-core-registries-endpoints-database-super
+                  key: CORE_REGISTRIES_ENDPOINTS_DATABASE_SUPER_USER
             - name: POSTGRES_PASSWORD
-              value: {{ .Values.core.registries.endpoints.database.super.password }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-core-registries-endpoints-database-super
+                  key: CORE_REGISTRIES_ENDPOINTS_DATABASE_SUPER_PASSWORD
           volumeMounts:
             - mountPath: /var/lib/postgresql
               name: {{ .Release.Name }}-endpoint-registry-postgres
@@ -75,9 +81,15 @@ spec:
               containerPort: 80
           env:
             - name: PGADMIN_DEFAULT_EMAIL
-              value: {{ .Values.core.registries.endpoints.database.pgAdmin.user }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-core-registries-endpoints-database-pgadmin
+                  key: CORE_REGISTRIES_ENDPOINTS_DATABASE_PGADMIN_USER
             - name: PGADMIN_DEFAULT_PASSWORD
-              value: {{ .Values.core.registries.endpoints.database.pgAdmin.password }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-core-registries-endpoints-database-pgadmin
+                  key: CORE_REGISTRIES_ENDPOINTS_DATABASE_PGADMIN_PASSWORD
   volumeClaimTemplates:
   - metadata:
       name: {{ .Release.Name }}-endpoint-registry-postgres
