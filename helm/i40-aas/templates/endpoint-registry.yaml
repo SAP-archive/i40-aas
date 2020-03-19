@@ -39,29 +39,32 @@ spec:
         image: "{{ .Values.image.repository }}/i40-aas-endpoint-registry:{{ .Values.image.release }}"
         ports:
         - name: endpoint
-	  containerPort: {{ .Values.core.registries.endpoints.port }}
-	env:
-	- name: LOGGING_LOGLEVEL
-	  value: {{ .Values.logging.logLevel }}
-	- name: LOGGING_LOGOUTPUT
-	  value: {{ .Values.logging.logOutput }}
-	- name: CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST
-	  valueFrom:
-	    configMapKeyRef:
-	      name: {{ .Release.Name }}-host-collection
-	      key: CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST
-	- name: CORE_REGISTRIES_ENDPOINTS_DATABASE_PORT
-	  value: {{ .Values.core.registries.endpoints.database.port }}
-	- name: CORE_REGISTRIES_ENDPOINTS_DATABASE_NAME
-	  value: {{ .Values.core.registries.endpoints.database.name }}
-	envFrom:
-	- secretRef:
-	    name: {{ .Release.Name }}-core-registries-endpoints-database
-	- secretRef:
-	    name: {{ .Release.Name }}-core-registries-endpoints
-	resources:
-	  {{- toYaml .Values.resources | nindent 10 }}
-	livenessProbe:
+          containerPort: {{ .Values.core.registries.endpoints.port }}
+        env:
+        - name: LOGGING_LOGLEVEL
+          value: {{ .Values.logging.logLevel }}
+        - name: LOGGING_LOGOUTPUT
+          value: {{ .Values.logging.logOutput }}
+        - name: CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-host-collection
+              key: CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST
+        - name: CORE_REGISTRIES_ENDPOINTS_DATABASE_PORT
+          value: {{ .Values.core.registries.endpoints.database.port }}
+        - name: CORE_REGISTRIES_ENDPOINTS_DATABASE_USER
+          value: {{ .Values.core.registries.endpoints.database.user }}
+        - name: CORE_REGISTRIES_ENDPOINTS_DATABASE_PASSWORD
+          value: {{ .Values.core.registries.endpoints.database.password }}
+        - name: CORE_REGISTRIES_ENDPOINTS_DATABASE_NAME
+          value: {{ .Values.core.registries.endpoints.database.name }}
+        - name: CORE_REGISTRIES_ENDPOINTS_USER
+          value: {{ .Values.core.registries.endpoints.user }}
+        - name: CORE_REGISTRIES_ENDPOINTS_PASSWORD
+          value: {{ .Values.core.registries.endpoints.password }}
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        livenessProbe:
           httpGet:
             path: /health
             port: endpoint

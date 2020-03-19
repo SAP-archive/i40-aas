@@ -71,21 +71,15 @@ spec:
       containers:
       - name: rabbitmq
         image: rabbitmq:3-management
-	imagePullPolicy: "IfNotPresent"
-	env:
-	- name: RABBITMQ_DEFAULT_USER
-	  valueFrom:
-	    secretKeyRef:
-	      name: {{ .Release.Name }}-core-broker-admin
-	      key: CORE_BROKER_ADMIN_USER
-	- name: RABBITMQ_DEFAULT_PASS
-	  valueFrom:
-	    secretKeyRef:
-	      name: {{ .Release.Name }}-core-broker-admin
-	      key: CORE_BROKER_ADMIN_PASSWORD
-	ports:
-	- name: messages
-	  containerPort: 5672
+        imagePullPolicy: "IfNotPresent"
+        env:
+        - name: RABBITMQ_DEFAULT_USER
+	        value: {{ .Values.core.broker.admin.user }}
+        - name: RABBITMQ_DEFAULT_PASS
+	        value: {{ .Values.core.broker.admin.password }}
+        ports:
+        - name: messages
+          containerPort: 5672
         - name: ui
           containerPort: 15672
         - name: mqtt

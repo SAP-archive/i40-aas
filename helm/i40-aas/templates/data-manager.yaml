@@ -39,31 +39,34 @@ spec:
         image: "{{ .Values.image.repository }}/i40-aas-data-manager:{{ .Values.image.release }}"
         ports: 
         - name: endpoint
-	  containerPort: {{ .Values.core.dataManager.port }}
-	env:
-	- name: LOGGING_LOGLEVEL
-	  value: {{ .Values.logging.logLevel }}
-	- name: LOGGING_LOGOUTPUT
-	  value: {{ .Values.logging.logOutput }}
-	- name: CORE_REGISTRIES_ADAPTERS_PROTOCOL
-	  value: "http"
-	- name: CORE_REGISTRIES_ADAPTERS_HOST
-	  valueFrom:
-	    configMapKeyRef:
-	      name: {{ .Release.Name }}-host-collection
-	      key: CORE_REGISTRIES_ADAPTERS_HOST
-	- name: CORE_REGISTRIES_ADAPTERS_PORT
-	  value: {{ .Values.core.registries.adapters.port }}
-	- name: CORE_REGISTRIES_ADAPTERS_URL_SUFFIX
-	  value: {{ .Values.core.registries.adapters.urlSuffix }}
-	envFrom:
-	- secretRef:
-	    name: {{ .Release.Name }}-core-registries-adapters
-	- secretRef:
-	    name: {{ .Release.Name }}-core-data-manager
-	resources:
-	  {{- toYaml .Values.resources | nindent 10 }}
-	livenessProbe:
+          containerPort: {{ .Values.core.dataManager.port }}
+        env:
+        - name: LOGGING_LOGLEVEL
+          value: {{ .Values.logging.logLevel }}
+        - name: LOGGING_LOGOUTPUT
+          value: {{ .Values.logging.logOutput }}
+        - name: CORE_REGISTRIES_ADAPTERS_PROTOCOL
+          value: "http"
+        - name: CORE_REGISTRIES_ADAPTERS_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-host-collection
+              key: CORE_REGISTRIES_ADAPTERS_HOST
+        - name: CORE_REGISTRIES_ADAPTERS_PORT
+          value: {{ .Values.core.registries.adapters.port }}
+        - name: CORE_REGISTRIES_ADAPTERS_URL_SUFFIX
+          value: {{ .Values.core.registries.adapters.urlSuffix }}
+        - name: CORE_REGISTRIES_ADAPTERS_USER
+          value: {{ .Values.core.registries.adapters.user }}
+        - name: CORE_REGISTRIES_ADAPTERS_PASSWORD
+          value: {{ .Values.core.registries.adapters.password }}
+        - name: CORE_DATA_MANAGER_USER
+          value: {{ .Values.dataManager.user }}
+        - name: CORE_DATA_MANAGER_PASSWORD
+          value: {{ .Values.dataManager.password }}
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        livenessProbe:
           httpGet:
             path: /health
             port: endpoint

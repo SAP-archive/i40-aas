@@ -57,24 +57,18 @@ spec:
           image: mongo
           imagePullPolicy: "IfNotPresent"
           ports:
-	    - name: database
-	      containerPort: {{ .Values.skills.onboarding.database.port }}
-	  env:
-	    - name: MONGO_INITDB_DATABASE
-	      value: {{ .Values.skills.onboarding.database.name }}
-	    - name: MONGO_INITDB_ROOT_USERNAME
-	      valueFrom:
-		secretKeyRef:
-		  name: {{ .Release.Name }}-skills-onboarding-database
-		  key: SKILLS_ONBOARDING_DATABASE_USER
-	    - name: MONGO_INITDB_ROOT_PASSWORD
-	      valueFrom:
-		secretKeyRef:
-		  name: {{ .Release.Name }}-skills-onboarding-database
-		  key: SKILLS_ONBOARDING_DATABASE_PASSWORD
-	  volumeMounts:
-	    - mountPath: /data/db
-	      name: {{ .Release.Name }}-mongodb
+            - name: database
+              containerPort: {{ .Values.skills.onboarding.database.port }}
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: {{ .Values.skills.onboarding.database.user }}
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: {{ .Values.skills.onboarding.database.password }}
+            - name: MONGO_INITDB_DATABASE
+              value: {{ .Values.skills.onboarding.database.name }}
+          volumeMounts:
+            - mountPath: /data/db
+              name: {{ .Release.Name }}-mongodb
   volumeClaimTemplates:
   - metadata:
       name: {{ .Release.Name }}-mongodb

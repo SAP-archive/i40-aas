@@ -58,38 +58,26 @@ spec:
           imagePullPolicy: "IfNotPresent"
           ports:
             - name: database
-	      containerPort: 5432
-	  env:
-	    - name: POSTGRES_USER
-	      valueFrom:
-		secretKeyRef:
-		  name: {{ .Release.Name }}-core-registries-endpoints-database-super
-		  key: CORE_REGISTRIES_ENDPOINTS_DATABASE_SUPER_USER
-	    - name: POSTGRES_PASSWORD
-	      valueFrom:
-		secretKeyRef:
-		  name: {{ .Release.Name }}-core-registries-endpoints-database-super
-		  key: CORE_REGISTRIES_ENDPOINTS_DATABASE_SUPER_PASSWORD
-	  volumeMounts:
-	    - mountPath: /var/lib/postgresql
-	      name: {{ .Release.Name }}-endpoint-registry-postgres
+              containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: {{ .Values.core.registries.endpoints.database.super.user }}
+            - name: POSTGRES_PASSWORD
+              value: {{ .Values.core.registries.endpoints.database.super.password }}
+          volumeMounts:
+            - mountPath: /var/lib/postgresql
+              name: {{ .Release.Name }}-endpoint-registry-postgres
         - name: pgadmin
           image: dpage/pgadmin4
           imagePullPolicy: "IfNotPresent"
           ports:
             - name: ui
-	      containerPort: 80
-	  env:
-	    - name: PGADMIN_DEFAULT_EMAIL
-	      valueFrom:
-		secretKeyRef:
-		  name: {{ .Release.Name }}-core-registries-endpoints-database-pgadmin
-		  key: CORE_REGISTRIES_ENDPOINTS_DATABASE_PGADMIN_USER
-	    - name: PGADMIN_DEFAULT_PASSWORD
-	      valueFrom:
-		secretKeyRef:
-		  name: {{ .Release.Name }}-core-registries-endpoints-database-pgadmin
-		  key: CORE_REGISTRIES_ENDPOINTS_DATABASE_PGADMIN_PASSWORD
+              containerPort: 80
+          env:
+            - name: PGADMIN_DEFAULT_EMAIL
+              value: {{ .Values.core.registries.endpoints.database.pgAdmin.user }}
+            - name: PGADMIN_DEFAULT_PASSWORD
+              value: {{ .Values.core.registries.endpoints.database.pgAdmin.password }}
   volumeClaimTemplates:
   - metadata:
       name: {{ .Release.Name }}-endpoint-registry-postgres
