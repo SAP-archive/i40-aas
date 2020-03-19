@@ -49,10 +49,6 @@ spec:
 	      key: CORE_BROKER_HOST
 	- name: CORE_BROKER_PORT
 	  value: {{ .Values.core.broker.port }}
-	- name: CORE_EGRESS_USER
-	  value: {{ .Values.core.egress.user }}
-	- name: CORE_EGRESS_PASSWORD
-	  value: {{ .Values.core.egress.password }}
 	- name: CORE_EGRESS_EXCHANGE
 	  value: {{ .Values.core.egress.exchange }}
 	- name: CORE_ENDPOINT_RESOLVER_CTAG
@@ -68,10 +64,11 @@ spec:
 	  value: {{ .Values.core.registries.endpoints.port }}
 	- name: CORE_REGISTRIES_ENDPOINTS_URL_SUFFIX
 	  value: {{ .Values.core.registries.endpoints.urlSuffix }}
-	- name: CORE_REGISTRIES_ENDPOINTS_USER
-	  value: {{ .Values.core.registries.endpoints.user }}
-	- name: CORE_REGISTRIES_ENDPOINTS_PASSWORD
-	  value: {{ .Values.core.registries.endpoints.password }}
+	envFrom:
+	- secretRef:
+	    name: {{ .Release.Name }}-core-egress
+	- secretRef:
+	    name: {{ .Release.Name }}-core-registries-endpoints
 	volumeMounts:
 	- name: certs
 	  mountPath: "/certs"

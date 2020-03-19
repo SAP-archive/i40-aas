@@ -51,15 +51,21 @@ spec:
 		name: {{ .Release.Name }}-host-collection
 		key: SKILLS_ONBOARDING_DATABASE_HOST
 	  - name: APPLICATION_ADAPTERS_MONGODB_DATABASE_PORT
-	    value: {{ .Values.onboarding.database.port }}
+	    value: {{ .Values.skills.onboarding.database.port }}
 	  - name: APPLICATION_ADAPTERS_MONGODB_DATABASE_USER
-	    value: {{ .Values.onboarding.database.user }}
+	    valueFrom:
+	      secretKeyRef:
+		name: {{ .Release.Name }}-skills-onboarding-database
+		key: SKILLS_ONBOARDING_DATABASE_USER
 	  - name: APPLICATION_ADAPTERS_MONGODB_DATABASE_PASSWORD
-	    value: {{ .Values.onboarding database.password }}
+	    valueFrom:
+	      secretKeyRef:
+		name: {{ .Release.Name }}-skills-onboarding-database
+		key: SKILLS_ONBOARDING_DATABASE_PASSWORD
 	  - name: APPLICATION_ADAPTERS_MONGODB_DATABASE_NAME
-	    value: {{ .Values.onboarding.database.name }}
+	    value: {{ .Values.skills.onboarding.database.name }}
 	  - name: APPLICATION_ADAPTERS_MONGODB_SUBMODELS_COLLECTION
 	    value: {{ .Values.applicationAdapters.mongoDb.submodelsCollection }}
-          resources:
+	  resources:
             {{- toYaml .Values.resources | nindent 12 }}
 ---
