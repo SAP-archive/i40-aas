@@ -1,0 +1,74 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-grpc-endpoint-egress
+  labels:
+    service: grpc-endpoint-egress
+    {{- include "i40-aas.labels" . | nindent 4 }}
+data:
+  # Logging
+  LOG_LEVEL: {{ .Values.logging.log_level }}
+  LOG_OUTPUT: {{ .Values.logging.log_output }}
+  # grpc-endpoint-egress
+  GRPC_ENDPOINT_EGRESS_AMQP_QUEUE: {{ .Values.grpcEndpointEgress.amqp.queue }}
+  GRPC_ENDPOINT_EGRESS_AMQP_CTAG: {{ .Values.grpcEndpointEgress.amqp.ctag }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-grpc-endpoint-egress
+  labels:
+    service: grpc-endpoint-egress
+    {{- include "i40-aas.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      service: grpc-endpoint-egress
+      {{- include "i40-aas.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+	service: grpc-endpoint-egress
+	{{- include "i40-aas.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - name: grpc-endpoint-egress
+	image: "{{ .Values.image.repository }}/i40-aas-grpc-endpoint-egress:{{ .Values.image.release }}"
+	env:
+	- name: RABBITMQ_HOST
+	  valueFrom:
+	    configMapKeyRef:
+	      name: {{ .Release.Name }}-rabbitmq
+	      key: RABBITMQ_AMQP_HOST
+	- name: RABBITMQ_PORT
+	  valueFrom:
+	    configMapKeyRef:
+	      name: {{ .Release.Name }}-rabbitmq
+	      key: RABBITMQ_AMQP_PORT
+	envFrom:
+	- secretRef:
+	    name: {{ .Release.Name }}-rabbitmq-egress-credentials
+	- configMapRef:
+	    name: {{ .Release.Name }}-grpc-endpoint-egress
+	- configMapRef:
+	    name: {{ .Release.Name }}-rabbitmq
+	volumeMounts:
+	- name: certs
+	  mountPath: "/certs"
+	  readOnly: true
+	resources:
+	  {{- toYaml .Values.resources | nindent 10 }}
+#        livenessProbe:
+#          httpGet:
+#            path: /health
+#            port: endpoint
+#          initialDelaySeconds: 600
+#          periodSeconds: 60
+      volumes:
+      - name: certs
+	optional: true
+	secret:
+	  secretName: {{ .Values.certificates.secretName }}
+---
