@@ -2,50 +2,161 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-config:
-  # MongoDB
-  mongo_initdb_database: mongodb
-  # Onboarding Skill
-  onboardingSkillRequestApproval: false
-  onboardingSkillRequestType: false
-  onboardingSkillStatesCollection: car-onboarding-states
-  onboardingSkillRootTopic: i40:registry-semanticProtocol/onboarding.CentralAssetRepository
-  onboardingSkillRole: CentralAssetRepository
-  onboardingSkillURI: sap.com/aas/skills/onboarding/CentralAssetRepository
-  # PostgreSQL
-  endpointRegistryPostgresDB: AAS_REGISTRY
-  # RabbitMQ
-  rabbitmqBrokerTopicEgress: http.client
-  rabbitmqBrokerExchange: amq.topic
+# Optional
+certificates:
+  # Kubernetes Secret resource in which TLS certificates are stored on the cluster.
+  secretName: ""
 
+# Optional
+initializer:
+  # Kubernetes Configmap resource in which the scipts for initializing are stored.
+  # Script names have to match the keys in the configmap!
+  configMapName: ""
 
-# If you leave a field empty "" a (randAlphaNum 20) will be generated for it.
-credentials:
-  # Adapter-Registry
-  adapterRegistryAdminUser: admin
-  adapterRegistryAdminPassword: "" 
-  # Endpoint-Registry
-  endpointRegistryAdminUser: admin
-  endpointRegistryAdminPassword: ""
-  # Data-Manager
-  dataManagerUser: admin
-  dataManagerPassword: ""
-  # HTTPS-Endpoint-Ingress
-  httpsEndpointIngressUser: i40aas-user
-  httpsEndpointIngressPassword: ""
-  # MongoDB
-  mongoInitdbRootUsername: mongouser
-  mongoInitdbRootPassword: "" 
-  # PostgreSQL
-  endpointRegistryPostgresUser: postgres
-  endpointRegistryPostgresPassword: ""
-  # PGAdmin
-  endpointRegistryDefaultEmail: admin
-  endpointRegistryDefaultPassword: ""
-  # RabbitMQ
-  rabbitmqBrokerUser: guest
-  rabbitmqBrokerPassword: ""
+build:
+  ## Tagging
+  ## `make` overrides this by setting the shell variable TAG
+  ## to the current commit hash. Values in shell take precedence
+  tag=latest
 
+logging:
+  # LOG_LEVEL regulates the verbosity of application logs,
+  # acceptepted values are
+  #   - INFO
+  #   - DEBUG
+  logLevel: DEBUG
+
+  # LOG_FORMAT specifies whether the logs are formatted for
+  # console or log collector (json) consumption
+  # acceptepted values are
+  #   - CONSOLE
+  #   - JSON
+  logOutput: CONSOLE
+
+core:
+
+  broker:
+
+    port:
+      amqp: 5672
+      mqtt: 1883
+      ui: 80
+
+    admin:
+      # Put an empty string "" here for user/pw to let it be randomly generated
+      user: admin
+      password: admin
+
+  endpointResolver:
+
+    ctag: endpoint-resolver
+    queue: generic
+
+  ingress:
+
+    exchange: ingress
+    user: guest
+    password: guest
+
+    grpc:
+
+      port: 8384
+
+    http:
+
+      port: 2000
+      # Put an empty string "" here for user/pw to let it be randomly generated
+      user: admin
+      password: admin
+
+  egress:
+
+    exchange: egress
+    user: guest
+    password: guest
+
+    grpc:
+
+      ctag: grpc
+      queue: grpc
+
+    http:
+
+      ctag: http
+      queue: http
+
+  dataManager:
+
+    port: 4000
+    submodelsRoute: /submodels
+    # Put an empty string "" here for user/pw to let it be randomly generated
+    user: admin
+    password: admin
+
+  registries:
+
+    adapters:
+
+      port: 4500
+      urlSuffix: /adapters
+      # Put an empty string "" here for user/pw to let it be randomly generated
+      user: admin
+      password: admin
+
+    endpoints:
+
+      port: 4400
+      urlSuffix: /assetadministrationshells
+      # Put an empty string "" here for user/pw to let it be randomly generated
+      user: admin
+      password: admin
+
+      database:
+
+	name: AAS_REGISTRY
+	port: 5432
+	# Put an empty string "" here for user/pw to let it be randomly generated
+	user: postgres
+	password: postgres
+
+	super:
+
+	  # Put an empty string "" here for user/pw to let it be randomly generated
+	  user: postgres
+	  password: postgres
+
+	pgAdmin:
+
+	  port: 8080
+	  # Put an empty string "" here for user/pw to let it be randomly generated
+	  user: test@test.com
+	  password: admin
+
+applicationAdapters:
+
+  mongoDb:
+
+    port: 3100
+    submodelsCollection: storage-adapter-mongodb-submodels
+
+skills:
+
+  onboarding:
+
+    requestApproval: false
+    requestType: false
+    statesCollection: car-onboarding-states
+    rootTopic: ingress.i40:registry-semanticProtocol/onboarding.CentralAssetRepository
+    role: CentralAssetRepository
+    uri: sap.com/aas/skills/onboarding/CentralAssetRepository
+
+    database:
+
+      name: mongodb
+      port: 27017
+      # Put an empty string "" here for user/pw to let it be randomly generated
+      user: mongouser
+      password: mongopassword
 
 replicaCount: 1
 
@@ -65,6 +176,8 @@ resources: {}
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
   # Vice versa, if you want to disable setting resources, comment the following lines
   # and uncomment the curly braces after 'resources'.
+  # The following values are our recommendations,
+  # according to the consumption of resources as we have observed it.
   # limits:
   #   cpu: 40m
   #   memory: 350Mi
