@@ -17,12 +17,19 @@ build:
 no-cache:
 	DOCKER_BUILDKIT=1 COMPOSE_DOCKER_CLI_BUILD=1 BUILD_TAG=latest docker-compose -f docker-compose.dev.yml build --no-cache --parallel
 
-## removes everything created by docker-compose and prunes everything in docker
-## (!!) this includes all your work with docker, not just stuff
-## related to this repository (!!)
+## stop and remove containers & volumes related to i40-aas
 .PHONY: clean
 clean:
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml down --volumes --rmi all --remove-orphans
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml rm -v --force
+
+## removes everything created by docker-compose and prunes everything in docker
+## (!!) this includes all your work with docker, not just stuff
+## related to this repository (!!)
+.PHONY: purge
+purge:
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml down --volumes --rmi all --remove-orphans
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml rm -v --force
 	yes | docker system prune --all --volumes --force
 
 ## start everything using the docker-compose.yml file
