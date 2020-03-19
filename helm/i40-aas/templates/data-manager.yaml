@@ -56,17 +56,14 @@ spec:
 	  value: {{ .Values.core.registries.adapters.port }}
 	- name: CORE_REGISTRIES_ADAPTERS_URL_SUFFIX
 	  value: {{ .Values.core.registries.adapters.urlSuffix }}
-	- name: CORE_REGISTRIES_ADAPTERS_USER
-	  value: {{ .Values.core.registries.adapters.user }}
-	- name: CORE_REGISTRIES_ADAPTERS_PASSWORD
-	  value: {{ .Values.core.registries.adapters.password }}
-	- name: CORE_DATA_MANAGER_USER
-	  value: {{ .Values.dataManager.user }}
-	- name: CORE_DATA_MANAGER_PASSWORD
-	  value: {{ .Values.dataManager.password }}
-        resources:
-          {{- toYaml .Values.resources | nindent 10 }}
-        livenessProbe:
+	envFrom:
+	- secretRef:
+	    name: {{ .Release.Name }}-core-registries-adapters
+	- secretRef:
+	    name: {{ .Release.Name }}-core-data-manager
+	resources:
+	  {{- toYaml .Values.resources | nindent 10 }}
+	livenessProbe:
           httpGet:
             path: /health
             port: endpoint

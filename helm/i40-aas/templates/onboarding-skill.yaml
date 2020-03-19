@@ -52,10 +52,6 @@ spec:
 		  key: SKILLS_ONBOARDING_DATABASE_HOST
 	    - name: SKILLS_ONBOARDING_DATABASE_PORT
 	      value: {{ .Values.onboarding.database.port }}
-	    - name: SKILLS_ONBOARDING_DATABASE_USER
-	      value: {{ .Values.onboarding.database.user }}
-	    - name: SKILLS_ONBOARDING_DATABASE_PASSWORD
-	      value: {{ .Values.onboarding database.password }}
 	    - name: SKILLS_ONBOARDING_DATABASE_NAME
 	      value: {{ .Values.onboarding.database.name }}
 	    - name: CORE_BROKER_HOST
@@ -63,18 +59,10 @@ spec:
 		configMapKeyRef:
 		  name: {{ .Release.Name }}-host-collection
 		  key: CORE_BROKER_HOST
-	    - name: CORE_EGRESS_USER
-	      value: {{ .Values.core.egress.user }}
-	    - name: CORE_EGRESS_PASSWORD
-	      value: {{ .Values.core.egress.password }}
 	    - name: CORE_EGRESS_EXCHANGE
 	      value: {{ .Values.core.egress.exchange }}
 	    - name: CORE_INGRESS_EXCHANGE
 	      value: {{ .Values.core.ingress.exchange }}
-	    - name: CORE_INGRESS_USER
-	      value: {{ .Values.core.ingress.user }}
-	    - name: CORE_INGRESS_PASSWORD
-	      value: {{ .Values.core.ingress.password }}
 	    - name: CORE_ENDPOINT_RESOLVER_QUEUE
 	      value: {{ .Values.core.endpointResolver.queue }}
 	    - name: SKILLS_ONBOARDING_REQUEST_APPROVAL
@@ -100,10 +88,15 @@ spec:
 	      value: {{ .Values.core.dataManager.port }}
 	    - name: CORE_DATA_MANAGER_SUBMODELS_ROUTE
 	      value: {{ .Values.core.dataManager.submodelsRoute }}
-	    - name: CORE_DATA_MANAGER_USER
-	      value: {{ .Values.core.dataManager.user }}
-	    - name: CORE_DATA_MANAGER_PASSWORD
-	      value: {{ .Values.core.dataManager.password }}
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+	  envFrom:
+	    - secretRef:
+		name: {{ .Release.Name }}-skills-onboarding-database
+	    - secretRef:
+		name: {{ .Release.Name }}-core-egress
+	    - secretRef:
+		name: {{ .Release.Name }}-core-ingress
+	    - secretRef:
+		name: {{ .Release.Name }}-core-data-manager
+	  resources:
+	    {{- toYaml .Values.resources | nindent 12 }}
 ---

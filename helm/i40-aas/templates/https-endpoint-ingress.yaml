@@ -52,19 +52,16 @@ spec:
 		  key: CORE_BROKER_HOST
 	    - name: CORE_BROKER_PORT
 	      value: {{ .Values.core.broker.port }}
-	    - name: CORE_INGRESS_USER
-	      value: {{ .Values.core.ingress.user }}
-	    - name: CORE_INGRESS_PASSWORD
-	      value: {{ .Values.core.ingress.password }}
 	    - name: CORE_INGRESS_HTTP_PORT
 	      value: {{ .Values.core.ingress.http.port }}
-	    - name: CORE_INGRESS_HTTP_USER
-	      value: {{ .Values.core.ingress.http.user }}
-	    - name: CORE_INGRESS_HTTP_PASSWORD
-	      value: {{ .Values.core.ingress.http.password }}
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-          livenessProbe:
+	  envFrom:
+	    - secretRef:
+		name: {{ .Release.Name }}-core-ingress
+	    - secretRef:
+		name: {{ .Release.Name }}-core-ingress-http
+	  resources:
+	    {{- toYaml .Values.resources | nindent 12 }}
+	  livenessProbe:
             httpGet:
               path: /health
               port: endpoint
