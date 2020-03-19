@@ -9,10 +9,11 @@
 
 ## Services
 ### Overview
-Each service on this full list of services included in the repository has a designated `README.md` with more information about its purpose:
+Each service on this full list of services included in the repository has a designated _README.md_ with more information about its purpose:
 - [adapter-registry](markdown/adapter-registry.md)
 - [data-manager](markdown/data-manager.md)
 - [endpoint-registry](markdown/endpoint-registry.md)
+- [endpoint-resolver](markdown/endpoint-resolver.md)
 - [grpc-endpoint-egress](markdown/grpc-endpoint-egress.md)
 - [grpc-endpoint-ingress](markdown/grpc-endpoint-ingress.md)
 - [https-endpoint-egress](markdown/https-endpoint-egress.md)
@@ -22,7 +23,7 @@ Each service on this full list of services included in the repository has a desi
 - [storage-adapter-mongodb](markdown/storage-adapter-mongodb.md)
 
 ### Configuration
-Service configuration is handled via environment variables. In the `environment:` section of the container in `docker-compose.yml` is a full list of environment variables, some of which can be configured via the `.env` file located in the repository root.
+Service configuration is handled via environment variables. In each service's `environment:` section in [docker-compose.yml](../docker-compose.yml) is a full list of environment variables used, some of which can be configured via the [.env](../.env) file in the repository root.
 
 ## Further Information
 - For instructions on testing the running service look [here](markdown/test.md#Test)
