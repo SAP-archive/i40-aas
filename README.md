@@ -36,20 +36,20 @@ This service is orchestrated in containers and can be deployed anywhere, where c
 ---
 ## Prerequisites
 
-You need to download and install [Docker](https://www.docker.com) to manage containers and [Docker Compose](https://docs.docker.com/compose/), which comes with Docker Desktop for Mac and Windows ([check here for Linux](https://docs.docker.com/compose/install/)).
-
-Enter `docker --version` in your command line to test your installation.
-Your should see:
-
-```
+You need to install [Docker](https://www.docker.com) and [Docker Compose](https://docs.docker.com/compose/). Docker Compose comes with Docker if you're on Mac or Windows ([check here for Linux](https://docs.docker.com/compose/install/)). Check the installation by executing:
+```bash
 $ docker --version
-// tested with Docker version 19.03.8
+## tested with: 19.03.8
 
 $ docker-compose version
-// tested with docker-compose version 1.25.4
+## tested with: 1.25.4, build 8d51620a
 ```
 
-For easier usage, install GNU Make (tested with GNU Make 3.81).
+For easier usage, install Make and verify as follows:
+```bash
+$ make --version
+## tested with: GNU Make 3.81
+```
 
 Optionally, you can download and install [Postman](https://www.getpostman.com) to test the services.
 
