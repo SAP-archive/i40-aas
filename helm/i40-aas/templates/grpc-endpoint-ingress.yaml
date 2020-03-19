@@ -52,14 +52,13 @@ spec:
               key: CORE_BROKER_HOST
         - name: CORE_BROKER_PORT
           value: {{ .Values.core.broker.port }}
-        - name: CORE_INGRESS_USER
-          value: {{ .Values.core.ingress.user }}
-        - name: CORE_INGRESS_PASSWORD
-          value: {{ .Values.core.ingress.password }}
         - name: CORE_INGRESS_EXCHANGE
           value: {{ .Values.core.ingress.exchange }}
         - name: CORE_INGRESS_GRPC_PORT
           value: {{ .Values.core.ingress.grpc.port }}
+        envFrom:
+        - secretRef:
+            name: {{ .Release.Name }}-core-ingress
         volumeMounts:
         - name: certs
           mountPath: "/certs"

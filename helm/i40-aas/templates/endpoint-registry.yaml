@@ -52,16 +52,13 @@ spec:
               key: CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST
         - name: CORE_REGISTRIES_ENDPOINTS_DATABASE_PORT
           value: {{ .Values.core.registries.endpoints.database.port }}
-        - name: CORE_REGISTRIES_ENDPOINTS_DATABASE_USER
-          value: {{ .Values.core.registries.endpoints.database.user }}
-        - name: CORE_REGISTRIES_ENDPOINTS_DATABASE_PASSWORD
-          value: {{ .Values.core.registries.endpoints.database.password }}
         - name: CORE_REGISTRIES_ENDPOINTS_DATABASE_NAME
           value: {{ .Values.core.registries.endpoints.database.name }}
-        - name: CORE_REGISTRIES_ENDPOINTS_USER
-          value: {{ .Values.core.registries.endpoints.user }}
-        - name: CORE_REGISTRIES_ENDPOINTS_PASSWORD
-          value: {{ .Values.core.registries.endpoints.password }}
+        envFrom:
+        - secretRef:
+            name: {{ .Release.Name }}-core-registries-endpoints-database
+        - secretRef:
+            name: {{ .Release.Name }}-core-registries-endpoints
         resources:
           {{- toYaml .Values.resources | nindent 10 }}
         livenessProbe:
