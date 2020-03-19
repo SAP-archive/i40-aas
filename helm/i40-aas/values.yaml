@@ -34,115 +34,95 @@ logging:
   logOutput: CONSOLE
 
 core:
-
   broker:
-
     port: 
       amqp: 5672
       mqtt: 1883
       ui: 80
 
     admin:
-      # Put an empty string "" here for user/pw to let it be randomly generated
+      # Put an empty string "" to generate a random value (20 character, alpha-numeric)
       user: admin
       password: admin
 
   endpointResolver:
-
     ctag: endpoint-resolver
     queue: generic
 
   ingress:
-
     exchange: ingress
     user: guest
     password: guest
 
     grpc: 
-
       port: 8384
 
     http:
-    
       port: 2000
-      # Put an empty string "" here for user/pw to let it be randomly generated
+      # Put an empty string "" to generate a random value (20 character, alpha-numeric)
       user: admin
       password: admin
 
   egress:
-
     exchange: egress
     user: guest
     password: guest
 
     grpc: 
-
       ctag: grpc
       queue: grpc
 
     http:
-
       ctag: http
       queue: http
 
   dataManager:
-
     port: 4000
     submodelsRoute: /submodels
-    # Put an empty string "" here for user/pw to let it be randomly generated
+    # Put an empty string "" to generate a random value (20 character, alpha-numeric)
     user: admin
     password: admin
 
   registries:
-
     adapters:
-
       port: 4500
       urlSuffix: /adapters
-      # Put an empty string "" here for user/pw to let it be randomly generated
+      # Put an empty string "" to generate a random value (20 character, alpha-numeric)
       user: admin
       password: admin
 
     endpoints:
-
       port: 4400
       urlSuffix: /assetadministrationshells
-      # Put an empty string "" here for user/pw to let it be randomly generated
+      # Put an empty string "" to generate a random value (20 character, alpha-numeric)
       user: admin
       password: admin
 
       database:
-
         name: AAS_REGISTRY
         port: 5432
-        # Put an empty string "" here for user/pw to let it be randomly generated
+        # Put an empty string "" to generate a random value (20 character, alpha-numeric)
         user: postgres
         password: postgres
 
         super:
-
-          # Put an empty string "" here for user/pw to let it be randomly generated
+          # Put an empty string "" to generate a random value (20 character, alpha-numeric)
           user: postgres
           password: postgres
 
         pgAdmin:
-
           port: 8080
-          # Put an empty string "" here for user/pw to let it be randomly generated
+          # Put an empty string "" to generate a random value (20 character, alpha-numeric)
           user: test@test.com
           password: admin
 
 applicationAdapters:
-
   mongoDb:
-
     port: 3100
     submodelsCollection: storage-adapter-mongodb-submodels
 
 skills:
-
   onboarding:
-
     requestApproval: false
     requestType: false
     statesCollection: car-onboarding-states
@@ -151,10 +131,9 @@ skills:
     uri: sap.com/aas/skills/onboarding/CentralAssetRepository
 
     database:
-
       name: mongodb
       port: 27017
-      # Put an empty string "" here for user/pw to let it be randomly generated
+      # Put an empty string "" to generate a random value (20 character, alpha-numeric)
       user: mongouser
       password: mongopassword      
 
