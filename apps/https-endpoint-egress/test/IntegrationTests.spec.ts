@@ -21,18 +21,18 @@ describe("AmpqClient", function () {
     const dotenv = require("dotenv");
     dotenv.config();
     if (
-      process.env.RABBITMQ_AMQP_HOST &&
-      process.env.RABBITMQ_AMQP_PORT &&
-      process.env.RABBITMQ_BROKER_EXCHANGE &&
-      process.env.RABBITMQ_BROKER_USER &&
-      process.env.RABBITMQ_BROKER_PASSWORD
+      process.env.CORE_BROKER_HOST &&
+      process.env.CORE_BROKER_PORT &&
+      process.env.CORE_EGRESS_EXCHANGE &&
+      process.env.CORE_EGRESS_USER &&
+      process.env.CORE_EGRESS_PASSWORD
     ) {
       amqpClientSender = new AmqpClient(
-        process.env.RABBITMQ_AMQP_HOST,
-        process.env.RABBITMQ_AMQP_PORT,
-        process.env.RABBITMQ_BROKER_EXCHANGE,
-        process.env.RABBITMQ_BROKER_USER,
-        process.env.RABBITMQ_BROKER_PASSWORD,
+        process.env.CORE_BROKER_HOST,
+        process.env.CORE_BROKER_PORT,
+        process.env.CORE_EGRESS_EXCHANGE,
+        process.env.CORE_EGRESS_USER,
+        process.env.CORE_EGRESS_PASSWORD,
         "sampleListenerId"
       );
     } else {
@@ -46,7 +46,7 @@ describe("AmpqClient", function () {
 
   it("can send and receive messages from the broker *if a message broker has been started*", function(done) {
     if (AMQP_URL === undefined) {
-      throw new Error("No RABBITMQ_AMQP_HOST found in environment");
+      throw new Error("No CORE_BROKER_HOST found in environment");
     }
     let exchange = "test1";
     amqpClientSender = new AmqpClient(AMQP_URL, exchange, "guest", "guest", "");

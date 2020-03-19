@@ -16,11 +16,11 @@ import (
 func main() {
 	var err error
 
-	output := os.Getenv("LOG_OUTPUT")
+	output := os.Getenv("LOGGING_LOGOUTPUT")
 	if output == "" {
 		output = "CONSOLE"
 	}
-	level := os.Getenv("LOG_LEVEL")
+	level := os.Getenv("LOGGING_LOGLEVEL")
 	if level == "" {
 		level = "DEBUG"
 	}
@@ -42,13 +42,16 @@ func main() {
 		egress    *GRPCEgress
 	)
 
-	amqpPort, _ := strconv.Atoi(os.Getenv("RABBITMQ_PORT"))
+	amqpPort, err := strconv.Atoi(os.Getenv("CORE_BROKER_PORT"))
+	if err != nil {
+		log.Error().Err(err).Msg("failed to read and cast CORE_BROKER_PORT")
+	}
 	amqpCfg = &amqpclient.Config{
-		Host:     os.Getenv("RABBITMQ_HOST"),
+		Host:     os.Getenv("CORE_BROKER_HOST"),
 		Port:     amqpPort,
-		User:     os.Getenv("RABBITMQ_EGRESS_USER"),
-		Password: os.Getenv("RABBITMQ_EGRESS_PASSWORD"),
-		Exchange: os.Getenv("RABBITMQ_EGRESS_EXCHANGE"),
+		User:     os.Getenv("CORE_EGRESS_USER"),
+		Password: os.Getenv("CORE_EGRESS_PASSWORD"),
+		Exchange: os.Getenv("CORE_EGRESS_EXCHANGE"),
 	}
 
 	egressCfg = &GRPCEgressConfig{

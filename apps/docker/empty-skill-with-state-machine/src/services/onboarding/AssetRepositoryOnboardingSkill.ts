@@ -72,11 +72,11 @@ class AssetRepositoryOnboardingSkill {
     return {
       message: message,
       actionMap: new SkillActionMap(messageDispatcher),
-      askForApproval: process.env.ONBOARDING_SKILL_REQUEST_APPROVAL
-        ? eval(process.env.ONBOARDING_SKILL_REQUEST_APPROVAL)
+      askForApproval: process.env.SKILLS_ONBOARDING_APPROVAL_ENABLED
+        ? eval(process.env.SKILLS_ONBOARDING_APPROVAL_ENABLED)
         : false,
-      askForType: process.env.ONBOARDING_SKILL_REQUEST_TYPE
-        ? eval(process.env.ONBOARDING_SKILL_REQUEST_TYPE)
+      askForType: process.env.SKILLS_ONBOARDING_APPROVAL_TYPE
+        ? eval(process.env.SKILLS_ONBOARDING_APPROVAL_TYPE)
         : false
     };
   }

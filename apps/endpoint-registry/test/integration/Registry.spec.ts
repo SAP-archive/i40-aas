@@ -172,7 +172,7 @@ async function insertIntoAssetAdministrationShells(
 describe('Tests with a simple data model', function() {
   before(async () => {
     console.log(await execShellCommand('sh ./prepareDB.sh'));
-    console.log('Using DB: ' + process.env.ENDPOINT_REGISTRY_POSTGRES_DB);
+    console.log('Using DB: ' + process.env.CORE_REGISTRIES_ENDPOINTS_DATABASE_NAME);
 
     var uniqueTestId = 'dataForAllTests';
     await insertIntoSemanticProtocols(uniqueTestId + 'protocolId');

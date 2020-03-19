@@ -52,7 +52,8 @@ class AmqpClient implements IMessageBrokerClient {
 
   //TODO: make a parameter object
   constructor(
-    private ampqUrl: string,
+    private ampqHost: string,
+    private ampqPort: string,
     private brokerExchange: string,
     private brokerUser: string,
     private brokerPass: string,
@@ -60,6 +61,8 @@ class AmqpClient implements IMessageBrokerClient {
     useMqtt?: boolean,
     private reconnectAfterMilliSecs?: number
   ) {
+    //TODO: Generate the Url from host and port
+    
     this.start = Date.now();
     this.listenerQName = listenerQueue;
     console.debug('AmpqClient created');

@@ -63,9 +63,9 @@ func (e *GRPCEgress) Init() error {
 		return err
 	}
 
-	queue := os.Getenv("GRPC_ENDPOINT_EGRESS_AMQP_QUEUE")
+	queue := os.Getenv("CORE_EGRESS_GRPC_QUEUE")
 	bindingKey := e.config.AMQPConfig.Exchange + "." + queue
-	ctag := os.Getenv("GRPC_ENDPOINT_EGRESS_AMQP_CTAG")
+	ctag := os.Getenv("CORE_EGRESS_GRPC_CTAG")
 
 	go func() {
 		for {
