@@ -2,10 +2,6 @@
 
 The data manager acts as a router that forwards requests to the responsible storage adapter services. An overview of its API is available at the server under the route `/api-docs`
 
-## Configuration
-Configuration is handled via environment variables. In the `environment:` section of the container in `docker-compose.yml` is a full list of environment variables, some of which can be configured via the `.env` file located in the repository root.
-
-
 ## Submodels
 Route a submodel to its respective adapter
 

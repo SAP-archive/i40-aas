@@ -3,7 +3,7 @@
 ## Prerequisites
 The following components need to be installed:
 - [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/) (v0.35.0 & hypervisor e.g. [hyperkit](https://github.com/moby/hyperkit)(v0.20180403-17-g3e954c) for mac)
-- [kubectl](https://kubernetes.io/docs/tasks/tools/install-minikube/#install-kubectl) 
+- [kubectl](https://kubernetes.io/docs/tasks/tools/install-minikube/#install-kubectl)
 - [docker](https://runnable.com/docker/getting-started/) (tested with v2.0.0.3)
 
 For Mac, most of these (despite from Docker🐳) can be installed via [homebrew🍺](https://brew.sh/):
@@ -58,37 +58,37 @@ Once the cluster is ready to go, from the root of the repo, run
 ```
 kubectl apply -f helm/kubernetes/
 ```
-Watch for the creation of the pods via: 
+Watch for the creation of the pods via:
 ```
-kubectl get pods --watch 
+kubectl get pods --watch
 ```
 until the `rabbitmq-0`, `mongodb-0` and `postgres-0` pods are `Running`.
 
-## Local testing with minikube 
+## Local testing with minikube
 How to run a smoke test with the installation locally with minikube:
 
 1. Install and Start minikube (See above commands. Important to allocate at least 4 Gb of RAM).Test deployment with: ```minikube status```. Note: VPN sometimes interferes with Minikube's networking. If deployment hangs, try deactivating VPN
 2. Run the commands for setting up the services (see above)
-3. In order to start the Apps, go to the folder of each of the respective App in `helm/`, e.g. `helm/onboarding-skill/` and apply the kubernetes yaml file there.  
-!NOTE: You'll have to remove the `SHA-PLACEHOLDER` image tag. 
+3. In order to start the Apps, go to the folder of each of the respective App in `helm/`, e.g. `helm/onboarding-skill/` and apply the kubernetes yaml file there.
+!NOTE: You'll have to remove the `SHA-PLACEHOLDER` image tag.
 
 
 ## Monitoring with minikube
 
-1. Execute the steps above. Starting all Apps and Running a ```kubectl get pods --watch ``` should yield: 
-   
-   ![podsall](images/scr-pods-all.png)
+1. Execute the steps above. Starting all Apps and Running a ```kubectl get pods --watch ``` should yield:
+
+   ![podsall](../images/scr-pods-all.png)
 
 2. To get the logs of an app run:
 ```kubectl logs [pod name] ```, or a running log using ```kubectl logs [pod name] -f```:
 For instance the ```kubectl logs https-endpoint ``` returns
-    
-   ![podsall](images/scr-logs-endpoint.png)
 
-3. To see how the apps and services can be accessed outside the K8s Cluster run 
+   ![podsall](../images/scr-logs-endpoint.png)
+
+3. To see how the apps and services can be accessed outside the K8s Cluster run
    ```minikube service list```
    This should return a list of the addresses and ports:
-   
-   ![services](images/scr-service-list.png)
+
+   ![services](../images/scr-service-list.png)
 
    These service addresses can be used for accessing the management services like pgadmin, mongodb or rabbitmq-management-ui

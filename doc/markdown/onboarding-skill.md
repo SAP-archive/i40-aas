@@ -1,21 +1,18 @@
 # onboarding-skill
 
-## Configuration
-Configuration is handled via environment variables. In the `environment:` section of the container in `docker-compose.yml` is a full list of environment variables, some of which can be configured via the `.env` file located in the repository root.
-
 ## Running
 
 - To start: `npm run dev` from this directory
 
 ## The big picture
 
-![The big picture](doc/big_picture_car.png).
+![The big picture](../images/big_picture_car.png).
 
 ## The state machine
 
-This component uses [xstate](https://github.com/davidkpiano/xstate). The modelled state machine is shown below: ![The state machine](doc/car.png)
+This component uses [xstate](https://github.com/davidkpiano/xstate). The modelled state machine is shown below: ![The state machine](../images/car.png)
 
-The machine is defined [here](src/services/onboarding/SkillStateMachineSpecification.ts).
+The machine is defined [here](../../src/ts/cmd/onboarding-skill/src/services/onboarding/MySkillStateMachineSpecification.ts).
 
 From each state, invalid messages will be responded to (as long as they are parsable and contain a proper sender) with notUnderstood.
 
@@ -46,6 +43,6 @@ It can be run from a docker image with `source .\integration-test-setup` (wait 2
 
 - The first thing to do is to create a state chart as above. The notation is as described in this [paper](http://www.inf.ed.ac.uk/teaching/courses/seoc/2005_2006/resources/statecharts.pdf): States are shown as rectangles with rounded edges, final states have double borders. Transistions are shown by arrows. The notation on the arrows is: event-to-move-out-of-state (condition-under-which-to-execute-transition)/transition-action-to-be-executed-while-transitioning. Actions can also be triggered on entering or exiting states. This is indicated in them being written inside the state "rectangle" in small font. Events received from other parties are concatenated as following: {message type}_FROM_{sender role} (all caps). When an external rest service is called it needs to be modelled as a [service](https://xstate.js.org/docs/guides/communication.html#the-invoke-property) with its own sub-states. Understand how the diagram maps to the [skill state machine specification](src/services/onboarding/MySkillStateMachineSpecification.ts.) provided for [xstate](https://github.com/davidkpiano/xstate). This way you create your own MySkillStateMachineSpecification.ts, replacing the one for the onboarding skill.
 
-- Create a MySkillActionMap.ts containing the code for actions to be performed when the state machine moves through the states. These actions can be messages sent to other parties in an AAS interaction or the invocation of external services and the methods you provide here depend on your scenario. This class should make use of a MyExternalRestServiceCaller.ts to make the actual calls to the external services as well as a MyAasMessageDispatcher.ts that uses the [message sender](src/base/messaging/MessageSender.ts) to send messages via the message broker. MyAasMessageDispatcher needs to implement at least the interface [IAasMessageDispatcher](src/base/messaginginterface/IAasMessageDispatcher.ts).
+- Create a MySkillActionMap.ts containing the code for actions to be performed when the state machine moves through the states. These actions can be messages sent to other parties in an AAS interaction or the invocation of external services and the methods you provide here depend on your scenario. This class should make use of a MyExternalRestServiceCaller.ts to make the actual calls to the external services as well as a MyAasMessageDispatcher.ts that uses the [message sender](../../src/ts/cmd/onboarding-skill/src/base/messaging/MessageSender.ts) to send messages via the message broker. MyAasMessageDispatcher needs to implement at least the interface [IAasMessageDispatcher](../../src/ts/cmd/onboarding-skill/src/base/messaginginterface/IAasMessageDispatcher.ts).
 
   -Finally, provide a MyInitializer that provides these two communication classes and a configuration object that is later placed in the context for your state machine to use.

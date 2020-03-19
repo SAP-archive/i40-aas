@@ -6,10 +6,10 @@
 
 
 ## Test using Postman
-[postman]: images/Postman_open.png "Open Postman"
-[postmanimp]: images/Postman_import_collection.png "Import collection"
-[postmanselend]: images/Postman_select_endpoint.png "Select Endpoint"
-[postmantest]: images/Postman_test_interaction.png "Test Endpoint"
+[postman]: ../images/Postman_open.png "Open Postman"
+[postmanimp]: ../images/Postman_import_collection.png "Import collection"
+[postmanselend]: ../images/Postman_select_endpoint.png "Select Endpoint"
+[postmantest]: ../images/Postman_test_interaction.png "Test Endpoint"
 
 
 1. Open [Postman](https://www.getpostman.com)

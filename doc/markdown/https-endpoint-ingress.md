@@ -2,9 +2,6 @@
 
 This component implements a REST API and handles requests by forwarding them to the message broker to be received from the respective skill. API available at the server under `/api-docs`
 
-## Configuration
-Configuration is handled via environment variables. In the `environment:` section of the container in `docker-compose.yml` is a full list of environment variables, some of which can be configured via the `.env` file located in the repository root.
-
 ## Running
 
 - To start: `npm run dev` from this directory
