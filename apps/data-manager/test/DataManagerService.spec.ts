@@ -5,8 +5,8 @@ import { RoutingController } from "../src/services/data-manager/RoutingControlle
 const dotenv = require("dotenv");
 dotenv.config();
 
-var DATA_MANAGER_USER = process.env.DATA_MANAGER_USER;
-var DATA_MANAGER_PASSWORD = process.env.DATA_MANAGER_PASSWORD;
+var CORE_DATA_MANAGER_USER = process.env.CORE_DATA_MANAGER_USER;
+var CORE_DATA_MANAGER_PASSWORD = process.env.CORE_DATA_MANAGER_PASSWORD;
 
 var chai = require("chai");
 chai.use(chaiHttp);
@@ -42,7 +42,7 @@ describe("the server", async function() {
     return chai
       .request(app)
       .get("/health")
-      .auth(DATA_MANAGER_USER, DATA_MANAGER_PASSWORD)
+      .auth(CORE_DATA_MANAGER_USER, CORE_DATA_MANAGER_PASSWORD)
       .then(function(res: any) {
         chai.expect(res.text).to.eql("Server Up!");
       });
@@ -98,7 +98,7 @@ describe("the server", async function() {
     return chai
       .request(app)
       .post("/submodels")
-      .auth(DATA_MANAGER_USER, DATA_MANAGER_PASSWORD)
+      .auth(CORE_DATA_MANAGER_USER, CORE_DATA_MANAGER_PASSWORD)
       .set("content-type", "application/json")
       .send(submodelRequestNoId)
       .then(function(res: any) {
@@ -110,7 +110,7 @@ describe("the server", async function() {
     return chai
       .request(app)
       .post("/submodels")
-      .auth(DATA_MANAGER_USER, DATA_MANAGER_PASSWORD)
+      .auth(CORE_DATA_MANAGER_USER, CORE_DATA_MANAGER_PASSWORD)
       .set("content-type", "application/json")
       .send(submodelsRequest + "xx")
       .then(function(res: any) {
@@ -121,7 +121,7 @@ describe("the server", async function() {
     return chai
       .request(app)
       .post("/submodels")
-      .auth(DATA_MANAGER_USER, DATA_MANAGER_PASSWORD)
+      .auth(CORE_DATA_MANAGER_USER, CORE_DATA_MANAGER_PASSWORD)
       .set("content-type", "application/json")
       .send("")
       .then(function(res: any) {
@@ -139,7 +139,7 @@ describe("the server", async function() {
     chai
       .request(app)
       .post("/submodels")
-      .auth(DATA_MANAGER_USER, DATA_MANAGER_PASSWORD)
+      .auth(CORE_DATA_MANAGER_USER, CORE_DATA_MANAGER_PASSWORD)
       .set("content-type", "application/json")
       .send(submodelsRequest)
       .then((res: any) => {
@@ -159,7 +159,7 @@ describe("the server", async function() {
     chai
       .request(app)
       .post("/submodels")
-      .auth(DATA_MANAGER_USER, DATA_MANAGER_PASSWORD)
+      .auth(CORE_DATA_MANAGER_USER, CORE_DATA_MANAGER_PASSWORD)
       .set("content-type", "application/json")
       .send(submodelsRequest)
       .then((res: any) => {

@@ -8,12 +8,12 @@ import { SubscriptionDto } from '../base/messaginginterface/SubscriptionDto';
 const initializeLogger = require('../log');
 let sender: IMessageBrokerClient;
 let receiver: IMessageBrokerClient;
-let AMQP_URL = process.env.RABBITMQ_AMQP_HOST;
+let AMQP_URL = process.env.CORE_BROKER_HOST;
 
 let counter = 1;
 function start() {
   if (AMQP_URL === undefined) {
-    throw new Error('No RABBITMQ_AMQP_HOST found in environment');
+    throw new Error('No CORE_BROKER_HOST found in environment');
   }
 
   receiver = new SapMqttClient(AMQP_URL, 'guest', 'guest');

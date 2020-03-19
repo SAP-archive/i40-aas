@@ -20,7 +20,7 @@ chai.should();
 describe("AmpqClient", function() {
   let amqpClientSender: AmqpClient;
   let amqpClientReceiver: AmqpClient;
-  let AMQP_URL = process.env.RABBITMQ_AMQP_HOST;
+  let AMQP_URL = process.env.CORE_BROKER_HOST;
   this.beforeEach(function() {});
   this.afterEach(async function() {
     if (amqpClientSender) amqpClientSender.cleanup();
@@ -34,7 +34,7 @@ describe("AmpqClient", function() {
 
   it("can send and receive messages from the broker *if a message broker has been started*", function(done) {
     if (AMQP_URL === undefined) {
-      throw new Error("No RABBITMQ_AMQP_HOST found in environment");
+      throw new Error("No CORE_BROKER_HOST found in environment");
     }
     let exchange = "test1";
     amqpClientSender = new AmqpClient(AMQP_URL, exchange, "guest", "guest", "");
@@ -72,7 +72,7 @@ describe("AmpqClient", function() {
 
   it("can  receive mqtt messages from the broker *if a message broker has been started*", function(done) {
     if (AMQP_URL === undefined) {
-      throw new Error("No RABBITMQ_AMQP_HOST found in environment");
+      throw new Error("No CORE_BROKER_HOST found in environment");
     }
 
     let mqttSender = new SapMqttClient(AMQP_URL, "guest", "guest");
@@ -110,7 +110,7 @@ describe("AmpqClient", function() {
 
   it("can send mqtt messages to the broker *if a message broker has been started*", function(done) {
     if (AMQP_URL === undefined) {
-      throw new Error("No RABBITMQ_AMQP_HOST found in environment");
+      throw new Error("No CORE_BROKER_HOST found in environment");
     }
 
     let mqttReceiver = new SapMqttClient(AMQP_URL, "guest", "guest");
@@ -156,7 +156,7 @@ describe("AmpqClient", function() {
     );
 
     if (AMQP_URL === undefined) {
-      throw new Error("No RABBITMQ_AMQP_HOST found in environment");
+      throw new Error("No CORE_BROKER_HOST found in environment");
     }
     let exchange = "test2";
     amqpClientSender = new AmqpClient(AMQP_URL, exchange, "guest", "guest", "");
@@ -210,7 +210,7 @@ describe("AmpqClient", function() {
 
   it("recovers from a dropped connection as a receiver", function(done) {
     if (AMQP_URL === undefined) {
-      throw new Error("No RABBITMQ_AMQP_HOST found in environment");
+      throw new Error("No CORE_BROKER_HOST found in environment");
     }
     let exchange = "test3";
     amqpClientSender = new AmqpClient(AMQP_URL, exchange, "guest", "guest", "");

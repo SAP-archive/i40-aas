@@ -29,16 +29,16 @@ describe("SimpleMongoDbClient", function() {
   const uuidv1 = require("uuid/v1");
   let mongoDbClient: SimpleMongoDbClient;
   let collectionName: string = "tests" + uuidv1();
-  let MONGO_INITDB_DATABASE = checkEnvVar("MONGO_INITDB_DATABASE");
-  let MONGODB_HOST = checkEnvVar("MONGODB_HOST");
-  let MONGODB_PORT = checkEnvVar("MONGODB_PORT");
-  let MONGO_INITDB_ROOT_USERNAME = checkEnvVar("MONGO_INITDB_ROOT_USERNAME");
-  let MONGO_INITDB_ROOT_PASSWORD = checkEnvVar("MONGO_INITDB_ROOT_PASSWORD");
+  let MONGO_INITDB_DATABASE = checkEnvVar("SKILLS_ONBOARDING_DATABASE_NAME");
+  let MONGODB_HOST = checkEnvVar("SKILLS_ONBOARDING_DATABASE_HOST");
+  let MONGODB_PORT = checkEnvVar("SKILLS_ONBOARDING_DATABASE_PORT");
+  let MONGO_INITDB_ROOT_USERNAME = checkEnvVar("SKILLS_ONBOARDING_DATABASE_USER");
+  let MONGO_INITDB_ROOT_PASSWORD = checkEnvVar("SKILLS_ONBOARDING_DATABASE_PASSWORD");
 
   before(async () => {
     if (!MONGODB_HOST || !MONGODB_PORT || !MONGO_INITDB_DATABASE) {
       throw new Error(
-        "These environment variables need to be set: MONGODB_HOST, MONGODB_PORT, MONGO_INITDB_DATABASE"
+        "These environment variables need to be set: SKILLS_ONBOARDING_DATABASE_HOST, SKILLS_ONBOARDING_DATABASE_PORT, SKILLS_ONBOARDING_DATABASE_NAME"
       );
     }
     if (MONGO_INITDB_ROOT_USERNAME && MONGO_INITDB_ROOT_PASSWORD) {
