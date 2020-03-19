@@ -1,2 +1,2 @@
 docker stop some-rabbit
-docker stop some-mongo
+docker rm some-rabbit
