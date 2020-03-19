@@ -7,8 +7,8 @@ const registryAPI = require("../src/services/registry/registry-api");
 const dotenv = require("dotenv");
 dotenv.config();
 
-var ADAPTER_REGISTRY_ADMIN_USER = process.env.ADAPTER_REGISTRY_ADMIN_USER;
-var ADAPTER_REGISTRY_ADMIN_PASSWORD = process.env.ADAPTER_REGISTRY_ADMIN_PASSWORD;
+var CORE_REGISTRIES_ADAPTERS_USER = process.env.CORE_REGISTRIES_ADAPTERS_USER;
+var CORE_REGISTRIES_ADAPTERS_PASSWORD = process.env.CORE_REGISTRIES_ADAPTERS_PASSWORD;
 
 var chai = require("chai");
 chai.use(chaiHttp);
@@ -68,7 +68,7 @@ describe("the adapter service", async function() {
     return chai
       .request(app)
       .post("/adapters")
-      .auth(ADAPTER_REGISTRY_ADMIN_USER, ADAPTER_REGISTRY_ADMIN_PASSWORD)
+      .auth(CORE_REGISTRIES_ADAPTERS_USER, CORE_REGISTRIES_ADAPTERS_PASSWORD)
       .set("content-type", "application/json")
       .send(adapterRequest)
       .then(function(res: any) {
@@ -88,7 +88,7 @@ describe("the adapter service", async function() {
     return chai
       .request(app)
       .post("/adapters")
-      .auth(ADAPTER_REGISTRY_ADMIN_USER, ADAPTER_REGISTRY_ADMIN_PASSWORD)
+      .auth(CORE_REGISTRIES_ADAPTERS_USER, CORE_REGISTRIES_ADAPTERS_PASSWORD)
       .set("content-type", "application/json")
       .send(adapterRequest)
       .then(function(res: any) {
@@ -110,7 +110,7 @@ describe("the adapter service", async function() {
     return chai
       .request(app)
       .post("/adapters")
-      .auth(ADAPTER_REGISTRY_ADMIN_USER, ADAPTER_REGISTRY_ADMIN_PASSWORD)
+      .auth(CORE_REGISTRIES_ADAPTERS_USER, CORE_REGISTRIES_ADAPTERS_PASSWORD)
       .set("content-type", "application/json")
       .send(adapterRequest + "xx")
       .then(function(res: any) {
@@ -122,7 +122,7 @@ describe("the adapter service", async function() {
     return chai
       .request(app)
       .post("/adapters")
-      .auth(ADAPTER_REGISTRY_ADMIN_USER, ADAPTER_REGISTRY_ADMIN_PASSWORD)
+      .auth(CORE_REGISTRIES_ADAPTERS_USER, CORE_REGISTRIES_ADAPTERS_PASSWORD)
       .set("content-type", "application/json")
       .send("")
       .then(function(res: any) {
@@ -149,7 +149,7 @@ describe("the adapter service", async function() {
     chai
       .request(app)
       .post("/adapters")
-      .auth(ADAPTER_REGISTRY_ADMIN_USER, ADAPTER_REGISTRY_ADMIN_PASSWORD)
+      .auth(CORE_REGISTRIES_ADAPTERS_USER, CORE_REGISTRIES_ADAPTERS_PASSWORD)
       .set("content-type", "application/json")
       .send(adapterRequest)
       .then((res: any) => {
@@ -177,7 +177,7 @@ describe("the adapter service", async function() {
     chai
       .request(app)
       .post("/adapters")
-      .auth(ADAPTER_REGISTRY_ADMIN_USER, ADAPTER_REGISTRY_ADMIN_PASSWORD)
+      .auth(CORE_REGISTRIES_ADAPTERS_USER, CORE_REGISTRIES_ADAPTERS_PASSWORD)
       .set("content-type", "application/json")
       .send(adapterRequest)
       .then((res: any) => {

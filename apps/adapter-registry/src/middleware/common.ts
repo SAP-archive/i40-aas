@@ -8,15 +8,15 @@ import { logger } from "../utils/log";
 const dotenv = require("dotenv");
 dotenv.config();
 
-let ADAPTER_REGISTRY_ADMIN_USER: string | undefined =
-  process.env.ADAPTER_REGISTRY_ADMIN_USER;
-let ADAPTER_REGISTRY_ADMIN_PASSWORD: string | undefined =
-  process.env.ADAPTER_REGISTRY_ADMIN_PASSWORD;
+let CORE_REGISTRIES_ADAPTERS_USER: string | undefined =
+  process.env.CORE_REGISTRIES_ADAPTERS_USER;
+let CORE_REGISTRIES_ADAPTERS_PASSWORD: string | undefined =
+  process.env.CORE_REGISTRIES_ADAPTERS_PASSWORD;
 
-if (ADAPTER_REGISTRY_ADMIN_USER === undefined) {
+if (CORE_REGISTRIES_ADAPTERS_USER === undefined) {
   logger.error(" [Basic auth] No  username was found in environment");
 }
-if (ADAPTER_REGISTRY_ADMIN_PASSWORD === undefined) {
+if (CORE_REGISTRIES_ADAPTERS_PASSWORD === undefined) {
   logger.error(" [Basic auth] No  password was found in environment");
 }
 
@@ -33,9 +33,9 @@ export const handleCompression = (router: Router) => {
 };
 
 let user: any = {};
-if(ADAPTER_REGISTRY_ADMIN_USER && ADAPTER_REGISTRY_ADMIN_PASSWORD){
-  user[ADAPTER_REGISTRY_ADMIN_USER] =
-  ADAPTER_REGISTRY_ADMIN_PASSWORD;
+if(CORE_REGISTRIES_ADAPTERS_USER && CORE_REGISTRIES_ADAPTERS_PASSWORD){
+  user[CORE_REGISTRIES_ADAPTERS_USER] =
+  CORE_REGISTRIES_ADAPTERS_PASSWORD;
 }
 
 export const handleBasicAuth = (router: Router) =>
