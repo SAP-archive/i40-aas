@@ -1,17 +1,5 @@
 ---
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .Release.Name }}-storage-adapter-mongodb
-  labels: 
-    service: storage-adapter-mongodb
-    {{- include "i40-aas.labels" . | nindent 4 }}
-data:
-  # Networking
-  STORAGE_ADAPTER_MONGODB_PORT: "80"
-  STORAGE_ADAPTER_MONGODB_SUBOMODELS_COLLECTION: storage-adapter-mongodb-submodels
----
-apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Release.Name }}-storage-adapter-mongodb
@@ -21,7 +9,7 @@ metadata:
 spec:
   ports:
   - targetPort: endpoint
-    port: 80
+    port: {{ .Values.applicationAdapters.mongoDb.port }}
     protocol: TCP
   selector:
     service: storage-adapter-mongodb
@@ -51,14 +39,27 @@ spec:
           image: "{{ .Values.image.repository }}/i40-aas-storage-adapter-mongodb:{{ .Values.image.release }}"
           ports:
           - name: endpoint
-            containerPort: 3100
-          envFrom:
-            - secretRef:
-                name: {{ .Release.Name }}-mongodb
-            - configMapRef:
-                name: {{ .Release.Name }}-mongodb
-            - configMapRef:
-                name: {{ .Release.Name }}-storage-adapter-mongodb
+	    containerPort: {{ .Values.applicationAdapters.mongoDb.port }}
+	  env:
+	  - name: LOGGING_LOGLEVEL
+	    value: {{ .Values.logging.logLevel }}
+	  - name: LOGGING_LOGOUTPUT
+	    value: {{ .Values.logging.logOutput }}
+	  - name: APPLICATION_ADAPTERS_MONGODB_DATABASE_HOST
+	    valueFrom:
+	      configMapKeyRef:
+		name: {{ .Release.Name }}-host-collection
+		key: SKILLS_ONBOARDING_DATABASE_HOST
+	  - name: APPLICATION_ADAPTERS_MONGODB_DATABASE_PORT
+	    value: {{ .Values.onboarding.database.port }}
+	  - name: APPLICATION_ADAPTERS_MONGODB_DATABASE_USER
+	    value: {{ .Values.onboarding.database.user }}
+	  - name: APPLICATION_ADAPTERS_MONGODB_DATABASE_PASSWORD
+	    value: {{ .Values.onboarding database.password }}
+	  - name: APPLICATION_ADAPTERS_MONGODB_DATABASE_NAME
+	    value: {{ .Values.onboarding.database.name }}
+	  - name: APPLICATION_ADAPTERS_MONGODB_SUBMODELS_COLLECTION
+	    value: {{ .Values.applicationAdapters.mongoDb.submodelsCollection }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
 ---

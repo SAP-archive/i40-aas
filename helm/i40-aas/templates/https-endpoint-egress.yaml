@@ -40,15 +40,28 @@ spec:
           ports:
             - name: endpoint
               containerPort: 3000
-          envFrom:
-            - secretRef:
-                name: {{ .Release.Name }}-endpoint-registry
-            - configMapRef:
-                name: {{ .Release.Name }}-endpoint-registry
-            - configMapRef:
-                name: {{ .Release.Name }}-rabbitmq
-            - secretRef:
-                name: {{ .Release.Name }}-rabbitmq
+	  env:
+	    - name: LOGGING_LOGLEVEL
+	      value: {{ .Values.logging.logLevel }}
+	    - name: LOGGING_LOGOUTPUT
+	      value: {{ .Values.logging.logOutput }}
+	    - name: CORE_BROKER_HOST
+	      valueFrom:
+		configMapKeyRef:
+		  name: {{ .Release.Name }}-host-collection
+		  key: CORE_BROKER_HOST
+	    - name: CORE_BROKER_PORT
+	      value: {{ .Values.core.broker.port }}
+	    - name: CORE_EGRESS_USER
+	      value: {{ .Values.core.egress.user }}
+	    - name: CORE_EGRESS_PASSWORD
+	      value: {{ .Values.core.egress.password }}
+	    - name: CORE_EGRESS_EXCHANGE
+	      value: {{ .Values.core.egress.exchange }}
+	    - name: CORE_EGRESS_HTTP_QUEUE
+	      value: {{ .Values.core.egress.http.queue }}
+	    - name: CORE_EGRESS_HTTP_CTAG
+	      value: {{ .Values.core.egress.http.ctag }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
 ---
