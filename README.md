@@ -4,6 +4,8 @@
 
 :warning: __i40-aas__ is __alpha__ :warning:
 
+__i40-aas__ welcomes [contributions](#contributing). Please read about [known issues](#known-issues) and [upcoming changes](#upcoming-changes).
+
 
 
 ## Contents
