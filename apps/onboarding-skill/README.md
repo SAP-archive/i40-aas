@@ -1,12 +1,12 @@
 # Onboarding-skill
 
 ## Configuration
+
 Service configuration is handled via environment variable injection. Within the `envs:` section of `docker-compose.yml` you find a full list of environment variables, some of which can be configured via the `.env` file in the repository root dir. [server.ts](src/server.ts) contains all environment variables that need to be set.
 
 ## Running
 
 - To start: `npm run dev` from this directory
-- A GET on `localhost:3000/health` returns a "Server Up!"
 
 ## The big picture
 
@@ -20,20 +20,7 @@ The machine is defined [here](src/services/onboarding/SkillStateMachineSpecifica
 
 From each state, invalid messages will be responded to (as long as they are parsable and contain a proper sender) with notUnderstood.
 
-## Developer notes
-
-### Main classes:
-
-- `AssetRepositoryOnboardingSkill`: the heart of the business logic.
-- `SkillStateMachineSpecification`: the specification of the state machine from the diagram.
-- `SkillActionMap`: maps actions from the state machine to calls on the MessageDispatcher (transitions result in sending of messages )
-- `IMessageDispatcher/MessageDispatcher`: high-level interface for all message sending from the state machine
-- `DeferredMessageDispatcher`: a message sender that allows you to collect messages with the CommandCollector) and send them with a commit action (used to avoid the state machine sending non-error messages in case the e.g. a database write error occurs after a transition has taken place)
-- `WebClient`: low level HTTP messaging interface
-- `AMQPClient`: low level AMQP messaging interface
-- `IMessageSender/MessageSender`: high-level AMQP messaging interface
-- `MessageInterpreter`: converts received AMQP messages to events to be applied to the state machine.
-- `SimpleMongoDbClient/IDatabaseClient`: MongoDB interface
+## Developer's note
 
 ### How it works
 
@@ -50,8 +37,16 @@ A message is received via the message broker (AMQPClient -> MessageInterpreter) 
 
 These tests require a message broker and the AMQP_URL variable set in the environment to the host name of the message broker (in the docker container) with the exposed 5672 port, for example: "localhost", if running the tests locally. The message broker for the integration needs to provide default guest user account for the tests to run.
 
-It can be run from a docker image with `source .\integration-test-setup`
+It can be run from a docker image with `source .\integration-test-setup` (wait 20s before starting integration tests).
 
 - To run integration tests as well: `npm run test-with-integration`
 - To run coverage with integration tests: `npm run coverage-with-integration`
   To cleanup the message broker `.\integration-test-teardown`
+
+# Writing you own "skill"
+
+- The first thing to do is to create a state chart as above. The notation is as described in this [paper](http://www.inf.ed.ac.uk/teaching/courses/seoc/2005_2006/resources/statecharts.pdf): States are shown as rectangles with rounded edges, final states have double borders. Transistions are shown by arrows. The notation on the arrows is: event-to-move-out-of-state (condition-under-which-to-execute-transition)/transition-action-to-be-executed-while-transitioning. Actions can also be triggered on entering or exiting states. This is indicated in them being written inside the state "rectangle" in small font. Events received from other parties are concatenated as following: {message type}_FROM_{sender role} (all caps). When an external rest service is called it needs to be modelled as a [service](https://xstate.js.org/docs/guides/communication.html#the-invoke-property) with its own sub-states. Understand how the diagram maps to the [skill state machine specification](src/services/onboarding/MySkillStateMachineSpecification.ts.) provided for [xstate](https://github.com/davidkpiano/xstate). This way you create your own MySkillStateMachineSpecification.ts, replacing the one for the onboarding skill.
+
+- Create a MySkillActionMap.ts containing the code for actions to be performed when the state machine moves through the states. These actions can be messages sent to other parties in an AAS interaction or the invocation of external services and the methods you provide here depend on your scenario. This class should make use of a MyExternalRestServiceCaller.ts to make the actual calls to the external services as well as a MyAasMessageDispatcher.ts that uses the [message sender](src/base/messaging/MessageSender.ts) to send messages via the message broker. MyAasMessageDispatcher needs to implement at least the interface [IAasMessageDispatcher](src/base/messaginginterface/IAasMessageDispatcher.ts).
+
+  -Finally, provide a MyInitializer that provides these two communication classes and a configuration object that is later placed in the context for your state machine to use.

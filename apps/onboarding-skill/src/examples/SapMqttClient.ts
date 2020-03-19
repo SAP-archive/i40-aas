@@ -1,16 +1,16 @@
-import { IMessageBrokerClient } from "../services/onboarding/messaginginterface/IMessageBrokerClient";
-import { IMessageReceiver } from "../services/onboarding/messaginginterface/IMessageReceiver";
-import { Subscription } from "../services/onboarding/messaginginterface/Subscription";
-import { Client } from "mqtt";
-import * as logger from "winston";
+import { IMessageBrokerClient } from '../base/messaginginterface/IMessageBrokerClient';
+import { IMessageReceiver } from '../base/messaginginterface/IMessageReceiver';
+import { SubscriptionDto } from '../base/messaginginterface/SubscriptionDto';
+import { Client } from 'mqtt';
+import * as logger from 'winston';
 
-var mqtt = require("mqtt");
+var mqtt = require('mqtt');
 
 class SapMqttClient implements IMessageBrokerClient {
-  private subscription: Subscription | undefined;
+  private subscription: SubscriptionDto | undefined;
   private client: Client;
 
-  addSubscriptionData(subscription: Subscription) {
+  addSubscriptionData(subscription: SubscriptionDto) {
     this.subscription = subscription;
   }
 
@@ -20,7 +20,10 @@ class SapMqttClient implements IMessageBrokerClient {
     private brockerUser: string,
     private brokerPass: string
   ) {
-    this.client = mqtt.connect(this.mqttUrl, { protocol: "mqtt" });
+    this.client = mqtt.connect(this.mqttUrl, { protocol: 'mqtt' });
+    this.client.on('connect', function() {
+      logger.debug('mqtt connected');
+    });
   }
 
   startListening(cb?: (() => void) | undefined): void {
@@ -29,17 +32,18 @@ class SapMqttClient implements IMessageBrokerClient {
       let subscriptionTopic: string = this.subscription.topic;
       let messageReceiver: IMessageReceiver = this.subscription.messageReceiver;
 
-      this.client.on("connect", function() {
+      this.client.on('connect', function() {
+        logger.debug('mqtt connected - now subscribing');
         that.client.subscribe(subscriptionTopic, function(err) {
           if (err) {
-                    throw new Error("Error receiving message");
+            throw new Error('Error receiving message');
           }
-          logger.debug("mqtt client subscribed to " + subscriptionTopic);
+          logger.debug('mqtt client subscribed to ' + subscriptionTopic);
         });
         if (cb) cb();
       });
 
-      this.client.on("message", function(topic, message) {
+      this.client.on('message', function(topic, message) {
         if (topic === subscriptionTopic) {
           messageReceiver.receive(message.toString());
         }
@@ -47,14 +51,14 @@ class SapMqttClient implements IMessageBrokerClient {
     }
   }
 
-  setupPublishing(cb: () => void): void {
-    cb();
-  }
+  setupPublishing(): void {}
 
   publish(routingKey: string, msg: string): void {
-    this.client.publish(routingKey, msg);
+    this.client.publish(routingKey, msg, () =>
+      logger.debug('message published from mqtt client')
+    );
     logger.debug(
-      "mqtt client sent to exchange to topic " +
+      'mqtt client sent to exchange for topic ' +
         routingKey +
         " following message'" +
         msg +
