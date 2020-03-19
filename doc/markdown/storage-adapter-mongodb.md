@@ -13,7 +13,7 @@ Configuration is handled via environment variables. In the `environment:` sectio
 
 ## The big picture
 
-![The big picture](doc/big_picture.png "Where this component fits in.")
+![The big picture](doc/big_picture_mongodb.png "Where this component fits in.")
 
 ## Developer notes
 

@@ -9,7 +9,7 @@ Configuration is handled via environment variables. In the `environment:` sectio
 
 ## The big picture
 
-![The big picture](doc/big_picture.png).
+![The big picture](doc/big_picture_car.png).
 
 ## The state machine
 

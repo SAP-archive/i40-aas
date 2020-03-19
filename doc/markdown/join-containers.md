@@ -1,10 +1,8 @@
-
----
 ## Joining service containers locally
-Service containers can be added to the Compose setup as follows: 
+Service containers can be added to the Compose setup as follows:
 
 Verify that the network `i40-aas_default` exists
-```bash 
+```bash
 $ docker network ls
 NETWORK ID          NAME                   DRIVER              SCOPE
 825a5b8a43f8        bridge                 bridge              local
@@ -14,7 +12,7 @@ b3d4c74514f2        none                   null                local
 ```
 
 Build your container and join the network:
-```bash 
+```bash
 ## Exemplary for i40-aas-storage-adapter-ain:
 
 # Build & tag the container
@@ -25,7 +23,7 @@ $ docker run --network="i40-aas_default" --name="i40-aas-storage-adapter-ain" i4
 ```
 
 Verify that the container is now part of the network:
-```bash 
+```bash
 $ docker network inspect i40-aas_default
 ```
 You should find your container in the list, somewhat resembling this:
@@ -49,7 +47,7 @@ You should find your container in the list, somewhat resembling this:
 ```
 
 Now you can verify that hosts are resolved correctly within the container and connection can be established:
-```bash 
+```bash
 # Retrieve the container ID
 $ docker ps
 CONTAINER ID   IMAGE                         COMMAND         CREATED         STATUS         PORTS       NAMES

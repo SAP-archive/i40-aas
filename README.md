@@ -53,7 +53,7 @@ $ make --version
 ## tested with: GNU Make 3.81
 ```
 
-Optionally, you can download and install [Postman](https://www.getpostman.com) to test the services.
+Optionally, you can download and install [Postman](https://www.getpostman.com) to [test the services](doc/markdown/test.md).
 
 
 
@@ -76,10 +76,6 @@ $ make install
 $ make && make dev
 ```
 
-If you want to test the running service follow [these](doc/README_Test.md#Test) steps.
-
-Refer to [this](doc/README_Minikube.md) how to run the AAS Service on a local cluster (e.g. Minikube).
-
 ### Cleanup
 Once done, one can stop & clean up locally by executing:
 ```bash
@@ -91,7 +87,7 @@ $ make clean
 ## Configuration
 The local setup uses the default configurations specified in the `.env` file.
 
-See [here](doc/README_Network.md) how to join other service containers locally.
+See [here](doc/markdown/join-containers.md) how to join other service containers locally.
 
 
 
@@ -103,7 +99,7 @@ Please refer to the list of [issues](https://github.com/SAP/i40-aas/issues) on G
 
 ## Get Support
 <!--- This section should contain details on how the outside user can obtain support, ask questions, or post a bug report on your project. If your project is provided "as-is", with no expected changes or support, you must state that here. --->
-Please use the [GitHub issue tracker](https://github.com/SAP/i40-aas/issues) for any questions, bug reports, feature requests, etc.
+Please study the [help provided](doc/README.md) and use the [GitHub issue tracker](https://github.com/SAP/i40-aas/issues) for further assistance, bug reports or feature requests.
 
 
 
@@ -118,8 +114,6 @@ Simply check the [Contribution Guidelines](CONTRIBUTING.md).
 ## Upcoming Changes
 <!--- Details on any expected changes in later versions. If your project is released "as-is", or you know of no upcoming changes, this section can be omitted. --->
 This project follows the specification ["Details of the AssetAdministrationShell"](https://www.plattform-i40.de/PI40/Redaktion/EN/Downloads/Publikation/2018-details-of-the-asset-administration-shell.html) part 1 version 1.0, which is work in progress. As the specification changes, so will this project.
-
-For upcoming changes under development, please refer to the [Github issue board](https://github.com/SAP/i40-aas/issues).
 
 
 
