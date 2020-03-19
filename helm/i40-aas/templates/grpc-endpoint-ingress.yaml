@@ -1,0 +1,94 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-grpc-endpoint-ingress
+  labels: 
+    service: grpc-endpoint-ingress
+    {{- include "i40-aas.labels" . | nindent 4 }}
+data:
+  # Logging
+  LOG_LEVEL: {{ .Values.logging.log_level }}
+  LOG_OUTPUT: {{ .Values.logging.log_output }}
+  # grpc-endpoint-ingress
+  GRPC_ENDPOINT_INGRESS_PORT: {{ .Values.config.grpcEndpointIngress.Port }}  
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-grpc-endpoint-ingress
+  labels: 
+    service: grpc-endpoint-ingress
+    {{- include "i40-aas.labels" . | nindent 4 }}
+spec:
+  ports:
+  - targetPort: endpoint
+    port: 80
+    protocol: TCP
+  selector:
+    service: grpc-endpoint-ingress
+    {{- include "i40-aas.selectorLabels" . | nindent 4 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-grpc-endpoint-ingress
+  labels: 
+    service: grpc-endpoint-ingress
+    {{- include "i40-aas.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      service: grpc-endpoint-ingress
+      {{- include "i40-aas.selectorLabels" . | nindent 6 }}
+  template: 
+    metadata:
+      labels:
+        service: grpc-endpoint-ingress
+        {{- include "i40-aas.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - name: grpc-endpoint-ingress
+        image: "{{ .Values.image.repository }}/i40-aas-grpc-endpoint-ingress:{{ .Values.image.release }}"
+        ports: 
+        - name: endpoint
+          containerPort: 8384
+        env:
+        - name: RABBITMQ_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-rabbitmq
+              key: RABBITMQ_AMQP_HOST
+        - name: RABBITMQ_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-rabbitmq
+              key: RABBITMQ_AMQP_PORT
+        envFrom:
+        - secretRef:
+            name: {{ .Release.Name }}-rabbitmq-ingress-credentials
+        - secretRef:
+            name: {{ .Release.Name }}-grpc-endpoint-ingress
+        - configMapRef:
+            name: {{ .Release.Name }}-grpc-endpoint-ingress
+        - configMapRef:
+            name: {{ .Release.Name }}-rabbitmq
+        volumeMounts:
+        - name: certs
+          mountPath: "/certs"
+          readOnly: true
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+#        livenessProbe:
+#          httpGet:
+#            path: /health
+#            port: endpoint
+#          initialDelaySeconds: 600
+#          periodSeconds: 60
+      volumes:
+      - name: certs
+        optional: true
+        secret:
+          secretName: {{ .Values.certificates.secretName }}
+---
