@@ -9,7 +9,7 @@ import { ISkillContext } from '../../base/statemachineinterface/ISkillContext';
 //leads to
 //OperationFailed, resulting in a message sent to the operator
 //this is currently not the case
-class SkillStateMachineSpecification {
+class MySkillStateMachineSpecification {
   private readonly machineDescription = {
     id: 'onboarding-central-asset-repository',
     initial: 'WaitingForOnboardingRequest',
@@ -104,9 +104,9 @@ class SkillStateMachineSpecification {
     MachineOptions<ISkillContext, EventObject>
   > = {
     services: {
-      createInstance: (context: any, event: any) => {
+      createInstance: async (context: any, event: any) => {
         logger.debug('service createInstance called');
-        return context.actionMap.createInstance(context, event);
+        await context.actionMap.createInstance(context, event);
       }
     },
     guards: {
@@ -150,4 +150,4 @@ class SkillStateMachineSpecification {
   }
 }
 
-export { SkillStateMachineSpecification as SkillStateMachine };
+export { MySkillStateMachineSpecification };

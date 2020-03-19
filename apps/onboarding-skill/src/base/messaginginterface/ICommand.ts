@@ -1,4 +1,8 @@
 interface ICommand {
   fn: () => void;
 }
-export { ICommand };
+
+class Command {
+  constructor(public fnName: string, public args: IArguments) {}
+}
+export { ICommand, Command };

@@ -1,14 +1,10 @@
 import { IMessageSender } from '../../base/messaginginterface/IMessageSender';
-import * as logger from 'winston';
-
-import { WebClient } from '../../web/WebClient';
-import { AxiosResponse } from 'axios';
-import { Submodel, InteractionMessage, IFrame } from 'i40-aas-objects';
-import { IMessageDispatcher } from './IMessageDispatcher';
+import { IAasMessageDispatcher } from '../../base/messaginginterface/IAasMessageDispatcher';
+import { InteractionMessage, IFrame } from 'i40-aas-objects';
 import { Roles } from '../../base/messaginginterface/Roles';
 import { MessageTypes } from '../../base/messaginginterface/MessageTypes';
 
-class MessageDispatcher implements IMessageDispatcher {
+class MyAasMessageDispatcher implements IAasMessageDispatcher {
   sendNextMessageInConversationTo(
     receiverRoleName: string,
     messageType: string,
@@ -37,19 +33,7 @@ class MessageDispatcher implements IMessageDispatcher {
     );
   }
 
-  constructor(
-    private messageSender: IMessageSender,
-    private webClient: WebClient,
-    private dataManagerUrlSuffix: string
-  ) {}
-
-  async createInstanceOnCAR(submodels: Submodel[]): Promise<AxiosResponse> {
-    logger.debug('MessageDispatcher:createInstanceOnCAR called');
-    return await this.webClient.postRequest(
-      this.dataManagerUrlSuffix,
-      submodels
-    );
-  }
+  constructor(private messageSender: IMessageSender) {}
 
   replyRequestRefused(message: InteractionMessage) {
     this.messageSender.replyTo(message.frame, MessageTypes.REQUEST_REFUSED);
@@ -61,7 +45,7 @@ class MessageDispatcher implements IMessageDispatcher {
 
   sendResponseInstanceToOperator(
     message: InteractionMessage,
-    submodel: Submodel
+    submodel: object
   ) {
     //TODO: an error here leads to unhandled rejection
     this.sendNextMessageInConversationTo(
@@ -117,4 +101,4 @@ class MessageDispatcher implements IMessageDispatcher {
   }
 }
 
-export { MessageDispatcher };
+export { MyAasMessageDispatcher };

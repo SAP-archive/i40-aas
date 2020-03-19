@@ -1,12 +1,17 @@
-import { IMessageDispatcher } from './IMessageDispatcher';
 import { logger } from '../../log';
 import { AxiosResponse } from 'axios';
 import { InteractionMessage } from 'i40-aas-objects';
 import { ISkillContext } from '../../base/statemachineinterface/ISkillContext';
 import { Utils } from '../../base/Utils';
 
-class SkillActionMap {
-  constructor(private messageDispatcher: IMessageDispatcher) {}
+import { MyExternalRestServiceCaller } from './MyExternalRestServiceCaller';
+import { MyAasMessageDispatcher } from './MyAasMessageDispatcher';
+
+class MySkillActionMap {
+  constructor(
+    private messageDispatcher: MyAasMessageDispatcher,
+    private restClient: MyExternalRestServiceCaller
+  ) {}
 
   sendCreationErrorToOperator(context: ISkillContext, event: any) {
     logger.debug('Received error. Now sending error back');
@@ -43,12 +48,18 @@ class SkillActionMap {
     this.messageDispatcher.requestTypeFromManufacturer('', {});
     //TODO:send actual type to actual url
   }
-  createInstance(context: ISkillContext, event: any): Promise<AxiosResponse> {
+
+  async createInstance(
+    context: ISkillContext,
+    event: any
+  ): Promise<AxiosResponse> {
     logger.debug('SkillActionMap::createInstance called');
-    return this.messageDispatcher.createInstanceOnCAR(
+    //TODO await?
+    return this.restClient.createInstanceOnCAR(
       context.message.interactionElements
     );
   }
+
   sendResponseInstanceToOperator(context: ISkillContext, event: any) {
     logger.debug('onDone called');
     return this.messageDispatcher.sendResponseInstanceToOperator(
@@ -74,4 +85,4 @@ class SkillActionMap {
     this.messageDispatcher.sendResponseTypeToOperator(message, {});
   }
 }
-export { SkillActionMap };
+export { MySkillActionMap };

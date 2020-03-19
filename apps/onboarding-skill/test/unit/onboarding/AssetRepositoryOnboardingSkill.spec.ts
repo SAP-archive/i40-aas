@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { logger } from '../../../src/log';
 import { Skill } from '../../../src/base/Skill';
 import sinon from 'sinon';
-import { MessageDispatcher } from '../../../src/services/onboarding/MessageDispatcher';
+import { MyAasMessageDispatcher } from '../../../src/services/onboarding/MyAasMessageDispatcher';
 import { WebClient } from '../../../src/web/WebClient';
 import fs from 'fs';
 import { MessageSender } from '../../../src/base/messaging/MessageSender';
@@ -13,6 +13,8 @@ import Axios, { AxiosError } from 'axios';
 import { AmqpClient } from '../../../src/base/messaging/AmqpClient';
 import { InteractionMessage } from 'i40-aas-objects';
 import { IConversationMember } from 'i40-aas-objects/dist/src/interaction/ConversationMember';
+import { MyExternalRestServiceCaller } from '../../../src/services/onboarding/MyExternalRestServiceCaller';
+import { MyInitializer } from '../../../src/services/onboarding/MyInitializer';
 
 const initializeLogger = require('../../../src/log');
 
@@ -81,8 +83,10 @@ describe('applyEvent', function() {
       'InstancePublished via CreatingInstance, counting up versions correctly',
     function(done) {
       let conversationId = 'abcd1234';
-      let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-        <IMessageSender>{},
+      let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
+        <IMessageSender>{}
+      );
+      let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
         <WebClient>{},
         'data-manager'
       );
@@ -102,14 +106,13 @@ describe('applyEvent', function() {
         fakesendResponseInstanceToOperator
       );
 
-      let fakecreateInstanceOnCAR = sinon.fake.resolves({ status: 200 });
-      sinon.replace(
-        messageDispatcher,
-        'createInstanceOnCAR',
-        fakecreateInstanceOnCAR
-      );
+      let fakecreateInstanceOnCAR = sinon.fake.returns({ status: 200 });
+      sinon.replace(restClient, 'createInstanceOnCAR', fakecreateInstanceOnCAR);
 
-      let skill: Skill = new Skill(messageDispatcher, dbClient, {});
+      let skill: Skill = new Skill(
+        new MyInitializer(messageDispatcher, restClient, {}),
+        dbClient
+      );
       skill.applyEvent(
         'PUBLISHINSTANCE_FROM_OPERATOR',
         conversationId,
@@ -150,8 +153,11 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      messageSender,
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
+      messageSender
+    );
+
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -168,9 +174,12 @@ describe('applyEvent', function() {
     sinon.replace(messageSender, 'sendTo', fakesendTo);
     //sinon.replace(messageSender, "replyTo", sinon.fake());
 
-    let skill: Skill = new Skill(messageDispatcher, dbClient, {
-      askForApproval: true
-    });
+    let skill: Skill = new Skill(
+      new MyInitializer(messageDispatcher, restClient, {
+        askForApproval: true
+      }),
+      dbClient
+    );
 
     skill.applyEvent(
       'PUBLISHINSTANCE_FROM_OPERATOR',
@@ -231,13 +240,14 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      messageSender,
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
+      messageSender
+    );
+    let dbClient = makeMockDbClient();
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
-    let dbClient = makeMockDbClient();
-
     let fakeStoreInDb = sinon.fake.resolves({ result: 'ok' });
 
     sinon.replace(dbClient, 'connect', sinon.fake.resolves({}));
@@ -258,11 +268,7 @@ describe('applyEvent', function() {
     );
 
     let fakecreateInstanceOnCAR = sinon.fake.resolves({ status: 200 });
-    sinon.replace(
-      messageDispatcher,
-      'createInstanceOnCAR',
-      fakecreateInstanceOnCAR
-    );
+    sinon.replace(restClient, 'createInstanceOnCAR', fakecreateInstanceOnCAR);
 
     let fakeReplyTo = sinon.fake();
     sinon.replace(messageSender, 'replyTo', fakeReplyTo);
@@ -270,16 +276,19 @@ describe('applyEvent', function() {
     let fakeSendTo = sinon.fake();
     sinon.replace(messageSender, 'sendTo', fakeSendTo);
 
-    let skill: Skill = new Skill(messageDispatcher, dbClient, {
-      askForApproval: true
-    });
+    let skill: Skill = new Skill(
+      new MyInitializer(messageDispatcher, restClient, {
+        askForApproval: true
+      }),
+      dbClient
+    );
 
     skill.applyEvent(
       'APPROVED_FROM_APPROVER',
       conversationId,
       messageFromApprover,
       state => {
-        if (state.value === 'CreatingInstance') {
+        if (state.value === 'InstancePublished') {
           sinon.assert.notCalled(fakeReplyTo);
           sinon.assert.calledOnce(fakecreateInstanceOnCAR);
           sinon.assert.calledWith(
@@ -333,8 +342,10 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      messageSender,
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
+      messageSender
+    );
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -362,9 +373,12 @@ describe('applyEvent', function() {
     let fakeSendTo = sinon.fake();
     sinon.replace(messageSender, 'sendTo', fakeSendTo);
 
-    let skill: Skill = new Skill(messageDispatcher, dbClient, {
-      askForApproval: true
-    });
+    let skill: Skill = new Skill(
+      new MyInitializer(messageDispatcher, restClient, {
+        askForApproval: true
+      }),
+      dbClient
+    );
 
     skill.applyEvent(
       'REQUESTREFUSED_FROM_APPROVER',
@@ -423,8 +437,10 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      messageSender,
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
+      messageSender
+    );
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -450,11 +466,7 @@ describe('applyEvent', function() {
     );
 
     let fakecreateInstanceOnCAR = sinon.fake.rejects({ status: 550 });
-    sinon.replace(
-      messageDispatcher,
-      'createInstanceOnCAR',
-      fakecreateInstanceOnCAR
-    );
+    sinon.replace(restClient, 'createInstanceOnCAR', fakecreateInstanceOnCAR);
 
     let fakeReplyTo = sinon.fake();
     sinon.replace(messageSender, 'replyTo', fakeReplyTo);
@@ -462,16 +474,19 @@ describe('applyEvent', function() {
     let fakeSendTo = sinon.fake();
     sinon.replace(messageSender, 'sendTo', fakeSendTo);
 
-    let skill: Skill = new Skill(messageDispatcher, dbClient, {
-      askForApproval: true
-    });
+    let skill: Skill = new Skill(
+      new MyInitializer(messageDispatcher, restClient, {
+        askForApproval: true
+      }),
+      dbClient
+    );
 
     skill.applyEvent(
       'APPROVED_FROM_APPROVER',
       conversationId,
       messageFromApprover,
       state => {
-        if (state.value === 'CreatingInstance') {
+        if (state.value === 'OperationFailed') {
           sinon.assert.notCalled(fakeReplyTo);
           sinon.assert.calledOnce(fakecreateInstanceOnCAR);
           sinon.assert.calledWith(
@@ -525,12 +540,14 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      messageSender,
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
+      messageSender
+    );
+    let dbClient = makeMockDbClient();
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
-    let dbClient = makeMockDbClient();
 
     let fakeStoreInDb = sinon.fake.resolves({ result: 'ok' });
 
@@ -554,9 +571,12 @@ describe('applyEvent', function() {
     let fakeSendTo = sinon.fake();
     sinon.replace(messageSender, 'sendTo', fakeSendTo);
 
-    let skill: Skill = new Skill(messageDispatcher, dbClient, {
-      askForApproval: true
-    });
+    let skill: Skill = new Skill(
+      new MyInitializer(messageDispatcher, restClient, {
+        askForApproval: true
+      }),
+      dbClient
+    );
 
     skill.applyEvent(
       'NOTUNDERSTOOD_FROM_APPROVER',
@@ -615,13 +635,14 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      messageSender,
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
+      messageSender
+    );
+    let dbClient = makeMockDbClient();
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
-    let dbClient = makeMockDbClient();
-
     let fakeStoreInDb = sinon.fake.resolves({ result: 'ok' });
 
     sinon.replace(dbClient, 'connect', sinon.fake.resolves({}));
@@ -644,9 +665,12 @@ describe('applyEvent', function() {
     let fakeSendTo = sinon.fake();
     sinon.replace(messageSender, 'sendTo', fakeSendTo);
 
-    let skill: Skill = new Skill(messageDispatcher, dbClient, {
-      askForApproval: true
-    });
+    let skill: Skill = new Skill(
+      new MyInitializer(messageDispatcher, restClient, {
+        askForApproval: true
+      }),
+      dbClient
+    );
 
     skill.applyEvent(
       'ERROR_FROM_APPROVER',
@@ -705,13 +729,14 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      messageSender,
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
+      messageSender
+    );
+    let dbClient = makeMockDbClient();
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
-    let dbClient = makeMockDbClient();
-
     let fakeStoreInDb = sinon.fake.resolves({ result: 'ok' });
 
     sinon.replace(dbClient, 'connect', sinon.fake.resolves({}));
@@ -732,11 +757,7 @@ describe('applyEvent', function() {
     );
 
     let fakecreateInstanceOnCAR = sinon.fake.rejects(makeRequestError(400));
-    sinon.replace(
-      messageDispatcher,
-      'createInstanceOnCAR',
-      fakecreateInstanceOnCAR
-    );
+    sinon.replace(restClient, 'createInstanceOnCAR', fakecreateInstanceOnCAR);
 
     let fakeReplyTo = sinon.fake();
     sinon.replace(messageSender, 'replyTo', fakeReplyTo);
@@ -744,16 +765,19 @@ describe('applyEvent', function() {
     let fakeSendTo = sinon.fake();
     sinon.replace(messageSender, 'sendTo', fakeSendTo);
 
-    let skill: Skill = new Skill(messageDispatcher, dbClient, {
-      askForApproval: true
-    });
+    let skill: Skill = new Skill(
+      new MyInitializer(messageDispatcher, restClient, {
+        askForApproval: true
+      }),
+      dbClient
+    );
 
     skill.applyEvent(
       'APPROVED_FROM_APPROVER',
       conversationId,
       messageFromApprover,
       state => {
-        if (state.value === 'CreatingInstance') {
+        if (state.value === 'OperationFailed') {
           sinon.assert.notCalled(fakeReplyTo);
           sinon.assert.calledOnce(fakecreateInstanceOnCAR);
           sinon.assert.calledWith(
@@ -807,13 +831,14 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      messageSender,
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
+      messageSender
+    );
+    let dbClient = makeMockDbClient();
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
-    let dbClient = makeMockDbClient();
-
     let fakeStoreInDb = sinon.fake.resolves({ result: 'ok' });
 
     sinon.replace(dbClient, 'connect', sinon.fake.resolves({}));
@@ -834,11 +859,7 @@ describe('applyEvent', function() {
     );
 
     let fakecreateInstanceOnCAR = sinon.fake.rejects(makeRequestError(401));
-    sinon.replace(
-      messageDispatcher,
-      'createInstanceOnCAR',
-      fakecreateInstanceOnCAR
-    );
+    sinon.replace(restClient, 'createInstanceOnCAR', fakecreateInstanceOnCAR);
 
     let fakeReplyTo = sinon.fake();
     sinon.replace(messageSender, 'replyTo', fakeReplyTo);
@@ -846,16 +867,19 @@ describe('applyEvent', function() {
     let fakeSendTo = sinon.fake();
     sinon.replace(messageSender, 'sendTo', fakeSendTo);
 
-    let skill: Skill = new Skill(messageDispatcher, dbClient, {
-      askForApproval: true
-    });
+    let skill: Skill = new Skill(
+      new MyInitializer(messageDispatcher, restClient, {
+        askForApproval: true
+      }),
+      dbClient
+    );
 
     skill.applyEvent(
       'APPROVED_FROM_APPROVER',
       conversationId,
       messageFromApprover,
       state => {
-        if (state.value === 'CreatingInstance') {
+        if (state.value === 'OperationFailed') {
           sinon.assert.notCalled(fakeReplyTo);
           sinon.assert.calledOnce(fakecreateInstanceOnCAR);
           sinon.assert.calledWith(
@@ -909,8 +933,10 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      messageSender,
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
+      messageSender
+    );
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -936,11 +962,7 @@ describe('applyEvent', function() {
     );
 
     let fakecreateInstanceOnCAR = sinon.fake.rejects(makeRequestError(500));
-    sinon.replace(
-      messageDispatcher,
-      'createInstanceOnCAR',
-      fakecreateInstanceOnCAR
-    );
+    sinon.replace(restClient, 'createInstanceOnCAR', fakecreateInstanceOnCAR);
 
     let fakeReplyTo = sinon.fake();
     sinon.replace(messageSender, 'replyTo', fakeReplyTo);
@@ -948,16 +970,19 @@ describe('applyEvent', function() {
     let fakeSendTo = sinon.fake();
     sinon.replace(messageSender, 'sendTo', fakeSendTo);
 
-    let skill: Skill = new Skill(messageDispatcher, dbClient, {
-      askForApproval: true
-    });
+    let skill: Skill = new Skill(
+      new MyInitializer(messageDispatcher, restClient, {
+        askForApproval: true
+      }),
+      dbClient
+    );
 
     skill.applyEvent(
       'APPROVED_FROM_APPROVER',
       conversationId,
       messageFromApprover,
       state => {
-        if (state.value === 'CreatingInstance') {
+        if (state.value === 'OperationFailed') {
           sinon.assert.notCalled(fakeReplyTo);
           sinon.assert.calledOnce(fakecreateInstanceOnCAR);
           sinon.assert.calledWith(
@@ -978,13 +1003,14 @@ describe('applyEvent', function() {
     //process.env['ONBOARDING_SKILL_REQUEST_TYPE'] = 'true';
 
     let conversationId = 'abcd1234';
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      <IMessageSender>{},
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
+      <IMessageSender>{}
+    );
+    let dbClient = makeMockDbClient();
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
-    let dbClient = makeMockDbClient();
-
     let fakeStoreInDb = sinon.fake.resolves({ result: 'ok' });
     sinon.replace(dbClient, 'connect', sinon.fake.resolves({}));
     sinon.replace(dbClient, 'disconnect', sinon.fake.resolves({}));
@@ -1006,15 +1032,14 @@ describe('applyEvent', function() {
     );
 
     let fakecreateInstanceOnCAR = sinon.fake.resolves({ status: 200 });
-    sinon.replace(
-      messageDispatcher,
-      'createInstanceOnCAR',
-      fakecreateInstanceOnCAR
-    );
+    sinon.replace(restClient, 'createInstanceOnCAR', fakecreateInstanceOnCAR);
 
-    let skill: Skill = new Skill(messageDispatcher, dbClient, {
-      askForType: true
-    });
+    let skill: Skill = new Skill(
+      new MyInitializer(messageDispatcher, restClient, {
+        askForType: true
+      }),
+      dbClient
+    );
 
     skill.applyEvent(
       'PUBLISHINSTANCE_FROM_OPERATOR',
@@ -1034,7 +1059,7 @@ describe('applyEvent', function() {
   it('switches sender to receiver when replying to a message', async function() {
     let conversationId = 'abcd1234';
     let amqpClient = new AmqpClient('a', 'b', 'c', 'd', '');
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
       new MessageSender(
         amqpClient,
         {
@@ -1047,7 +1072,9 @@ describe('applyEvent', function() {
           }
         },
         'routingKey'
-      ),
+      )
+    );
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -1070,7 +1097,10 @@ describe('applyEvent', function() {
     let fakePublish = sinon.fake();
     sinon.replace(amqpClient, 'publish', fakePublish);
 
-    let skill: Skill = new Skill(messageDispatcher, dbClient, {});
+    let skill: Skill = new Skill(
+      new MyInitializer(messageDispatcher, restClient, {}),
+      dbClient
+    );
 
     await skill.applyEvent(
       'NOTUNDERSTOOD_FROM_OPERATOR',
@@ -1086,8 +1116,10 @@ describe('applyEvent', function() {
 
   it('sends out not understood if it receives a publish instance message when in state InstancePublished', async function() {
     let conversationId = 'abcd1234';
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      <IMessageSender>{},
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
+      <IMessageSender>{}
+    );
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -1114,7 +1146,10 @@ describe('applyEvent', function() {
       fakereplyNotUnderstood
     );
 
-    let skill: Skill = new Skill(messageDispatcher, dbClient, {});
+    let skill: Skill = new Skill(
+      new MyInitializer(messageDispatcher, restClient, {}),
+      dbClient
+    );
 
     await skill.applyEvent(
       'PUBLISHINSTANCE_FROM_OPERATOR',
@@ -1126,8 +1161,10 @@ describe('applyEvent', function() {
 
   it('sends out not understood if it receives an illegal interaction', async function() {
     let conversationId = 'abcd1234';
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      <IMessageSender>{},
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
+      <IMessageSender>{}
+    );
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -1155,7 +1192,10 @@ describe('applyEvent', function() {
       fakereplyNotUnderstood
     );
 
-    let skill: Skill = new Skill(messageDispatcher, dbClient, {});
+    let skill: Skill = new Skill(
+      new MyInitializer(messageDispatcher, restClient, {}),
+      dbClient
+    );
 
     await skill.applyEvent(
       'NOTUNDERSTOOD_FROM_OPERATOR',
@@ -1172,8 +1212,10 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      messageSender,
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
+      messageSender
+    );
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -1197,9 +1239,13 @@ describe('applyEvent', function() {
     let fakeSendTo = sinon.fake();
     sinon.replace(messageSender, 'sendTo', fakeSendTo);
 
-    let skill: Skill = new Skill(messageDispatcher, dbClient, {
-      askForType: true
-    });
+    let skill: Skill = new Skill(
+      new MyInitializer(messageDispatcher, restClient, {
+        askForType: true
+      }),
+      dbClient
+    );
+
     skill.applyEvent(
       'RESPONSETYPE_FROM_MANUFACTURER',
       conversationId,
@@ -1220,8 +1266,10 @@ describe('applyEvent', function() {
 
   it('does not send out a responseInstance if there was an error in writing to the database after entering InstancePublished', function(done) {
     let conversationId = 'abcd1234';
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      <IMessageSender>{},
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
+      <IMessageSender>{}
+    );
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -1244,13 +1292,12 @@ describe('applyEvent', function() {
     sinon.replace(messageDispatcher, 'replyError', fakeSendError);
 
     let fakecreateInstanceOnCAR = sinon.fake.resolves({ status: 200 });
-    sinon.replace(
-      messageDispatcher,
-      'createInstanceOnCAR',
-      fakecreateInstanceOnCAR
-    );
+    sinon.replace(restClient, 'createInstanceOnCAR', fakecreateInstanceOnCAR);
 
-    let skill: Skill = new Skill(messageDispatcher, dbClient, {});
+    let skill: Skill = new Skill(
+      new MyInitializer(messageDispatcher, restClient, {}),
+      dbClient
+    );
 
     skill.applyEvent(
       'PUBLISHINSTANCE_FROM_OPERATOR',
@@ -1274,8 +1321,10 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      messageSender,
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
+      messageSender
+    );
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       new WebClient('http://base.com', 'user', 'password'),
       'data-manager'
     );
@@ -1300,7 +1349,10 @@ describe('applyEvent', function() {
     let fakePost = sinon.fake.rejects(makeRequestError(400));
     sinon.replace(Axios, 'post', fakePost);
 
-    let skill: Skill = new Skill(messageDispatcher, dbClient, {});
+    let skill: Skill = new Skill(
+      new MyInitializer(messageDispatcher, restClient, {}),
+      dbClient
+    );
 
     skill.applyEvent(
       'PUBLISHINSTANCE_FROM_OPERATOR',
@@ -1327,8 +1379,10 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      messageSender,
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
+      messageSender
+    );
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -1340,11 +1394,7 @@ describe('applyEvent', function() {
     sinon.replace(dbClient, 'getOneByKey', sinon.fake.returns(null));
 
     let fakecreateInstanceOnCAR = sinon.fake.rejects(makeRequestError(401));
-    sinon.replace(
-      messageDispatcher,
-      'createInstanceOnCAR',
-      fakecreateInstanceOnCAR
-    );
+    sinon.replace(restClient, 'createInstanceOnCAR', fakecreateInstanceOnCAR);
 
     let sendTo = sinon.fake();
     sinon.replace(messageSender, 'sendTo', sendTo);
@@ -1356,7 +1406,10 @@ describe('applyEvent', function() {
       fakesendResponseInstanceToOperator
     );
 
-    let skill: Skill = new Skill(messageDispatcher, dbClient, {});
+    let skill: Skill = new Skill(
+      new MyInitializer(messageDispatcher, restClient, {}),
+      dbClient
+    );
 
     skill.applyEvent(
       'PUBLISHINSTANCE_FROM_OPERATOR',
@@ -1383,29 +1436,29 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      messageSender,
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
+      messageSender
+    );
+    let dbClient = makeMockDbClient();
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
-    let dbClient = makeMockDbClient();
-
     sinon.replace(dbClient, 'connect', sinon.fake.resolves({}));
     sinon.replace(dbClient, 'disconnect', sinon.fake.resolves({}));
     sinon.replace(dbClient, 'update', sinon.fake.resolves({}));
     sinon.replace(dbClient, 'getOneByKey', sinon.fake.returns(null));
 
     let fakecreateInstanceOnCAR = sinon.fake.rejects(makeRequestError(500));
-    sinon.replace(
-      messageDispatcher,
-      'createInstanceOnCAR',
-      fakecreateInstanceOnCAR
-    );
+    sinon.replace(restClient, 'createInstanceOnCAR', fakecreateInstanceOnCAR);
 
     let sendTo = sinon.fake();
     sinon.replace(messageSender, 'sendTo', sendTo);
 
-    let skill: Skill = new Skill(messageDispatcher, dbClient, {});
+    let skill: Skill = new Skill(
+      new MyInitializer(messageDispatcher, restClient, {}),
+      dbClient
+    );
 
     skill.applyEvent(
       'PUBLISHINSTANCE_FROM_OPERATOR',
@@ -1431,13 +1484,14 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      messageSender,
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
+      messageSender
+    );
+    let dbClient = makeMockDbClient();
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
-    let dbClient = makeMockDbClient();
-
     sinon.replace(dbClient, 'connect', sinon.fake.resolves({}));
     sinon.replace(dbClient, 'disconnect', sinon.fake.resolves({}));
     sinon.replace(dbClient, 'update', sinon.fake.resolves({}));
@@ -1462,7 +1516,10 @@ describe('applyEvent', function() {
     //let sendTo = sinon.fake();
     //sinon.replace(messageSender, "sendTo", sendTo);
 
-    let skill: Skill = new Skill(messageDispatcher, dbClient, {});
+    let skill: Skill = new Skill(
+      new MyInitializer(messageDispatcher, restClient, {}),
+      dbClient
+    );
     let fakecreateAndStartMaschineServiceFromPreviousWithCurrentContext = sinon.fake.throws(
       new Error()
     );
@@ -1494,8 +1551,10 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      messageSender,
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
+      messageSender
+    );
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
@@ -1521,7 +1580,10 @@ describe('applyEvent', function() {
     let sendTo = sinon.fake();
     sinon.replace(messageSender, 'sendTo', sendTo);
 
-    let skill: Skill = new Skill(messageDispatcher, dbClient, {});
+    let skill: Skill = new Skill(
+      new MyInitializer(messageDispatcher, restClient, {}),
+      dbClient
+    );
 
     skill.applyEvent(
       'REQUESTREFUSED_FROM_MANUFACTURER',
@@ -1544,13 +1606,14 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      messageSender,
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
+      messageSender
+    );
+    let dbClient = makeMockDbClient();
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
-    let dbClient = makeMockDbClient();
-
     sinon.replace(dbClient, 'connect', sinon.fake.resolves({}));
     sinon.replace(dbClient, 'disconnect', sinon.fake.resolves({}));
     sinon.replace(dbClient, 'update', sinon.fake.resolves({}));
@@ -1571,7 +1634,10 @@ describe('applyEvent', function() {
     let sendTo = sinon.fake();
     sinon.replace(messageSender, 'sendTo', sendTo);
 
-    let skill: Skill = new Skill(messageDispatcher, dbClient, {});
+    let skill: Skill = new Skill(
+      new MyInitializer(messageDispatcher, restClient, {}),
+      dbClient
+    );
 
     skill.applyEvent(
       'NOTUNDERSTOOD_FROM_MANUFACTURER',
@@ -1593,13 +1659,14 @@ describe('applyEvent', function() {
       <IConversationMember>{},
       ''
     );
-    let messageDispatcher: MessageDispatcher = new MessageDispatcher(
-      messageSender,
+    let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
+      messageSender
+    );
+    let dbClient = makeMockDbClient();
+    let restClient: MyExternalRestServiceCaller = new MyExternalRestServiceCaller(
       <WebClient>{},
       'data-manager'
     );
-    let dbClient = makeMockDbClient();
-
     sinon.replace(dbClient, 'connect', sinon.fake.resolves({}));
     sinon.replace(dbClient, 'disconnect', sinon.fake.resolves({}));
     sinon.replace(dbClient, 'update', sinon.fake.resolves({}));
@@ -1620,7 +1687,10 @@ describe('applyEvent', function() {
     let sendTo = sinon.fake();
     sinon.replace(messageSender, 'sendTo', sendTo);
 
-    let skill: Skill = new Skill(messageDispatcher, dbClient, {});
+    let skill: Skill = new Skill(
+      new MyInitializer(messageDispatcher, restClient, {}),
+      dbClient
+    );
 
     skill.applyEvent(
       'ERROR_FROM_MANUFACTURER',

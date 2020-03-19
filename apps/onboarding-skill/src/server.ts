@@ -1,6 +1,6 @@
 import { MessageInterpreter } from './base/messaging/MessageInterpreter';
 import { Skill } from './base/Skill';
-import { MessageDispatcher } from './services/onboarding/MessageDispatcher';
+import { MyAasMessageDispatcher } from './services/onboarding/MyAasMessageDispatcher';
 import { MessageSender } from './base/messaging/MessageSender';
 import { WebClient } from './web/WebClient';
 import { SimpleMongoDbClient } from './base/persistence/SimpleMongoDbClient';
@@ -8,6 +8,8 @@ import { IDatabaseClient } from './base/persistenceinterface/IDatabaseClient';
 import { logger } from './log';
 import { TIdType, IdTypeEnum } from 'i40-aas-objects/dist/src/types/IdTypeEnum';
 import { AmqpClient } from 'AMQP-Client/lib/src/AMQPClient';
+import { MyExternalRestServiceCaller } from './services/onboarding/MyExternalRestServiceCaller';
+import { MyInitializer } from './services/onboarding/MyInitializer';
 
 
 const dotenv = require("dotenv");
@@ -65,7 +67,7 @@ let amqpClient = new AmqpClient(
   BROCKER_QUEUE
 );
 
-let messageDispatcher: MessageDispatcher = new MessageDispatcher(
+let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
   new MessageSender(
     amqpClient,
     {
@@ -78,13 +80,7 @@ let messageDispatcher: MessageDispatcher = new MessageDispatcher(
       }
     },
     HTTPS_ENDPOINT_ROUTING_KEY
-  ),
-  new WebClient(
-    DATA_MANAGER_BASE_URL,
-    DATA_MANAGER_USER,
-    DATA_MANAGER_PASSWORD
-  ),
-  DATA_MANAGER_URL_SUFFIX
+  )
 );
 
 let dbClient: IDatabaseClient = new SimpleMongoDbClient(
@@ -96,14 +92,28 @@ let dbClient: IDatabaseClient = new SimpleMongoDbClient(
   MONGO_INITDB_ROOT_PASSWORD
 );
 
-let skill = new Skill(messageDispatcher, dbClient, {
-  askForApproval: process.env.ONBOARDING_SKILL_REQUEST_APPROVAL
-    ? eval(process.env.ONBOARDING_SKILL_REQUEST_APPROVAL)
-    : false,
-  askForType: process.env.ONBOARDING_SKILL_REQUEST_TYPE
-    ? eval(process.env.ONBOARDING_SKILL_REQUEST_TYPE)
-    : false
-});
+let skill = new Skill(
+  new MyInitializer(
+    messageDispatcher,
+    new MyExternalRestServiceCaller(
+      new WebClient(
+        DATA_MANAGER_BASE_URL,
+        DATA_MANAGER_USER,
+        DATA_MANAGER_PASSWORD
+      ),
+      DATA_MANAGER_URL_SUFFIX
+    ),
+    {
+      askForApproval: process.env.ONBOARDING_SKILL_REQUEST_APPROVAL
+        ? eval(process.env.ONBOARDING_SKILL_REQUEST_APPROVAL)
+        : false,
+      askForType: process.env.ONBOARDING_SKILL_REQUEST_TYPE
+        ? eval(process.env.ONBOARDING_SKILL_REQUEST_TYPE)
+        : false
+    }
+  ),
+  dbClient
+);
 
 //TODO: no need to share amqpClient amongst sender and receiver
 let messageInterpreter: MessageInterpreter = new MessageInterpreter(

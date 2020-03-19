@@ -7,7 +7,6 @@ import {
   Message
 } from 'amqplib/callback_api';
 
-
 class AmqpConnectionDetails {
   connection: Connection | undefined;
   connectionClosed: boolean = true;
