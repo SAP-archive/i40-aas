@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.com/SAP/i40-aas.svg?branch=master)](https://travis-ci.com/SAP/i40-aas)
 
-:warning: __i40-aas__ is still __alpha__.
+:warning: __i40-aas__ is __alpha__ :warning:
 
 
 
@@ -14,9 +14,9 @@
   - [Cleanup](#cleanup)
 - [Configuration](#configuration)
 - [Known Issues](#known-issues)
-- [How to obtain support](#how-to-obtain-support)
+- [Get Support](#get-support)
 - [Contributing](#contributing)
-- [Upcoming changes](#upcoming-changes)
+- [Upcoming Changes](#upcoming-changes)
 - [License](#license)
 
 
@@ -105,7 +105,7 @@ Please refer to the list of [issues](https://github.com/SAP/i40-aas/issues) on G
 
 
 
-## How to obtain support
+## Get Support
 
 <!--- This section should contain details on how the outside user can obtain support, ask questions, or post a bug report on your project. If your project is provided "as-is", with no expected changes or support, you must state that here. --->
 
@@ -123,7 +123,7 @@ Simply check the [Contribution Guidelines](CONTRIBUTING.md).
 
 
 
-## Upcoming changes
+## Upcoming Changes
 
 <!--- Details on any expected changes in later versions. If your project is released "as-is", or you know of no upcoming changes, this section can be omitted. --->
 
