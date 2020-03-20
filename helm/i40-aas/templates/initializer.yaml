@@ -89,7 +89,7 @@ spec:
 	  {{- toYaml .Values.resources | nindent 10 }}
       volumes:
       - name: scripts
-	optional: true
 	configMap:
 	  name: {{ .Values.initializer.configMapName }}
+	  optional: true
 ---

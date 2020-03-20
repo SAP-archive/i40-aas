@@ -51,9 +51,9 @@ spec:
 		  name: {{ .Release.Name }}-host-collection
 		  key: SKILLS_ONBOARDING_DATABASE_HOST
 	    - name: SKILLS_ONBOARDING_DATABASE_PORT
-	      value: {{ .Values.onboarding.database.port }}
+	      value: {{ .Values.skills.onboarding.database.port }}
 	    - name: SKILLS_ONBOARDING_DATABASE_NAME
-	      value: {{ .Values.onboarding.database.name }}
+	      value: {{ .Values.skills.onboarding.database.name }}
 	    - name: CORE_BROKER_HOST
 	      valueFrom:
 		configMapKeyRef:
