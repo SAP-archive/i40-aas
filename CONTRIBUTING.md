@@ -42,7 +42,7 @@ cd <path to projects root folder>
 ```
 eclint check '<path to your changed files>'
 
-//e.g. eclint check 'apps/onboarding-skill/**/*.ts'
+//e.g. eclint check 'src/ts/cmd/onboarding-skill/**/*.ts'
 
 
 ```
@@ -52,8 +52,8 @@ eclint check '<path to your changed files>'
 ```
 eclint fix '<path to your file>'
 
-// e.g. eclint fix 'apps/onboarding-skill/src/server.ts' for a specific src file
-// or eclint fix 'apps/onboarding-skill/**/*.ts' for all src files in this folder
+// e.g. eclint fix 'src/ts/cmd/onboarding-skill/src/server.ts' for a specific src file
+// or eclint fix 'src/ts/cmd/onboarding-skill/**/*.ts' for all src files in this folder
 
 ```
 
