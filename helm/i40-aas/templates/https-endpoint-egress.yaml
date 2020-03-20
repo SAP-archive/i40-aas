@@ -48,13 +48,13 @@ spec:
             - name: CORE_BROKER_HOST
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Release.Name }}-host-collection
-                  key: CORE_BROKER_HOST
-            - name: CORE_BROKER_PORT
-              value: {{ .Values.core.broker.port | quote }}
-            - name: CORE_EGRESS_EXCHANGE
-              value: {{ .Values.core.egress.exchange | quote }}
-            - name: CORE_EGRESS_HTTP_QUEUE
+		  name: {{ .Release.Name }}-host-collection
+		  key: CORE_BROKER_HOST
+	    - name: CORE_BROKER_PORT
+	      value: {{ .Values.core.broker.port.amqp | quote }}
+	    - name: CORE_EGRESS_EXCHANGE
+	      value: {{ .Values.core.egress.exchange | quote }}
+	    - name: CORE_EGRESS_HTTP_QUEUE
               value: {{ .Values.core.egress.http.queue | quote }}
             - name: CORE_EGRESS_HTTP_CTAG
               value: {{ .Values.core.egress.http.ctag | quote }}
