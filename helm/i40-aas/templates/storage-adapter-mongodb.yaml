@@ -42,16 +42,16 @@ spec:
 	    containerPort: {{ .Values.applicationAdapters.mongoDb.port }}
 	  env:
 	  - name: LOGGING_LOGLEVEL
-	    value: {{ .Values.logging.logLevel }}
+	    value: {{ .Values.logging.logLevel | quote }}
 	  - name: LOGGING_LOGOUTPUT
-	    value: {{ .Values.logging.logOutput }}
+	    value: {{ .Values.logging.logOutput | quote }}
 	  - name: APPLICATION_ADAPTERS_MONGODB_DATABASE_HOST
 	    valueFrom:
 	      configMapKeyRef:
 		name: {{ .Release.Name }}-host-collection
 		key: SKILLS_ONBOARDING_DATABASE_HOST
 	  - name: APPLICATION_ADAPTERS_MONGODB_DATABASE_PORT
-	    value: {{ .Values.skills.onboarding.database.port }}
+	    value: {{ .Values.skills.onboarding.database.port | quote }}
 	  - name: APPLICATION_ADAPTERS_MONGODB_DATABASE_USER
 	    valueFrom:
 	      secretKeyRef:
@@ -63,9 +63,9 @@ spec:
 		name: {{ .Release.Name }}-skills-onboarding-database
 		key: SKILLS_ONBOARDING_DATABASE_PASSWORD
 	  - name: APPLICATION_ADAPTERS_MONGODB_DATABASE_NAME
-	    value: {{ .Values.skills.onboarding.database.name }}
+	    value: {{ .Values.skills.onboarding.database.name | quote }}
 	  - name: APPLICATION_ADAPTERS_MONGODB_SUBMODELS_COLLECTION
-	    value: {{ .Values.applicationAdapters.mongoDb.submodelsCollection }}
+	    value: {{ .Values.applicationAdapters.mongoDb.submodelsCollection | quote }}
 	  resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+	    {{- toYaml .Values.resources | nindent 12 }}
 ---

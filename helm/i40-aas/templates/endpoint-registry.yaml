@@ -42,18 +42,18 @@ spec:
 	  containerPort: {{ .Values.core.registries.endpoints.port }}
 	env:
 	- name: LOGGING_LOGLEVEL
-	  value: {{ .Values.logging.logLevel }}
+	  value: {{ .Values.logging.logLevel | quote }}
 	- name: LOGGING_LOGOUTPUT
-	  value: {{ .Values.logging.logOutput }}
+	  value: {{ .Values.logging.logOutput | quote }}
 	- name: CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST
 	  valueFrom:
 	    configMapKeyRef:
 	      name: {{ .Release.Name }}-host-collection
 	      key: CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST
 	- name: CORE_REGISTRIES_ENDPOINTS_DATABASE_PORT
-	  value: {{ .Values.core.registries.endpoints.database.port }}
+	  value: {{ .Values.core.registries.endpoints.database.port | quote }}
 	- name: CORE_REGISTRIES_ENDPOINTS_DATABASE_NAME
-	  value: {{ .Values.core.registries.endpoints.database.name }}
+	  value: {{ .Values.core.registries.endpoints.database.name | quote }}
 	envFrom:
 	- secretRef:
 	    name: {{ .Release.Name }}-core-registries-endpoints-database
