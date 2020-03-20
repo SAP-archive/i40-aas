@@ -195,7 +195,7 @@ services:
   i40-aas-initializer:
     image: sapi40/i40-aas-initializer
     volumes:
-      - .compose/volumes/initializer/:/initializer
+      - ./src/compose/volumes/initializer/:/initializer
     environment:
       ## logging
       - LOGGING_LOGLEVEL=${LOGGING_LOGLEVEL}
@@ -250,4 +250,4 @@ services:
       - "${CORE_BROKER_PORT_UI}:${CORE_BROKER_PORT_UI}"
       - "${CORE_BROKER_PORT_MQTT}:${CORE_BROKER_PORT_MQTT}"
     volumes:
-      - .compose/volumes/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
+      - ./src/compose/volumes/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
