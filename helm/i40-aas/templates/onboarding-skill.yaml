@@ -42,41 +42,41 @@ spec:
               containerPort: 3000
           env:
             - name: LOGGING_LOGLEVEL
-              value: {{ .Values.logging.logLevel }}
+              value: {{ .Values.logging.logLevel | quote }}
             - name: LOGGING_LOGOUTPUT
-              value: {{ .Values.logging.logOutput }}
+              value: {{ .Values.logging.logOutput | quote }}
             - name: SKILLS_ONBOARDING_DATABASE_HOST
               valueFrom:
                 configMapKeyRef:
                   name: {{ .Release.Name }}-host-collection
                   key: SKILLS_ONBOARDING_DATABASE_HOST
             - name: SKILLS_ONBOARDING_DATABASE_PORT
-              value: {{ .Values.onboarding.database.port }}
+              value: {{ .Values.skills.onboarding.database.port | quote }}
             - name: SKILLS_ONBOARDING_DATABASE_NAME
-              value: {{ .Values.onboarding.database.name }}
+              value: {{ .Values.skills.onboarding.database.name | quote }}
             - name: CORE_BROKER_HOST
               valueFrom:
                 configMapKeyRef:
                   name: {{ .Release.Name }}-host-collection
                   key: CORE_BROKER_HOST
             - name: CORE_EGRESS_EXCHANGE
-              value: {{ .Values.core.egress.exchange }}
+              value: {{ .Values.core.egress.exchange | quote }}
             - name: CORE_INGRESS_EXCHANGE
-              value: {{ .Values.core.ingress.exchange }}
+              value: {{ .Values.core.ingress.exchange | quote }}
             - name: CORE_ENDPOINT_RESOLVER_QUEUE
-              value: {{ .Values.core.endpointResolver.queue }}
+              value: {{ .Values.core.endpointResolver.queue | quote }}
             - name: SKILLS_ONBOARDING_REQUEST_APPROVAL
-              value: {{ .Values.skills.onboarding.requestApproval }}
+              value: {{ .Values.skills.onboarding.requestApproval | quote }}
             - name: SKILLS_ONBOARDING_REQUEST_TYPE
-              value: {{ .Values.skills.onboarding.requestType }}
+              value: {{ .Values.skills.onboarding.requestType | quote }}
             - name: SKILLS_ONBOARDING_STATES_COLLECTION
-              value: {{ .Values.skills.onboarding.statesCollection }}
+              value: {{ .Values.skills.onboarding.statesCollection | quote }}
             - name: SKILLS_ONBOARDING_ROOT_TOPIC
-              value: {{ .Values.skills.onboarding.rootTopic }}
+              value: {{ .Values.skills.onboarding.rootTopic | quote }}
             - name: SKILLS_ONBOARDING_ROLE
-              value: {{ .Values.skills.onboarding.role }}
+              value: {{ .Values.skills.onboarding.role | quote }}
             - name: SKILLS_ONBOARDING_URI
-              value: {{ .Values.skills.onboarding.uri }}
+              value: {{ .Values.skills.onboarding.uri | quote }}
             - name: CORE_DATA_MANAGER_PROTOCOL
               value: "http"
             - name: CORE_DATA_MANAGER_HOST
@@ -85,9 +85,9 @@ spec:
                   name: {{ .Release.Name }}-host-collection
                   key: CORE_DATA_MANAGER_HOST
             - name: CORE_DATA_MANAGER_PORT
-              value: {{ .Values.core.dataManager.port }}
+              value: {{ .Values.core.dataManager.port | quote }}
             - name: CORE_DATA_MANAGER_SUBMODELS_ROUTE
-              value: {{ .Values.core.dataManager.submodelsRoute }}
+              value: {{ .Values.core.dataManager.submodelsRoute | quote }}
           envFrom:
             - secretRef:
                 name: {{ .Release.Name }}-skills-onboarding-database
@@ -97,6 +97,6 @@ spec:
                 name: {{ .Release.Name }}-core-ingress
             - secretRef:
                 name: {{ .Release.Name }}-core-data-manager
-        resources:
+          resources:
             {{- toYaml .Values.resources | nindent 12 }}
 ---

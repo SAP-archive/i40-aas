@@ -60,9 +60,9 @@ spec:
           containerPort: {{ .Values.core.registries.adapters.port }}
         env:
         - name: LOGGING_LOGLEVEL
-          value: {{ .Values.logging.logLevel }}
+          value: {{ .Values.logging.logLevel | quote }}
         - name: LOGGING_LOGOUTPUT
-          value: {{ .Values.logging.logOutput }}
+          value: {{ .Values.logging.logOutput | quote }}
         envFrom:
         - secretRef:
             name: {{ .Release.Name }}-core-registries-adapters

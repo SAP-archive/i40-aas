@@ -42,18 +42,18 @@ spec:
               containerPort: {{ .Values.core.ingress.http.port }}
           env:
             - name: LOGGING_LOGLEVEL
-              value: {{ .Values.logging.logLevel }}
+              value: {{ .Values.logging.logLevel | quote }}
             - name: LOGGING_LOGOUTPUT
-              value: {{ .Values.logging.logOutput }}
+              value: {{ .Values.logging.logOutput | quote }}
             - name: CORE_BROKER_HOST
               valueFrom:
                 configMapKeyRef:
                   name: {{ .Release.Name }}-host-collection
                   key: CORE_BROKER_HOST
             - name: CORE_BROKER_PORT
-              value: {{ .Values.core.broker.port }}
+              value: {{ .Values.core.broker.port | quote }}
             - name: CORE_INGRESS_HTTP_PORT
-              value: {{ .Values.core.ingress.http.port }}
+              value: {{ .Values.core.ingress.http.port | quote }}
           envFrom:
             - secretRef:
                 name: {{ .Release.Name }}-core-ingress

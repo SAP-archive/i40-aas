@@ -39,31 +39,31 @@ spec:
         image: "{{ .Values.image.repository }}/i40-aas-endpoint-resolver:{{ .Values.image.release }}"
         env:
         - name: LOGGING_LOGLEVEL
-          value: {{ .Values.logging.logLevel }}
+          value: {{ .Values.logging.logLevel | quote }}
         - name: LOGGING_LOGOUTPUT
-          value: {{ .Values.logging.logOutput }}
+          value: {{ .Values.logging.logOutput | quote }}
         - name: CORE_BROKER_HOST
           valueFrom:
             configMapKeyRef:
               name: {{ .Release.Name }}-host-collection
               key: CORE_BROKER_HOST
         - name: CORE_BROKER_PORT
-          value: {{ .Values.core.broker.port }}
+          value: {{ .Values.core.broker.port | quote }}
         - name: CORE_EGRESS_EXCHANGE
-          value: {{ .Values.core.egress.exchange }}
+          value: {{ .Values.core.egress.exchange | quote }}
         - name: CORE_ENDPOINT_RESOLVER_CTAG
-          value: {{ .Values.core.endpointResolver.ctag }}
+          value: {{ .Values.core.endpointResolver.ctag | quote }}
         - name: CORE_ENDPOINT_RESOLVER_QUEUE
-          value: {{ .Values.core.endpointResolver.queue }}
+          value: {{ .Values.core.endpointResolver.queue | quote }}
         - name: CORE_REGISTRIES_ENDPOINTS_HOST
           valueFrom:
             configMapKeyRef:
               name: {{ .Release.Name }}-host-collection
               key: CORE_REGISTRIES_ENDPOINTS_HOST
         - name: CORE_REGISTRIES_ENDPOINTS_PORT
-          value: {{ .Values.core.registries.endpoints.port }}
+          value: {{ .Values.core.registries.endpoints.port | quote }}
         - name: CORE_REGISTRIES_ENDPOINTS_URL_SUFFIX
-          value: {{ .Values.core.registries.endpoints.urlSuffix }}
+          value: {{ .Values.core.registries.endpoints.urlSuffix | quote }}
         envFrom:
         - secretRef:
             name: {{ .Release.Name }}-core-egress

@@ -61,7 +61,7 @@ spec:
               containerPort: {{ .Values.skills.onboarding.database.port }}
           env:
             - name: MONGO_INITDB_DATABASE
-              value: {{ .Values.skills.onboarding.database.name }}
+              value: {{ .Values.skills.onboarding.database.name | quote }}
             - name: MONGO_INITDB_ROOT_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -76,16 +76,16 @@ spec:
             - mountPath: /data/db
               name: {{ .Release.Name }}-mongodb
   volumeClaimTemplates:
-  - metadata:
-      name: {{ .Release.Name }}-mongodb
-      labels:
-        service: mongodb
-        {{- include "i40-aas.labels" . | nindent 8 }}
-    spec:
-      storageClassName: {{ .Values.storageClassName }}
-      accessModes:
-        - ReadWriteOnce
-      resources:
-        requests:
-          storage: 100Mi
+    - metadata:
+        name: {{ .Release.Name }}-mongodb
+        labels:
+          service: mongodb
+          {{- include "i40-aas.labels" . | nindent 8 }}
+      spec:
+        storageClassName: {{ .Values.storageClassName }}
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 100Mi
 ---
