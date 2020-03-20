@@ -1,0 +1,74 @@
+{
+  "name": "i40-aas-endpoint-registry",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "mocha --require ts-node/register --exit test/unit/**/*.spec.ts",
+    "test-integration-only": "mocha --require ts-node/register --exit test/integration/**/*.spec.ts",
+    "test-with-integration": "mocha --require ts-node/register --exit test/integration/**/*.spec.ts test/unit/**/*.spec.ts",
+    "coverage": "nyc --reporter html --reporter text npm test",
+    "coverage-with-integration": "nyc --reporter html --reporter text npm run test-with-integration",
+    "build": "tsc",
+    "prestart": "./prepareDB.sh",
+    "start": "node ./dist/server.js",
+    "clean": "rm -rf ./dist/*",
+    "poststart": "node ./dist/server.js",
+    "local": "node -r dotenv/config ./dist/server.js"
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.ts",
+      "src/**/*.tsx"
+    ],
+    "extension": [
+      ".ts",
+      ".tsx"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "reporter": [
+      "text-summary",
+      "html"
+    ],
+    "sourceMap": true,
+    "instrument": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SAP/i40-aas.git"
+  },
+  "dependencies": {
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "express-basic-auth": "^1.2.0",
+    "generic-pool": "^3.7.1",
+    "i40-aas-objects": "0.2.6",
+    "pg": "^7.11.0",
+    "swagger-ui-express": "^4.0.6",
+    "ts-postgres": "^1.1.0"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/compression": "0.0.36",
+    "@types/cors": "^2.8.5",
+    "@types/dotenv": "^6.1.1",
+    "@types/express": "^4.17.0",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^12.0.2",
+    "@types/sinon": "^7.0.13",
+    "@types/swagger-ui-express": "^3.0.1",
+    "chai": "^4.2.0",
+    "dotenv": "^8.1.0",
+    "mocha": "^6.1.4",
+    "nyc": "^14.1.1",
+    "rewire": "^4.0.1",
+    "sinon": "^7.3.2",
+    "ts-node": "^8.2.0",
+    "typescript": "^3.5.1"
+  },
+  "author": "D062507",
+  "license": "SEE LICENSE IN LICENSE"
+}

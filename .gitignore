@@ -65,9 +65,6 @@ typings/
 # Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variables file
-.env
-
 # next.js build output
 .next
 
@@ -78,3 +75,25 @@ typings/
 .compose/volumes/initializer/*
 # except for
 !.compose/volumes/initializer/sample_config.sh
+
+#######################
+# ignore everything that is likely encryption-related
+*.pem
+*.key
+*.crt
+*.priv
+
+# exclude the whole .compose/cert* directory
+.compose/volumes/certs/*
+# except for
+!.compose/volumes/certs/.gitkeep
+
+#######################
+# ignore all .env files
+*.env
+# except for the one in root
+!/.env
+
+#######################
+# ignore all cover.out files (from gocover)
+*/cover.out
