@@ -51,4 +51,5 @@ It can be run from a docker image with `source .\integration-test-setup` (wait 2
 
   -Finally, provide a *MyInitializer.ts* that provides these two communication classes and a configuration object that is later placed in the context for your state machine to use. This configuration object contains configuration properties your state machine requires.
   
-  Please note that the state machine is an interation state machine. It deals with events (incoming messages or results of rest calls) and performs actions (sending messages, making rest calls) thereby moving to a new state. It does not know about business logic unrelated to messaging. Only model the interaction in it.
+  
+Please note that the state machine is an interation state machine. It deals with events (incoming messages or results of rest calls) and performs actions (sending messages, making rest calls) thereby moving to a new state. It does not know about business logic unrelated to messaging. Only model the interaction in it.
