@@ -99,22 +99,22 @@ core:
       password: admin
 
       database:
-	name: AAS_REGISTRY
-	port: 5432
-	# Put an empty string "" to generate a random value (20 character, alpha-numeric)
-	user: postgres
-	password: postgres
+        name: AAS_REGISTRY
+        port: 5432
+        # Put an empty string "" to generate a random value (20 character, alpha-numeric)
+        user: postgres
+        password: postgres
 
-	super:
-	  # Put an empty string "" to generate a random value (20 character, alpha-numeric)
-	  user: postgres
-	  password: postgres
+        super:
+          # Put an empty string "" to generate a random value (20 character, alpha-numeric)
+          user: postgres
+          password: postgres
 
-	pgAdmin:
-	  port: 8080
-	  # Put an empty string "" to generate a random value (20 character, alpha-numeric)
-	  user: test@test.com
-	  password: admin
+        pgAdmin:
+          port: 8080
+          # Put an empty string "" to generate a random value (20 character, alpha-numeric)
+          user: test@test.com
+          password: admin
 
 applicationAdapters:
   mongoDb:

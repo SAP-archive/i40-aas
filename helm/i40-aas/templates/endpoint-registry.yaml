@@ -39,29 +39,29 @@ spec:
         image: "{{ .Values.image.repository }}/i40-aas-endpoint-registry:{{ .Values.image.release }}"
         ports:
         - name: endpoint
-	  containerPort: {{ .Values.core.registries.endpoints.port }}
-	env:
-	- name: LOGGING_LOGLEVEL
-	  value: {{ .Values.logging.logLevel | quote }}
-	- name: LOGGING_LOGOUTPUT
-	  value: {{ .Values.logging.logOutput | quote }}
-	- name: CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST
-	  valueFrom:
-	    configMapKeyRef:
-	      name: {{ .Release.Name }}-host-collection
-	      key: CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST
-	- name: CORE_REGISTRIES_ENDPOINTS_DATABASE_PORT
-	  value: {{ .Values.core.registries.endpoints.database.port | quote }}
-	- name: CORE_REGISTRIES_ENDPOINTS_DATABASE_NAME
-	  value: {{ .Values.core.registries.endpoints.database.name | quote }}
-	envFrom:
-	- secretRef:
-	    name: {{ .Release.Name }}-core-registries-endpoints-database
-	- secretRef:
-	    name: {{ .Release.Name }}-core-registries-endpoints
-	resources:
-	  {{- toYaml .Values.resources | nindent 10 }}
-	livenessProbe:
+          containerPort: {{ .Values.core.registries.endpoints.port }}
+        env:
+        - name: LOGGING_LOGLEVEL
+          value: {{ .Values.logging.logLevel | quote }}
+        - name: LOGGING_LOGOUTPUT
+          value: {{ .Values.logging.logOutput | quote }}
+        - name: CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-host-collection
+              key: CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST
+        - name: CORE_REGISTRIES_ENDPOINTS_DATABASE_PORT
+          value: {{ .Values.core.registries.endpoints.database.port | quote }}
+        - name: CORE_REGISTRIES_ENDPOINTS_DATABASE_NAME
+          value: {{ .Values.core.registries.endpoints.database.name | quote }}
+        envFrom:
+        - secretRef:
+            name: {{ .Release.Name }}-core-registries-endpoints-database
+        - secretRef:
+            name: {{ .Release.Name }}-core-registries-endpoints
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        livenessProbe:
           httpGet:
             path: /health
             port: endpoint

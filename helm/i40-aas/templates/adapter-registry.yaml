@@ -57,18 +57,18 @@ spec:
         image: "{{ .Values.image.repository }}/i40-aas-adapter-registry:{{ .Values.image.release }}"
         ports: 
         - name: endpoint
-	  containerPort: {{ .Values.core.registries.adapters.port }}
-	env:
-	- name: LOGGING_LOGLEVEL
-	  value: {{ .Values.logging.logLevel | quote }}
-	- name: LOGGING_LOGOUTPUT
-	  value: {{ .Values.logging.logOutput | quote }}
-	envFrom:
-	- secretRef:
-	    name: {{ .Release.Name }}-core-registries-adapters
-	resources:
-	  {{- toYaml .Values.resources | nindent 10 }}
-	livenessProbe:
+          containerPort: {{ .Values.core.registries.adapters.port }}
+        env:
+        - name: LOGGING_LOGLEVEL
+          value: {{ .Values.logging.logLevel | quote }}
+        - name: LOGGING_LOGOUTPUT
+          value: {{ .Values.logging.logOutput | quote }}
+        envFrom:
+        - secretRef:
+            name: {{ .Release.Name }}-core-registries-adapters
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        livenessProbe:
           httpGet:
             path: /health
             port: endpoint

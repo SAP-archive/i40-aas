@@ -31,50 +31,50 @@ spec:
   template:
     metadata:
       labels:
-	service: endpoint-resolver
-	{{- include "i40-aas.selectorLabels" . | nindent 8 }}
+        service: endpoint-resolver
+        {{- include "i40-aas.selectorLabels" . | nindent 8 }}
     spec:
       containers:
       - name: endpoint-resolver
-	image: "{{ .Values.image.repository }}/i40-aas-endpoint-resolver:{{ .Values.image.release }}"
-	env:
-	- name: LOGGING_LOGLEVEL
-	  value: {{ .Values.logging.logLevel | quote }}
-	- name: LOGGING_LOGOUTPUT
-	  value: {{ .Values.logging.logOutput | quote }}
-	- name: CORE_BROKER_HOST
-	  valueFrom:
-	    configMapKeyRef:
-	      name: {{ .Release.Name }}-host-collection
-	      key: CORE_BROKER_HOST
-	- name: CORE_BROKER_PORT
-	  value: {{ .Values.core.broker.port.amqp | quote }}
-	- name: CORE_EGRESS_EXCHANGE
-	  value: {{ .Values.core.egress.exchange | quote }}
-	- name: CORE_ENDPOINT_RESOLVER_CTAG
-	  value: {{ .Values.core.endpointResolver.ctag | quote }}
-	- name: CORE_ENDPOINT_RESOLVER_QUEUE
-	  value: {{ .Values.core.endpointResolver.queue | quote }}
-	- name: CORE_REGISTRIES_ENDPOINTS_HOST
-	  valueFrom:
-	    configMapKeyRef:
-	      name: {{ .Release.Name }}-host-collection
-	      key: CORE_REGISTRIES_ENDPOINTS_HOST
-	- name: CORE_REGISTRIES_ENDPOINTS_PORT
-	  value: {{ .Values.core.registries.endpoints.port | quote }}
-	- name: CORE_REGISTRIES_ENDPOINTS_URL_SUFFIX
-	  value: {{ .Values.core.registries.endpoints.urlSuffix | quote }}
-	envFrom:
-	- secretRef:
-	    name: {{ .Release.Name }}-core-egress
-	- secretRef:
-	    name: {{ .Release.Name }}-core-registries-endpoints
-	volumeMounts:
-	- name: certs
-	  mountPath: "/certs"
-	  readOnly: true
-	resources:
-	  {{- toYaml .Values.resources | nindent 10 }}
+        image: "{{ .Values.image.repository }}/i40-aas-endpoint-resolver:{{ .Values.image.release }}"
+        env:
+        - name: LOGGING_LOGLEVEL
+          value: {{ .Values.logging.logLevel | quote }}
+        - name: LOGGING_LOGOUTPUT
+          value: {{ .Values.logging.logOutput | quote }}
+        - name: CORE_BROKER_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-host-collection
+              key: CORE_BROKER_HOST
+        - name: CORE_BROKER_PORT
+          value: {{ .Values.core.broker.port.amqp | quote }}
+        - name: CORE_EGRESS_EXCHANGE
+          value: {{ .Values.core.egress.exchange | quote }}
+        - name: CORE_ENDPOINT_RESOLVER_CTAG
+          value: {{ .Values.core.endpointResolver.ctag | quote }}
+        - name: CORE_ENDPOINT_RESOLVER_QUEUE
+          value: {{ .Values.core.endpointResolver.queue | quote }}
+        - name: CORE_REGISTRIES_ENDPOINTS_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-host-collection
+              key: CORE_REGISTRIES_ENDPOINTS_HOST
+        - name: CORE_REGISTRIES_ENDPOINTS_PORT
+          value: {{ .Values.core.registries.endpoints.port | quote }}
+        - name: CORE_REGISTRIES_ENDPOINTS_URL_SUFFIX
+          value: {{ .Values.core.registries.endpoints.urlSuffix | quote }}
+        envFrom:
+        - secretRef:
+            name: {{ .Release.Name }}-core-egress
+        - secretRef:
+            name: {{ .Release.Name }}-core-registries-endpoints
+        volumeMounts:
+        - name: certs
+          mountPath: "/certs"
+          readOnly: true
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
 #        livenessProbe:
 #          httpGet:
 #            path: /health
@@ -83,7 +83,7 @@ spec:
 #          periodSeconds: 60
       volumes:
       - name: certs
-	secret:
-	  secretName: {{ .Values.certificates.secretName }}
-	  optional: true
+      secret:
+        secretName: {{ .Values.certificates.secretName }}
+        optional: true
 ---
