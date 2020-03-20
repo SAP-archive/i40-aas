@@ -61,7 +61,7 @@ spec:
 	      containerPort: {{ .Values.skills.onboarding.database.port }}
 	  env:
 	    - name: MONGO_INITDB_DATABASE
-	      value: {{ .Values.skills.onboarding.database.name }}
+	      value: {{ .Values.skills.onboarding.database.name | quote }}
 	    - name: MONGO_INITDB_ROOT_USERNAME
 	      valueFrom:
 		secretKeyRef:

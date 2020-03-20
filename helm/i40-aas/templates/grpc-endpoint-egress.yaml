@@ -23,22 +23,22 @@ spec:
 	image: "{{ .Values.image.repository }}/i40-aas-grpc-endpoint-egress:{{ .Values.image.release }}"
 	env:
 	- name: LOGGING_LOGLEVEL
-	  value: {{ .Values.logging.logLevel }}
+	  value: {{ .Values.logging.logLevel | quote }}
 	- name: LOGGING_LOGOUTPUT
-	  value: {{ .Values.logging.logOutput }}
+	  value: {{ .Values.logging.logOutput | quote }}
 	- name: CORE_BROKER_HOST
 	  valueFrom:
 	    configMapKeyRef:
 	      name: {{ .Release.Name }}-host-collection
 	      key: CORE_BROKER_HOST
 	- name: CORE_BROKER_PORT
-	  value: {{ .Values.core.broker.port }}
+	  value: {{ .Values.core.broker.port | quote }}
 	- name: CORE_EGRESS_EXCHANGE
-	  value: {{ .Values.core.egress.exchange }}
+	  value: {{ .Values.core.egress.exchange | quote }}
 	- name: CORE_EGRESS_GRPC_QUEUE
-	  value: {{ .Values.core.egress.grpc.queue }}
+	  value: {{ .Values.core.egress.grpc.queue | quote }}
 	- name: CORE_EGRESS_GRPC_CTAG
-	  value: {{ .Values.core.egress.grpc.ctag }}
+	  value: {{ .Values.core.egress.grpc.ctag | quote }}
 	envFrom:
 	- secretRef:
 	    name: {{ .Release.Name }}-core-egress
