@@ -39,7 +39,7 @@ It can be run from a docker image with `source .\integration-test-setup` (wait 2
 - To run coverage with integration tests: `npm run coverage-with-integration`
   To cleanup the message broker `.\integration-test-teardown`
 
-# Writing you own skill
+# Writing your own skill
 
 You may use the onboarding skill as a template to write your own skill.
 
