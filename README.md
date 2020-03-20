@@ -27,7 +27,7 @@ __i40-aas__ welcomes [contributions](#contributing). Please read about [known is
 This implementation is related to the [Plattform Industrie 4.0](https://www.plattform-i40.de/PI40/Navigation/EN/Home/home.html) activities being driven by working groups in Germany. Especially the working group [Reference Architectures, Standards, and Norms](https://www.plattform-i40.de/PI40/Navigation/EN/ThePlatform/PlatformWorkingGroups/Reference-Architectures-Standards-Norms/reference-architectures-standards-norms.html) has defined a reference architecture and a [specification](https://www.plattform-i40.de/PI40/Redaktion/EN/Downloads/Publikation/2018-details-of-the-asset-administration-shell.pdf?__blob=publicationFile&v=5) to address a challenging topic to hardware and software vendors: __interoperability__. Especially the integration of assets (devices, machines, software, documents, etc.) into business processes is always cumbersome, time-consuming, and usually costly. As shown in the following figure, this service is meant to simplify the integration processes, and has further potential to extend existing applications.
 
 
-[ramisap]: doc/images/RAMI_SAP.png "Based on RAMI 4.0"
+[ramisap]: docs/images/RAMI_SAP.png "Based on RAMI 4.0"
 
 |![alt text][ramisap]|
 |:--:|
@@ -53,16 +53,15 @@ $ make --version
 ## tested with: GNU Make 3.81
 ```
 
-Optionally, you can download and install [Postman](https://www.getpostman.com) to [test the services](doc/markdown/test.md).
+Optionally, you can download and install [Postman](https://www.getpostman.com) to [test the services](docs/markdown/test.md).
 
 
 
 ## Instructions
 ### Getting Started
-Service interactions can be tested and developed locally using Docker Compose:
+Service interactions can be deployed, tested and developed locally using Docker Compose as described below. For further instructions & information about __i40-aas__ check [the documentation](docs/README.md)
 
-1. Open a terminal and navigate to the repositories root directory
-2. Download or build the Docker images and deploy containers locally:
+Setup locally:
 ```bash
 ## Option 1
 ## Use images from Docker Hub (https://hub.docker.com/orgs/sapi40/repositories)
@@ -87,7 +86,7 @@ $ make clean
 ## Configuration
 The local setup uses the default configurations specified in the `.env` file.
 
-See [here](doc/markdown/join-containers.md) how to join other service containers locally.
+See [here](docs/markdown/join-containers.md) how to join other service containers locally.
 
 
 
@@ -99,7 +98,7 @@ Please refer to the list of [issues](https://github.com/SAP/i40-aas/issues) on G
 
 ## Get Support
 <!--- This section should contain details on how the outside user can obtain support, ask questions, or post a bug report on your project. If your project is provided "as-is", with no expected changes or support, you must state that here. --->
-Please study the [help provided](doc/README.md) and use the [GitHub issue tracker](https://github.com/SAP/i40-aas/issues) for further assistance, bug reports or feature requests.
+Please study the [help provided](docs/README.md) and use the [GitHub issue tracker](https://github.com/SAP/i40-aas/issues) for further assistance, bug reports or feature requests.
 
 
 
