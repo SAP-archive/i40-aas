@@ -64,14 +64,14 @@ spec:
               value: {{ .Values.skills.onboarding.database.name | quote }}
             - name: MONGO_INITDB_ROOT_USERNAME
               valueFrom:
-          secretKeyRef:
-            name: {{ .Release.Name }}-skills-onboarding-database
-            key: SKILLS_ONBOARDING_DATABASE_USER
+                secretKeyRef:
+                  name: {{ .Release.Name }}-skills-onboarding-database
+                  key: SKILLS_ONBOARDING_DATABASE_USER
             - name: MONGO_INITDB_ROOT_PASSWORD
               valueFrom:
-          secretKeyRef:
-            name: {{ .Release.Name }}-skills-onboarding-database
-            key: SKILLS_ONBOARDING_DATABASE_PASSWORD
+                secretKeyRef:
+                  name: {{ .Release.Name }}-skills-onboarding-database
+                  key: SKILLS_ONBOARDING_DATABASE_PASSWORD
           volumeMounts:
             - mountPath: /data/db
               name: {{ .Release.Name }}-mongodb
