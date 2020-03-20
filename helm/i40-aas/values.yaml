@@ -5,13 +5,13 @@
 # Optional
 certificates:
   # Kubernetes Secret resource in which TLS certificates are stored on the cluster.
-  secretName: ""
+  secretName: certificates
 
 # Optional
 initializer:
   # Kubernetes Configmap resource in which the scipts for initializing are stored.
   # Script names have to match the keys in the configmap!
-  configMapName: ""
+  configMapName: initializer-scripts
 
 build:
   ## Tagging
