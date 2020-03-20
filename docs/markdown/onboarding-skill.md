@@ -39,7 +39,9 @@ It can be run from a docker image with `source .\integration-test-setup` (wait 2
 - To run coverage with integration tests: `npm run coverage-with-integration`
   To cleanup the message broker `.\integration-test-teardown`
 
-# Writing you own "skill"
+# Writing you own skill
+
+You may use the onboarding skill as a template to write your own skill.
 
 - The first thing to do is to create a state chart as above. 
 
@@ -52,4 +54,4 @@ It can be run from a docker image with `source .\integration-test-setup` (wait 2
 - Finally, provide a *MyInitializer.ts* that provides these two communication classes and a configuration object that is later placed in the context for your state machine to use. This configuration object contains configuration properties your state machine requires. You may have a look at the [corresponding file](../../src/ts/cmd/onboarding-skill/src/services/onboarding/MyInitializer.ts) for the onboarding skill and replace it.
   
   
-Please note that the state machine is an interation state machine. It deals with events (incoming messages or results of REST calls) and performs actions (sending messages, making REST calls) thereby moving to a new state. It does not know about business logic unrelated to messaging. Only model the interaction in it.
+Please note that the state machine is an interation state machine. It deals with events (incoming messages or results of REST calls) and performs actions (sending messages, making REST calls) thereby moving to a new state. It does not know about business logic unrelated to messaging. Only model the interaction in it. If you have a scenario with multiple services (and skills in them communicating with each other you will need to perform this process for all involved parties Each will result in a service that is deployed as a skill in each instance of the AAS-services involved in the interaction.
