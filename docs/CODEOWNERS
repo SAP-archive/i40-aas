@@ -5,16 +5,16 @@
 
 ## documentation & orga
 /docs/ @Manu3756
-NOTICE @Manu3756
-LICENSE @Manu3756
-README.md @Manu3756
+/NOTICE @Manu3756
+/LICENSE @Manu3756
+/README.md @Manu3756
 
 ## deployment stuff
 /helm/ @etoster
-.travis.yml @etoster
-. env @heldic @etoster
-docker-compose* @heldic
-Makefile @heldic
+/.travis.yml @etoster
+/.env @heldic @etoster
+/docker-compose* @heldic
+/Makefile @heldic
 /src/compose/ @heldic
 /src/docker/ @heldic
 
