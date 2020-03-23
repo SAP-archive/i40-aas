@@ -6,6 +6,12 @@ WORKDIR /wdir
 ##   1. install production dependencies and create a copy of node_modules to be reused in prod stage below
 ##   2. install dev dependencies
 COPY cmd/onboarding-skill/package.json /wdir
+
+# copy the amqp lib and install is as local dependency module
+COPY pkg/AMQP-Client /pkg/AMQP-Client
+
+RUN npm install --save /pkg/AMQP-Client
+
 RUN npm install --production \
     && mkdir /production-dependencies/ \
     && cp -R node_modules /production-dependencies/
