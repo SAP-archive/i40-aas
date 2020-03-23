@@ -17,12 +17,12 @@ class SapMqttClient implements IMessageBrokerClient {
   }
 
   constructor(
-    private mqttUrl: string,
+    private mqttHost: string,
     //TODO; make it secure
     private brockerUser: string,
     private brokerPass: string
   ) {
-    this.client = mqtt.connect(this.mqttUrl, { protocol: 'mqtt' });
+    this.client = mqtt.connect(this.mqttHost, { protocol: 'mqtt' });
     this.client.on('connect', function() {
       console.debug('mqtt connected');
     });
