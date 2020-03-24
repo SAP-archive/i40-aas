@@ -1,5 +1,4 @@
 import { IMessageReceiver } from "./interfaces/IMessageReceiver";
-import { IInteractionMessage } from "i40-aas-objects";
 import { AmqpClient, Subscription } from 'AMQP-Client/lib/src/AMQPClient';
 import { IResolverMessage } from "./interfaces/IResolverMessage";
 import { AASConnector } from "./AASConnector";

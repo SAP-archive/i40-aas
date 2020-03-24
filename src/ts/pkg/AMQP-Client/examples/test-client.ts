@@ -2,16 +2,21 @@ import { IMessageBrokerClient, IMessageReceiver, Subscription, AmqpClient } from
 
 let amqpClientSender: AmqpClient;
 let amqpClientReceiver: AmqpClient;
-let AMQP_URL = process.env.CORE_BROKER_HOST;
+let AMQP_HOST = process.env.CORE_BROKER_HOST;
+let AMQP_PORT = process.env.CORE_BROKER_PORT;
 
 let counter = 1;
 function start() {
-  if (AMQP_URL === undefined) {
+  if (AMQP_HOST === undefined) {
     throw new Error('No CORE_BROKER_HOST found in environment');
   }
-  amqpClientSender = new AmqpClient(AMQP_URL, 'test', 'guest', 'guest', '');
+  if (AMQP_PORT === undefined) {
+    throw new Error('No AMQP_PORT found in environment');
+  }
+
+  amqpClientSender = new AmqpClient(AMQP_HOST, AMQP_PORT, 'test', 'guest', 'guest', '');
   amqpClientReceiver = new AmqpClient(
-    AMQP_URL,
+    AMQP_HOST,AMQP_PORT,
     'test',
     'guest',
     'guest',

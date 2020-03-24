@@ -45,6 +45,8 @@ class AmqpClient implements IMessageBrokerClient {
   public useMqtt = false;
   private destroyed: boolean = false;
 
+  private ampqUrl:URL ;
+
 
   isConnected(): boolean {
     return this.myConn.connectionClosed ? false : true;
@@ -61,8 +63,9 @@ class AmqpClient implements IMessageBrokerClient {
     useMqtt?: boolean,
     private reconnectAfterMilliSecs?: number
   ) {
+
     //TODO: Generate the Url from host and port
-    
+    this.ampqUrl = new URL(ampqHost+":"+ampqPort);
     this.start = Date.now();
     this.listenerQName = listenerQueue;
     console.debug('AmpqClient created');
@@ -99,7 +102,7 @@ class AmqpClient implements IMessageBrokerClient {
         this.brokerPass
       )
     };
-    let url = ' amqp://' + this.ampqUrl + '?heartbeat=60';
+    let url = ' amqp://' + this.ampqUrl.href + '?heartbeat=60';
     console.debug('Connecting to ' + url);
     var that = this;
     try {

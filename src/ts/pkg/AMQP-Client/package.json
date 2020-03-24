@@ -20,15 +20,15 @@
     "mqtt": "^3.0.0"
   },
   "devDependencies": {
-    "typescript": "^3.8.3",
     "@types/amqplib": "^0.5.13",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "chai-http": "^4.3.0",
     "mocha": "^6.1.4",
     "nyc": "^14.1.1",
     "sinon": "^7.3.2",
     "ts-node": "^8.3.0",
     "tsc-watch": "^2.2.1",
-    "chai": "^4.2.0",
-    "chai-as-promised": "^7.1.1",
-    "chai-http": "^4.3.0"
+    "typescript": "^3.8.3"
   }
 }
