@@ -1,18 +1,20 @@
 FROM node:lts-alpine as builder
 
-WORKDIR /wdir
+WORKDIR /cmd/endpoint-registry
 
-## copy package.json first and proceed to install dependencies to leverage caching as much as possible
-##   1. install production dependencies and create a copy of node_modules to be reused in prod stage below
-##   2. install dev dependencies
-COPY cmd/endpoint-registry/package.json /wdir
+## copy package.json first and install dependencies to leverage caching
+COPY cmd/endpoint-registry/package.json /cmd/endpoint-registry
+
+## install & backup production dependencies
 RUN npm install --production \
     && mkdir /production-dependencies/ \
     && cp -R node_modules /production-dependencies/
+
+## install dependencies
 RUN npm install
 
-# Add & compile sourcecode
-COPY cmd/endpoint-registry/ /wdir
+## add & transpile sourcecode
+COPY cmd/endpoint-registry/ /cmd/endpoint-registry
 RUN npm run clean \
     && npm run build
 
@@ -24,15 +26,16 @@ RUN apk update && apk upgrade \
 
 RUN adduser -D aasuser
 
-WORKDIR /wdir
+WORKDIR /cmd/endpoint-registry
 
-COPY --from=builder /wdir/dist /wdir/dist
-COPY --from=builder /production-dependencies/node_modules /wdir/node_modules
-COPY cmd/endpoint-registry/package.json /wdir
+## copy build output from previous stage
+COPY --from=builder /cmd/endpoint-registry/dist /cmd/endpoint-registry/dist
+COPY --from=builder /production-dependencies/node_modules /cmd/endpoint-registry/node_modules
+COPY cmd/endpoint-registry/package.json /cmd/endpoint-registry
 
-COPY cmd/endpoint-registry/start.sh /wdir
-COPY cmd/endpoint-registry/prepareDB.sh /wdir
-COPY cmd/endpoint-registry/sql/* /wdir/sql/
+COPY cmd/endpoint-registry/start.sh /cmd/endpoint-registry
+COPY cmd/endpoint-registry/prepareDB.sh /cmd/endpoint-registry
+COPY cmd/endpoint-registry/sql/* /cmd/endpoint-registry/sql/
 
 USER aasuser
 EXPOSE 4400
