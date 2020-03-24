@@ -9,7 +9,8 @@ COPY cmd/https-endpoint-ingress/package.json /wdir
 
 # copy the amqp lib and install is as local dependency module
 COPY pkg/AMQP-Client /pkg/AMQP-Client
-
+RUN cd /pkg/AMQP-Client && npm install && npm run build
+WORKDIR /wdir
 RUN npm install --save /pkg/AMQP-Client
 
 RUN npm install --production \
