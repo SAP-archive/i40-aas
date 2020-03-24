@@ -2,10 +2,7 @@ FROM node:lts-alpine as builder
 
 WORKDIR /cmd/https-endpoint-egress/
 
-## copy package.json first and proceed to install dependencies to leverage caching as much as possible
-##   1. install local modules
-##   2. install production dependencies and create a copy of node_modules to be reused in prod stage below
-##   3. install dev dependencies
+## copy package.json first and install dependencies to leverage caching
 COPY cmd/https-endpoint-egress/package.json /cmd/https-endpoint-egress/
 
 ## copy the local AMQPClient dependency, transpile it and install it

@@ -1,18 +1,20 @@
 FROM node:lts-alpine as builder
 
-WORKDIR /wdir
+WORKDIR /cmd/adapter-registry
 
-## copy package.json first and proceed to install dependencies to leverage caching as much as possible
-##   1. install production dependencies and create a copy of node_modules to be reused in prod stage below
-##   2. install dev dependencies
-COPY cmd/adapter-registry/package.json /wdir
+## copy package.json first and install dependencies to leverage caching
+COPY cmd/adapter-registry/package.json /cmd/adapter-registry
+
+## install & backup production dependencies
 RUN npm install --production \
     && mkdir /production-dependencies/ \
     && cp -R node_modules /production-dependencies/
+
+## install dependencies
 RUN npm install
 
-# Add & compile sourcecode
-COPY cmd/adapter-registry/ /wdir
+## add & transpile sourcecode
+COPY cmd/adapter-registry/ /cmd/adapter-registry
 RUN npm run clean \
     && npm run build
 
@@ -21,11 +23,12 @@ FROM node:lts-alpine as prod
 
 # RUN adduser -D aasuser
 
-WORKDIR /wdir
+WORKDIR /cmd/adapter-registry
 
-COPY --from=builder /wdir/dist /wdir/dist
-COPY --from=builder /production-dependencies/node_modules /wdir/node_modules
-COPY cmd/adapter-registry/package.json /wdir
+## copy build output from previous stage
+COPY --from=builder /cmd/adapter-registry/dist /cmd/adapter-registry/dist
+COPY --from=builder /production-dependencies/node_modules /cmd/adapter-registry/node_modules
+COPY cmd/adapter-registry/package.json /cmd/adapter-registry
 
 # USER aasuser
 EXPOSE 4500

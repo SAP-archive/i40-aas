@@ -3,14 +3,11 @@ FROM node:lts-alpine as builder
 WORKDIR /cmd/onboarding-skill/
 
 ## copy package.json first and proceed to install dependencies to leverage caching as much as possible
-##   1. install local modules
-##   2. install production dependencies and create a copy of node_modules to be reused in prod stage below
-##   3. install dev dependencies
-COPY cmd/onboarding-skill/package.json /ts/cmd/onboarding-skill/
+COPY cmd/onboarding-skill/package.json /cmd/onboarding-skill/
 
 ## copy the local AMQPClient dependency, transpile it and install it
-COPY pkg/AMQP-Client pkg/AMQP-Client
-RUN cd pkg/AMQP-Client \
+COPY pkg/AMQP-Client /pkg/AMQP-Client
+RUN cd /pkg/AMQP-Client \
     && npm install \
     && npm run build \
     && cd /cmd/onboarding-skill
