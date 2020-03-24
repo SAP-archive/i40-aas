@@ -3,17 +3,25 @@ FROM node:lts-alpine as builder
 WORKDIR /wdir
 
 ## copy package.json first and proceed to install dependencies to leverage caching as much as possible
-##   1. install production dependencies and create a copy of node_modules to be reused in prod stage below
-##   2. install dev dependencies
+##   1. install local modules
+##   2. install production dependencies and create a copy of node_modules to be reused in prod stage below
+##   3. install dev dependencies
 COPY cmd/https-endpoint-egress/package.json /wdir
 
-# copy the amqp lib and install is as local dependency module
-COPY pkg/AMQP-Client /pkg/AMQP-Client
-RUN npm install --save /pkg/AMQP-Client
+## copy the local AMQPClient dependency, transpile it and install it
+COPY pkg/AMQP-Client pkg/AMQP-Client
+RUN cd pkg/AMQP-Client \
+    && npm install \
+    && npm run build \
+    && cd ../../ \
+    && npm install --save ./pkg/AMQP-Client
 
+## install & backup production dependencies
 RUN npm install --production \
     && mkdir /production-dependencies/ \
     && cp -R node_modules /production-dependencies/
+
+## install dependencies
 RUN npm install
 
 # Add & compile sourcecode
