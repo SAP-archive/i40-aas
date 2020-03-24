@@ -1,6 +1,6 @@
 //import * as logger from "winston";
 import { Skill } from '../Skill';
-import { AmqpClient, Subscription } from 'AMQP-Client/lib/src/AMQPClient';
+import { AmqpClient, Subscription } from 'AMQP-Client/lib/AMQPClient';
 import { InteractionMessage } from 'i40-aas-objects';
 import { IMessageReceiver } from '../messaginginterface/IMessageReceiver';
 import { logger } from '../../log';

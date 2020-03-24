@@ -1,5 +1,5 @@
 import {  publishMessageToBrokerTopic } from "./InteractionHandler";
-import { AmqpClient } from 'AMQP-Client/lib/src/AMQPClient';
+import { AmqpClient } from 'AMQP-Client/lib/AMQPClient';
 import * as logger from "winston";
 
 let brokerClient:AmqpClient;
