@@ -8,7 +8,7 @@ services:
     ports:
       - "1880:1880"
     volumes:
-      - ./src/compose/volumes/node-red-1/node-red:/dataPers
+      - ./src/compose/volumes/node-red-1/node-red:/data
     #environment:
 
   i40-aas-onboarding-skill:

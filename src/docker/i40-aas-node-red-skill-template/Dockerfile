@@ -6,8 +6,6 @@ WORKDIR /cmd/i40-aas-node-red-simple-skill/
 RUN mkdir -p /usr/src/node-red
 
 # User data directory, contains flows, config and nodes.
-#RUN mkdir /data
-#COPY cmd/i40-aas-node-red-simple-skill/node-red/flows.json /data
 WORKDIR /usr/src/node-red
 
 # Add node-red user so we aren't running as root.
@@ -28,4 +26,4 @@ EXPOSE 1880
 # Environment variable holding file path for flows configuration
 ENV FLOWS=flows.json
 
-CMD ["npm", "start", "--", "--userDir", "/dataPers"]
+CMD ["npm", "start", "--", "--userDir", "/data"]
