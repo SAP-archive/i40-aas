@@ -15,7 +15,6 @@ RUN adduser -h /usr/src/node-red -D -H node-red \
     && chown -R node-red:node-red /data \
     && chown -R node-red:node-red /usr/src/node-red
 
-#COPY ./customNodes ./customNodes
 USER node-red
 
 # package.json contains Node-RED NPM module and node dependencies
@@ -29,4 +28,4 @@ EXPOSE 1880
 # Environment variable holding file path for flows configuration
 ENV FLOWS=flows.json
 
-CMD ["npm", "start", "--", "--userDir", "/data"]
+CMD ["npm", "start", "--", "--userDir", "/dataPers"]

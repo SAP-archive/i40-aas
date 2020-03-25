@@ -7,8 +7,8 @@ services:
     image: sapi40/i40-aas-node-red-skill-template
     ports:
       - "1880:1880"
-   # volumes:
-    #  - ./src/compose/volumes/node-red-1/data:/dataPers
+    volumes:
+      - ./src/compose/volumes/node-red-1/node-red:/dataPers
     #environment:
 
   i40-aas-onboarding-skill:
