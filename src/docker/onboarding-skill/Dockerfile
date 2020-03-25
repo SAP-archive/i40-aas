@@ -2,7 +2,7 @@ FROM node:lts-alpine as builder
 
 WORKDIR /cmd/onboarding-skill/
 
-## copy package.json first and proceed to install dependencies to leverage caching as much as possible
+## copy package.json first and install dependencies to leverage caching
 COPY cmd/onboarding-skill/package.json /cmd/onboarding-skill/
 
 ## copy the local AMQPClient dependency, transpile it and install it
