@@ -15,8 +15,9 @@ services:
       - SKILLS_ONBOARDING_DATABASE_USER=${SKILLS_ONBOARDING_DATABASE_USER}
       - SKILLS_ONBOARDING_DATABASE_PASSWORD=${SKILLS_ONBOARDING_DATABASE_PASSWORD}
       - SKILLS_ONBOARDING_DATABASE_NAME=${SKILLS_ONBOARDING_DATABASE_NAME}
-      ## rabbitmq
+      ## broker
       - CORE_BROKER_HOST=rabbitmq
+      - CORE_BROKER_PORT=${CORE_BROKER_PORT}
       - CORE_EGRESS_USER=${CORE_EGRESS_USER}
       - CORE_EGRESS_PASSWORD=${CORE_EGRESS_PASSWORD}
       - CORE_EGRESS_EXCHANGE=${CORE_EGRESS_EXCHANGE}
@@ -220,6 +221,27 @@ services:
       ## TODO: add endpoint-resolver, http-endpoint-egress and grpc-endpoint-egress
       ## once healthchecks are added
       # - =${}
+
+
+
+  ########################################################
+  #### node-red sample skills
+  ##########################################
+  node-red-1:
+    image: nodered/node-red:latest-minimal
+    ports:
+      - "1880:1880"
+    volumes:
+      - ./src/compose/volumes/node-red-1/data:/data
+  ##########################################
+  ## in case you want to deploy a second skill simultaneously e.g. to establish
+  ## a `conversation` between the two, you can uncomment the following section
+  # node-red-2:
+  #   image: nodered/node-red:latest-minimal
+  #   ports:
+  #     - "1881:1880"
+  #   volumes:
+  #     - ./src/compose/volumes/node-red-2/data:/data
 
 
 
