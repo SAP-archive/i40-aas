@@ -1,28 +1,30 @@
-import { IMessageBrokerClient } from '../base/messaginginterface/IMessageBrokerClient';
-import { IMessageReceiver } from '../base/messaginginterface/IMessageReceiver';
-import { SubscriptionDto } from '../base/messaginginterface/SubscriptionDto';
+import { IMessageBrokerClient,IMessageReceiver,Subscription  } from '../src/AMQPClient';
 import { Client } from 'mqtt';
-import * as logger from 'winston';
 
 var mqtt = require('mqtt');
 
 class SapMqttClient implements IMessageBrokerClient {
-  private subscription: SubscriptionDto | undefined;
+
+
+  isConnected(): boolean {
+    throw new Error("Method not implemented.");
+  }
+  private subscription: Subscription | undefined;
   private client: Client;
 
-  addSubscriptionData(subscription: SubscriptionDto) {
+  addSubscriptionData(subscription: Subscription) {
     this.subscription = subscription;
   }
 
   constructor(
-    private mqttUrl: string,
+    private mqttHost: string,
     //TODO; make it secure
     private brockerUser: string,
     private brokerPass: string
   ) {
-    this.client = mqtt.connect(this.mqttUrl, { protocol: 'mqtt' });
+    this.client = mqtt.connect(this.mqttHost, { protocol: 'mqtt' });
     this.client.on('connect', function() {
-      logger.debug('mqtt connected');
+      console.debug('mqtt connected');
     });
   }
 
@@ -33,12 +35,12 @@ class SapMqttClient implements IMessageBrokerClient {
       let messageReceiver: IMessageReceiver = this.subscription.messageReceiver;
 
       this.client.on('connect', function() {
-        logger.debug('mqtt connected - now subscribing');
+        console.debug('mqtt connected - now subscribing');
         that.client.subscribe(subscriptionTopic, function(err) {
           if (err) {
             throw new Error('Error receiving message');
           }
-          logger.debug('mqtt client subscribed to ' + subscriptionTopic);
+          console.debug('mqtt client subscribed to ' + subscriptionTopic);
         });
         if (cb) cb();
       });
@@ -55,9 +57,9 @@ class SapMqttClient implements IMessageBrokerClient {
 
   publish(routingKey: string, msg: string): void {
     this.client.publish(routingKey, msg, () =>
-      logger.debug('message published from mqtt client')
+    console.debug('message published from mqtt client')
     );
-    logger.debug(
+    console.debug(
       'mqtt client sent to exchange for topic ' +
         routingKey +
         " following message'" +

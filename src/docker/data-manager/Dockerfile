@@ -1,18 +1,20 @@
 FROM node:lts-alpine AS builder
 
-WORKDIR /wdir
+WORKDIR /cmd/data-manager
 
-## copy package.json first and proceed to install dependencies to leverage caching as much as possible
-##   1. install production dependencies and create a copy of node_modules to be reused in prod stage below
-##   2. install dev dependencies
-COPY cmd/data-manager/package.json /wdir
+## copy package.json first and install dependencies to leverage caching
+COPY cmd/data-manager/package.json /cmd/data-manager
+
+## install & backup production dependencies
 RUN npm install --production \
     && mkdir /production-dependencies/ \
     && cp -R node_modules /production-dependencies/
+
+## install dependencies
 RUN npm install
 
-# Add & compile sourcecode
-COPY cmd/data-manager/ /wdir
+## add & transpile sourcecode
+COPY cmd/data-manager/ /cmd/data-manager
 RUN npm run clean \
     && npm run build
 
@@ -21,11 +23,12 @@ FROM node:lts-alpine as prod
 
 RUN adduser -D aasuser
 
-WORKDIR /wdir
+WORKDIR /cmd/data-manager
 
-COPY --from=builder /wdir/dist /wdir/dist
-COPY --from=builder /production-dependencies/node_modules /wdir/node_modules
-COPY cmd/data-manager/package.json /wdir
+## copy build output from previous stage
+COPY --from=builder /cmd/data-manager/dist /cmd/data-manager/dist
+COPY --from=builder /production-dependencies/node_modules /cmd/data-manager/node_modules
+COPY cmd/data-manager/package.json /cmd/data-manager
 
 USER aasuser
 EXPOSE 4000
