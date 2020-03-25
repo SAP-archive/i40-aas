@@ -9,7 +9,11 @@ services:
       - "1880:1880"
     volumes:
       - ./src/compose/volumes/node-red-1/node-red:/data
-    #environment:
+    environment:
+      - CORE_BROKER_HOST=rabbitmq
+      - CORE_EGRESS_EXCHANGE=${CORE_EGRESS_EXCHANGE}
+      - CORE_INGRESS_EXCHANGE=${CORE_INGRESS_EXCHANGE}
+      - CORE_ENDPOINT_RESOLVER_QUEUE= ${CORE_ENDPOINT_RESOLVER_QUEUE}
 
   i40-aas-onboarding-skill:
     image: sapi40/i40-aas-onboarding-skill
