@@ -1,4 +1,3 @@
-import * as logger from 'winston';
 import * as amqp from 'amqplib/callback_api';
 import {
   Connection,
@@ -7,15 +6,32 @@ import {
   Options,
   Message
 } from 'amqplib/callback_api';
-import { IMessageBrokerClient } from '../messaginginterface/IMessageBrokerClient';
-import { SubscriptionDto } from '../messaginginterface/SubscriptionDto';
 
 class AmqpConnectionDetails {
   connection: Connection | undefined;
   connectionClosed: boolean = true;
   pubChannel: Channel | undefined;
-  subscription: SubscriptionDto | undefined;
+  subscription: Subscription | undefined;
 }
+
+class Subscription {
+  constructor(public topic: string, public messageReceiver: IMessageReceiver) { }
+}
+interface IMessageReceiver {
+  //TODO: localization of string when converting from bytes
+  receive: (msg: string) => void;
+}
+interface IMessageBrokerClient {
+  addSubscriptionData(subscription: Subscription): void;
+  startListening(cb?: () => void): void;
+  publish(routingKey: string, msg: string): void;
+  setupPublishing(cb?: () => void): void;
+  isConnected(): boolean;
+
+}
+
+
+
 
 //TODO: set proper time gap for connection retries (6s currently).
 class AmqpClient implements IMessageBrokerClient {
@@ -29,21 +45,32 @@ class AmqpClient implements IMessageBrokerClient {
   public useMqtt = false;
   private destroyed: boolean = false;
 
+  private ampqUrl:URL ;
+
+
+  isConnected(): boolean {
+    return this.myConn.connectionClosed ? false : true;
+  }
+
   //TODO: make a parameter object
   constructor(
-    private ampqUrl: string,
+    private ampqHost: string,
+    private ampqPort: string,
     private brokerExchange: string,
     private brokerUser: string,
     private brokerPass: string,
-    private uniqueListenerId: string,
+    private listenerQueue: string,
     useMqtt?: boolean,
     private reconnectAfterMilliSecs?: number
   ) {
+
+    //TODO: Generate the Url from host and port
+    this.ampqUrl = new URL(ampqHost+":"+ampqPort);
     this.start = Date.now();
-    this.listenerQName = uniqueListenerId + ':submodels:publishRequests';
-    logger.debug('AmpqClient created');
+    this.listenerQName = listenerQueue;
+    console.debug('AmpqClient created');
     let that = this;
-    process.on('SIGINT', function() {
+    process.on('SIGINT', function () {
       that.cleanup();
     });
     if (useMqtt !== undefined) {
@@ -75,41 +102,41 @@ class AmqpClient implements IMessageBrokerClient {
         this.brokerPass
       )
     };
-    let url = ' amqp://' + this.ampqUrl + '?heartbeat=60';
-    logger.debug('Connecting to ' + url);
+    let url = ' amqp://' + this.ampqUrl.href + '?heartbeat=60';
+    console.debug('Connecting to ' + url);
     var that = this;
     try {
-      this.connectToBroker(url, opt, async function(err, conn: Connection) {
+      this.connectToBroker(url, opt, async function (err, conn: Connection) {
         if (err) {
-          logger.error('[AMQP] Error:' + err.message);
-          logger.info('Waiting to reconnect');
+          console.error('[AMQP] Error:' + err.message);
+          console.info('Waiting to reconnect');
           let timeout: number;
           if (that.reconnectAfterMilliSecs)
             timeout = that.reconnectAfterMilliSecs;
           else timeout = 6000;
           await AmqpClient.sleep(timeout);
-          logger.info('reconnecting. Call count:' + that.retryCounter++);
+          console.info('reconnecting. Call count:' + that.retryCounter++);
           that.connect(cb);
           return;
         }
         //no error
-        logger.info('[AMQP] definitely connected');
+        console.info('[AMQP] definitely connected');
         that.myConn.connection = conn;
         that.myConn.connectionClosed = false;
-        conn.on('close', async function() {
+        conn.on('close', async function () {
           if (that.destroyed) return;
-          logger.error(
+          console.error(
             '[AMQP] connection lost, reconnecting. Time:' +
-              (Date.now() - that.start)
+            (Date.now() - that.start)
           );
           that.myConn.connectionClosed = true;
           that.connectAndDoSubscription(() => {
             that.setupPublishing(() =>
-              logger.info(
+              console.info(
                 'Successfully connected after drop count:' +
-                  ++that.successCounter +
-                  '. Time:' +
-                  (Date.now() - that.start)
+                ++that.successCounter +
+                '. Time:' +
+                (Date.now() - that.start)
               )
             );
           });
@@ -118,11 +145,11 @@ class AmqpClient implements IMessageBrokerClient {
         cb();
       });
     } catch (error) {
-      logger.error('Error when trying to connect:' + error.message);
+      console.error('Error when trying to connect:' + error.message);
     }
   }
 
-  addSubscriptionData(subscription: SubscriptionDto) {
+  addSubscriptionData(subscription: Subscription) {
     this.myConn.subscription = subscription;
   }
 
@@ -133,7 +160,7 @@ class AmqpClient implements IMessageBrokerClient {
     }
 
     if (this.myConn.connectionClosed) {
-      logger.error('Cannot subscribe as connection closed');
+      console.error('Cannot subscribe as connection closed');
       return;
     }
     if (!this.myConn.connection) {
@@ -142,9 +169,9 @@ class AmqpClient implements IMessageBrokerClient {
       );
     }
     var that = this;
-    this.myConn.connection.createChannel(function(err, ch: Channel) {
+    this.myConn.connection.createChannel(function (err, ch: Channel) {
       if (err) {
-        logger.error('Error thrown:' + err.message);
+        console.error('Error thrown:' + err.message);
         throw err;
       }
       that.myConn.pubChannel = ch;
@@ -157,36 +184,36 @@ class AmqpClient implements IMessageBrokerClient {
           AmqpClient.MQTT_EXCHANGE,
           '*',
           {},
-          () => logger.error('Mqtt exchange bound')
+          () => console.error('Mqtt exchange bound')
         );
       }
 
-      ch.assertQueue(that.listenerQName, { exclusive: false }, function(
+      ch.assertQueue(that.listenerQName, { exclusive: false }, function (
         error2,
         q
       ) {
         if (error2) {
-          logger.error('Error thrown:' + error2.message);
+          console.error('Error thrown:' + error2.message);
           throw error2;
           //return;
         }
 
         if (that.myConn.subscription) {
-          logger.info(
+          console.info(
             'Listener started. Waiting for messages in ' +
-              q.queue +
-              ' for topic ' +
-              that.myConn.subscription.topic +
-              '. Call count: ' +
-              ++that.listenerCounter
+            q.queue +
+            ' for topic ' +
+            that.myConn.subscription.topic +
+            '. Call count: ' +
+            ++that.listenerCounter
           );
-          logger.debug(
+          console.debug(
             'Binding ' +
-              q.queue +
-              ' to exchange ' +
-              that.brokerExchange +
-              ' for topic ' +
-              that.myConn.subscription.topic
+            q.queue +
+            ' to exchange ' +
+            that.brokerExchange +
+            ' for topic ' +
+            that.myConn.subscription.topic
           );
           ch.bindQueue(
             q.queue,
@@ -194,17 +221,17 @@ class AmqpClient implements IMessageBrokerClient {
             that.myConn.subscription.topic,
             {},
             () => {
-              logger.debug('q ' + q.queue + ' bound to exchange');
+              console.debug('q ' + q.queue + ' bound to exchange');
             }
           );
           ch.consume(
             q.queue,
-            function(msg: Message | null) {
+            function (msg: Message | null) {
               if (msg === null) {
                 throw Error('Null message received!');
               }
-              logger.debug(
-                that.uniqueListenerId + ' received message on queue ' + q.queue
+              console.debug(
+                that.listenerQueue + ' received message on queue ' + q.queue
               );
 
               if (that.myConn.subscription) {
@@ -212,7 +239,7 @@ class AmqpClient implements IMessageBrokerClient {
                   msg.content.toString()
                 );
               } else {
-                logger.error(
+                console.error(
                   'Attempting to set up a subscription even though none was provided.'
                 );
               }
@@ -222,7 +249,7 @@ class AmqpClient implements IMessageBrokerClient {
           if (afterSubscriptionDone) afterSubscriptionDone();
           //if (cb) cb();
         } else {
-          logger.error(
+          console.error(
             'Attempting to set up a subscription even though none was provided.'
           );
         }
@@ -250,25 +277,25 @@ class AmqpClient implements IMessageBrokerClient {
   setupPublishing(cb?: () => void) {
     let that = this;
     function publishSetup() {
-      logger.debug('Called setupPublishing');
+      console.debug('Called setupPublishing');
       if (!that.myConn.connection) {
         throw new Error(
           'Message publisher could not be started due to the connection not being set up'
         );
       }
-      logger.debug('Creating channel');
-      that.myConn.connection.createChannel(function(err: any, ch: Channel) {
+      console.debug('Creating channel');
+      that.myConn.connection.createChannel(function (err: any, ch: Channel) {
         if (err) {
           throw new Error(err.message);
         }
         that.myConn.pubChannel = ch;
-        logger.debug('Channel ready. Asserting exchange');
+        console.debug('Channel ready. Asserting exchange');
 
         that.myConn.pubChannel.assertExchange(that.brokerExchange, 'topic', {
           durable: true
         });
 
-        logger.debug('Exchange ' + that.brokerExchange + ' set up for topics');
+        console.debug('Exchange ' + that.brokerExchange + ' set up for topics');
 
         if (that.useMqtt) {
           that.myConn.pubChannel.assertExchange(
@@ -278,25 +305,25 @@ class AmqpClient implements IMessageBrokerClient {
               durable: true
             }
           );
-          logger.debug('exchange asserted');
+          console.debug('exchange asserted');
           that.myConn.pubChannel.bindExchange(
             AmqpClient.MQTT_EXCHANGE, //destination
             that.brokerExchange, //source
             '#',
             {},
             () => {
-              logger.debug(
+              console.debug(
                 'bound exchange. All messages arriving at ' +
-                  that.brokerExchange +
-                  ' will be forwarded to ' +
-                  AmqpClient.MQTT_EXCHANGE
+                that.brokerExchange +
+                ' will be forwarded to ' +
+                AmqpClient.MQTT_EXCHANGE
               );
-              logger.debug('Calling publish callback');
+              console.debug('Calling publish callback');
               if (cb) cb();
             }
           );
         } else {
-          logger.debug('Calling publish callback');
+          console.debug('Calling publish callback');
           if (cb) cb();
         }
       });
@@ -326,26 +353,26 @@ class AmqpClient implements IMessageBrokerClient {
       routingKey,
       Buffer.from(msg)
     );
-    logger.debug(
+    console.debug(
       'amqp client sent to exchange ' +
-        this.brokerExchange +
-        ' with topic ' +
-        routingKey +
-        " the following message'" +
-        msg +
-        "'"
+      this.brokerExchange +
+      ' with topic ' +
+      routingKey +
+      " the following message'" +
+      msg +
+      "'"
     );
   }
 
   cleanup() {
-    logger.debug('Cleaning up');
+    console.debug('Cleaning up');
     this.destroyed = true;
     if (this.myConn.connection && !this.myConn.connectionClosed) {
       this.myConn.connection.close(); //this takes time
       this.myConn.connectionClosed = true;
-      logger.debug('Closed connection');
+      console.debug('Closed connection');
     }
   }
 }
 
-export { AmqpClient };
+export { IMessageReceiver, IMessageBrokerClient, AmqpClient, Subscription }

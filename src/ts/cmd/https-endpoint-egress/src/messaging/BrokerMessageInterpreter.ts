@@ -1,7 +1,5 @@
-import { Subscription } from "./interfaces/Subscription";
 import { IMessageReceiver } from "./interfaces/IMessageReceiver";
-import { IInteractionMessage } from "i40-aas-objects";
-import { AmqpClient } from "./AMQPClient";
+import { AmqpClient, Subscription } from 'AMQP-Client/lib/AMQPClient';
 import { IResolverMessage } from "./interfaces/IResolverMessage";
 import { AASConnector } from "./AASConnector";
 import { WebClient } from "../WebClient/WebClient";
@@ -32,8 +30,8 @@ class BrokerMessageInterpreter implements IMessageReceiver {
   * Initiate listening to the broker topic, designated for forwarding responses from skills to clients
   * @param routingKeys
   */
-  start(routingKeys: string[]) {
-    this.brokerClient.addSubscriptionData(new Subscription(routingKeys, this));
+  start(routingKey: string) {
+    this.brokerClient.addSubscriptionData(new Subscription(routingKey, this));
     this.brokerClient.startListening();
   }
   /*

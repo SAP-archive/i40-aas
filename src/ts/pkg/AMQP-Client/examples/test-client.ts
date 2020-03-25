@@ -1,22 +1,22 @@
-import { ConsumeMessage } from 'amqplib';
-import { AmqpClient } from '../base/messaging/AmqpClient';
-import { IMessageReceiver } from '../base/messaging/MessageInterpreter';
-import { logger } from '../log';
-import { SubscriptionDto } from '../base/messaginginterface/SubscriptionDto';
+import { IMessageBrokerClient, IMessageReceiver, Subscription, AmqpClient } from '../src/AMQPClient';
 
-const initializeLogger = require('../log');
 let amqpClientSender: AmqpClient;
 let amqpClientReceiver: AmqpClient;
-let AMQP_URL = process.env.CORE_BROKER_HOST;
+let AMQP_HOST = process.env.CORE_BROKER_HOST;
+let AMQP_PORT = process.env.CORE_BROKER_PORT;
 
 let counter = 1;
 function start() {
-  if (AMQP_URL === undefined) {
+  if (AMQP_HOST === undefined) {
     throw new Error('No CORE_BROKER_HOST found in environment');
   }
-  amqpClientSender = new AmqpClient(AMQP_URL, 'test', 'guest', 'guest', '');
+  if (AMQP_PORT === undefined) {
+    throw new Error('No AMQP_PORT found in environment');
+  }
+
+  amqpClientSender = new AmqpClient(AMQP_HOST, AMQP_PORT, 'test', 'guest', 'guest', '');
   amqpClientReceiver = new AmqpClient(
-    AMQP_URL,
+    AMQP_HOST,AMQP_PORT,
     'test',
     'guest',
     'guest',
@@ -24,7 +24,7 @@ function start() {
   );
   let clockSet: boolean = false;
   amqpClientReceiver.addSubscriptionData(
-    new SubscriptionDto(
+    new Subscription(
       'skill.*',
       new (class MyMessageReceiver implements IMessageReceiver {
         receive(msg: string) {
@@ -42,7 +42,7 @@ function start() {
     try {
       amqpClientSender.publish('skill.x', 'ping' + counter++);
     } catch (error) {
-      logger.debug('Could not publish:' + error);
+      console.debug('Could not publish:' + error);
     }
   }, 1000);
   clockSet = true;
