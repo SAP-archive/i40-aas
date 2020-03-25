@@ -3,6 +3,11 @@ services:
   ########################################################
   #### Provide build instructions for all i40-aas images
   ##########################################
+  i40-aas-node-red-skill-template:
+    image: sapi40/i40-aas-node-red-skill-template:${BUILD_TAG}
+    build:
+      context: src/ts
+      dockerfile: ../docker/i40-aas-node-red-skill-template/Dockerfile
   i40-aas-onboarding-skill:
     image: sapi40/i40-aas-onboarding-skill:${BUILD_TAG}
     build:

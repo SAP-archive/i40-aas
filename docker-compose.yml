@@ -3,6 +3,14 @@ services:
   ########################################################
   #### i40-aas containers
   ##########################################
+  i40-aas-node-red-skill-template:
+    image: sapi40/i40-aas-node-red-skill-template
+    ports:
+      - "1880:1880"
+   # volumes:
+    #  - ./src/compose/volumes/node-red-1/data:/dataPers
+    #environment:
+
   i40-aas-onboarding-skill:
     image: sapi40/i40-aas-onboarding-skill
     environment:
@@ -220,6 +228,27 @@ services:
       ## TODO: add endpoint-resolver, http-endpoint-egress and grpc-endpoint-egress
       ## once healthchecks are added
       # - =${}
+
+
+
+  ########################################################
+  #### node-red sample skills
+  ##########################################
+  #node-red-1:
+  #  image: nodered/node-red:latest-minimal
+  #  ports:
+  #    - "1880:1880"
+  #  volumes:
+  #    - ./src/compose/volumes/node-red-1/data:/data
+  ##########################################
+  ## in case you want to deploy a second skill simultaneously e.g. to establish
+  ## a `conversation` between the two, you can uncomment the following section
+  # node-red-2:
+  #   image: nodered/node-red:latest-minimal
+  #   ports:
+  #     - "1881:1880"
+  #   volumes:
+  #     - ./src/compose/volumes/node-red-2/data:/data
 
 
 

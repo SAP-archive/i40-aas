@@ -1,0 +1,32 @@
+FROM mhart/alpine-node:10
+
+WORKDIR /cmd/i40-aas-node-red-simple-skill/
+
+# Home directory for Node-RED application source code.
+RUN mkdir -p /usr/src/node-red
+
+# User data directory, contains flows, config and nodes.
+RUN mkdir /data
+COPY cmd/i40-aas-node-red-simple-skill/node-red/flows.json /data
+WORKDIR /usr/src/node-red
+
+# Add node-red user so we aren't running as root.
+RUN adduser -h /usr/src/node-red -D -H node-red \
+    && chown -R node-red:node-red /data \
+    && chown -R node-red:node-red /usr/src/node-red
+
+#COPY ./customNodes ./customNodes
+USER node-red
+
+# package.json contains Node-RED NPM module and node dependencies
+COPY cmd/i40-aas-node-red-simple-skill/package.json /usr/src/node-red/
+RUN npm install
+
+# User configuration directory volume
+VOLUME ["/data"]
+EXPOSE 1880
+
+# Environment variable holding file path for flows configuration
+ENV FLOWS=flows.json
+
+CMD ["npm", "start", "--", "--userDir", "/data"]
