@@ -1,7 +1,14 @@
+## Ref.: https://help.github.com/en/github/creating-cloning-and-archiving-repositories/about-code-owners#codeowners-file-location
+
 ## these owners will be the default owners for everything in
 ## the repo. Unless a later match takes precedence, they will
 ## be requested for review when someone opens a pull request.
-*       @heldic @kasimrehman @etoster @akiskips
+* @heldic @kasimrehman @etoster @akiskips
+
+## Order is important; the last matching pattern takes the most
+## precedence. When someone opens a pull request that only
+## modifies a group of files, only those owner(s) and not the
+## global owner(s) will be requested for a review.
 
 ## documentation & orga
 /docs/ @Manu3756
@@ -13,23 +20,23 @@
 /helm/ @etoster
 /.travis.yml @etoster
 /.env @heldic @etoster
-/docker-compose* @heldic
+/docker-compose.*.yml @heldic
 /Makefile @heldic
 /src/compose/ @heldic
 /src/docker/ @heldic
 
 ## components
-/src/ts/cmd/adapter-registry @akiskips
-/src/ts/cmd/endpoint-registry @akiskips
-/src/ts/cmd/data-manager @akiskips
-/src/ts/cmd/https-endpoint-egress @akiskips
-/src/ts/cmd/https-endpoint-ingress @akiskips
-/src/ts/cmd/onboarding-skill @kasimrehman
-/src/ts/cmd/storage-adapter-mongodb @kasimrehman
-/src/go/cmd/endpoint-resolver @heldic
-/src/go/cmd/grpc-endpoint-egress @heldic
-/src/go/cmd/grpc-endpoint-ingress @heldic
-/src/go/pkg/interaction @heldic
-/src/go/pkg/logging @heldic
-/src/go/pkg/amqpclient @heldic
+/src/ts/cmd/adapter-registry/ @akiskips
+/src/ts/cmd/endpoint-registry/ @akiskips
+/src/ts/cmd/data-manager/ @akiskips
+/src/ts/cmd/https-endpoint-egress/ @akiskips
+/src/ts/cmd/https-endpoint-ingress/ @akiskips
+/src/ts/cmd/onboarding-skill/ @kasimrehman
+/src/ts/cmd/storage-adapter-mongodb/ @kasimrehman
+/src/go/cmd/endpoint-resolver/ @heldic
+/src/go/cmd/grpc-endpoint-egress/ @heldic
+/src/go/cmd/grpc-endpoint-ingress/ @heldic
+/src/go/pkg/interaction/ @heldic
+/src/go/pkg/logging/ @heldic
+/src/go/pkg/amqpclient/ @heldic
 /src/proto/ @heldic
