@@ -411,6 +411,62 @@
      "file": "/usr/src/node-red/node_modules/node-red-node-tail/28-tail.js"
     }
    }
+  },
+  "i40-aas-nodes": {
+   "name": "i40-aas-nodes",
+   "version": "1.0.0",
+   "local": false,
+   "nodes": {
+    "i40-aas-onboarding": {
+     "name": "i40-aas-onboarding",
+     "types": [
+      "i40-aas-onboarding"
+     ],
+     "enabled": true,
+     "local": false,
+     "module": "i40-aas-nodes",
+     "file": "/usr/src/node-red/node_modules/i40-aas-nodes/aas/i40-aas-onboarding.js"
+    },
+    "oi4-mam-to-aas-onboarding": {
+     "name": "oi4-mam-to-aas-onboarding",
+     "types": [
+      "oi4-mam-to-aas-onboarding"
+     ],
+     "enabled": true,
+     "local": false,
+     "module": "i40-aas-nodes",
+     "file": "/usr/src/node-red/node_modules/i40-aas-nodes/oi4/oi4-mam-to-aas-onboarding.js"
+    },
+    "oi4-mam-generator": {
+     "name": "oi4-mam-generator",
+     "types": [
+      "oi4-mam-generator"
+     ],
+     "enabled": true,
+     "local": false,
+     "module": "i40-aas-nodes",
+     "file": "/usr/src/node-red/node_modules/i40-aas-nodes/oi4/oi4-mam-generator.js"
+    }
+   }
+  },
+  "node-red-contrib-amqp-credentials": {
+   "name": "node-red-contrib-amqp-credentials",
+   "version": "0.0.1",
+   "local": false,
+   "nodes": {
+    "amqp": {
+     "name": "amqp",
+     "types": [
+      "amqp in",
+      "amqp out",
+      "amqp-server"
+     ],
+     "enabled": true,
+     "local": false,
+     "module": "node-red-contrib-amqp-credentials",
+     "file": "/usr/src/node-red/node_modules/node-red-contrib-amqp-credentials/lib/amqp.js"
+    }
+   }
   }
  },
  "_credentialSecret": "175f2831ad808ac3f634076ca060c423e4e638212698a19cf8199e606e7ede73",
