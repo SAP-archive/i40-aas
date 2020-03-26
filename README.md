@@ -27,14 +27,14 @@ __i40-aas__ welcomes [contributions](#contributing). Please read about [known is
 ## Main Features
 The AAS-Service provides an implementation of the reference  architecture as specified by [Plattform Industrie 4.0](https://www.zvei.org/themen/industrie-40/details-of-the-asset-administration-shell/). Main features include:
 
-- Standardised and secure communication interfaces and API to access Asset Administration Shells as the Digital representation of a physical asset (Digital Twin), that enable:
+- Standardized and secure communication interfaces and API to access Asset Administration Shells as the Digital representation of a physical asset (Digital Twin), that enable:
   - use a single AAS information model
   - unambiguously identification of an asset in the network
   - secure access to asset information from cloud and edge
   - integration of assets without a communication interface (i.e. passive), e.g. via bar codes or QR codes pointing to Asset Management Solutions
 
-- Facilate Interoperability between Applications managing assets:
-  - AAS-Service can act as a mediator between assets that use different languages/standards that are being used today and in the future.
+- Facilitate Interoperability:
+  - AAS-Service can act as a mediator between assets and applications that use different languages/standards that are being used today and in the future.
   - Enable interactions between administration shells based on semantic protocols [(VDI/VDE 2193-1)]()
   - Information in the admin shell can be exchanged between all
   partners in a value chain (e.g. system manufacturers, engineering partners, operators and service partners)
@@ -44,7 +44,7 @@ The AAS-Service provides an implementation of the reference  architecture as spe
   -  implement endpoint handling for communication
   -  unambiguously identify an Asset in network
 
-- Easy implemention of complex buisiness scenarios that support an asynchronous communication among AAS-enabled assets and applications (see [skills]()).
+- Easy implementation of complex business scenarios that support an asynchronous communication among AAS-enabled assets and applications (see [skills]()).
 
 - Enable integration of applications (eg. Asset Stores, Data Lake) through [application adapters]()
 
