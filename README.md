@@ -29,7 +29,6 @@ The AAS-Service provides an implementation of the reference  architecture as spe
 
 - Standardized and secure communication interfaces and API to access Asset Administration Shells as the Digital representation of a physical asset (Digital Twin), that enable:
   - use a single AAS information model
-  - unambiguously identification of an asset in the network
   - secure access to asset information from cloud and edge
   - integration of assets without a communication interface (i.e. passive), e.g. via bar codes or QR codes pointing to Asset Management Solutions
 
