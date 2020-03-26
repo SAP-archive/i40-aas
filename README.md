@@ -9,21 +9,48 @@ __i40-aas__ welcomes [contributions](#contributing). Please read about [known is
 
 
 ## Contents
-- [Description](#description)
-- [Prerequisites](#prerequisites)
-- [Instructions](#instructions)
-  - [Getting Started](#getting-started)
-  - [Cleanup](#cleanup)
-- [Configuration](#configuration)
-- [Known Issues](#known-issues)
-- [Get Support](#get-support)
-- [Contributing](#contributing)
-- [Upcoming Changes](#upcoming-changes)
-- [License](#license)
+- [i40-aas](#i40-aas)
+  - [Contents](#Contents)
+  - [Main Features](#Main-Features)
+  - [Context - Industry 4.0](#Context---Industry-40)
+  - [Prerequisites](#Prerequisites)
+  - [Instructions](#Instructions)
+    - [Getting Started](#Getting-Started)
+    - [Cleanup](#Cleanup)
+  - [Configuration](#Configuration)
+  - [Known Issues](#Known-Issues)
+  - [Get Support](#Get-Support)
+  - [Contributing](#Contributing)
+  - [Upcoming Changes](#Upcoming-Changes)
+  - [License](#License)
 
+## Main Features
+The AAS-Service provides an implementation of the reference  architecture as specified by [Plattform Industrie 4.0](https://www.zvei.org/themen/industrie-40/details-of-the-asset-administration-shell/). Main features include:
 
+- Standardised and secure communication interfaces and API to access Asset Administration Shells as the Digital representation of a physical asset (Digital Twin), that enable:
+  - use a single AAS information model
+  - unambiguously identification of an asset in the network
+  - secure access to asset information from cloud and edge
+  - integration of assets without a communication interface (i.e. passive), e.g. via bar codes or QR codes pointing to Asset Management Solutions
 
-## Description
+- Facilate Interoperability between Applications managing assets:
+  - AAS-Service can act as a mediator between assets that use different languages/standards that are being used today and in the future.
+  - Enable interactions between administration shells based on semantic protocols [(VDI/VDE 2193-1)]()
+  - Information in the admin shell can be exchanged between all
+  partners in a value chain (e.g. system manufacturers, engineering partners, operators and service partners)
+
+- Provide registry and discovery services that:
+  -  hold digital models of various aspects (submodels) and describes technical functionality exposed by asset
+  -  implement endpoint handling for communication
+  -  unambiguously identify an Asset in network
+
+- Easy implemention of complex buisiness scenarios that support an asynchronous communication among AAS-enabled assets and applications (see [skills]()).
+
+- Enable integration of applications (eg. Asset Stores, Data Lake) through [application adapters]()
+
+- [Deploy everywhere]() (cloud, on-premise, edge) with simple developer Experience with docker and K8s
+
+## Context - Industry 4.0
 This implementation is related to the [Plattform Industrie 4.0](https://www.plattform-i40.de/PI40/Navigation/EN/Home/home.html) activities being driven by working groups in Germany. Especially the working group [Reference Architectures, Standards, and Norms](https://www.plattform-i40.de/PI40/Navigation/EN/ThePlatform/PlatformWorkingGroups/Reference-Architectures-Standards-Norms/reference-architectures-standards-norms.html) has defined a reference architecture and a [specification](https://www.plattform-i40.de/PI40/Redaktion/EN/Downloads/Publikation/2018-details-of-the-asset-administration-shell.pdf?__blob=publicationFile&v=5) to address a challenging topic to hardware and software vendors: __interoperability__. Especially the integration of assets (devices, machines, software, documents, etc.) into business processes is always cumbersome, time-consuming, and usually costly. As shown in the following figure, this service is meant to simplify the integration processes, and has further potential to extend existing applications.
 
 
