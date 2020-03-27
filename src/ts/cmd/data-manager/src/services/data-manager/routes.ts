@@ -4,7 +4,6 @@ import {
   checkReqBodyEmpty,
   validateSubmodelsRequest
 } from '../../middleware/checks';
-import boom = require('@hapi/boom');
 import * as logger from 'winston';
 
 import { RoutingController } from './RoutingController';
@@ -33,11 +32,10 @@ export default [
           let result = await RoutingController.routeSubmodel(submodelsArray);
 
           //TODO: check if we need to send back the response of the adapter
-
           res.status(200).send(submodelsArray);
         } catch (err) {
-          logger.error(' Could not process the forwarding of submodel ' + err);
-          next(new Error(' Server Error '));
+          logger.error(' Could not process the forwarding of submodel(s) ' + err);
+          next(new Error(err));
         }
       }
     ]

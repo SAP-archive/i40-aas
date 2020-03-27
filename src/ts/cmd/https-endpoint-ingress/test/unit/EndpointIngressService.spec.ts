@@ -15,12 +15,9 @@ const app = require("../../src/server").app;
 var expect = chai.expect;
 const assert = chai.assert;
 
-let BROKER_URL = process.env.AMQP_URL;
-var BROKER_EXCHANGE = process.env.BROKER_EXCHANGE;
-var BROKER_USER = process.env.BROKER_USER;
-var BROKER_PASSWORD = process.env.BROKER_PASSWORD;
-var INGRESS_ADMIN_USER = process.env.INGRESS_ADMIN_USER;
-var INGRESS_ADMIN_PASS = process.env.INGRESS_ADMIN_PASS;
+
+var INGRESS_ADMIN_USER = process.env.CORE_INGRESS_HTTP_USER;
+var INGRESS_ADMIN_PASS = process.env.CORE_INGRESS_HTTP_PASSWORD;
 // or:
 //var assert = chai.assert;
 // or:
