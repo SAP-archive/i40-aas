@@ -69,10 +69,6 @@ typings/
 .next
 
 
-######################
-# exclude backup files of echo-skill
-./compose/volumes/echo-skill/*.json.backup
-
 #######################
 # exclude all initializer scripts
 .compose/volumes/initializer/*
