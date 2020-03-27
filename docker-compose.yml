@@ -177,7 +177,7 @@ services:
   i40-aas-echo-skill:
     image: sapi40/i40-aas-echo-skill
     ports:
-      - "1880:1880"
+      - "${SKILLS_ECHO_PORT}:${SKILLS_ECHO_PORT}"
     volumes:
       - ./src/compose/volumes/echo-skill/data:/data
     environment:
@@ -185,6 +185,7 @@ services:
       - CORE_EGRESS_EXCHANGE=${CORE_EGRESS_EXCHANGE}
       - CORE_INGRESS_EXCHANGE=${CORE_INGRESS_EXCHANGE}
       - CORE_EGRESS_ROUTINGKEY=${CORE_EGRESS_ROUTINGKEY}
+      - PORT=${SKILLS_ECHO_PORT}
   ##########################################
   i40-aas-onboarding-skill:
     image: sapi40/i40-aas-onboarding-skill
