@@ -25,29 +25,29 @@ __i40-aas__ welcomes [contributions](#contributing). Please read about [known is
   - [License](#License)
 
 ## Main Features
-The AAS-Service provides an implementation of the reference  architecture as specified by [Plattform Industrie 4.0](https://www.zvei.org/themen/industrie-40/details-of-the-asset-administration-shell/). Main features include:
+The AAS-Service provides an implementation of the RAMI 4.0 reference  architecture as specified by [Plattform Industrie 4.0](https://www.zvei.org/themen/industrie-40/details-of-the-asset-administration-shell/). Main features include:
 
-- Standardized and secure communication interfaces and API to access Asset Administration Shells as the Digital representation of a physical asset (Digital Twin), that enable:
-  - use a single AAS information model
+- Standardized and secure communication interfaces and API to access Asset Administration Shells of the digital representation of a physical asset (Digital Twin), that enable:
+  - use of a single AAS information model
   - secure access to asset information from cloud and edge
-  - integration of assets without a communication interface (i.e. passive), e.g. via bar codes or QR codes pointing to Asset Management Solutions
+  - integration of assets without a communication interface (i.e. passive), e.g. via barcodes or QR-codes pointing to asset       management solutions
 
 - Facilitate Interoperability:
-  - AAS-Service can act as a mediator between assets and applications that use different languages/standards that are being used today and in the future.
+  - The AAS-Service can act as a mediator between assets and applications that use different languages/standards
   - Enable interactions between administration shells based on semantic protocols [(VDI/VDE 2193-1)]()
-  - Information in the admin shell can be exchanged between all
-  partners in a value chain (e.g. system manufacturers, engineering partners, operators and service partners)
+  - Information in the AAS can be exchanged between all
+  partners in a value chain (e.g. system manufacturers, operators, engineering and service partners, system integrators)
 
 - Provide registry and discovery services that:
-  -  hold digital models of various aspects (submodels) and describes technical functionality exposed by asset
+  -  hold digital models of various aspects [submodels]() that describe the technical functionality exposed by the asset
   -  implement endpoint handling for communication
-  -  unambiguously identify an Asset in network
+  -  unambiguously identify an asset in network
 
 - Easy implementation of complex business scenarios that support an asynchronous communication among AAS-enabled assets and applications (see [skills]()).
 
-- Enable integration of applications (eg. Asset Stores, Data Lake) through [application adapters]()
+- Enable integration of applications (eg. Asset stores, datalake) through [application adapters]()
 
-- [Deploy everywhere]() (cloud, on-premise, edge) with simple developer Experience with docker and K8s
+- [Deploy everywhere]() (cloud, on-premise, edge) providing a simple developer experience with docker and K8s
 
 ## Context - Industry 4.0
 This implementation is related to the [Plattform Industrie 4.0](https://www.plattform-i40.de/PI40/Navigation/EN/Home/home.html) activities being driven by working groups in Germany. Especially the working group [Reference Architectures, Standards, and Norms](https://www.plattform-i40.de/PI40/Navigation/EN/ThePlatform/PlatformWorkingGroups/Reference-Architectures-Standards-Norms/reference-architectures-standards-norms.html) has defined a reference architecture and a [specification](https://www.plattform-i40.de/PI40/Redaktion/EN/Downloads/Publikation/2018-details-of-the-asset-administration-shell.pdf?__blob=publicationFile&v=5) to address a challenging topic to hardware and software vendors: __interoperability__. Especially the integration of assets (devices, machines, software, documents, etc.) into business processes is always cumbersome, time-consuming, and usually costly. As shown in the following figure, this service is meant to simplify the integration processes, and has further potential to extend existing applications.
