@@ -9,21 +9,47 @@ __i40-aas__ welcomes [contributions](#contributing). Please read about [known is
 
 
 ## Contents
-- [Description](#description)
-- [Prerequisites](#prerequisites)
-- [Instructions](#instructions)
-  - [Getting Started](#getting-started)
-  - [Cleanup](#cleanup)
-- [Configuration](#configuration)
-- [Known Issues](#known-issues)
-- [Get Support](#get-support)
-- [Contributing](#contributing)
-- [Upcoming Changes](#upcoming-changes)
-- [License](#license)
+- [i40-aas](#i40-aas)
+  - [Contents](#Contents)
+  - [Main Features](#Main-Features)
+  - [Context - Industry 4.0](#Context---Industry-40)
+  - [Prerequisites](#Prerequisites)
+  - [Instructions](#Instructions)
+    - [Getting Started](#Getting-Started)
+    - [Cleanup](#Cleanup)
+  - [Configuration](#Configuration)
+  - [Known Issues](#Known-Issues)
+  - [Get Support](#Get-Support)
+  - [Contributing](#Contributing)
+  - [Upcoming Changes](#Upcoming-Changes)
+  - [License](#License)
 
+## Main Features
+The AAS-Service provides an implementation of the RAMI 4.0 reference  architecture as specified by [Plattform Industrie 4.0](https://www.zvei.org/themen/industrie-40/details-of-the-asset-administration-shell/). Main features include:
 
+- Standardized and secure communication interfaces and API to access Asset Administration Shells of the digital representation of a physical asset (Digital Twin), that enable:
+  - use of a single AAS information model
+  - secure access to asset information from cloud and edge
+  - integration of assets without a communication interface (i.e. passive), e.g. via barcodes or QR-codes pointing to asset       management solutions
 
-## Description
+- Facilitate Interoperability:
+  - The AAS-Service can act as a mediator between assets and applications that use different languages/standards
+  - Enable interactions between administration shells based on semantic protocols [(VDI/VDE 2193-1)]()
+  - Information in the AAS can be exchanged between all
+  partners in a value chain (e.g. system manufacturers, operators, engineering and service partners, system integrators)
+
+- Provide registry and discovery services that:
+  -  hold digital models of various aspects [submodels]() that describe the technical functionality exposed by the asset
+  -  implement endpoint handling for communication
+  -  unambiguously identify an asset in network
+
+- Easy implementation of complex business scenarios that support an asynchronous communication among AAS-enabled assets and applications (see [skills]()).
+
+- Enable integration of applications (eg. Asset stores, datalake) through [application adapters]()
+
+- [Deploy everywhere]() (cloud, on-premise, edge) providing a simple developer experience with docker and K8s
+
+## Context - Industry 4.0
 This implementation is related to the [Plattform Industrie 4.0](https://www.plattform-i40.de/PI40/Navigation/EN/Home/home.html) activities being driven by working groups in Germany. Especially the working group [Reference Architectures, Standards, and Norms](https://www.plattform-i40.de/PI40/Navigation/EN/ThePlatform/PlatformWorkingGroups/Reference-Architectures-Standards-Norms/reference-architectures-standards-norms.html) has defined a reference architecture and a [specification](https://www.plattform-i40.de/PI40/Redaktion/EN/Downloads/Publikation/2018-details-of-the-asset-administration-shell.pdf?__blob=publicationFile&v=5) to address a challenging topic to hardware and software vendors: __interoperability__. Especially the integration of assets (devices, machines, software, documents, etc.) into business processes is always cumbersome, time-consuming, and usually costly. As shown in the following figure, this service is meant to simplify the integration processes, and has further potential to extend existing applications.
 
 
@@ -61,20 +87,18 @@ Optionally, you can download and install [Postman](https://www.getpostman.com) t
 ### Getting Started
 Service interactions can be deployed, tested and developed locally using Docker Compose as described below. For further instructions & information about __i40-aas__ check [the documentation](docs/README.md)
 
-Run __i40-aas__ locally using any of these options:
-- Pull and run prebuilt images from our [Docker Hub repository](https://hub.docker.com/orgs/sapi40/repositories). Pulling can last several minutes depending on your internet connection.
+Setup locally:
 ```bash
-## 'up' (start) the composed setup
+## Option 1
+## Use images from Docker Hub (https://hub.docker.com/orgs/sapi40/repositories)
 $ make install
-```
 
-- Build the __i40-aas__ images from source first, then pull external dependencies and continue to run everything. Builds are executed in parallel, thus build logs can appear cluttered. Building all __i40-aas__ images can last several minutes.
-```bash
-## build i40-aas images
-$ make
-
-## 'up' (start) the composed setup
-$ make install
+## Option 2
+## Build & use images from this repository via Compose file extension
+## ref.:
+##  - https://docs.docker.com/compose/extends/
+##  - https://docs.docker.com/compose/compose-file/#image
+$ make && make dev
 ```
 
 ### Cleanup
