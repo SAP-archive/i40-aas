@@ -2,7 +2,7 @@ import express from "express";
 import { applyMiddleware, applyRoutes } from "./utils";
 import middleware from "./middleware";
 import errorHandlers from "./middleware/errorHandlers";
-import { AmqpClient } from "./services/aas-router/messaging/AMQPClient";
+import { AmqpClient } from 'AMQP-Client/lib/AMQPClient';
 
 import { initiateBroker } from "./services/aas-router/RoutingController";
 
@@ -10,6 +10,7 @@ import { initiateBroker } from "./services/aas-router/RoutingController";
 import { logger } from "./utils/log";
 import healthRoute from "./services/health/routes";
 import routes from "./services";
+import { uuid } from 'uuidv4';
 
 const dotenv = require("dotenv");
 dotenv.config();
@@ -19,6 +20,10 @@ let CORE_BROKER_PORT = process.env.CORE_BROKER_PORT;
 var CORE_INGRESS_EXCHANGE = process.env.CORE_INGRESS_EXCHANGE;
 var CORE_INGRESS_USER = process.env.CORE_INGRESS_USER;
 var CORE_INGRESS_PASSWORD = process.env.CORE_INGRESS_PASSWORD;
+
+// The queue is generated based on the binding key and is unique for the client
+
+let BROKER_QUEUE = CORE_INGRESS_EXCHANGE +"/"+ uuid(); //TODO: here also from env variable??
 
 //avoid crashing the process when an unhandled Exception occurs
 process.on("uncaughtException", e => {
@@ -50,14 +55,16 @@ if (
   CORE_BROKER_PORT &&
   CORE_INGRESS_EXCHANGE &&
   CORE_INGRESS_USER &&
-  CORE_INGRESS_PASSWORD
+  CORE_INGRESS_PASSWORD &&
+  BROKER_QUEUE
 ) {
   let brokerClient = new AmqpClient(
     CORE_BROKER_HOST,
     CORE_BROKER_PORT,
     CORE_INGRESS_EXCHANGE,
     CORE_INGRESS_USER,
-    CORE_INGRESS_PASSWORD
+    CORE_INGRESS_PASSWORD,
+    BROKER_QUEUE
   );
 
   initiateBroker(brokerClient);

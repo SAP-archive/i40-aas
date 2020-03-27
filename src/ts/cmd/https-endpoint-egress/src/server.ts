@@ -1,4 +1,4 @@
-import { AmqpClient } from "./messaging/AMQPClient";
+import { AmqpClient } from 'AMQP-Client/lib/AMQPClient';
 import { BrokerMessageInterpreter } from "./messaging/BrokerMessageInterpreter";
 import { logger } from "./utils/log";
 
@@ -45,7 +45,7 @@ if (
   );
 
   //start listening for messages at the broker
-  messageInterpreter.start([CORE_EGRESS_HTTP_BROKER_BINDINGKEY as string]);
+  messageInterpreter.start(CORE_EGRESS_HTTP_BROKER_BINDINGKEY as string);
 } else {
   logger.error("One or more env variable not set, service not started");
 }

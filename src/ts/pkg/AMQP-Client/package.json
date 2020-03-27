@@ -1,0 +1,34 @@
+{
+  "name": "AMQP-Client",
+  "version": "1.0.4",
+  "description": "An AMQP Client with reconnect capabilities",
+  "scripts": {
+    "test": "mocha --require ts-node/register --exit test/**/*.spec.ts",
+    "build": "tsc",
+    "test-client": "tsc-watch --onSuccess \"node ./lib/examples/test-client.js\"",
+    "test-client-mqtt-to-amqp": "tsc-watch --onSuccess \"node ./lib/examples/test-client-mqtt-to-amqp.js\"",
+    "test-client-amqp-to-mqtt": "tsc-watch --onSuccess \"node ./lib/examples/test-client-amqp-to-mqtt.js\""
+  },
+  "keywords": [],
+  "author": "Orthodoxos Kipouridis, Kasim Rehman",
+  "license": "MIT",
+  "dependencies": {
+    "@types/mocha": "^7.0.2",
+    "@types/sinon": "^7.5.2",
+    "amqplib": "^0.5.3",
+    "async-mqtt": "^2.4.2",
+    "mqtt": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/amqplib": "^0.5.13",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "chai-http": "^4.3.0",
+    "mocha": "^6.1.4",
+    "nyc": "^14.1.1",
+    "sinon": "^7.3.2",
+    "ts-node": "^8.3.0",
+    "tsc-watch": "^2.2.1",
+    "typescript": "^3.8.3"
+  }
+}

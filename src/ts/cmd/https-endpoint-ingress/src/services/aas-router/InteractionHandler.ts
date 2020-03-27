@@ -1,6 +1,6 @@
 import request from "request-promise";
 import * as logger from "winston";
-import { AmqpClient } from "./messaging/AMQPClient";
+import { AmqpClient } from 'AMQP-Client/lib/AMQPClient';
 
 
 export const publishMessageToBrokerTopic = async (brokerClient:AmqpClient,

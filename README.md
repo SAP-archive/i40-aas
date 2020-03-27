@@ -61,18 +61,20 @@ Optionally, you can download and install [Postman](https://www.getpostman.com) t
 ### Getting Started
 Service interactions can be deployed, tested and developed locally using Docker Compose as described below. For further instructions & information about __i40-aas__ check [the documentation](docs/README.md)
 
-Setup locally:
+Run __i40-aas__ locally using any of these options:
+- Pull and run prebuilt images from our [Docker Hub repository](https://hub.docker.com/orgs/sapi40/repositories). Pulling can last several minutes depending on your internet connection.
 ```bash
-## Option 1
-## Use images from Docker Hub (https://hub.docker.com/orgs/sapi40/repositories)
+## 'up' (start) the composed setup
 $ make install
+```
 
-## Option 2
-## Build & use images from this repository via Compose file extension
-## ref.:
-##  - https://docs.docker.com/compose/extends/
-##  - https://docs.docker.com/compose/compose-file/#image
-$ make && make dev
+- Build the __i40-aas__ images from source first, then pull external dependencies and continue to run everything. Builds are executed in parallel, thus build logs can appear cluttered. Building all __i40-aas__ images can last several minutes.
+```bash
+## build i40-aas images
+$ make
+
+## 'up' (start) the composed setup
+$ make install
 ```
 
 ### Cleanup
