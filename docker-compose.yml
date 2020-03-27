@@ -234,28 +234,6 @@ services:
       # - =${}
 
 
-
-  ########################################################
-  #### node-red sample skills
-  ##########################################
-  #node-red-1:
-  #  image: nodered/node-red:latest-minimal
-  #  ports:
-  #    - "1880:1880"
-  #  volumes:
-  #    - ./src/compose/volumes/node-red-1/data:/data
-  ##########################################
-  ## in case you want to deploy a second skill simultaneously e.g. to establish
-  ## a `conversation` between the two, you can uncomment the following section
-  # node-red-2:
-  #   image: nodered/node-red:latest-minimal
-  #   ports:
-  #     - "1881:1880"
-  #   volumes:
-  #     - ./src/compose/volumes/node-red-2/data:/data
-
-
-
   ########################################################
   #### third party containers
   ##########################################
