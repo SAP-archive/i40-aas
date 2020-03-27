@@ -361,16 +361,12 @@
   },
   "node-red-contrib-amqp": {
    "name": "node-red-contrib-amqp",
-   "version": "1.0.1",
+   "version": "1.0.2",
    "local": false,
    "nodes": {
     "amqp": {
      "name": "amqp",
-     "types": [
-      "amqp in",
-      "amqp out",
-      "amqp-server"
-     ],
+     "types": [],
      "enabled": true,
      "local": false,
      "module": "node-red-contrib-amqp",

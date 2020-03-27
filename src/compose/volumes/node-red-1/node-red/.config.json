@@ -361,7 +361,7 @@
   },
   "node-red-contrib-amqp": {
    "name": "node-red-contrib-amqp",
-   "version": "1.0.1",
+   "version": "1.0.2",
    "local": false,
    "nodes": {
     "amqp": {
@@ -446,25 +446,6 @@
      "local": false,
      "module": "i40-aas-nodes",
      "file": "/usr/src/node-red/node_modules/i40-aas-nodes/oi4/oi4-mam-generator.js"
-    }
-   }
-  },
-  "node-red-contrib-amqp-credentials": {
-   "name": "node-red-contrib-amqp-credentials",
-   "version": "0.0.1",
-   "local": false,
-   "nodes": {
-    "amqp": {
-     "name": "amqp",
-     "types": [
-      "amqp in",
-      "amqp out",
-      "amqp-server"
-     ],
-     "enabled": true,
-     "local": false,
-     "module": "node-red-contrib-amqp-credentials",
-     "file": "/usr/src/node-red/node_modules/node-red-contrib-amqp-credentials/lib/amqp.js"
     }
    }
   }

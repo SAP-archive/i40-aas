@@ -19,6 +19,8 @@ USER node-red
 COPY cmd/i40-aas-node-red-simple-skill/package.json /usr/src/node-red/
 RUN npm install
 
+ADD cmd/i40-aas-node-red-simple-skill/lib /usr/src/node-red/node_modules/node-red-contrib-amqp/lib
+
 # User configuration directory volume
 VOLUME ["/data"]
 EXPOSE 1880
