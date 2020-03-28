@@ -1,26 +1,56 @@
 [
-  {
-    "aasId": {
-        "id": "SAP_CentralAssetRepository",
-        "idType": "IRI"
-    },
-    "endpoints": [
-        {
-            "url": "i40-aas-grpc-endpoint-ingress:8384",
-            "target": "cloud",
-            "protocol": "grpc",
-            "protocolVersion": "1.1"
+    {
+        "aasId": {
+            "id": "https://i40-test-aas-server.cfapps.eu10.hana.ondemand.com/aas",
+            "idType": "IRI"
         },
-        {
-          "url": "http://admin:admin@i40-aas-https-endpoint-ingress:2000/interaction",
-          "target": "cloud",
-          "protocol": "http",
-          "protocolVersion": "1.1"
-      }
-    ],
-    "assetId": {
-        "id": "SAP_CentralAssetRepository",
-        "idType": "IRI"
+        "endpoints": [
+            {
+                "url": "https://admin:admin123@i40-test-aas-server.cfapps.eu10.hana.ondemand.com/ingress",
+                "target": "cloud",
+                "protocol": "https",
+                "protocolVersion": "1.1"
+            }
+        ],
+        "assetId": {
+            "id": "https://i40-test-aas-server.cfapps.eu10.hana.ondemand.com",
+            "idType": "IRI"
+        }
+    },
+    {
+        "aasId": {
+            "id": "https://i40-aas-approval-app.cfapps.eu10.hana.ondemand.com/aas",
+            "idType": "IRI"
+        },
+        "endpoints": [
+            {
+                "url": "https://admin:admin123@i40-aas-approval-app.cfapps.eu10.hana.ondemand.com/register",
+                "target": "cloud",
+                "protocol": "https",
+                "protocolVersion": "1.1"
+            }
+        ],
+        "assetId": {
+            "id": "https://i40-aas-approval-app.cfapps.eu10.hana.ondemand.com",
+            "idType": "IRI"
+        }
+    },
+    {
+        "aasId": {
+            "id": "http://i40-aas-service.westeurope.cloudapp.azure.com/aas",
+            "idType": "IRI"
+        },
+        "endpoints": [
+            {
+                "url": "http://i40-aas-service.westeurope.cloudapp.azure.com/https-endpoint/interaction",
+                "target": "cloud",
+                "protocol": "https",
+                "protocolVersion": "1.1"
+            }
+        ],
+        "assetId": {
+            "id": "http://i40-aas-service.westeurope.cloudapp.azure.com",
+            "idType": "IRI"
+        }
     }
-  }
 ]
