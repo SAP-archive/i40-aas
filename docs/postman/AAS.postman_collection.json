@@ -559,4 +559,6 @@
 			"value": "http://localhost:4500",
 			"type": "string"
 		}
-	]
+	],
+	"protocolProfileBehavior": {}
+}
