@@ -1,0 +1,104 @@
+<script type="text/javascript">
+  RED.nodes.registerType('oi4-mam-generator', {
+    category: 'i40-aas',
+    color: '#a6bbcf',
+    defaults: {
+      datasetclassID: { value: '' },
+      publisherID: { value: '' },
+      datasetwriterID: { value: '' },
+      manufacturer: { value: '' },
+      manufactureruri: { value: '' },
+      model: { value: '' },
+      serialnumber: { value: '' },
+      hardwarerevision: { value: '' },
+      deviceclass: { value: '' },
+      devicemanual: { value: '' },
+      productinstanceuri: { value: '' },
+      productcode: { value: '' },
+      devicerevision: { value: '' },
+      revisioncounter: { value: 0 },
+      softwarerevision: { value: '' },
+      description: { value: '' }
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: 'file.png',
+    label: function() {
+      return this.name || 'oi4-mam-generator';
+    }
+  });
+</script>
+
+<script type="text/html" data-template-name="oi4-mam-generator">
+  <div class="form-row">
+    <h3>Message</h3>
+      <label for="node-input-datasetclassID"><i class="icon-tag"></i> datasetclassID</label>
+      <input type="text" id="node-input-datasetclassID" placeholder="datasetclassID">
+      <br>
+      <label for="node-input-publisherID"><i class="icon-tag"></i> publisherID</label>
+      <input type="text" id="node-input-publisherID" placeholder="http://sap.com/myPublisherContainerID/123">
+      <br>
+      <label for="node-input-datasetwriterID"><i class="icon-tag"></i> datasetwriterID</label>
+      <input type="text" id="node-input-datasetwriterID" placeholder="http://sap.com/myDeviceId/123">
+      <br>
+      <h3>Properties</h3>
+      <label for="node-input-manufacturer"><i class="icon-tag"></i> manufacturer</label>
+      <input type="text" id="node-input-manufacturer" placeholder="SAP SE">
+      <br>
+      <label for="node-input-manufactureruri"><i class="icon-tag"></i> manufactureruri</label>
+      <input type="text" id="node-input-manufactureruri" placeholder="sap.com">
+      <br>
+      <label for="node-input-model"><i class="icon-tag"></i> model</label>
+      <input type="text" id="node-input-model" placeholder="model">
+      <br>
+      <label for="node-input-serialnumber"><i class="icon-tag"></i> serialnumber</label>
+      <input type="text" id="node-input-serialnumber" placeholder="serialnumber">
+      <br>
+      <label for="node-input-hardwarerevision"><i class="icon-tag"></i> hardwarerevision</label>
+      <input type="text" id="node-input-hardwarerevision" placeholder="hardwarerevision">
+      <br>
+      <label for="node-input-deviceclass"><i class="icon-tag"></i> deviceclass</label>
+      <input type="text" id="node-input-deviceclass" placeholder="deviceclass">      <br>
+      <label for="node-input-devicemanual"><i class="icon-tag"></i> devicemanual</label>
+      <input type="text" id="node-input-devicemanual" placeholder="devicemanual">      <br>
+      <label for="node-input-productinstanceuri"><i class="icon-tag"></i> productinstanceuri</label>
+      <input type="text" id="node-input-productinstanceuri" placeholder="productinstanceuri">      <br>
+      <label for="node-input-productcode"><i class="icon-tag"></i> productcode</label>
+      <input type="text" id="node-input-productcode" placeholder="productcode">      <br>
+      <label for="node-input-devicerevision"><i class="icon-tag"></i> devicerevision</label>
+      <input type="text" id="node-input-devicerevision" placeholder="devicerevision">      <br>
+      <label for="node-input-revisioncounter"><i class="icon-tag"></i> revisioncounter</label>
+      <input type="number" id="node-input-revisioncounter" placeholder="0"><br>
+      <label for="node-input-softwarerevision"><i class="icon-tag"></i> softwarerevision</label>
+      <input type="text" id="node-input-softwarerevision" placeholder="softwarerevision">
+      <label for="node-input-description"><i class="icon-tag"></i> description</label>
+      <input type="text" id="node-input-description" placeholder="description">
+
+
+  </div>
+</script>
+
+<script type="text/html" data-help-name="oi4-mam-generator">
+   <p>Generate OI4 MAM Messages</p>
+   <p> If there is a key in the input JSON the value from the input JSON is used. Otherwise the default from the configuration is used. </p>
+   <p >input JSON
+   <br>
+   {
+     "DataSetClassId":"",
+     "PublisherId":"",
+     "DataSetWriterId":"",
+     "Manufacturer":"",
+     "ManufacturerUri":"",
+     "Model":"",
+     "SerialNumber":"",
+     "HardwareRevision":"",
+     "DeviceClass":"",
+     "DeviceManual":"",
+     "ProductInstanceUri":"",
+     "ProductCode":"",
+     "DeviceRevision":"",
+     "RevisionCounter":"",
+     "SoftwareRevision":""
+  }
+   </p>
+</script>

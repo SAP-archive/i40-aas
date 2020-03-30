@@ -1,0 +1,21 @@
+{
+  "name": "i40-aas-nodes",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "node-red": {
+    "nodes": {
+      "i40-aas-onboarding": "aas/i40-aas-onboarding.js",
+      "oi4-mam-to-aas-onboarding": "oi4/oi4-mam-to-aas-onboarding.js",
+      "oi4-mam-generator": "oi4/oi4-mam-generator.js"
+    }
+  },
+  "dependencies": {
+    "i40-aas-objects": "^0.2.6"
+  }
+}
