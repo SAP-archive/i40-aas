@@ -1,44 +1,7 @@
 version: '3.7'
 services:
   ########################################################
-  #### i40-aas containers
-  ##########################################
-  i40-aas-onboarding-skill:
-    image: sapi40/i40-aas-onboarding-skill
-    environment:
-      ## logging
-      - LOGGING_LOGLEVEL=${LOGGING_LOGLEVEL}
-      - LOGGING_LOGOUTPUT=${LOGGING_LOGOUTPUT}
-      ## mongodb
-      - SKILLS_ONBOARDING_DATABASE_HOST=mongodb
-      - SKILLS_ONBOARDING_DATABASE_PORT=${SKILLS_ONBOARDING_DATABASE_PORT}
-      - SKILLS_ONBOARDING_DATABASE_USER=${SKILLS_ONBOARDING_DATABASE_USER}
-      - SKILLS_ONBOARDING_DATABASE_PASSWORD=${SKILLS_ONBOARDING_DATABASE_PASSWORD}
-      - SKILLS_ONBOARDING_DATABASE_NAME=${SKILLS_ONBOARDING_DATABASE_NAME}
-      ## broker
-      - CORE_BROKER_HOST=rabbitmq
-      - CORE_BROKER_PORT=${CORE_BROKER_PORT}
-      - CORE_EGRESS_USER=${CORE_EGRESS_USER}
-      - CORE_EGRESS_PASSWORD=${CORE_EGRESS_PASSWORD}
-      - CORE_EGRESS_EXCHANGE=${CORE_EGRESS_EXCHANGE}
-      - CORE_INGRESS_EXCHANGE=${CORE_INGRESS_EXCHANGE}
-      - CORE_INGRESS_USER=${CORE_INGRESS_USER}
-      - CORE_INGRESS_PASSWORD=${CORE_INGRESS_PASSWORD}
-      - CORE_ENDPOINT_RESOLVER_QUEUE=egress.generic
-      ## onboarding-skill
-      - SKILLS_ONBOARDING_APPROVAL_ENABLED=${SKILLS_ONBOARDING_APPROVAL_ENABLED}
-      - SKILLS_ONBOARDING_APPROVAL_TYPE=${SKILLS_ONBOARDING_APPROVAL_TYPE}
-      - SKILLS_ONBOARDING_APPROVAL_STATES_COLLECTION=${SKILLS_ONBOARDING_APPROVAL_STATES_COLLECTION}
-      - SKILLS_ONBOARDING_APPROVAL_ROOT_TOPIC=${SKILLS_ONBOARDING_APPROVAL_ROOT_TOPIC}
-      - SKILLS_ONBOARDING_APPROVAL_ROLE=${SKILLS_ONBOARDING_APPROVAL_ROLE}
-      - SKILLS_ONBOARDING_APPROVAL_URI=${SKILLS_ONBOARDING_APPROVAL_URI}
-      ## data-manager
-      - CORE_DATA_MANAGER_PROTOCOL=http
-      - CORE_DATA_MANAGER_HOST=i40-aas-data-manager
-      - CORE_DATA_MANAGER_PORT=${CORE_DATA_MANAGER_PORT}
-      - CORE_DATA_MANAGER_SUBMODELS_ROUTE=${CORE_DATA_MANAGER_SUBMODELS_ROUTE}
-      - CORE_DATA_MANAGER_USER=${CORE_DATA_MANAGER_USER}
-      - CORE_DATA_MANAGER_PASSWORD=${CORE_DATA_MANAGER_PASSWORD}
+  #### i40-aas core containers
   ##########################################
   i40-aas-https-endpoint-ingress:
     image: sapi40/i40-aas-https-endpoint-ingress
@@ -119,7 +82,7 @@ services:
       - CORE_EGRESS_PASSWORD=${CORE_EGRESS_PASSWORD}
       - CORE_EGRESS_EXCHANGE=${CORE_EGRESS_EXCHANGE}
       - CORE_ENDPOINT_RESOLVER_CTAG=${CORE_ENDPOINT_RESOLVER_CTAG}
-      - CORE_ENDPOINT_RESOLVER_QUEUE=${CORE_ENDPOINT_RESOLVER_QUEUE}
+      - CORE_EGRESS_ROUTINGKEY=${CORE_EGRESS_ROUTINGKEY}
       ## endpoint registry
       - CORE_REGISTRIES_ENDPOINTS_HOST=i40-aas-endpoint-registry
       - CORE_REGISTRIES_ENDPOINTS_PORT=${CORE_REGISTRIES_ENDPOINTS_PORT}
@@ -176,23 +139,6 @@ services:
       - CORE_REGISTRIES_ADAPTERS_USER=${CORE_REGISTRIES_ADAPTERS_USER}
       - CORE_REGISTRIES_ADAPTERS_PASSWORD=${CORE_REGISTRIES_ADAPTERS_PASSWORD}
   ##########################################
-  i40-aas-storage-adapter-mongodb:
-    image: sapi40/i40-aas-storage-adapter-mongodb
-    ports:
-      - "${APPLICATION_ADAPTERS_MONGODB_PORT}:${APPLICATION_ADAPTERS_MONGODB_PORT}"
-    environment:
-      ## logging
-      - LOGGING_LOGLEVEL=${LOGGING_LOGLEVEL}
-      - LOGGING_LOGOUTPUT=${LOGGING_LOGOUTPUT}
-      ## mongodb
-      - MONGODB_HOST=mongodb
-      - MONGODB_PORT=${SKILLS_ONBOARDING_DATABASE_PORT}
-      - MONGO_INITDB_ROOT_USERNAME=${SKILLS_ONBOARDING_DATABASE_USER}
-      - MONGO_INITDB_ROOT_PASSWORD=${SKILLS_ONBOARDING_DATABASE_PASSWORD}
-      - MONGO_INITDB_DATABASE=${SKILLS_ONBOARDING_DATABASE_NAME}
-      ## storage-adapter-mongodb
-      - APPLICATION_ADAPTERS_MONGODB_SUBMODELS_COLLECTION=${APPLICATION_ADAPTERS_MONGODB_SUBMODELS_COLLECTION}
-  ##########################################
   i40-aas-initializer:
     image: sapi40/i40-aas-initializer
     volumes:
@@ -221,27 +167,80 @@ services:
       ## TODO: add endpoint-resolver, http-endpoint-egress and grpc-endpoint-egress
       ## once healthchecks are added
       # - =${}
+  ##########################################
 
 
 
   ########################################################
-  #### node-red sample skills
+  #### i40-aas skills & adapters
   ##########################################
-  node-red-1:
-    image: nodered/node-red:latest-minimal
+  i40-aas-echo-skill:
+    image: sapi40/i40-aas-echo-skill
     ports:
-      - "1880:1880"
+      - "${SKILLS_ECHO_PORT}:${SKILLS_ECHO_PORT}"
     volumes:
-      - ./src/compose/volumes/node-red-1/data:/data
+      - ./src/compose/volumes/echo-skill/data:/data
+    environment:
+      - CORE_BROKER_HOST=rabbitmq
+      - CORE_EGRESS_EXCHANGE=${CORE_EGRESS_EXCHANGE}
+      - CORE_INGRESS_EXCHANGE=${CORE_INGRESS_EXCHANGE}
+      - CORE_EGRESS_ROUTINGKEY=${CORE_EGRESS_ROUTINGKEY}
+      - PORT=${SKILLS_ECHO_PORT}
   ##########################################
-  ## in case you want to deploy a second skill simultaneously e.g. to establish
-  ## a `conversation` between the two, you can uncomment the following section
-  # node-red-2:
-  #   image: nodered/node-red:latest-minimal
-  #   ports:
-  #     - "1881:1880"
-  #   volumes:
-  #     - ./src/compose/volumes/node-red-2/data:/data
+  i40-aas-onboarding-skill:
+    image: sapi40/i40-aas-onboarding-skill
+    environment:
+      ## logging
+      - LOGGING_LOGLEVEL=${LOGGING_LOGLEVEL}
+      - LOGGING_LOGOUTPUT=${LOGGING_LOGOUTPUT}
+      ## mongodb
+      - SKILLS_ONBOARDING_DATABASE_HOST=mongodb
+      - SKILLS_ONBOARDING_DATABASE_PORT=${SKILLS_ONBOARDING_DATABASE_PORT}
+      - SKILLS_ONBOARDING_DATABASE_USER=${SKILLS_ONBOARDING_DATABASE_USER}
+      - SKILLS_ONBOARDING_DATABASE_PASSWORD=${SKILLS_ONBOARDING_DATABASE_PASSWORD}
+      - SKILLS_ONBOARDING_DATABASE_NAME=${SKILLS_ONBOARDING_DATABASE_NAME}
+      ## rabbitmq
+      - CORE_BROKER_HOST=rabbitmq
+      - CORE_BROKER_PORT=${CORE_BROKER_PORT}
+      - CORE_EGRESS_USER=${CORE_EGRESS_USER}
+      - CORE_EGRESS_PASSWORD=${CORE_EGRESS_PASSWORD}
+      - CORE_EGRESS_EXCHANGE=${CORE_EGRESS_EXCHANGE}
+      - CORE_INGRESS_EXCHANGE=${CORE_INGRESS_EXCHANGE}
+      - CORE_INGRESS_USER=${CORE_INGRESS_USER}
+      - CORE_INGRESS_PASSWORD=${CORE_INGRESS_PASSWORD}
+      - CORE_EGRESS_ROUTINGKEY=${CORE_EGRESS_ROUTINGKEY}
+      ## onboarding-skill
+      - SKILLS_ONBOARDING_APPROVAL_ENABLED=${SKILLS_ONBOARDING_APPROVAL_ENABLED}
+      - SKILLS_ONBOARDING_APPROVAL_TYPE=${SKILLS_ONBOARDING_APPROVAL_TYPE}
+      - SKILLS_ONBOARDING_APPROVAL_STATES_COLLECTION=${SKILLS_ONBOARDING_APPROVAL_STATES_COLLECTION}
+      - SKILLS_ONBOARDING_APPROVAL_ROOT_TOPIC=${SKILLS_ONBOARDING_APPROVAL_ROOT_TOPIC}
+      - SKILLS_ONBOARDING_APPROVAL_ROLE=${SKILLS_ONBOARDING_APPROVAL_ROLE}
+      - SKILLS_ONBOARDING_APPROVAL_URI=${SKILLS_ONBOARDING_APPROVAL_URI}
+      ## data-manager
+      - CORE_DATA_MANAGER_PROTOCOL=http
+      - CORE_DATA_MANAGER_HOST=i40-aas-data-manager
+      - CORE_DATA_MANAGER_PORT=${CORE_DATA_MANAGER_PORT}
+      - CORE_DATA_MANAGER_SUBMODELS_ROUTE=${CORE_DATA_MANAGER_SUBMODELS_ROUTE}
+      - CORE_DATA_MANAGER_USER=${CORE_DATA_MANAGER_USER}
+      - CORE_DATA_MANAGER_PASSWORD=${CORE_DATA_MANAGER_PASSWORD}
+  ##########################################
+  i40-aas-storage-adapter-mongodb:
+    image: sapi40/i40-aas-storage-adapter-mongodb
+    ports:
+      - "${APPLICATION_ADAPTERS_MONGODB_PORT}:${APPLICATION_ADAPTERS_MONGODB_PORT}"
+    environment:
+      ## logging
+      - LOGGING_LOGLEVEL=${LOGGING_LOGLEVEL}
+      - LOGGING_LOGOUTPUT=${LOGGING_LOGOUTPUT}
+      ## mongodb
+      - MONGODB_HOST=mongodb
+      - MONGODB_PORT=${SKILLS_ONBOARDING_DATABASE_PORT}
+      - MONGO_INITDB_ROOT_USERNAME=${SKILLS_ONBOARDING_DATABASE_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${SKILLS_ONBOARDING_DATABASE_PASSWORD}
+      - MONGO_INITDB_DATABASE=${SKILLS_ONBOARDING_DATABASE_NAME}
+      ## storage-adapter-mongodb
+      - APPLICATION_ADAPTERS_MONGODB_SUBMODELS_COLLECTION=${APPLICATION_ADAPTERS_MONGODB_SUBMODELS_COLLECTION}
+  ##########################################
 
 
 
@@ -273,3 +272,4 @@ services:
       - "${CORE_BROKER_PORT_MQTT}:${CORE_BROKER_PORT_MQTT}"
     volumes:
       - ./src/compose/volumes/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
+  ##########################################
