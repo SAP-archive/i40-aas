@@ -4,6 +4,7 @@
 
 - [Services](#services)
   - [Overview](#overview)
+  - [Architecture](#architecture)
   - [Configuration](#configuration)
 - [Further Information](#further-information)
 - [FAQs](#faqs)
