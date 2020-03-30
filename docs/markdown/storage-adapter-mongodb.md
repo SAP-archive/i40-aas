@@ -10,6 +10,8 @@
 
 ## The big picture
 
+This component is shown as "MongoDB Application Adapter".
+
 ![The big picture](../images/AAS_SERVICE_REVISED.png).
 
 ## Developer notes
