@@ -10,7 +10,7 @@
 
 ## The big picture
 
-![The big picture](../images/big_picture_mongodb.png "Where this component fits in.")
+![The big picture](../images/AAS_SERVICE_REVISED.png).
 
 ## Developer notes
 

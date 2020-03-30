@@ -46,7 +46,7 @@ POST /assetadministrationshells
   {
     aasId: {
       id: "<id of the asset administration shell>",
-      idType: "URI"
+      idType: "URI|CUSTOM|IRDI"
     },
     endpoints: [
       {
@@ -58,8 +58,22 @@ POST /assetadministrationshells
     ],
     assetId: {
       id: "<id of the asset>",
-      idType: "URI"
+      idType: "URI|CUSTOM|IRDI"
     }
+  }
+];
+```
+
+## Create role assignments
+
+```javascript
+[
+  {
+    aasId: {
+      id: '<ID of the AAS>',
+      idType: 'URI|CUSTOM|IRDI'
+    },
+    roleId: '<id of the role>'
   }
 ];
 ```
