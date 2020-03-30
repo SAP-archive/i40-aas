@@ -34,20 +34,20 @@ The AAS-Service provides an implementation of the RAMI 4.0 reference  architectu
 
 - Facilitate Interoperability:
   - The AAS-Service can act as a mediator between assets and applications that use different languages/standards
-  - Enable interactions between administration shells based on semantic protocols [(VDI/VDE 2193-1)]()
+  - Enable interactions between administration shells based on semantic protocols [(VDI/VDE 2193-1)](https://www.smart-production.de/open-automation/news-detailansicht/nsctrl/detail/News/vdivde-2193-einheitliche-sprache-fuer-industrie-40-komponenten-2019995/)
   - Information in the AAS can be exchanged between all
   partners in a value chain (e.g. system manufacturers, operators, engineering and service partners, system integrators)
 
 - Provide registry and discovery services that:
-  -  hold digital models of various aspects [submodels]() that describe the technical functionality exposed by the asset
+  -  hold digital models of various aspects submodels that describe the technical functionality exposed by the asset
   -  implement endpoint handling for communication
   -  unambiguously identify an asset in network
 
-- Easy implementation of complex business scenarios that support an asynchronous communication among AAS-enabled assets and applications (see [skills]()).
+- Easy implementation of complex business scenarios that support an asynchronous communication among AAS-enabled assets and applications (see [skills](https://github.com/SAP/i40-aas/blob/master/docs/markdown/onboarding-skill.md)).
 
-- Enable integration of applications (eg. Asset stores, datalake) through [application adapters]()
+- Enable integration of applications (eg. Asset stores, datalake) through [application adapters](https://github.com/SAP/i40-aas/blob/master/docs/markdown/adapter-registry.md)
 
-- [Deploy everywhere]() (cloud, on-premise, edge) providing a simple developer experience with docker and K8s
+- Deploy everywhere (cloud, on-premise, edge) providing a simple developer experience with docker and K8s
 
 ## Context - Industry 4.0
 This implementation is related to the [Plattform Industrie 4.0](https://www.plattform-i40.de/PI40/Navigation/EN/Home/home.html) activities being driven by working groups in Germany. Especially the working group [Reference Architectures, Standards, and Norms](https://www.plattform-i40.de/PI40/Navigation/EN/ThePlatform/PlatformWorkingGroups/Reference-Architectures-Standards-Norms/reference-architectures-standards-norms.html) has defined a reference architecture and a [specification](https://www.plattform-i40.de/PI40/Redaktion/EN/Downloads/Publikation/2018-details-of-the-asset-administration-shell.pdf?__blob=publicationFile&v=5) to address a challenging topic to hardware and software vendors: __interoperability__. Especially the integration of assets (devices, machines, software, documents, etc.) into business processes is always cumbersome, time-consuming, and usually costly. As shown in the following figure, this service is meant to simplify the integration processes, and has further potential to extend existing applications.
