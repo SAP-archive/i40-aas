@@ -27,9 +27,9 @@ __i40-aas__ welcomes [contributions](#contributing). Please read about [known is
 ## Main Features
 The AAS-Service provides an implementation of the RAMI 4.0 reference  architecture as specified by [Plattform Industrie 4.0](https://www.plattform-i40.de/PI40/Redaktion/DE/Downloads/Publikation/Details-of-the-Asset-Administration-Shell-Part1.html). Main features include:
 
-- Standardized and secure communication interfaces and API to access Asset Administration Shells of the digital representation of a physical asset (Digital Twin), that enable:
+- Standardized communication interfaces and API to access Asset Administration Shells of the digital representation of a physical asset (Digital Twin), that enable:
   - use of a single AAS information model
-  - secure access to asset information from cloud and edge
+  - access to asset information from cloud and edge
   - integration of assets without a communication interface (i.e. passive), e.g. via barcodes or QR-codes pointing to asset       management solutions
 
 - Facilitate Interoperability:
