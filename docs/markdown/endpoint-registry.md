@@ -45,20 +45,20 @@ POST /assetadministrationshells
 [
   {
     aasId: {
-      id: "<id of the asset administration shell>",
-      idType: "URI|CUSTOM|IRDI"
+      id: '<id of the asset administration shell>',
+      idType: 'URI|CUSTOM|IRDI'
     },
     endpoints: [
       {
-        url: "<url of the endpoint>",
-        protocolVersion: "<version of the protocol>",
-        protocol: "<name of the protocol>"
-        target: "<cloud|edge>"
+        url: '<url of the endpoint>',
+        protocolVersion: '<version of the protocol>',
+        protocol: '<name of the protocol>',
+        target: '<cloud|edge>'
       }
     ],
     assetId: {
-      id: "<id of the asset>",
-      idType: "URI|CUSTOM|IRDI"
+      id: '<id of the asset>',
+      idType: 'URI|CUSTOM|IRDI'
     }
   }
 ];
