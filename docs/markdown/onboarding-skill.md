@@ -6,7 +6,8 @@
 
 ## The big picture
 
-![The big picture](../images/AAS_SERVICE_REVISED.png). This component is shown as "Onboarding - CAR".
+This component is shown as "Onboarding - CAR".
+![The big picture](../images/AAS_SERVICE_REVISED.png)
 
 ## The state machine
 
