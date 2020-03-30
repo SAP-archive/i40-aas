@@ -62,7 +62,7 @@ let BROKER_PORT = checkEnvVar('CORE_BROKER_PORT');
 let BROKER_EXCHANGE = checkEnvVar('CORE_EGRESS_EXCHANGE');
 let BROKER_USER = checkEnvVar('CORE_EGRESS_USER');
 let BROKER_PASSWORD = checkEnvVar('CORE_EGRESS_PASSWORD');
-let HTTPS_ENDPOINT_ROUTING_KEY = checkEnvVar('CORE_ENDPOINT_RESOLVER_QUEUE');
+let CORE_EGRESS_ROUTINGKEY = checkEnvVar('CORE_EGRESS_ROUTINGKEY');
 
 let MONGODB_HOST = checkEnvVar('SKILLS_ONBOARDING_DATABASE_HOST');
 let MONGODB_PORT = checkEnvVar('SKILLS_ONBOARDING_DATABASE_PORT');
@@ -91,7 +91,7 @@ let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
         name: MY_ROLE
       }
     },
-    HTTPS_ENDPOINT_ROUTING_KEY
+    CORE_EGRESS_ROUTINGKEY
   )
 );
 

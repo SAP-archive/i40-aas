@@ -69,7 +69,6 @@ typings/
 .next
 
 
-
 #######################
 # exclude all initializer scripts
 .compose/volumes/initializer/*

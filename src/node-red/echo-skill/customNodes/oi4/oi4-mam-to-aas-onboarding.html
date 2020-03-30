@@ -1,0 +1,85 @@
+<script type="text/javascript">
+  RED.nodes.registerType('oi4-mam-to-aas-onboarding', {
+    category: 'i40-aas',
+    color: '#a6bbcf',
+    defaults: {
+      conversationID: { value: '' },
+      senderID: { value: '' },
+      receiverID: { value: '' },
+      submodelID: { value: '' },
+      manufacturer: { value: '' },
+      manufactureruri: { value: '' },
+      model: { value: '' },
+      serialnumber: { value: '' },
+      hardwarerevision: { value: '' },
+      deviceclass: { value: '' },
+      devicemanual: { value: '' },
+      productinstanceuri: { value: '' },
+      productcode: { value: '' },
+      devicerevision: { value: '' },
+      revisioncounter: { value: '' },
+      softwarerevision: { value: '' }
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: 'file.png',
+    label: function() {
+      return this.name || 'oi4-mam-to-aas-onboarding';
+    }
+  });
+</script>
+
+<script type="text/html" data-template-name="oi4-mam-to-aas-onboarding">
+  <div class="form-row">
+    <h3>Frame</h3>
+      <label for="node-input-conversationID"><i class="icon-tag"></i> conversationID</label>
+      <input type="text" id="node-input-conversationID" placeholder="conversationID">
+      <br>
+      <label for="node-input-senderID"><i class="icon-tag"></i> senderID</label>
+      <input type="text" id="node-input-senderID" placeholder="http://sap.com/mysenderid/123">
+      <br>
+      <label for="node-input-receiverID"><i class="icon-tag"></i> receiverID</label>
+      <input type="text" id="node-input-receiverID" placeholder="http://sap.com/myreceiverid/123">
+      <br>
+      <h3>Interaction Element</h3>
+      <label for="node-input-submodelID"><i class="icon-tag"></i> submodelID</label>
+      <input type="text" id="node-input-submodelID" placeholder="http://sap.com/submodels/opc-ua-devices/123">
+      <br>
+      <h3>Properties</h3>
+      <label for="node-input-manufacturer"><i class="icon-tag"></i> manufacturer</label>
+      <input type="text" id="node-input-manufacturer" placeholder="SAP SE">
+      <br>
+      <label for="node-input-manufactureruri"><i class="icon-tag"></i> manufactureruri</label>
+      <input type="text" id="node-input-manufactureruri" placeholder="sap.com">
+      <br>
+      <label for="node-input-model"><i class="icon-tag"></i> model</label>
+      <input type="text" id="node-input-model" placeholder="model">
+      <br>
+      <label for="node-input-serialnumber"><i class="icon-tag"></i> serialnumber</label>
+      <input type="text" id="node-input-serialnumber" placeholder="serialnumber">
+      <br>
+      <label for="node-input-hardwarerevision"><i class="icon-tag"></i> hardwarerevision</label>
+      <input type="text" id="node-input-hardwarerevision" placeholder="hardwarerevision">
+      <br>
+      <label for="node-input-deviceclass"><i class="icon-tag"></i> deviceclass</label>
+      <input type="text" id="node-input-deviceclass" placeholder="deviceclass">      <br>
+      <label for="node-input-devicemanual"><i class="icon-tag"></i> devicemanual</label>
+      <input type="text" id="node-input-devicemanual" placeholder="devicemanual">      <br>
+      <label for="node-input-productinstanceuri"><i class="icon-tag"></i> productinstanceuri</label>
+      <input type="text" id="node-input-productinstanceuri" placeholder="productinstanceuri">      <br>
+      <label for="node-input-productcode"><i class="icon-tag"></i> productcode</label>
+      <input type="text" id="node-input-productcode" placeholder="productcode">      <br>
+      <label for="node-input-devicerevision"><i class="icon-tag"></i> devicerevision</label>
+      <input type="text" id="node-input-devicerevision" placeholder="devicerevision">      <br>
+      <label for="node-input-revisioncounter"><i class="icon-tag"></i> revisioncounter</label>
+      <input type="text" id="node-input-revisioncounter" placeholder="0"><br>
+      <label for="node-input-softwarerevision"><i class="icon-tag"></i> softwarerevision</label>
+      <input type="text" id="node-input-softwarerevision" placeholder="softwarerevision">
+
+
+  </div>
+</script>
+
+<script type="text/html" data-help-name="oi4-mam-to-aas-onboarding">
+  <p>A simple node that converts the message payloads into all lower-case characters</p>
+</script>

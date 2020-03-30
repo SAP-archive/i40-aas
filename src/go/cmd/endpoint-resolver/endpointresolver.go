@@ -78,8 +78,8 @@ func (r *EndpointResolver) Init() error {
 	}
 
 	// TODO: move to main.go and pass down
-	queue := os.Getenv("CORE_ENDPOINT_RESOLVER_QUEUE")
-	bindingKey := r.config.AMQPConfig.Exchange + "." + queue
+	queue := "generic"
+	bindingKey := os.Getenv("CORE_EGRESS_ROUTINGKEY")
 	ctag := os.Getenv("CORE_ENDPOINT_RESOLVER_CTAG")
 
 	go func() {

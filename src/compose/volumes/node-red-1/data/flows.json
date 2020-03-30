@@ -1,1 +1,0 @@
-[{"id":"2c822ed0.dd1a52","type":"tab","label":"Flow 1","disabled":false,"info":""},{"id":"8dab169.aeaa6e8","type":"function","z":"2c822ed0.dd1a52","name":"MyFunc","func":"msg = \"test\";\nreturn msg;","outputs":1,"noerr":0,"x":370,"y":360,"wires":[[]]}]
