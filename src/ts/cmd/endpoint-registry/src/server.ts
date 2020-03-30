@@ -5,6 +5,7 @@ import healthRoute from './services/health/routes';
 
 import routes from './services';
 import middleware from './middleware';
+import "reflect-metadata";
 
 const router = express();
 applyRoutes(healthRoute, router);

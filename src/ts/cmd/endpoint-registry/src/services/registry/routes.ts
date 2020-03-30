@@ -9,6 +9,7 @@ import {
 } from './daos/interfaces/IApiRequests';
 import { RegistryApi } from './RegistryApi';
 
+
 var registryApi = new RegistryApi();
 
 function updateResponseForConflict(error: any, res: Response) {
