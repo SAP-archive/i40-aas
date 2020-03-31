@@ -16,7 +16,7 @@ The machine is defined [here](../../src/ts/cmd/onboarding-skill/src/services/onb
 
 From each state, invalid messages will be responded to (as long as they are parsable and contain a proper sender) with notUnderstood.
 
-## Developer's note
+## Developer's notes
 
 ### How it works
 
@@ -31,7 +31,7 @@ A message is received via the message broker (AMQPClient -> MessageInterpreter) 
 
 #### Including integration tests
 
-Test setup can be done with `source ./integration-test-setup` (wait 20s before starting integration tests).
+Test setup can be done with `source ./integration-test-setup`.
 
 - To run integration tests as well: `npm run test-with-integration`
 - To run coverage with integration tests: `npm run coverage-with-integration`

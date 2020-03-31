@@ -31,7 +31,6 @@ interface IMessageBrokerClient {
 
 //TODO: set proper time gap for connection retries (6s currently).
 class AmqpClient implements IMessageBrokerClient {
-  static DEFAULT_AMQP_HOST = 5672;
   private myConn: AmqpConnectionDetails = new AmqpConnectionDetails();
   private listenerQName: string;
   public listenerCounter = 0;
@@ -60,11 +59,10 @@ class AmqpClient implements IMessageBrokerClient {
     private reconnectAfterMilliSecs?: number
   ) {
     //TODO: Generate the Url from host and port
-    if (!ampqPort) ampqPort = AmqpClient.DEFAULT_AMQP_HOST.toString();
     this.ampqUrl = new URL(ampqHost + ':' + ampqPort);
     this.start = Date.now();
     this.listenerQName = listenerQueue;
-    console.debug('AmpqClient created');
+    console.debug('AmpqClient created:' + this.ampqUrl);
     let that = this;
     process.on('SIGINT', function() {
       that.cleanup();
