@@ -1,5 +1,4 @@
 const { Pool } = require('pg');
-import { pgConfig } from './Connection';
 import { Registry } from './Registry';
 
 class RegistryFactory {
@@ -15,6 +14,12 @@ class RegistryFactory {
     console.log(pgConfig);
     return RegistryFactory.pool;
   }
+
+  static getConnectionMananger() {
+    console.log(pgConfig);
+    return RegistryFactory.pool;
+  }
+
 }
 
 export { RegistryFactory };

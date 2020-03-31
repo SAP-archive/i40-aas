@@ -1,6 +1,7 @@
 import {Entity, Column, PrimaryColumn} from "typeorm";
 
-export enum IdTypeEnum {
+//TODO: import from AAS-Objects
+enum IdTypeEnum {
   IRDI = 'IRDI',
   IRI = 'IRI',
   Custom = 'Custom',
@@ -9,9 +10,7 @@ export enum IdTypeEnum {
 
 
 @Entity()
-export class Photo {
-
-
+export class Asset {
 
     @PrimaryColumn()
     id!: string;

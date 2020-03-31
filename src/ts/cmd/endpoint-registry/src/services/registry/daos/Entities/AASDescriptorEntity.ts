@@ -1,9 +1,18 @@
 import {Entity, Column, PrimaryColumn} from "typeorm";
 
+//import { IdTypeEnum } from 'i40-aas-objects/src/types/IdTypeEnum';
+
+
+//TODO: import from AAS-Objects
+ enum IdTypeEnum {
+  IRDI = 'IRDI',
+  IRI = 'IRI',
+  Custom = 'Custom',
+  IdShort = 'IdShort',
+}
+
 @Entity()
-export class Photo {
-
-
+export class AASDescriptor {
 
     @PrimaryColumn({
       length: 1024
@@ -11,9 +20,11 @@ export class Photo {
     id!: string;
 
     @Column({
-    length: 100
-    })
-    idType!: string;
+      type: "enum",
+      enum: IdTypeEnum,
+      default: IdTypeEnum.Custom    })
+
+    idType!: IdTypeEnum;
 
     @Column({
       length: 1024

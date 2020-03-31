@@ -1,16 +1,12 @@
 import {Entity, Column, PrimaryGeneratedColumn} from "typeorm";
 
 @Entity()
-export class Photo {
-
-
+export class Endpoint {
 
     @PrimaryGeneratedColumn()
     endpointId!: number;
 
-    @Column({
-    length: 100
-    })
+    @Column()
     address!: string;
 
     @Column({
