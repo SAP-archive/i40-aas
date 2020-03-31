@@ -47,7 +47,6 @@
     "generic-pool": "^3.7.1",
     "i40-aas-objects": "0.2.6",
     "pg": "^7.11.0",
-    "swagger-ui-express": "^4.0.6",
     "ts-postgres": "^1.1.0"
   },
   "devDependencies": {
@@ -62,9 +61,9 @@
     "@types/swagger-ui-express": "^3.0.1",
     "chai": "^4.2.0",
     "dotenv": "^8.1.0",
-    "mocha": "^6.1.4",
+    "mocha": "^7.1.1",
     "nyc": "^14.1.1",
-    "rewire": "^4.0.1",
+    "rewire": "^5.0.0",
     "sinon": "^7.3.2",
     "ts-node": "^8.2.0",
     "typescript": "^3.5.1"

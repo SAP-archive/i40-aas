@@ -1,4 +1,9 @@
-import { IMessageBrokerClient, IMessageReceiver, Subscription, AmqpClient } from '../src/AMQPClient';
+import {
+  IMessageBrokerClient,
+  IMessageReceiver,
+  Subscription,
+  AmqpClient
+} from '../src/AMQPClient';
 import * as sinon from 'sinon';
 import { SapMqttClient } from '../examples/SapMqttClient';
 var chai = require('chai');
@@ -34,10 +39,18 @@ describe('AmpqClient', function() {
       throw new Error('No RABBITMQ_AMQP_HOST found in environment');
     }
     let exchange = 'test1';
-    amqpClientSender = new AmqpClient(AMQP_URL, exchange, 'guest', 'guest', '');
+    amqpClientSender = new AmqpClient(
+      AMQP_URL,
+      '',
+      exchange,
+      'guest',
+      'guest',
+      ''
+    );
     let listenerId = 'listener1';
     amqpClientReceiver = new AmqpClient(
       AMQP_URL,
+      '',
       exchange,
       'guest',
       'guest',
@@ -77,6 +90,7 @@ describe('AmpqClient', function() {
     let listenerId = 'listener1b';
     amqpClientReceiver = new AmqpClient(
       AMQP_URL,
+      '',
       'amq.topic',
       'guest',
       'guest',
@@ -112,6 +126,7 @@ describe('AmpqClient', function() {
 
     amqpClientSender = new AmqpClient(
       AMQP_URL,
+      '',
       'test',
       'guest',
       'guest',
@@ -154,10 +169,18 @@ describe('AmpqClient', function() {
       throw new Error('No RABBITMQ_AMQP_HOST found in environment');
     }
     let exchange = 'test2';
-    amqpClientSender = new AmqpClient(AMQP_URL, exchange, 'guest', 'guest', '');
+    amqpClientSender = new AmqpClient(
+      AMQP_URL,
+      '',
+      exchange,
+      'guest',
+      'guest',
+      ''
+    );
     let listenerId = 'listener2';
     amqpClientReceiver = new AmqpClient(
       AMQP_URL,
+      '',
       exchange,
       'guest',
       'guest',
@@ -208,10 +231,18 @@ describe('AmpqClient', function() {
       throw new Error('No RABBITMQ_AMQP_HOST found in environment');
     }
     let exchange = 'test3';
-    amqpClientSender = new AmqpClient(AMQP_URL, exchange, 'guest', 'guest', '');
+    amqpClientSender = new AmqpClient(
+      AMQP_URL,
+      '',
+      exchange,
+      'guest',
+      'guest',
+      ''
+    );
     let listenerId = 'listener3';
     amqpClientReceiver = new AmqpClient(
       AMQP_URL,
+      '',
       exchange,
       'guest',
       'guest',
