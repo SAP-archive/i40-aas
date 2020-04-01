@@ -22,17 +22,18 @@ constructor(){
 }
 
 
-  async readRecordByIdentifier(
-    identifier: IIdentifier
+
+  async readAASDescriptorByAASId(
+    aasId: string
   ): Promise<Array<RegistryResultSet>> {
     //TODO: dependency injection is better
     var registryDao: iRegistry = await RegistryFactory.getRegistry();
 
     try {
-      if (!identifier.id) {
+      if (!aasId) {
         throw new RegistryError('Missing parameter id', 422);
       }
-      var result = await registryDao.readRecordByAasId(identifier);
+      var result = await registryDao.readAASDescriptorByAasId(aasId);
       console.log(result);
       return result;
     } catch (e) {

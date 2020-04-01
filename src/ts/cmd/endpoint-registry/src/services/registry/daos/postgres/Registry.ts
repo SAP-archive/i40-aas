@@ -23,6 +23,7 @@ import { Asset } from '../Entities/AssetEntity';
 import { Connection, createConnection } from 'typeorm';
 import { Endpoint } from '../Entities/EndpointEntity';
 import { AASDescriptor } from '../Entities/AASDescriptorEntity';
+import { AASDescriptorResponse } from '../Responses/AASDescriptorResponse';
 
 class Registry implements iRegistry {
   constructor(private readonly client: Connection) {
@@ -234,54 +235,21 @@ try{
     console.log(record);
     return record;
   }
-  //TODO: naming should be consistent: use same name in RegistryApi as here
-  async readRecordByAasId(
-    aasId: IIdentifier
-  ): Promise<Array<IRegistryResultSet>> {
-    // try {
-    //   console.log(aasId);
-    //   const aasRecords = await this.client.query(
-    //     'SELECT * FROM public.asset_administration_shells WHERE "aasId" = $1',
-    //     [aasId.id]
-    //   );
-    //   if (aasRecords.rows.length > 0) {
-    //     var aasRecord = aasRecords.rows[0];
-    //     //TODO: do proper chaining of queries
-    //     const endpointRecords = await this.client.query(
-    //       'SELECT * FROM public.endpoints WHERE "aasId" = $1',
-    //       [aasRecord.aasId]
-    //     );
-    //     var endpoints: Array<IEndpoint> = [];
+  async readAASDescriptorByAasId(
+    aasId: string
+  ): Promise<void>{
+    let aasDescriptorRepository = this.client.getRepository(AASDescriptor);
 
-    //     endpointRecords.rows.forEach((endpointRecord: IEndpointRecord) => {
-    //       console.log(endpointRecord);
-    //       var endpoint: IEndpoint = new Endpoint(
-    //         endpointRecord.URL,
-    //         endpointRecord.target,
-    //         endpointRecord.protocol_name,
-    //         endpointRecord.protocol_version
-    //       );
-    //       console.log(endpoint);
-    //       endpoints.push(endpoint);
-    //     });
-    //     return [
-    //       new RegistryResultSet(
-    //         {
-    //           id: aasRecord.aasId,
-    //           idType: aasRecord.idType
-    //         },
-    //         endpoints,
-    //         { id: '123', idType: IdTypeEnum.Custom }
-    //       )
-    //     ];
-    //   } else {
-    //     return [];
-    //   }
-    // } catch (err) {
-    //   throw new RegistryError(err, 500);
-    // }
-    return []
-  }
+    let resultAasDescriptor = await aasDescriptorRepository.findOne({ id: aasId });
+
+    //let response = new AASDescriptorResponse();
+
+
+
+    }
+
+
+
 
   async readEndpointBySemanticProtocolAndRole(
     sProtocol: string,

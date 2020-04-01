@@ -38,5 +38,6 @@ export {
   ICreateSemanticProtocol,
   IAssignRoles,
   ICreateRole,
-  ICreateAsset
+  ICreateAsset,
+  GenericDescriptor
 };

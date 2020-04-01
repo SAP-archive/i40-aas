@@ -10,7 +10,7 @@ import {
 import { ICreateRoleResultSet } from './IRegistryRolesSet';
 
 interface iRegistry {
-  readRecordByAasId(aasId: IIdentifier): Promise<Array<RegistryResultSet>>;
+  readRecordByAasId(aasId: string): Promise<IAASDescriptor>;
   registerAas(req: IAASDescriptor): Promise<void>;
   updateAas(req: IAASDescriptor): Promise<RegistryResultSet>;
   deleteAasByAasId(aasId: IIdentifier): Promise<number>;

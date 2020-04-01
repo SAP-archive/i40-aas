@@ -150,18 +150,10 @@ export default [
     handler: async (req: Request, res: Response) => {
       try {
         console.log('Query parameters received:' + JSON.stringify(req.query));
-        if (req.query.receiverId && req.query.receiverIdType) {
+        if (req.query.aasId && req.query.receiverIdType) {
           res.json(
-            await registryApi.getEndpointsByReceiverId(
-              req.query.receiverId,
-              req.query.receiverIdType
-            )
-          );
-        } else if (req.query.receiverRole && req.query.semanticProtocol) {
-          res.json(
-            await registryApi.getEndpointsByReceiverRole(
-              req.query.receiverRole,
-              req.query.semanticProtocol
+            await registryApi.readAASDescriptorByAASId(
+              req.query.aasId
             )
           );
         } else
@@ -176,6 +168,38 @@ export default [
       }
     }
   },
+  // {
+  //   path: '/aasDescriptorOld',
+  //   method: 'get',
+  //   handler: async (req: Request, res: Response) => {
+  //     try {
+  //       console.log('Query parameters received:' + JSON.stringify(req.query));
+  //       if (req.query.receiverId && req.query.receiverIdType) {
+  //         res.json(
+  //           await registryApi.getEndpointsByReceiverId(
+  //             req.query.receiverId,
+  //             req.query.receiverIdType
+  //           )
+  //         );
+  //       } else if (req.query.receiverRole && req.query.semanticProtocol) {
+  //         res.json(
+  //           await registryApi.getEndpointsByReceiverRole(
+  //             req.query.receiverRole,
+  //             req.query.semanticProtocol
+  //           )
+  //         );
+  //       } else
+  //         throw new RegistryError(
+  //           'Mandatory query parameters: receiverId and receiverIdType, or receiverRole and semanticProtocol',
+  //           422
+  //         );
+  //     } catch (e) {
+  //       console.log(e);
+  //       res.statusCode = e.r_statusCode || 500;
+  //       res.end(JSON.stringify(e));
+  //     }
+  //   }
+  // },
   {
     path: '/listAllEndpoints',
     method: 'get',
