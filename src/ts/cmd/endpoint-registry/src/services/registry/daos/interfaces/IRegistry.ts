@@ -1,7 +1,7 @@
 import { IIdentifier } from 'i40-aas-objects';
 import { RegistryResultSet, IRegistryResultSet } from './IRegistryResultSet';
 import {
-  IRegisterAas,
+  IAASDescriptor,
   ICreateSemanticProtocol,
   ICreateRole,
   IAssignRoles,
@@ -11,8 +11,8 @@ import { ICreateRoleResultSet } from './IRegistryRolesSet';
 
 interface iRegistry {
   readRecordByAasId(aasId: IIdentifier): Promise<Array<RegistryResultSet>>;
-  registerAas(req: IRegisterAas): Promise<RegistryResultSet>;
-  updateAas(req: IRegisterAas): Promise<RegistryResultSet>;
+  registerAas(req: IAASDescriptor): Promise<void>;
+  updateAas(req: IAASDescriptor): Promise<RegistryResultSet>;
   deleteAasByAasId(aasId: IIdentifier): Promise<number>;
   listAasByAssetId(assetId: IIdentifier): Promise<Array<RegistryResultSet>>;
   listAas(): Promise<Array<RegistryResultSet>>;

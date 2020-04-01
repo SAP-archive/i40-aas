@@ -1,6 +1,7 @@
-import {Entity, Column, PrimaryGeneratedColumn} from "typeorm";
+import {Entity, Column, PrimaryGeneratedColumn, Unique} from "typeorm";
 
 @Entity()
+@Unique(["address"])
 export class Endpoint {
 
     @PrimaryGeneratedColumn()

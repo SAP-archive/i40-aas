@@ -6,6 +6,7 @@ import healthRoute from './services/health/routes';
 import routes from './services';
 import middleware from './middleware';
 import "reflect-metadata";
+import { RegistryFactory } from './services/registry/daos/postgres/RegistryFactory';
 
 const router = express();
 applyRoutes(healthRoute, router);
@@ -16,4 +17,10 @@ applyRoutes(routes, router);
 const PORT = 4400;
 const server = http.createServer(router);
 
+
+/* Create a postgres connection */
+var conn = RegistryFactory.createDBConnection();
+if(!conn){
+  console.error("Could not establish connection to postgres database")
+}
 server.listen(PORT, () => console.log(`A Server is running http://localhost:${PORT}...`));

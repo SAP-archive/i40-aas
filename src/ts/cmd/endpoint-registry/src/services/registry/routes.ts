@@ -4,7 +4,7 @@ import { RegistryError } from '../../utils/RegistryError';
 import {
   ICreateRole,
   IAssignRoles,
-  IRegisterAas,
+  IAASDescriptor,
   ICreateAsset
 } from './daos/interfaces/IApiRequests';
 import { RegistryApi } from './RegistryApi';
@@ -20,21 +20,19 @@ function updateResponseForConflict(error: any, res: Response) {
 //need a better way to write a status code as soon as the error occurs
 //and send back any remaining exceptions as 500
 //Ideally send back response in one place, not so many places
+//TODO: request validation checks
 export default [
   {
-    path: '/assetadministrationshells',
-    method: 'post',
+    path: '/AASDescriptor',
+    method: 'put',
     handler: async (req: Request, res: Response) => {
       console.log('/administrationshells POST request received');
-      var endpointsAssignmentArray: IRegisterAas[] = req.body;
+      var registerAASRequest: IAASDescriptor = req.body;
 
-      //TODO: revise the array endpoints, the for loop should go to RegistryApi
       try {
-        await Promise.all(
-          endpointsAssignmentArray.map(async aas => {
-            await registryApi.register(aas);
-          })
-        );
+
+        await registryApi.register(registerAASRequest);
+
       } catch (e) {
         updateResponseForConflict(e, res);
         res.end(e.message);
@@ -147,7 +145,7 @@ export default [
     }
   },
   {
-    path: '/assetadministrationshells',
+    path: '/aasDescriptor',
     method: 'get',
     handler: async (req: Request, res: Response) => {
       try {

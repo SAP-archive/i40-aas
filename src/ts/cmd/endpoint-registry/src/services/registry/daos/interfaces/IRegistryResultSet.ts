@@ -1,4 +1,5 @@
 import { IIdentifier } from 'i40-aas-objects';
+import { IEndpoint } from './IEndpoint';
 interface IRegistryResultSet {
   aasId: IIdentifier;
   endpoints: Array<Endpoint>;
@@ -24,31 +25,19 @@ enum TTarget {
   edge
 }
 
-interface IEndpoint {
-  url: string;
-  protocol: string;
-  target: string;
-  protocolVersion?: string;
-}
 
 class Endpoint implements IEndpoint {
-  public url: string;
-  public protocol: string;
-  public protocolVersion?: string;
+  public address: string;
+  public type: string;
 
   constructor(
-    url: string,
-    public target: string,
-    protocol: string,
-    protocolVersion?: string
+    address: string,
+    type: string,
+
   ) {
-    this.url = url;
+    this.address = address;
+    this.type = type;
 
-    protocol
-      ? (this.protocol = protocol.toLowerCase())
-      : (this.protocol = protocol);
-
-    this.protocolVersion = protocolVersion;
   }
 }
 
@@ -58,4 +47,4 @@ var x = {
   endpoints: [{ url: '', protocol: "https", protocolVersion: '1.1' }],
   assetId: { id: '', idType: '' }
 }; */
-export { RegistryResultSet, Endpoint, IEndpoint, IRegistryResultSet, TTarget };
+export { RegistryResultSet, Endpoint, IRegistryResultSet, TTarget };

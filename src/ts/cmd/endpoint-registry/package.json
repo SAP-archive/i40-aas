@@ -4,13 +4,13 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
+    "dev": "tsc-watch --onSuccess \"node ./dist/server.js\"",
     "test": "mocha --require ts-node/register --exit test/unit/**/*.spec.ts",
     "test-integration-only": "mocha --require ts-node/register --exit test/integration/**/*.spec.ts",
     "test-with-integration": "mocha --require ts-node/register --exit test/integration/**/*.spec.ts test/unit/**/*.spec.ts",
     "coverage": "nyc --reporter html --reporter text npm test",
     "coverage-with-integration": "nyc --reporter html --reporter text npm run test-with-integration",
     "build": "tsc",
-    "prestart": "./prepareDB.sh",
     "start": "node ./dist/server.js",
     "clean": "rm -rf ./dist/*",
     "poststart": "node ./dist/server.js",
@@ -50,6 +50,7 @@
     "reflect-metadata": "^0.1.13",
     "swagger-ui-express": "^4.0.6",
     "ts-postgres": "^1.1.0",
+    "tsc-watch": "^4.2.3",
     "typeorm": "^0.2.24"
   },
   "devDependencies": {
@@ -63,7 +64,7 @@
     "@types/sinon": "^7.0.13",
     "@types/swagger-ui-express": "^3.0.1",
     "chai": "^4.2.0",
-    "dotenv": "^8.1.0",
+    "dotenv": "^8.2.0",
     "mocha": "^6.1.4",
     "nyc": "^14.1.1",
     "rewire": "^4.0.1",

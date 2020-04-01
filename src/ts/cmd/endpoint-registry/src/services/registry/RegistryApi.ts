@@ -7,15 +7,21 @@ import {
 } from './daos/interfaces/IRegistryResultSet';
 import { iRegistry } from './daos/interfaces/IRegistry';
 import {
-  IRegisterAas,
   ICreateRole,
   ICreateSemanticProtocol,
   IAssignRoles,
-  ICreateAsset
+  ICreateAsset,
+  IAASDescriptor
 } from './daos/interfaces/IApiRequests';
 import { TIdType } from 'i40-aas-objects/dist/src/types/IdTypeEnum';
 
 class RegistryApi {
+
+
+constructor(){
+}
+
+
   async readRecordByIdentifier(
     identifier: IIdentifier
   ): Promise<Array<RegistryResultSet>> {
@@ -73,7 +79,7 @@ class RegistryApi {
     }
   }
 
-  async register(req: IRegisterAas) {
+  async register(req: IAASDescriptor) {
     var registryDao: iRegistry = await RegistryFactory.getRegistry();
     try {
       var result = await registryDao.registerAas(req);

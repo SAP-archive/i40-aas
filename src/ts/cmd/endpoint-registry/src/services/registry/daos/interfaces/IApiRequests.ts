@@ -1,12 +1,19 @@
 import { IIdentifier } from 'i40-aas-objects';
+import { IEndpoint } from './IEndpoint';
 
-import { Endpoint } from './IRegistryResultSet';
-
-interface IRegisterAas {
-  aasId: IIdentifier;
-  endpoints: Array<Endpoint>;
-  assetId: IIdentifier;
+interface IAASDescriptor {
+  identification: IIdentifier;
+  asset:IIdentifier;
+  descriptor:GenericDescriptor;
 }
+
+interface GenericDescriptor {
+  endpoints: Array<IEndpoint>;
+  certificate_x509_i40: string;
+  signature: string;
+}
+
+
 
 interface ICreateSemanticProtocol {
   //field called protocolId in DB
@@ -27,7 +34,7 @@ interface ICreateAsset {
 }
 
 export {
-  IRegisterAas,
+  IAASDescriptor ,
   ICreateSemanticProtocol,
   IAssignRoles,
   ICreateRole,

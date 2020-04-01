@@ -19,12 +19,8 @@ export class AASDescriptor {
       })
     id!: string;
 
-    @Column({
-      type: "enum",
-      enum: IdTypeEnum,
-      default: IdTypeEnum.Custom    })
-
-    idType!: IdTypeEnum;
+    @Column()
+    idType!: string;
 
     @Column({
       length: 1024
