@@ -33,7 +33,7 @@ class WebClient {
     logger.debug('paraams ', params);
     logger.debug(
       'Config ' +
-        JSON.stringify(this.getURLRequestConfig(params, username, password))
+        JSON.stringify(this.getURLRequestConfig(params))
     );
 
     const response = await Axios.get<T>(
