@@ -90,14 +90,35 @@ export default [
   },
 
   {
+    path: "/listall",
+    method: "get",
+    handler: [
+      async (req: Request, res: Response) => {
+        var adaptersList: Adapter[];
+        logger.info(' List all registry entries ');
+
+        try {
+          adaptersList = await listAllAdapters();
+          res.json(adaptersList);
+        } catch (e) {
+          logger.error(' Error while retrieving entries from registry ' + e);
+
+          res.end(e.message);
+        }
+
+
+      }
+    ]
+  },
+
+
+
+
+  {
     path: "/deleteall",
     method: "delete",
     handler: [
-      checkReqBodyEmpty,
-      validateCreateAdaptersRequest,
-
       async (req: Request, res: Response) => {
-        var adaptersAssignmentArray: ICreateAdapter[] = req.body;
         logger.info(' Clear all registry entries ');
 
         try {
