@@ -73,10 +73,10 @@ class AdapterRegistryLocal implements IAdapterRegistry {
       let values: Adapter[] = await this.storage.values();
 
       values.forEach(Adapter => {
-        logger.debug('Adapter found : ' + JSON.stringify(Adapter));
         if (Adapter.submodelid === submodelId) {
           adapter = Adapter;
           //TODO: check for singularity. Submodel is an 1..1 to Adapter
+
         }
       });
 
@@ -103,7 +103,6 @@ class AdapterRegistryLocal implements IAdapterRegistry {
 
       let values: Adapter[] = await this.storage.values();
       values.forEach(Adapter => {
-        logger.debug('Adapter found : ' + JSON.stringify(Adapter));
         if (Adapter.submodelsemanticid === submodelSemanticId) {
           adapter = Adapter;
           //TODO: check for singularity. Submodel is an 1..1 to Adapter
