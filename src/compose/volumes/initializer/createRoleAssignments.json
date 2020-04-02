@@ -1,28 +1,14 @@
 [
   {
     "aasId": {
-      "id": "https://i40-aas-approval-app.cfapps.eu10.hana.ondemand.com/aas",
-      "idType": "IRI"
-    },
-    "roleId": "Approver"
-  },
-  {
-    "aasId": {
-      "id": "https://i40-test-aas-server.cfapps.eu10.hana.ondemand.com/aas",
+      "id": "http://www.operator.com/aas",
       "idType": "IRI"
     },
     "roleId": "Operator"
   },
   {
     "aasId": {
-      "id": "https://i40-test-aas-server.cfapps.eu10.hana.ondemand.com/aas",
-      "idType": "IRI"
-    },
-    "roleId": "Manufacturer"
-  },
-  {
-    "aasId": {
-      "id": "http://i40-aas-service.westeurope.cloudapp.azure.com/aas",
+      "id": "http://www.CAR.com/aas",
       "idType": "IRI"
     },
     "roleId": "CentralAssetRepository"

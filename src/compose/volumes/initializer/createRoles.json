@@ -4,14 +4,6 @@
     "semanticProtocol": "i40:registry-semanticProtocol/onboarding"
   },
   {
-    "roleId": "Approver",
-    "semanticProtocol": "i40:registry-semanticProtocol/onboarding"
-  },
-  {
-    "roleId": "Manufacturer",
-    "semanticProtocol": "i40:registry-semanticProtocol/onboarding"
-  },
-  {
     "roleId": "Operator",
     "semanticProtocol": "i40:registry-semanticProtocol/onboarding"
   }
