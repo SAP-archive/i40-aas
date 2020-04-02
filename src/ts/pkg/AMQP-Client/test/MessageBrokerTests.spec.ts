@@ -3,7 +3,7 @@ import {
   IMessageReceiver,
   Subscription,
   AmqpClient
-} from '../src/AMQPClient';
+} from '../src/AmqpClient';
 import * as sinon from 'sinon';
 import { SapMqttClient } from '../examples/SapMqttClient';
 var chai = require('chai');
