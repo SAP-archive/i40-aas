@@ -1,8 +1,9 @@
-import {Entity, Column, PrimaryGeneratedColumn, Unique} from "typeorm";
+import {Entity, Column, PrimaryGeneratedColumn, Unique, ManyToOne} from "typeorm";
+import { AASDescriptorEntity } from "./AASDescriptorEntity";
 
 @Entity()
 @Unique(["address"])
-export class Endpoint {
+export class EndpointEntity {
 
     @PrimaryGeneratedColumn()
     endpointId!: number;
@@ -15,9 +16,8 @@ export class Endpoint {
       })
     type!: string;
 
-    @Column({
-      length: 1024
-      })
-      aasId!: string;
+    @ManyToOne(type => AASDescriptorEntity, aasdescriptor => aasdescriptor.endpoints)
+    aasdescriptor!: AASDescriptorEntity;
+
 
 }

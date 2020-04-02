@@ -1,16 +1,10 @@
 import { IIdentifier } from 'i40-aas-objects';
-import { IEndpoint } from './IEndpoint';
+import { IGenericDescriptor } from '../Responses/GenericDescriptor';
 
 interface IAASDescriptor {
   identification: IIdentifier;
   asset:IIdentifier;
-  descriptor:GenericDescriptor;
-}
-
-interface GenericDescriptor {
-  endpoints: Array<IEndpoint>;
-  certificate_x509_i40: string;
-  signature: string;
+  descriptor:IGenericDescriptor;
 }
 
 
@@ -39,5 +33,4 @@ export {
   IAssignRoles,
   ICreateRole,
   ICreateAsset,
-  GenericDescriptor
 };

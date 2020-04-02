@@ -8,9 +8,10 @@ import {
   ICreateAsset
 } from './IApiRequests';
 import { ICreateRoleResultSet } from './IRegistryRolesSet';
+import { AASDescriptorResponse } from '../Responses/AASDescriptorResponse';
 
 interface iRegistry {
-  readRecordByAasId(aasId: string): Promise<IAASDescriptor>;
+  readAASDescriptorByAasId(aasId: string): Promise<IAASDescriptor|undefined>;
   registerAas(req: IAASDescriptor): Promise<void>;
   updateAas(req: IAASDescriptor): Promise<RegistryResultSet>;
   deleteAasByAasId(aasId: IIdentifier): Promise<number>;

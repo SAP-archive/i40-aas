@@ -1,9 +1,9 @@
 
 import "reflect-metadata";
 import {createConnection, AdvancedConsoleLogger, Connection} from "typeorm";
-import { Asset } from "../Entities/AssetEntity";
-import { Endpoint } from "../Entities/EndpointEntity";
-import { AASDescriptor } from "../Entities/AASDescriptorEntity";
+import { AssetEntity } from "../Entities/AssetEntity";
+import { EndpointEntity } from "../Entities/EndpointEntity";
+import { AASDescriptorEntity } from "../Entities/AASDescriptorEntity";
 
  class DatabaseConnection{
   host: string;
@@ -31,7 +31,7 @@ connectDB(){
     password: this.password,
     database: this.database,
     entities: [
-      Asset, Endpoint, AASDescriptor
+      AssetEntity, EndpointEntity, AASDescriptorEntity
     ],
     synchronize: true,
     logging: false

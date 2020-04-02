@@ -150,7 +150,7 @@ export default [
     handler: async (req: Request, res: Response) => {
       try {
         console.log('Query parameters received:' + JSON.stringify(req.query));
-        if (req.query.aasId && req.query.receiverIdType) {
+        if (req.query.aasId) {
           res.json(
             await registryApi.readAASDescriptorByAASId(
               req.query.aasId
@@ -158,7 +158,7 @@ export default [
           );
         } else
           throw new RegistryError(
-            'Mandatory query parameters: receiverId and receiverIdType, or receiverRole and semanticProtocol',
+            'Mandatory query parameters: aasId is not found in request',
             422
           );
       } catch (e) {

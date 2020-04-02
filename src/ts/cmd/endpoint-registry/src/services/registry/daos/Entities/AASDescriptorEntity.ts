@@ -1,4 +1,6 @@
-import {Entity, Column, PrimaryColumn} from "typeorm";
+import {Entity, Column, PrimaryColumn, OneToOne, JoinColumn, OneToMany} from "typeorm";
+import { AssetEntity } from "./AssetEntity";
+import { EndpointEntity } from "./EndpointEntity";
 
 //import { IdTypeEnum } from 'i40-aas-objects/src/types/IdTypeEnum';
 
@@ -12,7 +14,7 @@ import {Entity, Column, PrimaryColumn} from "typeorm";
 }
 
 @Entity()
-export class AASDescriptor {
+export class AASDescriptorEntity {
 
     @PrimaryColumn({
       length: 1024
@@ -22,20 +24,22 @@ export class AASDescriptor {
     @Column()
     idType!: string;
 
-    @Column({
-      length: 1024
-      })
-    assetId!: string;
+    @OneToOne(type => AssetEntity)
+    @JoinColumn()
+    asset!: AssetEntity;
 
     @Column({
       length: 1024
       })
-    ertificate_x509_i40!: string;
+    certificate_x509_i40!: string;
 
     @Column({
       length: 1024
       })
     signature!: string;
+
+    @OneToMany(type => EndpointEntity, endpoint => endpoint.aasdescriptor) // note: we will create author property in the Photo class below
+    endpoints!: EndpointEntity[];
 
 
 }

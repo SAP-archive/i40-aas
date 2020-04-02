@@ -19,13 +19,20 @@ import {
   RegistryRolesResultSet,
   ICreateRoleResultSet
 } from '../interfaces/IRegistryRolesSet';
-import { Asset } from '../Entities/AssetEntity';
+import { AssetEntity } from '../Entities/AssetEntity';
 import { Connection, createConnection } from 'typeorm';
-import { Endpoint } from '../Entities/EndpointEntity';
-import { AASDescriptor } from '../Entities/AASDescriptorEntity';
+import { EndpointEntity } from '../Entities/EndpointEntity';
+import { AASDescriptorEntity } from '../Entities/AASDescriptorEntity';
 import { AASDescriptorResponse } from '../Responses/AASDescriptorResponse';
+import { Identifiable } from 'i40-aas-objects/dist/src/characteristics/Identifiable';
+import { Identifier } from '../Responses/Identifier';
+import { TIdType } from 'i40-aas-objects/src/types/IdTypeEnum';
+import { GenericDescriptor } from '../Responses/GenericDescriptor';
 
 class Registry implements iRegistry {
+  readRecordByAasId(aasId: string): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
   constructor(private readonly client: Connection) {
     //https://node-postgres.com/
     //this.db = db;
@@ -60,18 +67,29 @@ class Registry implements iRegistry {
     try {
       //create Asset associated with this AAS
       // have seperate handlers for each entity and report errors e.g. when assetid present
-      let asset = new Asset();
+      let asset = new AssetEntity();
       asset.id = record.asset.id;
       asset.idType = record.asset.idType;
 
       let savedAsset = await this.client.manager.save(asset);
       console.log("Asset Saved in Db ", asset);
-    } catch (error) { console.log(error) }
 
-    try{     await Promise.all(
+
+      //finally create the AASDescriptor in DB
+      let aasDescriptor = new AASDescriptorEntity();
+      aasDescriptor.id = record.identification.id;
+      aasDescriptor.idType = record.identification.idType;
+      aasDescriptor.asset = record.asset;
+      aasDescriptor.certificate_x509_i40 = record.descriptor.certificate_x509_i40;
+      aasDescriptor.signature = record.descriptor.signature;
+      await this.client.manager.save(aasDescriptor);
+      console.log("AASDescriptor Saved in Db ", aasDescriptor);
+
+
+      await Promise.all(
         record.descriptor.endpoints.map(async endpoint => {
-          let ep = new Endpoint();
-          ep.aasId = record.identification.id;
+          let ep = new EndpointEntity();
+          ep.aasdescriptor = aasDescriptor; //one to many relation
           ep.address = endpoint.address;
           ep.type = endpoint.type;
           await this.client.manager.save(ep);
@@ -80,18 +98,7 @@ class Registry implements iRegistry {
         })
       );
       //create Endpoints for this AAS
-    } catch (error) { console.log(error) }
 
-try{
-      //finally create the AASDescriptor in DB
-      let aasDescriptor = new AASDescriptor();
-      aasDescriptor.id = record.identification.id;
-      aasDescriptor.idType = record.identification.idType;
-      aasDescriptor.assetId = record.asset.id;
-      aasDescriptor.ertificate_x509_i40 = record.descriptor.certificate_x509_i40;
-      aasDescriptor.signature = record.descriptor.signature;
-      await this.client.manager.save(aasDescriptor);
-      console.log("AASDescriptor Saved in Db ", aasDescriptor);
 
 
     } catch (error) { console.log(error) }
@@ -237,16 +244,36 @@ try{
   }
   async readAASDescriptorByAasId(
     aasId: string
-  ): Promise<void>{
-    let aasDescriptorRepository = this.client.getRepository(AASDescriptor);
+  ): Promise<IAASDescriptor | undefined> {
+    let aasDescriptorRepository = this.client.getRepository(AASDescriptorEntity);
+    let aasAssetRepository = this.client.getRepository(AssetEntity);
 
-    let resultAasDescriptor = await aasDescriptorRepository.findOne({ id: aasId });
+    //let resultAasDescriptor = await aasDescriptorRepository.findOne({ id: aasId });
+    let resultAasDescriptor = await aasDescriptorRepository.findOne({
+      where: [
+        { id: aasId },],
+      relations: ["endpoints","asset"]
+    });
 
-    //let response = new AASDescriptorResponse();
+    if (resultAasDescriptor) {
+      console.debug("asset id " +JSON.stringify(resultAasDescriptor));
+      let resultAsset = await aasAssetRepository.findOne({ id: resultAasDescriptor.asset.id })
+      let aasDescrIdentifier = new Identifier(resultAasDescriptor.id, resultAasDescriptor.idType as TIdType);
+      let descr = new GenericDescriptor(resultAasDescriptor.endpoints, resultAasDescriptor.certificate_x509_i40, resultAasDescriptor.signature );
+      if(resultAsset){
+        let assetIdentifier = new  Identifier(resultAsset.id, resultAsset.idType as TIdType);
 
-
-
+        let response = new AASDescriptorResponse(aasDescrIdentifier, assetIdentifier, descr);
+        return response;
+      }
     }
+
+
+
+
+    return undefined;
+
+  }
 
 
 

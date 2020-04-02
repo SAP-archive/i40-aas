@@ -8,10 +8,8 @@ enum IdTypeEnum {
   IdShort = 'IdShort',
 }
 
-declare type TIdType = 'IRDI' | 'IRI' | 'Custom' | 'IdShort';
-
 @Entity()
-export class Asset {
+export class AssetEntity {
 
     @PrimaryColumn()
     id!: string;

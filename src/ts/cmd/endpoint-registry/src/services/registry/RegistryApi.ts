@@ -25,7 +25,7 @@ constructor(){
 
   async readAASDescriptorByAASId(
     aasId: string
-  ): Promise<Array<RegistryResultSet>> {
+  ): Promise<IAASDescriptor | undefined> {
     //TODO: dependency injection is better
     var registryDao: iRegistry = await RegistryFactory.getRegistry();
 
@@ -145,11 +145,8 @@ constructor(){
   async getEndpointsByReceiverId(
     receiverId: string,
     receiverIdType: TIdType
-  ): Promise<Array<IRegistryResultSet>> {
-    return this.readRecordByIdentifier({
-      id: receiverId,
-      idType: receiverIdType
-    });
+  ): Promise<IAASDescriptor | undefined> {
+    return this.readAASDescriptorByAASId(receiverId);
   }
 
   //TODO: why is this extra level of indirection needed?
