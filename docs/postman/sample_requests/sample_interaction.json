@@ -5,17 +5,17 @@
     "type": "publishInstance",
     "messageId": "Sample_Msg_ID_000",
     "replyBy": 29993912,
-    "receiver": { 
+    "receiver": {
       "role":{"name":"CentralAssetRepository" }
     },
-    "sender": { 
+    "sender": {
       "identification": {
-      "id":  "https://i40-test-aas-server.cfapps.eu10.hana.ondemand.com/aas",
+      "id":  "http://www.operator.com/aas",
       "idType": "URI"
     }
       ,"role":{"name":"Operator" }
     },
-    "conversationId": "Foo_Conv_ID_000"
+    "conversationId": "{{$randomInt}}"
   },
   "interactionElements": [
     {
@@ -25,7 +25,7 @@
           {
             "idType": "URI",
             "type": "GlobalReference",
-            "value": "opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/",
+            "value": "opcfoundation.org/specifications-unified-architecture/part-100-device-information-model",
             "local": false
           }
         ]
@@ -608,7 +608,7 @@
         }
       ]
     }
-    
-      
+
+
   ]
 }
