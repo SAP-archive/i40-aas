@@ -1,4 +1,9 @@
-import { IMessageBrokerClient, IMessageReceiver, Subscription, AmqpClient } from '../src/AMQPClient';
+import {
+  IMessageBrokerClient,
+  IMessageReceiver,
+  Subscription,
+  AmqpClient
+} from '../src/AmqpClient';
 import * as sinon from 'sinon';
 import { SapMqttClient } from '../examples/SapMqttClient';
 var chai = require('chai');
@@ -13,6 +18,8 @@ var expect = chai.expect;
 chai.should();
 
 //If these tests do not work reliably some of these can be converted into useful unit tests
+
+var DEFAULT_PORT = '5672';
 
 describe('AmpqClient', function() {
   let amqpClientSender: AmqpClient;
@@ -34,10 +41,18 @@ describe('AmpqClient', function() {
       throw new Error('No RABBITMQ_AMQP_HOST found in environment');
     }
     let exchange = 'test1';
-    amqpClientSender = new AmqpClient(AMQP_URL, exchange, 'guest', 'guest', '');
+    amqpClientSender = new AmqpClient(
+      AMQP_URL,
+      DEFAULT_PORT,
+      exchange,
+      'guest',
+      'guest',
+      ''
+    );
     let listenerId = 'listener1';
     amqpClientReceiver = new AmqpClient(
       AMQP_URL,
+      DEFAULT_PORT,
       exchange,
       'guest',
       'guest',
@@ -77,6 +92,7 @@ describe('AmpqClient', function() {
     let listenerId = 'listener1b';
     amqpClientReceiver = new AmqpClient(
       AMQP_URL,
+      DEFAULT_PORT,
       'amq.topic',
       'guest',
       'guest',
@@ -112,6 +128,7 @@ describe('AmpqClient', function() {
 
     amqpClientSender = new AmqpClient(
       AMQP_URL,
+      DEFAULT_PORT,
       'test',
       'guest',
       'guest',
@@ -154,10 +171,18 @@ describe('AmpqClient', function() {
       throw new Error('No RABBITMQ_AMQP_HOST found in environment');
     }
     let exchange = 'test2';
-    amqpClientSender = new AmqpClient(AMQP_URL, exchange, 'guest', 'guest', '');
+    amqpClientSender = new AmqpClient(
+      AMQP_URL,
+      DEFAULT_PORT,
+      exchange,
+      'guest',
+      'guest',
+      ''
+    );
     let listenerId = 'listener2';
     amqpClientReceiver = new AmqpClient(
       AMQP_URL,
+      DEFAULT_PORT,
       exchange,
       'guest',
       'guest',
@@ -208,10 +233,18 @@ describe('AmpqClient', function() {
       throw new Error('No RABBITMQ_AMQP_HOST found in environment');
     }
     let exchange = 'test3';
-    amqpClientSender = new AmqpClient(AMQP_URL, exchange, 'guest', 'guest', '');
+    amqpClientSender = new AmqpClient(
+      AMQP_URL,
+      DEFAULT_PORT,
+      exchange,
+      'guest',
+      'guest',
+      ''
+    );
     let listenerId = 'listener3';
     amqpClientReceiver = new AmqpClient(
       AMQP_URL,
+      DEFAULT_PORT,
       exchange,
       'guest',
       'guest',

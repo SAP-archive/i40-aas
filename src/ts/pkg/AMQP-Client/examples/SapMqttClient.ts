@@ -1,13 +1,15 @@
-import { IMessageBrokerClient,IMessageReceiver,Subscription  } from '../src/AMQPClient';
+import {
+  IMessageBrokerClient,
+  IMessageReceiver,
+  Subscription
+} from '../src/AmqpClient';
 import { Client } from 'mqtt';
 
 var mqtt = require('mqtt');
 
 class SapMqttClient implements IMessageBrokerClient {
-
-
   isConnected(): boolean {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
   private subscription: Subscription | undefined;
   private client: Client;
@@ -57,7 +59,7 @@ class SapMqttClient implements IMessageBrokerClient {
 
   publish(routingKey: string, msg: string): void {
     this.client.publish(routingKey, msg, () =>
-    console.debug('message published from mqtt client')
+      console.debug('message published from mqtt client')
     );
     console.debug(
       'mqtt client sent to exchange for topic ' +
