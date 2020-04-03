@@ -1,8 +1,7 @@
-
 [
   {
     "aasId": {
-        "id": "SAP_CentralAssetRepository",
+        "id": "http://www.operator.com/aas",
         "idType": "IRI"
     },
     "endpoints": [
@@ -20,7 +19,7 @@
       }
     ],
     "assetId": {
-        "id": "SAP_CentralAssetRepository",
+        "id": "http://www.operator.com/aas",
         "idType": "IRI"
     }
   }
