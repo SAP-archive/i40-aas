@@ -18,11 +18,6 @@ import { TIdType } from 'i40-aas-objects/dist/src/types/IdTypeEnum';
 class RegistryApi {
 
 
-constructor(){
-}
-
-
-
   async readAASDescriptorByAASId(
     aasId: string
   ): Promise<IAASDescriptor | undefined> {

@@ -158,7 +158,7 @@ export default [
         console.log('Query parameters received:' + JSON.stringify(req.query));
         if (req.query.aasId) {
           res.json(
-            await registryApi.readAASDescriptorByAASId(
+            await registryApi.updateAASDescriptorByAASId(
               req.query.aasId
             )
           );
