@@ -10,7 +10,7 @@ import { IMessageSender } from '../../../src/base/messaginginterface/IMessageSen
 import { SimpleMongoDbClient } from '../../../src/base/persistence/SimpleMongoDbClient';
 
 import Axios, { AxiosError } from 'axios';
-import { AmqpClient } from '../../../src/base/messaging/AmqpClient';
+import { AmqpClient } from 'AMQP-Client/lib/AMQPClient';
 import { InteractionMessage } from 'i40-aas-objects';
 import { IConversationMember } from 'i40-aas-objects/dist/src/interaction/ConversationMember';
 import { MyExternalRestServiceCaller } from '../../../src/services/onboarding/MyExternalRestServiceCaller';
@@ -1028,7 +1028,7 @@ describe('applyEvent', function() {
 
   it('switches sender to receiver when replying to a message', async function() {
     let conversationId = 'abcd1234';
-    let amqpClient = new AmqpClient('a', 'b', 'c', 'd', '');
+    let amqpClient = new AmqpClient('a', 'a1', 'b', 'c', 'd', '');
     let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
       new MessageSender(
         amqpClient,

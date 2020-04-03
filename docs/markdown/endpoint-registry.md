@@ -163,3 +163,21 @@ Create Database
 2. create assets table
 3. create asset_administration_shells table
 4. create endpoints table
+
+## Developer's notes
+
+### Tests
+
+#### Unit Tests
+
+- Run unit tests using `npm run test`
+- Run unit tests with coverage with `npm run coverage`
+
+#### Including integration tests
+
+Test setup can be done with `source ./integration-test-setup`.
+
+- To run integration tests as well as unit tests: `npm run test-with-integration`
+- To run coverage with integration tests: `npm run coverage-with-integration`
+
+Test cleanup: `./integration-test-teardown`
