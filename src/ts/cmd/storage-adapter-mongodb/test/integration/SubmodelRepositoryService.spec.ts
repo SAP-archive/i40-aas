@@ -4,27 +4,27 @@ import {
   KeyElementsEnum,
   IdTypeEnum,
   AnyAtomicTypeEnum
-} from "i40-aas-objects";
+} from 'i40-aas-objects';
 
-import { SubmodelRepositoryService } from "../src/services/mongodb-client/operations/SubmodelRepositoryService";
-import { SimpleMongoDbClient } from "../src/services/mongodb-client/operations/SimpleMongoDbClient";
-import { ISubmodelRecord } from "../src/services/mongodb-client/model/ISubmodelRecord";
-import { logger } from "../src/log";
-import sinon from "sinon";
-import { fail } from "assert";
-import { expect } from "chai";
-import { KindEnum } from "i40-aas-objects/dist/src/types/KindEnum";
-import { IKey } from "i40-aas-objects/dist/src/baseClasses/Key";
-var chai = require("chai");
+import { SubmodelRepositoryService } from '../../src/services/mongodb-client/operations/SubmodelRepositoryService';
+import { SimpleMongoDbClient } from '../../src/services/mongodb-client/operations/SimpleMongoDbClient';
+import { ISubmodelRecord } from '../../src/services/mongodb-client/model/ISubmodelRecord';
+import { logger } from '../../src/log';
+import sinon from 'sinon';
+import { fail } from 'assert';
+import { expect } from 'chai';
+import { KindEnum } from 'i40-aas-objects/dist/src/types/KindEnum';
+import { IKey } from 'i40-aas-objects/dist/src/baseClasses/Key';
+var chai = require('chai');
 chai.should();
-let md5 = require("md5");
+let md5 = require('md5');
 function checkEnvVar(variableName: string): string {
   let retVal: string | undefined = process.env[variableName];
   if (retVal) {
     return retVal;
   } else {
     throw new Error(
-      "A variable that is required by the skill has not been defined in the environment:" +
+      'A variable that is required by the skill has not been defined in the environment:' +
         variableName
     );
   }
@@ -42,7 +42,7 @@ function getProperty(idShort: string, value: string | undefined): Property {
           idType: IdTypeEnum.IRI,
           type: KeyElementsEnum.Submodel,
           value:
-            "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22",
+            'sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22',
           local: true
         }
       ]
@@ -63,17 +63,17 @@ function getSubmodel(properties: Property[]): Submodel {
           idType: IdTypeEnum.IRI,
           type: KeyElementsEnum.GlobalReference,
           value:
-            "opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/",
+            'opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/',
           local: false
         }
       ]
     },
     kind: KindEnum.Instance,
     description: [],
-    idShort: "opc-ua-devices",
+    idShort: 'opc-ua-devices',
     identification: {
       id:
-        "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22",
+        'sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22',
       idType: IdTypeEnum.IRI
     },
     modelType: {
@@ -85,21 +85,21 @@ function getSubmodel(properties: Property[]): Submodel {
   return retVal;
 }
 
-describe("createEquipmentAndSetInitialValues", function() {
-  const uuidv1 = require("uuid/v1");
+describe('createEquipmentAndSetInitialValues', function() {
+  const uuidv1 = require('uuid/v1');
   let mongoDbClient: SimpleMongoDbClient;
-  let collectionName: string = "tests" + uuidv1();
-  let MONGO_INITDB_DATABASE = checkEnvVar("MONGO_INITDB_DATABASE");
-  let MONGODB_HOST = checkEnvVar("MONGODB_HOST");
-  let MONGODB_PORT = checkEnvVar("MONGODB_PORT");
-  let MONGO_INITDB_ROOT_USERNAME = checkEnvVar("MONGO_INITDB_ROOT_USERNAME");
-  let MONGO_INITDB_ROOT_PASSWORD = checkEnvVar("MONGO_INITDB_ROOT_PASSWORD");
+  let collectionName: string = 'tests' + uuidv1();
+  let MONGO_INITDB_DATABASE = checkEnvVar('MONGO_INITDB_DATABASE');
+  let MONGODB_HOST = checkEnvVar('MONGODB_HOST');
+  let MONGODB_PORT = checkEnvVar('MONGODB_PORT');
+  let MONGO_INITDB_ROOT_USERNAME = checkEnvVar('MONGO_INITDB_ROOT_USERNAME');
+  let MONGO_INITDB_ROOT_PASSWORD = checkEnvVar('MONGO_INITDB_ROOT_PASSWORD');
   if (MONGO_INITDB_ROOT_USERNAME && MONGO_INITDB_ROOT_PASSWORD) {
-    logger.info("Using authentication");
+    logger.info('Using authentication');
   }
   before(async () => {
     if (MONGO_INITDB_ROOT_USERNAME && MONGO_INITDB_ROOT_PASSWORD) {
-      logger.info("Using authentication");
+      logger.info('Using authentication');
     }
     mongoDbClient = new SimpleMongoDbClient(
       collectionName,
@@ -116,16 +116,16 @@ describe("createEquipmentAndSetInitialValues", function() {
       await mongoDbClient.deleteCurrentCollection();
       await mongoDbClient.disconnect();
     } catch (error) {
-      logger.error("Error cleaning up:" + error);
+      logger.error('Error cleaning up:' + error);
     }
   });
   afterEach(async () => {
     sinon.restore();
   });
-  it("will throw a 400 error if productinstanceuri is not defined in provided submodel", async function() {
+  it('will throw a 400 error if productinstanceuri is not defined in provided submodel', async function() {
     let submodel: Submodel = getSubmodel([
-      getProperty("manufactureruri", "foobar.com"),
-      getProperty("model", "Nx6")
+      getProperty('manufactureruri', 'foobar.com'),
+      getProperty('model', 'Nx6')
     ]);
     let submodelRepositoryService: SubmodelRepositoryService = new SubmodelRepositoryService(
       mongoDbClient
@@ -135,16 +135,16 @@ describe("createEquipmentAndSetInitialValues", function() {
         submodel
       );
     } catch (error) {
-      error.should.have.nested.property("output.statusCode", 400);
+      error.should.have.nested.property('output.statusCode', 400);
       return;
     }
-    fail("Error should have been thrown");
+    fail('Error should have been thrown');
   });
-  it("will throw a 400 error if productinstanceuri has no value in provided submodel", async function() {
+  it('will throw a 400 error if productinstanceuri has no value in provided submodel', async function() {
     let submodel: Submodel = getSubmodel([
-      getProperty("manufactureruri", "foobar.com"),
-      getProperty("model", "Nx6"),
-      getProperty("productinstanceuri", undefined)
+      getProperty('manufactureruri', 'foobar.com'),
+      getProperty('model', 'Nx6'),
+      getProperty('productinstanceuri', undefined)
     ]);
     let submodelRepositoryService: SubmodelRepositoryService = new SubmodelRepositoryService(
       mongoDbClient
@@ -154,24 +154,24 @@ describe("createEquipmentAndSetInitialValues", function() {
         submodel
       );
     } catch (error) {
-      error.should.have.nested.property("output.statusCode", 400);
+      error.should.have.nested.property('output.statusCode', 400);
       return;
     }
-    fail("Error should have been thrown");
+    fail('Error should have been thrown');
   });
-  it("will update the corresponding submodel if it is asked to create a submodel with an id already in the database", async function() {
-    const uuidv1 = require("uuid/v1");
+  it('will update the corresponding submodel if it is asked to create a submodel with an id already in the database', async function() {
+    const uuidv1 = require('uuid/v1');
     let uri = uuidv1();
     let submodel: Submodel = getSubmodel([
-      getProperty("manufactureruri", "foobar.com"),
-      getProperty("model", "Nx6"),
-      getProperty("productinstanceuri", uri)
+      getProperty('manufactureruri', 'foobar.com'),
+      getProperty('model', 'Nx6'),
+      getProperty('productinstanceuri', uri)
     ]);
 
     let submodelUpdated: Submodel = getSubmodel([
-      getProperty("manufactureruri", "foobar.com"),
-      getProperty("model", "Ny6"),
-      getProperty("productinstanceuri", uri)
+      getProperty('manufactureruri', 'foobar.com'),
+      getProperty('model', 'Ny6'),
+      getProperty('productinstanceuri', uri)
     ]);
 
     let submodelRepositoryService: SubmodelRepositoryService = new SubmodelRepositoryService(
@@ -190,25 +190,25 @@ describe("createEquipmentAndSetInitialValues", function() {
       }
     );
     if (submodelRecord === null) {
-      fail("Could not find submodel in database");
+      fail('Could not find submodel in database');
     } else {
-      submodelRecord.should.have.property("version", 2);
+      submodelRecord.should.have.property('version', 2);
     }
   });
 });
 
-describe("getSubmodels", function() {
-  const uuidv1 = require("uuid/v1");
+describe('getSubmodels', function() {
+  const uuidv1 = require('uuid/v1');
   let mongoDbClient: SimpleMongoDbClient;
-  let collectionName: string = "tests" + uuidv1();
-  let MONGO_INITDB_DATABASE = checkEnvVar("MONGO_INITDB_DATABASE");
-  let MONGODB_HOST = checkEnvVar("MONGODB_HOST");
-  let MONGODB_PORT = checkEnvVar("MONGODB_PORT");
-  let MONGO_INITDB_ROOT_USERNAME = checkEnvVar("MONGO_INITDB_ROOT_USERNAME");
-  let MONGO_INITDB_ROOT_PASSWORD = checkEnvVar("MONGO_INITDB_ROOT_PASSWORD");
+  let collectionName: string = 'tests' + uuidv1();
+  let MONGO_INITDB_DATABASE = checkEnvVar('MONGO_INITDB_DATABASE');
+  let MONGODB_HOST = checkEnvVar('MONGODB_HOST');
+  let MONGODB_PORT = checkEnvVar('MONGODB_PORT');
+  let MONGO_INITDB_ROOT_USERNAME = checkEnvVar('MONGO_INITDB_ROOT_USERNAME');
+  let MONGO_INITDB_ROOT_PASSWORD = checkEnvVar('MONGO_INITDB_ROOT_PASSWORD');
   before(async () => {
     if (MONGO_INITDB_ROOT_USERNAME && MONGO_INITDB_ROOT_PASSWORD) {
-      logger.info("Using authentication");
+      logger.info('Using authentication');
     }
     mongoDbClient = new SimpleMongoDbClient(
       collectionName,
@@ -230,24 +230,24 @@ describe("getSubmodels", function() {
       await mongoDbClient.deleteCurrentCollection();
       await mongoDbClient.disconnect();
     } catch (error) {
-      logger.error("Error cleaning up:" + error);
+      logger.error('Error cleaning up:' + error);
     }
   });
   afterEach(function() {
     sinon.restore();
   });
-  it("returns a list of previously created submodels", async function() {
-    const uuidv1 = require("uuid/v1");
+  it('returns a list of previously created submodels', async function() {
+    const uuidv1 = require('uuid/v1');
     let submodel: Submodel = getSubmodel([
-      getProperty("manufactureruri", "foobar.com"),
-      getProperty("model", "Nx6"),
-      getProperty("productinstanceuri", uuidv1())
+      getProperty('manufactureruri', 'foobar.com'),
+      getProperty('model', 'Nx6'),
+      getProperty('productinstanceuri', uuidv1())
     ]);
 
     let submodelOther: Submodel = getSubmodel([
-      getProperty("manufactureruri", "foobar.com"),
-      getProperty("model", "Nx6"),
-      getProperty("productinstanceuri", uuidv1())
+      getProperty('manufactureruri', 'foobar.com'),
+      getProperty('model', 'Nx6'),
+      getProperty('productinstanceuri', uuidv1())
     ]);
 
     let submodelRepositoryService: SubmodelRepositoryService = new SubmodelRepositoryService(
@@ -266,19 +266,19 @@ describe("getSubmodels", function() {
     expect(result.length).to.equal(2);
   });
 });
-describe("delete", function() {
-  const uuidv1 = require("uuid/v1");
+describe('delete', function() {
+  const uuidv1 = require('uuid/v1');
   let mongoDbClient: SimpleMongoDbClient;
-  let collectionName: string = "tests" + uuidv1();
-  let MONGO_INITDB_DATABASE = checkEnvVar("MONGO_INITDB_DATABASE");
-  let MONGODB_HOST = checkEnvVar("MONGODB_HOST");
-  let MONGODB_PORT = checkEnvVar("MONGODB_PORT");
-  let MONGO_INITDB_ROOT_USERNAME = checkEnvVar("MONGO_INITDB_ROOT_USERNAME");
-  let MONGO_INITDB_ROOT_PASSWORD = checkEnvVar("MONGO_INITDB_ROOT_PASSWORD");
+  let collectionName: string = 'tests' + uuidv1();
+  let MONGO_INITDB_DATABASE = checkEnvVar('MONGO_INITDB_DATABASE');
+  let MONGODB_HOST = checkEnvVar('MONGODB_HOST');
+  let MONGODB_PORT = checkEnvVar('MONGODB_PORT');
+  let MONGO_INITDB_ROOT_USERNAME = checkEnvVar('MONGO_INITDB_ROOT_USERNAME');
+  let MONGO_INITDB_ROOT_PASSWORD = checkEnvVar('MONGO_INITDB_ROOT_PASSWORD');
 
   before(async () => {
     if (MONGO_INITDB_ROOT_USERNAME && MONGO_INITDB_ROOT_PASSWORD) {
-      logger.info("Using authentication");
+      logger.info('Using authentication');
     }
     mongoDbClient = new SimpleMongoDbClient(
       collectionName,
@@ -300,28 +300,28 @@ describe("delete", function() {
       await mongoDbClient.deleteCurrentCollection();
       await mongoDbClient.disconnect();
     } catch (error) {
-      logger.error("Error cleaning up:" + error);
+      logger.error('Error cleaning up:' + error);
     }
   });
   afterEach(function() {
     sinon.restore();
   });
 
-  it("deletes by id", async function() {
-    const uuidv1 = require("uuid/v1");
+  it('deletes by id', async function() {
+    const uuidv1 = require('uuid/v1');
     let id1 = uuidv1();
-    logger.debug("Generated id-md5:" + md5(id1));
+    logger.debug('Generated id-md5:' + md5(id1));
     let submodel: Submodel = getSubmodel([
-      getProperty("manufactureruri", "foobar.com"),
-      getProperty("model", "Nx6"),
-      getProperty("productinstanceuri", id1)
+      getProperty('manufactureruri', 'foobar.com'),
+      getProperty('model', 'Nx6'),
+      getProperty('productinstanceuri', id1)
     ]);
     let id2 = uuidv1();
-    logger.debug("Generated id-md5:" + md5(id2));
+    logger.debug('Generated id-md5:' + md5(id2));
     let submodelOther: Submodel = getSubmodel([
-      getProperty("manufactureruri", "foobar.com"),
-      getProperty("model", "Nx6"),
-      getProperty("productinstanceuri", id2)
+      getProperty('manufactureruri', 'foobar.com'),
+      getProperty('model', 'Nx6'),
+      getProperty('productinstanceuri', id2)
     ]);
 
     let submodelRepositoryService: SubmodelRepositoryService = new SubmodelRepositoryService(
