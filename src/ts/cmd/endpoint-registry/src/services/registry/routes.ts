@@ -105,24 +105,6 @@ export default [
     }
   },
   {
-    path: '/asset',
-    method: 'post',
-    handler: async (req: Request, res: Response) => {
-      console.log('/asset POST request received');
-      try {
-        //TODO: inconsistencies
-        // parsing should always be done in the same place for all handlers
-        //either in the handler or in RegistryApi
-        //sending the response should also be done in the same way
-        var asset: ICreateAsset = req.body;
-        res.json(await registryApi.createAsset(asset));
-        console.log('Sent back response of /asset POST request');
-      } catch (e) {
-        res.end(e.message);
-      }
-    }
-  },
-  {
     path: '/assetadministrationshells',
     method: 'delete',
     handler: async (req: Request, res: Response) => {
@@ -147,6 +129,30 @@ export default [
   {
     path: '/aasDescriptor',
     method: 'get',
+    handler: async (req: Request, res: Response) => {
+      try {
+        console.log('Query parameters received:' + JSON.stringify(req.query));
+        if (req.query.aasId) {
+          res.json(
+            await registryApi.readAASDescriptorByAASId(
+              req.query.aasId
+            )
+          );
+        } else
+          throw new RegistryError(
+            'Mandatory query parameters: aasId is not found in request',
+            422
+          );
+      } catch (e) {
+        console.log(e);
+        res.statusCode = e.r_statusCode || 500;
+        res.end(JSON.stringify(e));
+      }
+    }
+  },
+  {
+    path: '/aasDescriptor',
+    method: 'patch',
     handler: async (req: Request, res: Response) => {
       try {
         console.log('Query parameters received:' + JSON.stringify(req.query));

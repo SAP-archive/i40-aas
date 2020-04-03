@@ -3,8 +3,8 @@ import cors from "cors";
 import parser from "body-parser";
 import compression from "compression";
 import * as basicAuth from "express-basic-auth";
-// const dotenv = require('dotenv');
-// dotenv.config();
+ const dotenv = require('dotenv');
+ dotenv.config();
 
 export const handleCors = (router: Router) =>
   router.use(cors({ credentials: true, origin: true }));

@@ -28,19 +28,17 @@ constructor(){
   ): Promise<IAASDescriptor | undefined> {
     //TODO: dependency injection is better
     var registryDao: iRegistry = await RegistryFactory.getRegistry();
-
-    try {
-      if (!aasId) {
-        throw new RegistryError('Missing parameter id', 422);
-      }
       var result = await registryDao.readAASDescriptorByAasId(aasId);
       console.log(result);
       return result;
-    } catch (e) {
-      throw e;
-    } finally {
-      registryDao.release();
-    }
+  }
+  async updateAASDescriptorByAASId(
+    aasId: string
+  ): Promise<IAASDescriptor | undefined> {
+    var registryDao: iRegistry = await RegistryFactory.getRegistry();
+      var result = await registryDao.readAASDescriptorByAasId(aasId);
+      console.log(result);
+      return result;
   }
 
   async deleteRecordByIdentifier(identifier: IIdentifier): Promise<number> {
