@@ -1,10 +1,4 @@
 #source ./integration-test-setup
-export AMQP_URL=localhost
-export RABBITMQ_AMQP_HOST=localhost
-export RABBITMQ_BROKER_USER=guest
-export RABBITMQ_BROKER_PASSWORD=guest
-export RABBITMQ_BROKER_BROKER_EXCHANGE=amq.topic
-export RABBITMQ_BROKER_TOPIC_EGRESS=http.client
 export MONGODB_HOST=127.0.0.1
 export MONGODB_PORT=27017
 export MONGO_INITDB_ROOT_USERNAME=test
@@ -12,4 +6,3 @@ export MONGO_INITDB_ROOT_PASSWORD=test
 export MONGO_INITDB_DATABASE=test
 
 docker run --rm -d -e MONGO_INITDB_ROOT_USERNAME=test -e MONGO_INITDB_ROOT_PASSWORD=test -e MONGO_INITDB_DATABASE=test --name some-mongo -p 27017:27017 mongo
-docker run --rm -d --name some-rabbit -p 5672:5672 -p 1883:1883 cyrilix/rabbitmq-mqtt

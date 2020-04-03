@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import fs from 'fs';
 import { MessageSender } from '../../../src/base/messaging/MessageSender';
-import { AmqpClient } from '../../../src/base/messaging/AmqpClient';
+import { AmqpClient } from 'AMQP-Client/lib/AMQPClient';
 import { InteractionMessage } from 'i40-aas-objects';
 
 describe('replyTo', function() {
@@ -27,6 +27,7 @@ describe('replyTo', function() {
 
     let amqpClient: AmqpClient = new AmqpClient(
       BROCKER_URL,
+      '5762',
       BROKER_EXCHANGE,
       BROKER_USER,
       BROKER_PASSWORD,
@@ -96,6 +97,7 @@ describe('start', function() {
 
     let amqpClient: AmqpClient = new AmqpClient(
       BROCKER_URL,
+      '5762',
       BROKER_EXCHANGE,
       BROKER_USER,
       BROKER_PASSWORD,

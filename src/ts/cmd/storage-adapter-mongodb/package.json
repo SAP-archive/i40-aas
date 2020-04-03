@@ -5,8 +5,11 @@
   "main": "src/index.js",
   "scripts": {
     "dev": "tsc-watch --onSuccess \"node ./dist/server.js\"",
-    "test": "mocha -r ts-node/register test/**/*.spec.ts",
+    "test": "mocha --require ts-node/register --exit test/unit/**/*.spec.ts",
+    "test-with-integration": "mocha --require ts-node/register --exit test/integration/**/*.spec.ts test/unit/**/*.spec.ts",
+    "test-integration-only": "mocha --require ts-node/register --exit test/integration/**/*.spec.ts",
     "coverage": "nyc --reporter html --reporter text npm test",
+    "coverage-with-integration": "nyc --reporter html --reporter text npm run test-with-integration",
     "build": "tsc",
     "clean": "rm -rf ./dist/* ",
     "start": "node ./dist/server.js"
@@ -61,8 +64,8 @@
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "chai-http": "^4.3.0",
-    "mocha": "^6.1.4",
-    "nyc": "^14.1.1",
+    "mocha": "^7.1.1",
+    "nyc": "^15.0.0",
     "tsc-watch": "^2.2.1",
     "ts-node": "^8.3.0",
     "typescript": "^3.5.2"
