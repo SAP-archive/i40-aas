@@ -13,7 +13,7 @@ import { AASDescriptorResponse } from '../Responses/AASDescriptorResponse';
 interface iRegistry {
   readAASDescriptorByAasId(aasId: string): Promise<IAASDescriptor|undefined>;
   registerAas(req: IAASDescriptor): Promise<void>;
-  updateAas(req: IAASDescriptor): Promise<RegistryResultSet>;
+  updateAasDescriptorByAasId(req: IAASDescriptor): Promise<IAASDescriptor | undefined>;
   deleteAasByAasId(aasId: IIdentifier): Promise<number>;
   listAasByAssetId(assetId: IIdentifier): Promise<Array<RegistryResultSet>>;
   listAas(): Promise<Array<RegistryResultSet>>;

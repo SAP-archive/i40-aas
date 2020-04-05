@@ -20,7 +20,7 @@ import {
   ICreateRoleResultSet
 } from '../interfaces/IRegistryRolesSet';
 import { AssetEntity } from '../Entities/AssetEntity';
-import { Connection, createConnection } from 'typeorm';
+import { Connection, createConnection, UpdateResult } from 'typeorm';
 import { EndpointEntity } from '../Entities/EndpointEntity';
 import { AASDescriptorEntity } from '../Entities/AASDescriptorEntity';
 import { AASDescriptorResponse } from '../Responses/AASDescriptorResponse';
@@ -99,57 +99,67 @@ class Registry implements iRegistry {
       );
       //create Endpoints for this AAS
 
-
-
     } catch (error) { console.log(error) }
 
-
-
-    /*
-        //TODO: remove cast once migration complete
-        try {
-          await this.client.query('BEGIN');
-          //TODO: if error handling change, we can use createAsset here
-          const insertAssetResult = await this.client.query(
-            ' INSERT INTO public.assets( "assetId", "idType") VALUES ($1, $2) ON CONFLICT DO NOTHING;',
-            [record.assetId.id, record.assetId.idType]
-          );
-          const insertAasResult = await this.client.query(
-            'INSERT INTO public.asset_administration_shells("aasId", "idType", "assetId") VALUES ($1, $2, $3);',
-            [record.aasId.id, record.aasId.idType, record.assetId.id]
-          );
-          const deleteEndpointResult = await this.client.query(
-            'DELETE FROM public.endpoints WHERE "aasId" = $1;',
-            [record.aasId.id]
-          );
-
-          await Promise.all(
-            record.endpoints.map(async (endpoint: IEndpoint) => {
-              console.log('endpoint:' + JSON.stringify(endpoint));
-              const insertEndpointResult = await this.client.query(
-                'INSERT INTO public.endpoints( "URL", protocol_name, protocol_version, "aasId",target) VALUES ($1, $2, $3, $4, $5);',
-                [
-                  endpoint.url,
-                  endpoint.protocol,
-                  endpoint.protocolVersion,
-                  record.aasId.id,
-                  endpoint.target
-                ]
-              );
-            })
-          );
-          await this.client.query('COMMIT');
-          console.log(record);
-          return record;
-        } catch (error) {
-          await this.client.query('ROLLBACK');
-          throw error;
-        }
-        */
   }
 
-  updateAas(record: IAASDescriptor): Promise<IRegistryResultSet> {
-    throw new Error('Method not implemented.');
+  async updateAasDescriptorByAasId(record: IAASDescriptor): Promise<IAASDescriptor | undefined> {
+
+    try {
+      //This is the most efficient way in terms of performance to update entities in your database (see https://typeorm.io/#/update-query-builder )
+
+
+      console.debug("cert "+record.descriptor.certificate_x509_i40);
+
+      let aasDescriptor = await this.client
+        .createQueryBuilder()
+        .update(AASDescriptorEntity)
+        .set({
+          asset: record.asset,
+          certificate_x509_i40: record.descriptor.certificate_x509_i40,
+          signature: record.descriptor.signature
+        })
+        .where("id = :id", { id: record.identification.id })
+        .execute();
+
+      console.log("AASDescriptor updated in Db " + JSON.stringify(aasDescriptor));
+
+      //TODO: is there a way to avoid this call (using the previous update maybe?)
+      let aasDescriptorRepository = this.client.getRepository(AASDescriptorEntity);
+      let resultAasDescriptor = await aasDescriptorRepository.findOne({
+        where: [
+          { id: record.identification.id },],
+        relations: ["endpoints", "asset"]
+      });
+
+      //updated each Endpoint refering to this AAS
+      if (resultAasDescriptor) {
+        await Promise.all(
+          record.descriptor.endpoints.map(async endpoint => {
+
+            let updateResult = await this.client
+              .createQueryBuilder()
+              .update(EndpointEntity)
+              .set({
+                address: endpoint.address,
+                type: endpoint.type
+              })
+              .where("aasdescriptor = :aasdescriptor", { aasdescriptor: record.identification.id })
+              .andWhere("address = :address", { address: endpoint.address})
+              .execute();
+
+            console.log("Endpoint Upated in Db ", updateResult);
+
+          })
+        );
+      }
+
+      return record
+
+    } catch (error) { console.log("Error caught " + error)
+  return undefined}
+
+
   }
 
   async deleteAasByAasId(aasId: IIdentifier): Promise<number> {
@@ -245,37 +255,34 @@ class Registry implements iRegistry {
   async readAASDescriptorByAasId(
     aasId: string
   ): Promise<IAASDescriptor | undefined> {
+
+    //get an Entityrepository for the AASDescriptor and the Asset
     let aasDescriptorRepository = this.client.getRepository(AASDescriptorEntity);
     let aasAssetRepository = this.client.getRepository(AssetEntity);
 
-    //let resultAasDescriptor = await aasDescriptorRepository.findOne({ id: aasId });
+    //Load the AASDescriptor object from the DB as well as the related Objects (Endpoints, Asset)
     let resultAasDescriptor = await aasDescriptorRepository.findOne({
       where: [
         { id: aasId },],
-      relations: ["endpoints","asset"]
+      relations: ["endpoints", "asset"]
     });
 
     if (resultAasDescriptor) {
-      console.debug("asset id " +JSON.stringify(resultAasDescriptor));
+      console.debug("asset id " + JSON.stringify(resultAasDescriptor));
       let resultAsset = await aasAssetRepository.findOne({ id: resultAasDescriptor.asset.id })
       let aasDescrIdentifier = new Identifier(resultAasDescriptor.id, resultAasDescriptor.idType as TIdType);
-      let descr = new GenericDescriptor(resultAasDescriptor.endpoints, resultAasDescriptor.certificate_x509_i40, resultAasDescriptor.signature );
-      if(resultAsset){
-        let assetIdentifier = new  Identifier(resultAsset.id, resultAsset.idType as TIdType);
+      let descr = new GenericDescriptor(resultAasDescriptor.endpoints, resultAasDescriptor.certificate_x509_i40, resultAasDescriptor.signature);
+      if (resultAsset) {
+        let assetIdentifier = new Identifier(resultAsset.id, resultAsset.idType as TIdType);
 
         let response = new AASDescriptorResponse(aasDescrIdentifier, assetIdentifier, descr);
         return response;
       }
     }
-
-
-
-
+    //if not found return undefined
     return undefined;
 
   }
-
-
 
 
   async readEndpointBySemanticProtocolAndRole(

@@ -151,6 +151,7 @@ export default [
     }
   },
   {
+    //TODO: Add validation that aasId==req.body.identification.id
     path: '/aasDescriptor',
     method: 'patch',
     handler: async (req: Request, res: Response) => {
@@ -159,7 +160,7 @@ export default [
         if (req.query.aasId) {
           res.json(
             await registryApi.updateAASDescriptorByAASId(
-              req.query.aasId
+              req.body
             )
           );
         } else

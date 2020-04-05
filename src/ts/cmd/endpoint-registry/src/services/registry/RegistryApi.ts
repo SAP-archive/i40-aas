@@ -28,10 +28,10 @@ class RegistryApi {
       return result;
   }
   async updateAASDescriptorByAASId(
-    aasId: string
+    req: IAASDescriptor
   ): Promise<IAASDescriptor | undefined> {
     var registryDao: iRegistry = await RegistryFactory.getRegistry();
-      var result = await registryDao.readAASDescriptorByAasId(aasId);
+      var result = await registryDao.updateAasDescriptorByAasId(req);
       console.log(result);
       return result;
   }
