@@ -1,4 +1,4 @@
-import { AmqpClient } from "../../src/services/aas-router/messaging/AMQPClient";
+import { AmqpClient } from "../../src/services/aas-router/messaging/AmqpClient";
 import { logger } from "../../src/utils/log";
 import sinon from "sinon";
 // import sinon from "sinon";
