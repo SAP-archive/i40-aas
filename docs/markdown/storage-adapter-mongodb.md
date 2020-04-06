@@ -10,7 +10,10 @@
 
 ## The big picture
 
-![The big picture](../images/big_picture_mongodb.png 'Where this component fits in.')
+This component is shown as "MongoDB Application Adapter".
+
+![The big picture](../images/AAS_SERVICE_REVISED.png).
+
 
 ## Developer notes
 

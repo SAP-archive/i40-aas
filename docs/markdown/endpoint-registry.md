@@ -45,21 +45,35 @@ POST /assetadministrationshells
 [
   {
     aasId: {
-      id: "<id of the asset administration shell>",
-      idType: "URI"
+      id: '<id of the asset administration shell>',
+      idType: 'URI|CUSTOM|IRDI'
     },
     endpoints: [
       {
-        url: "<url of the endpoint>",
-        protocolVersion: "<version of the protocol>",
-        protocol: "<name of the protocol>"
-        target: "<cloud|edge>"
+        url: '<url of the endpoint>',
+        protocolVersion: '<version of the protocol>',
+        protocol: '<name of the protocol>',
+        target: '<cloud|edge>'
       }
     ],
     assetId: {
-      id: "<id of the asset>",
-      idType: "URI"
+      id: '<id of the asset>',
+      idType: 'URI|CUSTOM|IRDI'
     }
+  }
+];
+```
+
+## Create role assignments
+
+```javascript
+[
+  {
+    aasId: {
+      id: '<ID of the AAS>',
+      idType: 'URI|CUSTOM|IRDI'
+    },
+    roleId: '<id of the role>'
   }
 ];
 ```
