@@ -17,7 +17,7 @@ The machine is defined [here](../../src/ts/cmd/onboarding-skill/src/services/onb
 
 From each state, invalid messages will be responded to (as long as they are parsable and contain a proper sender) with notUnderstood.
 
-## Developer's note
+## Developer's notes
 
 ### How it works
 
@@ -32,13 +32,12 @@ A message is received via the message broker (AMQPClient -> MessageInterpreter) 
 
 #### Including integration tests
 
-These tests require a message broker and the AMQP_URL variable set in the environment to the host name of the message broker (in the docker container) with the exposed 5672 port, for example: "localhost", if running the tests locally. The message broker for the integration needs to provide default guest user account for the tests to run.
-
-It can be run from a docker image with `source .\integration-test-setup` (wait 20s before starting integration tests).
+Test setup can be done with `source ./integration-test-setup`.
 
 - To run integration tests as well: `npm run test-with-integration`
 - To run coverage with integration tests: `npm run coverage-with-integration`
-  To cleanup the message broker `.\integration-test-teardown`
+
+Test cleanup: `./integration-test-teardown`
 
 # Writing your own skill
 

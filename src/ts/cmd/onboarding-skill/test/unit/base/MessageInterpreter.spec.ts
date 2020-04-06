@@ -5,7 +5,7 @@ import { WebClient } from '../../../src/web/WebClient';
 import { SimpleMongoDbClient } from '../../../src/base/persistence/SimpleMongoDbClient';
 import sinon from 'sinon';
 import { MessageInterpreter } from '../../../src/base/messaging/MessageInterpreter';
-import { AmqpClient } from '../../../src/base/messaging/AmqpClient';
+import { AmqpClient } from 'AMQP-Client/lib/AMQPClient';
 import { InteractionMessage } from 'i40-aas-objects';
 import { logger } from '../../../src/log';
 import { MyExternalRestServiceCaller } from '../../../src/services/onboarding/MyExternalRestServiceCaller';
@@ -95,7 +95,7 @@ describe('validation process', function() {
     );
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
-      new AmqpClient('a', 'b', 'c', 'd', '')
+      new AmqpClient('a', 'a2', 'b', 'c', 'd', '')
     );
     messageInterpreter.receive(JSON.stringify(message));
     sinon.assert.calledOnce(fakeReplyNotUnderstood);
@@ -146,7 +146,7 @@ describe('validation process', function() {
 
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
-      new AmqpClient('a', 'b', 'c', 'd', '')
+      new AmqpClient('a', 'a2', 'b', 'c', 'd', '')
     );
     messageInterpreter.receive(JSON.stringify(message));
     sinon.assert.calledOnce(fakeapplyEvent);
@@ -198,7 +198,7 @@ describe('validation process', function() {
 
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
-      new AmqpClient('a', 'b', 'c', 'd', '')
+      new AmqpClient('a', 'a2', 'b', 'c', 'd', '')
     );
     messageInterpreter.receive(JSON.stringify(message));
     sinon.assert.calledOnce(fakeapplyEvent);
@@ -247,7 +247,7 @@ describe('validation process', function() {
 
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
-      new AmqpClient('a', 'b', 'c', 'd', '')
+      new AmqpClient('a', 'a2', 'b', 'c', 'd', '')
     );
     messageInterpreter.receive(JSON.stringify(message));
     sinon.assert.calledOnce(fakeapplyEvent);
@@ -300,7 +300,7 @@ describe('validation process', function() {
     );
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
-      new AmqpClient('a', 'b', 'c', 'd', '')
+      new AmqpClient('a', 'a2', 'b', 'c', 'd', '')
     );
     messageInterpreter.receive(JSON.stringify(message));
     sinon.assert.calledOnce(fakeReplyNotUnderstood);
@@ -353,7 +353,7 @@ describe('validation process', function() {
     );
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
-      new AmqpClient('a', 'b', 'c', 'd', '')
+      new AmqpClient('a', 'a2', 'b', 'c', 'd', '')
     );
     messageInterpreter.receive(JSON.stringify(message));
     sinon.assert.calledOnce(fakeReplyNotUnderstood);
@@ -405,7 +405,7 @@ describe('validation process', function() {
     );
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
-      new AmqpClient('a', 'b', 'c', 'd', '')
+      new AmqpClient('a', 'a2', 'b', 'c', 'd', '')
     );
     messageInterpreter.receive(JSON.stringify(message));
     sinon.assert.calledOnce(fakeReplyNotUnderstood);
@@ -451,7 +451,7 @@ describe('validation process', function() {
     );
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
-      new AmqpClient('a', 'b', 'c', 'd', '')
+      new AmqpClient('a', 'a2', 'b', 'c', 'd', '')
     );
     messageInterpreter.receive(JSON.stringify(message));
     sinon.assert.calledOnce(fakeReplyError);
@@ -492,7 +492,7 @@ describe('validation process', function() {
     );
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
-      new AmqpClient('a', 'b', 'c', 'd', '')
+      new AmqpClient('a', 'a2', 'b', 'c', 'd', '')
     );
     let spy = sinon.spy(logger, 'error');
     messageInterpreter.receive(JSON.stringify(message));
@@ -539,7 +539,7 @@ describe('validation process', function() {
     );
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
-      new AmqpClient('a', 'b', 'c', 'd', '')
+      new AmqpClient('a', 'a2', 'b', 'c', 'd', '')
     );
     let spy = sinon.spy(logger, 'error');
     messageInterpreter.receive(JSON.stringify(message));
@@ -563,7 +563,7 @@ describe('validation process', function() {
     let fakeapplyEvent = sinon.fake();
     sinon.replace(skill, 'applyEvent', fakeapplyEvent);
 
-    let amqpClient = new AmqpClient('a', 'b', 'c', 'd', '');
+    let amqpClient = new AmqpClient('a', 'a2', 'b', 'c', 'd', '');
     let messageInterpreter: MessageInterpreter = new MessageInterpreter(
       skill,
       amqpClient
