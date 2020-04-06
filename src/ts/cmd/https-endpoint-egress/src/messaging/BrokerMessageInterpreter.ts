@@ -1,5 +1,5 @@
 import { IMessageReceiver } from "./interfaces/IMessageReceiver";
-import { AmqpClient, Subscription } from 'AMQP-Client/lib/AMQPClient';
+import { AmqpClient, Subscription } from 'AMQP-Client/lib/AmqpClient';
 import { IResolverMessage } from "./interfaces/IResolverMessage";
 import { AASConnector } from "./AASConnector";
 import { WebClient } from "../WebClient/WebClient";
