@@ -1,5 +1,5 @@
 import { Submodel, IFrame } from 'i40-aas-objects';
-import { AmqpClient } from 'AMQP-Client/lib/AMQPClient';
+import { AmqpClient } from 'AMQP-Client/lib/AmqpClient';
 
 import { IMessageSender } from '../messaginginterface/IMessageSender';
 import { IConversationMember } from 'i40-aas-objects/dist/src/interaction/ConversationMember';

@@ -5,7 +5,7 @@ import { WebClient } from '../../../src/web/WebClient';
 import { SimpleMongoDbClient } from '../../../src/base/persistence/SimpleMongoDbClient';
 import sinon from 'sinon';
 import { MessageInterpreter } from '../../../src/base/messaging/MessageInterpreter';
-import { AmqpClient } from 'AMQP-Client/lib/AMQPClient';
+import { AmqpClient } from 'AMQP-Client/lib/AmqpClient';
 import { InteractionMessage } from 'i40-aas-objects';
 import { logger } from '../../../src/log';
 import { MyExternalRestServiceCaller } from '../../../src/services/onboarding/MyExternalRestServiceCaller';
