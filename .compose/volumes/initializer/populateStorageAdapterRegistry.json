@@ -1,0 +1,23 @@
+[
+  {
+    "adapterid": "storage-adapter-mongodb",
+    "url": "http://i40-aas-storage-adapter-mongodb:3100/submodels",
+    "name": "mongo-adapter",
+    "submodelid": "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22/mongo",
+    "submodelsemanticid": "opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/mongo"
+  },
+  {
+    "adapterid": "storage-adapter-ain",
+    "url": "http://i40-aas-storage-adapter-ain:80/submodels",
+    "name": "ain-adapter-cloud",
+    "submodelid": "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22",
+    "submodelsemanticid": "opcfoundation.org/specifications-unified-architecture/part-100-device-information-model"
+  },
+  {
+    "adapterid": "storage-adapter-ain",
+    "url": "http://i40-aas-storage-adapter-ain:3000/submodels",
+    "name": "ain-adapter-local",
+    "submodelid": "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22/ain-local",
+    "submodelsemanticid": "opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/ain-local"
+  }
+]
