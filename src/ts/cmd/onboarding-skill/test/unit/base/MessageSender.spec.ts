@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import fs from 'fs';
 import { MessageSender } from '../../../src/base/messaging/MessageSender';
-import { AmqpClient } from 'AMQP-Client/lib/AMQPClient';
+import { AmqpClient } from 'AMQP-Client/lib/AmqpClient';
 import { InteractionMessage } from 'i40-aas-objects';
 
 describe('replyTo', function() {

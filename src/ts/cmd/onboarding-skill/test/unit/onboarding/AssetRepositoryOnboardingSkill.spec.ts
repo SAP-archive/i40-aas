@@ -10,7 +10,7 @@ import { IMessageSender } from '../../../src/base/messaginginterface/IMessageSen
 import { SimpleMongoDbClient } from '../../../src/base/persistence/SimpleMongoDbClient';
 
 import Axios, { AxiosError } from 'axios';
-import { AmqpClient } from 'AMQP-Client/lib/AMQPClient';
+import { AmqpClient } from 'AMQP-Client/lib/AmqpClient';
 import { InteractionMessage } from 'i40-aas-objects';
 import { IConversationMember } from 'i40-aas-objects/dist/src/interaction/ConversationMember';
 import { MyExternalRestServiceCaller } from '../../../src/services/onboarding/MyExternalRestServiceCaller';

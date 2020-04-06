@@ -7,7 +7,7 @@ import { SimpleMongoDbClient } from './base/persistence/SimpleMongoDbClient';
 import { IDatabaseClient } from './base/persistenceinterface/IDatabaseClient';
 import { logger } from './log';
 import { TIdType, IdTypeEnum } from 'i40-aas-objects/dist/src/types/IdTypeEnum';
-import { AmqpClient } from 'AMQP-Client/lib/AMQPClient';
+import { AmqpClient } from 'AMQP-Client/lib/AmqpClient';
 import { MyExternalRestServiceCaller } from './services/onboarding/MyExternalRestServiceCaller';
 import { MyInitializer } from './services/onboarding/MyInitializer';
 import { uuid } from 'uuidv4';
