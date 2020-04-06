@@ -1,4 +1,4 @@
-import { AmqpClient } from "../src/messaging/AMQPClient";
+import { AmqpClient } from "../src/messaging/AmqpClient";
 import { logger } from "../src/utils/log";
 import sinon from "sinon";
 // import sinon from "sinon";

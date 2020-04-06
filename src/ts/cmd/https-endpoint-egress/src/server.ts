@@ -1,4 +1,4 @@
-import { AmqpClient } from 'AMQP-Client/lib/AMQPClient';
+import { AmqpClient } from 'AMQP-Client/lib/AmqpClient';
 import { BrokerMessageInterpreter } from "./messaging/BrokerMessageInterpreter";
 import { logger } from "./utils/log";
 
