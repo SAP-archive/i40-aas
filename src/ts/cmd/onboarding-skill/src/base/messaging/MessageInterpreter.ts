@@ -1,6 +1,6 @@
 //import * as logger from "winston";
 import { Skill } from '../Skill';
-import { AmqpClient, Subscription } from 'AMQP-Client/lib/AMQPClient';
+import { AmqpClient, Subscription } from 'AMQP-Client/lib/AmqpClient';
 import { InteractionMessage } from 'i40-aas-objects';
 import { IMessageReceiver } from '../messaginginterface/IMessageReceiver';
 import { logger } from '../../log';
@@ -52,8 +52,8 @@ class MessageInterpreter implements IMessageReceiver {
       let requiredAndMissingData: string[] = [
         senderRole,
         messageType,
-        conversationId
-      ].filter(e => e === undefined || e.length === 0);
+        conversationId,
+      ].filter((e) => e === undefined || e.length === 0);
 
       if (requiredAndMissingData.length > 0) {
         this.handleUnintelligibleMessage(data, requiredAndMissingData);
