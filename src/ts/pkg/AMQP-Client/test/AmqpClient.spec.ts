@@ -1,6 +1,4 @@
-import sinon from 'sinon';
-import { AmqpClient } from '../../../src/base/messaging/AmqpClient';
-import { logger } from '../../../src/log';
+import { AmqpClient } from '../src/AmqpClient';
 var chai = require('chai');
 var chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
@@ -13,11 +11,6 @@ var expect = chai.expect;
 chai.should();
 
 describe('AmqpClient', function() {
-  this.beforeEach(function() {});
-  this.afterEach(function() {
-    sinon.restore();
-  });
-
   it('sleeps for the appropriate time', async function() {
     let start = Date.now();
     await AmqpClient.sleep(500);

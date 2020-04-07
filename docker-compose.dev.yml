@@ -3,6 +3,12 @@ services:
   ########################################################
   #### Provide build instructions for all i40-aas images
   ##########################################
+  i40-aas-echo-skill:
+    image: sapi40/i40-aas-echo-skill:${BUILD_TAG}
+    build:
+      context: src/node-red
+      dockerfile: ../docker/echo-skill/Dockerfile
+  ##########################################
   i40-aas-onboarding-skill:
     image: sapi40/i40-aas-onboarding-skill:${BUILD_TAG}
     build:

@@ -1,4 +1,3 @@
-import { AmqpClient } from './base/messaging/AmqpClient';
 import { MessageInterpreter } from './base/messaging/MessageInterpreter';
 import { Skill } from './base/Skill';
 import { MyAasMessageDispatcher } from './services/onboarding/MyAasMessageDispatcher';
@@ -8,8 +7,14 @@ import { SimpleMongoDbClient } from './base/persistence/SimpleMongoDbClient';
 import { IDatabaseClient } from './base/persistenceinterface/IDatabaseClient';
 import { logger } from './log';
 import { TIdType, IdTypeEnum } from 'i40-aas-objects/dist/src/types/IdTypeEnum';
+import { AmqpClient } from 'AMQP-Client/lib/AMQPClient';
 import { MyExternalRestServiceCaller } from './services/onboarding/MyExternalRestServiceCaller';
 import { MyInitializer } from './services/onboarding/MyInitializer';
+import { uuid } from 'uuidv4';
+
+
+const dotenv = require("dotenv");
+dotenv.config();
 
 function checkEnvVar(variableName: string): string {
   let retVal: string | undefined = process.env[variableName];
@@ -35,6 +40,12 @@ let DATA_MANAGER_BASE_URL =
 
 let ROOT_TOPIC = checkEnvVar('SKILLS_ONBOARDING_APPROVAL_ROOT_TOPIC');
 let TOPIC = ROOT_TOPIC + '.*';
+
+// The queue is generated based on the binding key and is unique for the client
+// GUID + CORE_EGRESS_HTTP_BROKER_BINDINGKEY; //TODO: here also from env variable??
+
+let BROKER_QUEUE = ROOT_TOPIC +"/"+ uuid(); //TODO: here also from env variable??
+
 let MY_URI = checkEnvVar('SKILLS_ONBOARDING_APPROVAL_URI');
 let MY_ROLE = checkEnvVar('SKILLS_ONBOARDING_APPROVAL_ROLE');
 let COLLECTION_IN_DATABASE = checkEnvVar(
@@ -46,11 +57,12 @@ let MONGO_INITDB_ROOT_PASSWORD = checkEnvVar(
   'SKILLS_ONBOARDING_DATABASE_PASSWORD'
 );
 
-let BROKER_URL = checkEnvVar('CORE_BROKER_HOST');
+let BROKER_HOST = checkEnvVar('CORE_BROKER_HOST');
+let BROKER_PORT = checkEnvVar('CORE_BROKER_PORT');
 let BROKER_EXCHANGE = checkEnvVar('CORE_EGRESS_EXCHANGE');
 let BROKER_USER = checkEnvVar('CORE_EGRESS_USER');
 let BROKER_PASSWORD = checkEnvVar('CORE_EGRESS_PASSWORD');
-let HTTPS_ENDPOINT_ROUTING_KEY = checkEnvVar('CORE_ENDPOINT_RESOLVER_QUEUE');
+let CORE_EGRESS_ROUTINGKEY = checkEnvVar('CORE_EGRESS_ROUTINGKEY');
 
 let MONGODB_HOST = checkEnvVar('SKILLS_ONBOARDING_DATABASE_HOST');
 let MONGODB_PORT = checkEnvVar('SKILLS_ONBOARDING_DATABASE_PORT');
@@ -59,11 +71,12 @@ let MONGODB_PORT = checkEnvVar('SKILLS_ONBOARDING_DATABASE_PORT');
 const initializeLogger = require('./log');
 
 let amqpClient = new AmqpClient(
-  BROKER_URL,
+  BROKER_HOST,
+  BROKER_PORT,
   BROKER_EXCHANGE,
   BROKER_USER,
   BROKER_PASSWORD,
-  ROOT_TOPIC
+  BROKER_QUEUE
 );
 
 let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
@@ -78,7 +91,7 @@ let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
         name: MY_ROLE
       }
     },
-    HTTPS_ENDPOINT_ROUTING_KEY
+    CORE_EGRESS_ROUTINGKEY
   )
 );
 

@@ -1,0 +1,359 @@
+<!-- AMQP IN ------------------------------------------------------------------>
+
+<script type="text/x-red" data-template-name="amqp in">
+    <div class="form-row">
+        <label for="node-input-server"><i class="fa fa-globe"></i> Source</label>
+        <input type="text" id="node-input-server" placeholder="AMQP server">
+    </div>
+    <div class="form-row">
+        <label for="node-input-ioname"><i class="fa fa-filter"></i> Read from</label>
+        <select id="node-input-iotype">
+          <option value="0">direct exchange</option>
+          <option value="1">fanout exchange</option>
+          <option value="2">headers exchange</option>
+          <option value="3">topic exchange</option>
+          <option value="4">queue</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-srcname"></label>
+        <input type="text" id="node-input-ioname" placeholder="AMQP exchange or queue name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-tasks"></i> Topic</label>
+        <input type="text" id="node-input-topic" placeholder="Leave empty to use the message routing key">
+    </div>
+
+    <br/>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="amqp in">
+   <p>AMQP input node. Connects to a server and subscribes to the specified exchange or queue.</p>
+   <p>Outputs an object called
+   <b>msg</b> containing <b>msg.topic</b>, <b>msg.payload</b> and <b>msg.amqpMessage</b>.</p>
+   <p>
+   <b>msg.topic</b> is a string containing the routing-key of the AMQP message.
+   <b>msg.payload</b> is a string or an object containing the content of the AMQP message.
+   <b>msg.amqpMessage</b> is an
+   <a href="https://github.com/abreits/amqp-ts/wiki/Message%20class" target="_blank"><b>amqp-ts Message</b></a>
+   object containing the received message.sendto
+   </p>
+</script>
+
+<!-- AMQP OUT ----------------------------------------------------------------->
+
+<script type="text/x-red" data-template-name="amqp out">
+    <div class="form-row">
+        <label for="node-input-server"><i class="fa fa-globe"></i> Server</label>
+        <input type="text" id="node-input-server">
+    </div>
+    <div class="form-row">
+        <label for="node-input-ioname"><i class="fa fa-filter"></i> Send to</label>
+        <select id="node-input-iotype">
+          <option value="0">direct exchange</option>
+          <option value="1">fanout exchange</option>
+          <option value="2">headers exchange</option>
+          <option value="3">topic exchange</option>
+          <option value="4">queue</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-ioname"></label>
+        <input type="text" id="node-input-ioname" placeholder="AMQP exchange or queue name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-routingkey"><i class="fa fa-tasks"></i> Routing key</label>
+        <input type="text" id="node-input-routingkey" placeholder="Leave empty to use the topic of the message">
+    </div>
+
+    <br/>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="amqp out">
+   <p>AMQP output node. Connects to a server and delivers the message payload to the specified exchange or queue.</p>
+   <p>Expects an object called
+   <b>msg</b> containing <b>msg.payload</b> and optionally <b>msg.topic</b> and <b>msg.options</b>. If <b>msg.payload</b> does not exist, the whole msg object will be sent</p>
+   <p>
+   <b>msg.payload</b>: string or an object containing the content of the AMQP message.<br>
+   <b>msg.topic</b>: string containing the routing-key of the AMQP message.<br>
+   <b>msg.options</b>: object containing specific AMQP properties for the message to be sent, see the.
+   <a href="http://www.squaremobius.net/amqp.node/channel_api.html#channel_publish" target="_blank"><b>amqplib publish</b></a>
+   documentation for more information.
+   </p>
+</script>
+
+<!-- AMQP-SERVER - CONFIG ----------------------------------------------------->
+
+<script type="text/x-red" data-template-name="amqp-server">
+    <div class="form-row">
+        <ul style="background: #fff; min-width: 600px; margin-bottom: 20px;" id="node-config-amqp-server-tabs"></ul>
+    </div>
+    <div id="node-config-amqp-server-tabs-content" style="min-height: 170px;">
+        <div id="amqp-server-tab-connection" style="display:none">
+            <div class="form-row">
+                <label for="node-config-input-host"><i class="fa fa-globe"></i> Server</label>
+                <input class="input-append-left" type="text" id="node-config-input-host" placeholder="localhost" style="width: 40%">
+                <label for="node-config-input-port" style="margin-left: 10px; width: 35px;"> Port</label>
+                <input type="text" id="node-config-input-port" placeholder="AMQP port, defaults to 5672" style="width:45px">
+            </div>
+            <div class="form-row">
+                <label for="node-config-input-vhost"><i class="fa fa-home"></i> Virtual host</label>
+                <input type="text" id="node-config-input-vhost" placeholder="Optional virtual host id">
+            </div>
+            <div class="form-row">
+                <label for="node-config-input-keepalive" style="width: auto"><i class="fa fa-clock-o"></i> Keep alive time (s)</label>
+                <input type="text" id="node-config-input-keepalive" style="width:45px">
+            </div>
+        </div>
+        <div id="amqp-server-tab-security" style="display:none">
+            <div class="form-row">
+                <label for="node-config-input-user"><i class="fa fa-user"></i> User</label>
+                <input type="text" id="node-config-input-user" >
+            </div>
+            <div class="form-row">
+                <label for="node-config-input-password"><i class="fa fa-lock"></i> Password</label>
+                <input type="password" id="node-config-input-password" >
+            </div>
+            <div class="form-row">
+                <input type="checkbox" id="node-config-input-usetls" style="display: inline-block; width: auto; vertical-align: top;">
+                <label for="node-config-input-usetls" style="width: 70%;"> Enable secure (SSL/TLS) connection</label>
+            </div>
+            <div class="form-row" style="display:none">
+                <input type="checkbox" id="node-config-input-verifyservercert" style="display: inline-block; width: auto; vertical-align: top;">
+                <label for="node-config-input-verifyservercert" style="width: 70%;"> Verify server certificate</label>
+            </div>
+            <div class="form-row">
+                <input type="checkbox" id="node-config-input-useca" style="display: inline-block; width: auto; vertical-align: top;">
+                <label for="node-config-input-useca" style="width: 70%;">Use Local CA File</label>
+            </div>
+
+            <div class="form-row node-text-editor-row">
+                <label for="node-config-input-ca" style="width: 70%;">CA File Location:</label>
+                <input type="text" id="node-config-input-ca" style="resize: vertical; width:100%"></textarea>
+            </div>
+        </div>
+        <div id="amqp-server-tab-topology" style:"display: none;">
+            <div class="form-row" style="margin-bottom: 0px">
+                <input type="checkbox" id="node-config-input-usetopology" style="display: inline-block; width: auto; vertical-align: top;">
+                <label for="node-config-input-usetls" style="width: 80%;"> use AMQP topology definition (JSON) defined below:</label>
+            </div>
+
+            <div class="form-row node-text-editor-row">
+                <textarea id="node-config-input-topology" style="display: none; resize: vertical; width:100%; height: 10em"></textarea>
+                <div style="height: 250px;" class="node-text-editor" id="node-config-input-topology-editor" ></div>
+            </div>
+
+        </div>
+    </div>
+</script>
+
+<script type="text/javascript">
+//
+// -- amqp in --------------------------------------------------------------------------------------
+//
+RED.nodes.registerType("amqp in", {
+    category: "input",
+    defaults: {
+        name: { value: "" },
+        topic: { value: "" },
+        iotype: { value: "4", required: true },
+        ioname: { value: "", required: true },
+        server: { type: "amqp-server", required: true }
+    },
+    inputs: 0,
+    outputs: 1,
+    color: "#ff9933",
+    icon: "bridge.png",
+    label: function () {
+        return this.name || this.ioname || "amqp";
+    },
+    labelStyle: function () {
+        return this.name ? "node_label_italic" : "";
+    }
+});
+
+//
+// -- amqp out -------------------------------------------------------------------------------------
+//
+RED.nodes.registerType("amqp out", {
+    category: "output",
+    defaults: {
+        name: { value: "" },
+        routingkey: { value: "" },
+        iotype: { value: "0", required: true },
+        ioname: { value: "", required: true },
+        server: { type: "amqp-server", required: true }
+    },
+    inputs: 1,
+    outputs: 0,
+    color: "#ff9933",
+    icon: "bridge.png",
+    align: "right",
+    label: function () {
+        return this.name || this.ioname || "amqp";
+    },
+    labelStyle: function () {
+        return this.name ? "node_label_italic" : "";
+    }
+});
+
+//
+// -- amqp server ----------------------------------------------------------------------------------
+//
+RED.nodes.registerType("amqp-server", {
+    category: "config",
+    defaults: {
+        host: { value: "localhost" },
+        port: { value: 5672, validate: RED.validators.number() },
+        vhost: { value: "" },
+        keepalive: { value: 30, validate: RED.validators.number() },
+        usetls: { value: false },
+        verifyservercert: { value: true },
+        useca: { value: false },
+        ca: { value: "" },
+        usetopology: { value: false },
+        topology: { value: "{\n" +
+                "\t\"exchanges\": [\n" +
+                "\t\t{\"name\": \"exchange1\", \"type\": \"direct\", \"options\": {\"durable\": false}},\n" +
+                "\t\t{\"name\": \"exchange2\"}\n" +
+                "\t],\n" +
+                "\t\"queues\": [\n" +
+                "\t\t{\"name\": \"queue1\", \"options\": {\"messageTtl\": 60000}},\n" +
+                "\t\t{\"name\": \"queue2\"}\n" +
+                "\t],\n" +
+                "\t\"bindings\": [\n" +
+                "\t\t{\"source\": \"exchange1\", \"queue\": \"queue1\", \"pattern\": \"debug\", \"args\": {}},\n" +
+                "\t\t{\"source\": \"exchange1\", \"exchange\": \"exchange2\", \"pattern\": \"error\"},\n" +
+                "\t\t{\"source\": \"exchange2\", \"queue\": \"queue2\"}\n" +
+                "\t]\n" +
+                "}" }
+    },
+    credentials: {
+        user: { type: "text" },
+        password: { type: "password" }
+    },
+    label: function () {
+        return (this.host || "localhost") + (this.port ? ":" + this.port : "");
+    },
+    oneditprepare: function () {
+        var tabs = RED.tabs.create({
+            id: "node-config-amqp-server-tabs",
+            onchange: function (tab) {
+                $("#node-config-amqp-server-tabs-content").children().hide();
+                $("#" + tab.id).show();
+                if (tab.id === "amqp-server-tab-topology") {
+                    functionDialogResize();
+                }
+            }
+        });
+        tabs.addTab({
+            id: "amqp-server-tab-connection",
+            label: "Connection"
+        });
+        tabs.addTab({
+            id: "amqp-server-tab-security",
+            label: "Security"
+        });
+        tabs.addTab({
+            id: "amqp-server-tab-topology",
+            label: "Topology"
+        });
+        setTimeout(function () { tabs.resize(); }, 0);
+        function updateCAStatus() {
+            //node-config-input-useca
+            if ($("#node-config-input-useca").is(":checked")) {
+                $("#node-config-input-ca").prop("disabled", false);
+            }
+            else {
+                $("#node-config-input-ca").prop("disabled", true);
+            }
+        }
+        updateCAStatus();
+        $("#node-config-input-useca").on("click", function () {
+            updateCAStatus();
+        });
+        function updateTLSOptions() {
+            if ($("#node-config-input-usetls").is(":checked")) {
+                $("#node-config-input-useca").prop("disabled", false);
+                $("#node-config-input-ca").prop("disabled", false);
+                $("#node-config-input-ca").next().css("color", "");
+            }
+            else {
+                $("#node-config-input-useca").prop("disabled", true);
+                $("#node-config-input-ca").prop("disabled", true);
+                $("#node-config-input-ca").next().css("color", "#aaa");
+            }
+        }
+        updateTLSOptions();
+        $("#node-config-input-usetls").on("click", function () {
+            updateTLSOptions();
+        });
+        // use editor
+        var topologyField = $("#node-config-input-topology");
+        this.editor = RED.editor.createEditor({
+            id: "node-config-input-topology-editor",
+            mode: "ace/mode/json",
+            value: topologyField.val()
+        });
+        // update editor changes to topology field
+        var editor = this.editor;
+        this.editor.getSession().on("change", function () {
+            topologyField.val(editor.getSession().getValue());
+        });
+        // this.editor.focus();
+        // resize editor area to fit the edit window
+        function functionDialogResize() {
+            // var topologyTab = $("#amqp-server-tab-topology");
+            // if(topologyTab.)
+            var height = $("#dialog-config-form").height();
+            if (height === null) {
+                height = $(".editor-tray-body").height();
+            }
+            height -= $("#node-config-amqp-server-tabs").outerHeight(true);
+            console.log("height:" + height + "px");
+            var rows = $("#amqp-server-tab-topology>div:not(.node-text-editor-row)");
+            for (var i = 0; i < rows.length; i++) {
+                height -= $(rows[i]).outerHeight(true);
+            }
+            console.log("height:" + height + "px");
+            var editorRow = $("#dialog-config-form>div.node-text-editor-row");
+            if (editorRow.css("marginTop")) {
+                height -= parseInt(editorRow.css("marginTop"), 10);
+            }
+            if (editorRow.css("marginBottom")) {
+                height -= parseInt(editorRow.css("marginBottom"), 10);
+            }
+            height -= 5;
+            console.log(height);
+            if (height < 100) {
+                height = 400;
+            }
+            $(".node-text-editor").css("height", height + "px");
+            console.log("height:" + height + "px");
+            editor.resize();
+        }
+        $("#node-config-dialog").on("dialogresize", functionDialogResize);
+        $("#node-config-dialog").one("dialogopen", function (ev) {
+            var size = $("#node-config-dialog").dialog("option", "sizeCache-function");
+            if (size) {
+                $("#node-config-dialog").dialog("option", "width", size.width);
+                $("#node-config-dialog").dialog("option", "height", size.height);
+                functionDialogResize();
+            }
+        });
+        $("#node-config-dialog").one("dialogclose", function (ev) {
+            var height = $("#node-config-dialog").dialog("option", "height");
+            $("#node-config-dialog").off("dialogresize", functionDialogResize);
+        });
+    }
+});
+
+</script>

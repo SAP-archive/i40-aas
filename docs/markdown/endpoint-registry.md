@@ -45,21 +45,35 @@ POST /assetadministrationshells
 [
   {
     aasId: {
-      id: "<id of the asset administration shell>",
-      idType: "URI"
+      id: '<id of the asset administration shell>',
+      idType: 'URI|CUSTOM|IRDI'
     },
     endpoints: [
       {
-        url: "<url of the endpoint>",
-        protocolVersion: "<version of the protocol>",
-        protocol: "<name of the protocol>"
-        target: "<cloud|edge>"
+        url: '<url of the endpoint>',
+        protocolVersion: '<version of the protocol>',
+        protocol: '<name of the protocol>',
+        target: '<cloud|edge>'
       }
     ],
     assetId: {
-      id: "<id of the asset>",
-      idType: "URI"
+      id: '<id of the asset>',
+      idType: 'URI|CUSTOM|IRDI'
     }
+  }
+];
+```
+
+## Create role assignments
+
+```javascript
+[
+  {
+    aasId: {
+      id: '<ID of the AAS>',
+      idType: 'URI|CUSTOM|IRDI'
+    },
+    roleId: '<id of the role>'
   }
 ];
 ```
@@ -163,3 +177,21 @@ Create Database
 2. create assets table
 3. create asset_administration_shells table
 4. create endpoints table
+
+## Developer's notes
+
+### Tests
+
+#### Unit Tests
+
+- Run unit tests using `npm run test`
+- Run unit tests with coverage with `npm run coverage`
+
+#### Including integration tests
+
+Test setup can be done with `source ./integration-test-setup`.
+
+- To run integration tests as well as unit tests: `npm run test-with-integration`
+- To run coverage with integration tests: `npm run coverage-with-integration`
+
+Test cleanup: `./integration-test-teardown`
