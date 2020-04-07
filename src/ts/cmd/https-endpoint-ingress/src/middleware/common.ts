@@ -5,18 +5,10 @@ import compression from "compression";
 import * as basicAuth from "express-basic-auth";
 import { logger } from "../utils/log";
 
-const dotenv = require("dotenv");
-dotenv.config();
 
 let CORE_INGRESS_HTTP_USER: string | undefined = process.env.CORE_INGRESS_HTTP_USER;
 let CORE_INGRESS_HTTP_PASSWORD: string | undefined = process.env.CORE_INGRESS_HTTP_PASSWORD;
 
-if (!CORE_INGRESS_HTTP_USER) {
-  logger.error(" [Basic auth] No  username was found in environment");
-}
-if (!CORE_INGRESS_HTTP_PASSWORD) {
-  logger.error(" [Basic auth] No  password was found in environment");
-}
 
 export const handleCors = (router: Router) =>
   router.use(cors({ credentials: true, origin: true }));

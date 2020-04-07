@@ -12,15 +12,14 @@ import healthRoute from "./services/health/routes";
 import routes from "./services";
 import { uuid } from 'uuidv4';
 
-const dotenv = require("dotenv");
-dotenv.config();
 
-let CORE_BROKER_HOST = process.env.CORE_BROKER_HOST;
-let CORE_BROKER_PORT = process.env.CORE_BROKER_PORT;
-var CORE_INGRESS_EXCHANGE = process.env.CORE_INGRESS_EXCHANGE;
-var CORE_INGRESS_USER = process.env.CORE_INGRESS_USER;
-var CORE_INGRESS_PASSWORD = process.env.CORE_INGRESS_PASSWORD;
+let CORE_BROKER_HOST = checkEnvVar('CORE_BROKER_HOST');
+let CORE_BROKER_PORT = checkEnvVar('CORE_BROKER_PORT');
+var CORE_INGRESS_EXCHANGE = checkEnvVar('CORE_INGRESS_EXCHANGE');
+var CORE_INGRESS_USER =checkEnvVar('CORE_INGRESS_USER');
+var CORE_INGRESS_PASSWORD = checkEnvVar('CORE_INGRESS_PASSWORD');
 
+const PORT = checkEnvVar('CORE_INGRESS_HTTP_PORT');
 // The queue is generated based on the binding key and is unique for the client
 
 let BROKER_QUEUE = CORE_INGRESS_EXCHANGE +"/"+ uuid(); //TODO: here also from env variable??
@@ -50,14 +49,7 @@ applyRoutes(routes, router);
 //error handling
 applyMiddleware(errorHandlers, router);
 
-if (
-  CORE_BROKER_HOST &&
-  CORE_BROKER_PORT &&
-  CORE_INGRESS_EXCHANGE &&
-  CORE_INGRESS_USER &&
-  CORE_INGRESS_PASSWORD &&
-  BROKER_QUEUE
-) {
+
   let brokerClient = new AmqpClient(
     CORE_BROKER_HOST,
     CORE_BROKER_PORT,
@@ -68,19 +60,32 @@ if (
   );
 
   initiateBroker(brokerClient);
-}
+
 /**
  * start the broker client and connect
  *  */
 
 
-const PORT = process.env.CORE_INGRESS_HTTP_PORT;
 
 router.listen(PORT, () => {
   logger.info(
     `A Server is running http://localhost:${PORT}...`
   );
-  router.emit("app_started");
 });
+
+
+function checkEnvVar(variableName: string): string {
+  let retVal: string | undefined = process.env[variableName];
+  if (retVal) {
+    return retVal;
+  } else {
+    throw new Error(
+      'A variable that is required by the service has not been defined in the environment:' +
+	variableName
+    );
+  }
+}
+
+
 
 export { router as app };
