@@ -94,12 +94,16 @@ jobs:
       node_js: lts/*
       env: SERVICE=onboarding-skill
       install:
-        - cd src/ts/cmd/${SERVICE}
-        - npm install
-        - ./integration-test-setup
-        - sleep 30
+	- cd src/ts/cmd/${SERVICE}
+	- npm install
+	- cd ./node_modules/AMQP-Client
+	- npm install
+	- npm run build
+	- cd ../../
+	- source ./integration-test-setup
+	- sleep 30
       script:
-        - npm run test
+	- npm run test
         - npm run test-with-integration
 
     - stage: unit-test
@@ -141,32 +145,40 @@ jobs:
       node_js: lts/*
       env: SERVICE=https-endpoint-egress
       install:
-        - cd src/ts/cmd/${SERVICE}
-        - npm i
+	- cd src/ts/cmd/${SERVICE}
+	- npm install
+	- cd ./node_modules/AMQP-Client
+	- npm install
+	- npm run build
+	- cd ../../
       script:
-        - npm test
+	- npm test
 
     - stage: unit-test
       language: node_js
       node_js: lts/*
       env: SERVICE=https-endpoint-ingress
       install:
-        - cd src/ts/cmd/${SERVICE}
-        - npm i
+	- cd src/ts/cmd/${SERVICE}
+	- npm install
+	- cd ./node_modules/AMQP-Client
+	- npm install
+	- npm run build
+	- cd ../../
       script:
-        - npm test
+	- npm test
 
     - stage: unit-test
       language: node_js
       node_js: lts/*
       env: SERVICE=storage-adapter-mongodb
       install:
-        - cd src/ts/cmd/${SERVICE}
-        - npm i
-        - ./integration-test-setup
-        - sleep 30
+	- cd src/ts/cmd/${SERVICE}
+	- npm i
+	- source ./integration-test-setup
+	- sleep 30
       script:
-        - npm run test-with-integration
+	- npm run test-with-integration
 
     - stage: unit-test
       language: go
