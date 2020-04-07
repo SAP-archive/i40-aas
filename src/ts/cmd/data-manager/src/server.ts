@@ -42,7 +42,7 @@ applyRoutes(routes, router);
 //error handling
 applyMiddleware(errorHandlers, router);
 
-const PORT = 4000 ;
+const PORT = checkEnvVar('CORE_DATA_MANAGER_PORT'); ;
 const server = http.createServer(router);
 
 var webClient = new WebClient();
