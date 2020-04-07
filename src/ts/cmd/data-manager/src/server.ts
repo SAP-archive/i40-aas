@@ -11,15 +11,12 @@ import { RoutingController } from "./services/data-manager/RoutingController";
 import { AdapterConnector } from "./services/data-manager/AdapterConnector";
 import { AdapterRegistryConnector } from "./services/data-manager/RegistryConnector";
 
-const dotenv = require("dotenv");
-dotenv.config();
-
-let CORE_REGISTRIES_ADAPTERS_PROTOCOL = process.env.CORE_REGISTRIES_ADAPTERS_PROTOCOL;
-let CORE_REGISTRIES_ADAPTERS_HOST = process.env.CORE_REGISTRIES_ADAPTERS_HOST;
-let CORE_REGISTRIES_ADAPTERS_PORT = process.env.CORE_REGISTRIES_ADAPTERS_PORT;
-let CORE_REGISTRIES_ADAPTERS_USER = process.env.CORE_REGISTRIES_ADAPTERS_USER;
-let CORE_REGISTRIES_ADAPTERS_PASSWORD = process.env.CORE_REGISTRIES_ADAPTERS_PASSWORD;
-let CORE_REGISTRIES_ADAPTERS_URL_SUFFIX = process.env.CORE_REGISTRIES_ADAPTERS_URL_SUFFIX;
+let CORE_REGISTRIES_ADAPTERS_PROTOCOL = checkEnvVar('CORE_REGISTRIES_ADAPTERS_PROTOCOL');
+let CORE_REGISTRIES_ADAPTERS_HOST = checkEnvVar('CORE_REGISTRIES_ADAPTERS_HOST');
+let CORE_REGISTRIES_ADAPTERS_PORT = checkEnvVar('CORE_REGISTRIES_ADAPTERS_PORT');
+let CORE_REGISTRIES_ADAPTERS_USER = checkEnvVar('CORE_REGISTRIES_ADAPTERS_USER');
+let CORE_REGISTRIES_ADAPTERS_PASSWORD = checkEnvVar('CORE_REGISTRIES_ADAPTERS_PASSWORD');
+let CORE_REGISTRIES_ADAPTERS_URL_SUFFIX = checkEnvVar('CORE_REGISTRIES_ADAPTERS_URL_SUFFIX');
 var webClient = new WebClient();
 
 process.on("uncaughtException", e => {
@@ -56,14 +53,6 @@ var buildUrl = (protocol:string,
 
       return protocol+"://"+host+":"+port+suffix;
     }
-if (
-  CORE_REGISTRIES_ADAPTERS_PROTOCOL &&
-  CORE_REGISTRIES_ADAPTERS_HOST &&
-  CORE_REGISTRIES_ADAPTERS_PORT &&
-  CORE_REGISTRIES_ADAPTERS_USER &&
-  CORE_REGISTRIES_ADAPTERS_PASSWORD &&
-  CORE_REGISTRIES_ADAPTERS_URL_SUFFIX
-) {
 
 let storageAdapterRegistryURL = new URL(buildUrl(CORE_REGISTRIES_ADAPTERS_PROTOCOL,CORE_REGISTRIES_ADAPTERS_HOST,CORE_REGISTRIES_ADAPTERS_PORT,CORE_REGISTRIES_ADAPTERS_URL_SUFFIX));
 
@@ -75,14 +64,25 @@ let storageAdapterRegistryURL = new URL(buildUrl(CORE_REGISTRIES_ADAPTERS_PROTOC
     CORE_REGISTRIES_ADAPTERS_PASSWORD
   );
   RoutingController.initController(registryConnector, adapterConnector);
-}
-else{
-  logger.error("One or more env. variable was not set. Exiting ");
-  throw new Error();
-}
 
 server.listen(PORT, () =>
   logger.info(`A Server is running http://localhost:${PORT} ...`)
 );
+
+
+
+function checkEnvVar(variableName: string): string {
+  let retVal: string | undefined = process.env[variableName];
+  if (retVal) {
+    return retVal;
+  } else {
+    throw new Error(
+      'A variable that is required by the service has not been defined in the environment:' +
+	variableName
+    );
+  }
+}
+
+
 
 export { router as app };
