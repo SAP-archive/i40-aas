@@ -15,14 +15,14 @@ import {
   RegistryRolesResultSet,
   ICreateRoleResultSet
 } from '../interfaces/IRegistryRolesSet';
-import { AssetEntity } from '../Entities/AssetEntity';
+import { AssetEntity } from '../entities/AssetEntity';
 import { Connection, createConnection, UpdateResult, DeleteResult } from 'typeorm';
-import { EndpointEntity } from '../Entities/EndpointEntity';
-import { AASDescriptorEntity } from '../Entities/AASDescriptorEntity';
-import { AASDescriptorResponse } from '../Responses/AASDescriptorResponse';
-import { Identifier } from '../Responses/Identifier';
+import { EndpointEntity } from '../entities/EndpointEntity';
+import { AASDescriptorEntity } from '../entities/AASDescriptorEntity';
+import { AASDescriptorResponse } from '../responses/AASDescriptorResponse';
+import { Identifier } from '../responses/Identifier';
 import { TIdType } from 'i40-aas-objects/src/types/IdTypeEnum';
-import { GenericDescriptor } from '../Responses/GenericDescriptor';
+import { GenericDescriptor } from '../responses/GenericDescriptor';
 
 class Registry implements iRegistry {
   readRecordByAasId(aasId: string): Promise<void> {

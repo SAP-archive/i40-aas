@@ -1,9 +1,9 @@
 
 import "reflect-metadata";
 import {createConnection, AdvancedConsoleLogger, Connection} from "typeorm";
-import { AssetEntity } from "../Entities/AssetEntity";
-import { EndpointEntity } from "../Entities/EndpointEntity";
-import { AASDescriptorEntity } from "../Entities/AASDescriptorEntity";
+import { AssetEntity } from "../entities/AssetEntity";
+import { EndpointEntity } from "../entities/EndpointEntity";
+import { AASDescriptorEntity } from "../entities/AASDescriptorEntity";
 
  class DatabaseConnection{
   host: string;

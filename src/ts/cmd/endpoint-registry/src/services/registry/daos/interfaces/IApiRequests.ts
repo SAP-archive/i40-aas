@@ -1,5 +1,5 @@
 import { IIdentifier } from 'i40-aas-objects';
-import { IGenericDescriptor } from '../Responses/GenericDescriptor';
+import { IGenericDescriptor } from '../responses/GenericDescriptor';
 
 interface IAASDescriptor {
   identification: IIdentifier;

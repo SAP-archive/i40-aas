@@ -1,5 +1,5 @@
 import { IIdentifier } from "i40-aas-objects";
-import { TIdType } from "i40-aas-objects/src/types/IdTypeEnum";
+import { TIdType } from "i40-aas-objects/dist/src/types/IdTypeEnum";
 
 class Identifier implements IIdentifier
 {

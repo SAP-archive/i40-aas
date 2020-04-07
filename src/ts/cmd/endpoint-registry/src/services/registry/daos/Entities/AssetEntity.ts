@@ -1,5 +1,4 @@
-import {Entity, Column, PrimaryColumn, JoinColumn, OneToOne} from "typeorm";
-import { AASDescriptorEntity } from "./AASDescriptorEntity";
+import { Entity, PrimaryColumn, Column } from "typeorm";
 
 //TODO: import from AAS-Objects
 enum IdTypeEnum {

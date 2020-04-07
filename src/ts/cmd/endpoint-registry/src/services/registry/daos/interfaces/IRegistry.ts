@@ -8,7 +8,7 @@ import {
   ICreateAsset
 } from './IApiRequests';
 import { ICreateRoleResultSet } from './IRegistryRolesSet';
-import { AASDescriptorResponse } from '../Responses/AASDescriptorResponse';
+import { AASDescriptorResponse } from '../responses/AASDescriptorResponse';
 import { DeleteResult } from 'typeorm';
 
 interface iRegistry {

@@ -1,6 +1,6 @@
-import {Entity, Column, PrimaryColumn, OneToOne, JoinColumn, OneToMany} from "typeorm";
 import { AssetEntity } from "./AssetEntity";
 import { EndpointEntity } from "./EndpointEntity";
+import { Entity, Column, PrimaryColumn, OneToOne, JoinColumn, OneToMany } from "typeorm";
 
 //import { IdTypeEnum } from 'i40-aas-objects/src/types/IdTypeEnum';
 
