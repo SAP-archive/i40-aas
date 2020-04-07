@@ -100,7 +100,11 @@ jobs:
       install:
 	- cd src/ts/cmd/${SERVICE}
 	- npm install
-	- ./integration-test-setup
+	- cd ./node_modules/AMQP-Client
+	- npm install
+	- npm run build
+	- cd ../../
+	- source ./integration-test-setup
 	- sleep 30
       script:
 	- npm run test
@@ -146,7 +150,11 @@ jobs:
       env: SERVICE=https-endpoint-egress
       install:
 	- cd src/ts/cmd/${SERVICE}
-	- npm i
+	- npm install
+	- cd ./node_modules/AMQP-Client
+	- npm install
+	- npm run build
+	- cd ../../
       script:
 	- npm test
 
@@ -156,7 +164,11 @@ jobs:
       env: SERVICE=https-endpoint-ingress
       install:
 	- cd src/ts/cmd/${SERVICE}
-	- npm i
+	- npm install
+	- cd ./node_modules/AMQP-Client
+	- npm install
+	- npm run build
+	- cd ../../
       script:
 	- npm test
 
@@ -167,7 +179,7 @@ jobs:
       install:
 	- cd src/ts/cmd/${SERVICE}
 	- npm i
-	- ./integration-test-setup
+	- source ./integration-test-setup
 	- sleep 30
       script:
 	- npm run test-with-integration
