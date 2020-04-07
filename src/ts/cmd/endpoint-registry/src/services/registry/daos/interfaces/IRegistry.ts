@@ -9,14 +9,13 @@ import {
 } from './IApiRequests';
 import { ICreateRoleResultSet } from './IRegistryRolesSet';
 import { AASDescriptorResponse } from '../Responses/AASDescriptorResponse';
+import { DeleteResult } from 'typeorm';
 
 interface iRegistry {
   readAASDescriptorByAasId(aasId: string): Promise<IAASDescriptor|undefined>;
-  registerAas(req: IAASDescriptor): Promise<void>;
+  registerAas(req: IAASDescriptor): Promise<IAASDescriptor | undefined>;
   updateAasDescriptorByAasId(req: IAASDescriptor): Promise<IAASDescriptor | undefined>;
-  deleteAasByAasId(aasId: IIdentifier): Promise<number>;
-  listAasByAssetId(assetId: IIdentifier): Promise<Array<RegistryResultSet>>;
-  listAas(): Promise<Array<RegistryResultSet>>;
+  deleteAasDescriptorByAasId(aasId: string): Promise<DeleteResult|undefined>;
   listAllEndpoints(): Promise<Array<RegistryResultSet>>;
   release(): void;
   createSemanticProtocol(req: ICreateSemanticProtocol): void;

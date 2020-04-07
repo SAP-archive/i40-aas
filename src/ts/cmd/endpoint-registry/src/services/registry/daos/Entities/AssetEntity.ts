@@ -1,4 +1,5 @@
-import {Entity, Column, PrimaryColumn} from "typeorm";
+import {Entity, Column, PrimaryColumn, JoinColumn, OneToOne} from "typeorm";
+import { AASDescriptorEntity } from "./AASDescriptorEntity";
 
 //TODO: import from AAS-Objects
 enum IdTypeEnum {
@@ -10,6 +11,7 @@ enum IdTypeEnum {
 
 @Entity()
 export class AssetEntity {
+
 
     @PrimaryColumn()
     id!: string;

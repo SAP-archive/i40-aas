@@ -30,9 +30,7 @@ export default [
       var registerAASRequest: IAASDescriptor = req.body;
 
       try {
-
         await registryApi.register(registerAASRequest);
-
       } catch (e) {
         updateResponseForConflict(e, res);
         res.end(e.message);
@@ -105,28 +103,6 @@ export default [
     }
   },
   {
-    path: '/assetadministrationshells',
-    method: 'delete',
-    handler: async (req: Request, res: Response) => {
-      try {
-        var idType: IdTypeEnum = IdTypeEnum['Custom'];
-        if (req.query.idType) {
-          idType = req.query.idType;
-        }
-        res.json(
-          await registryApi.deleteRecordByIdentifier({
-            id: req.query.id,
-            idType: idType
-          })
-        );
-      } catch (e) {
-        console.log(e);
-        res.statusCode = e.r_statusCode || 500;
-        res.end(JSON.stringify(e));
-      }
-    }
-  },
-  {
     path: '/aasDescriptor',
     method: 'get',
     handler: async (req: Request, res: Response) => {
@@ -175,38 +151,31 @@ export default [
       }
     }
   },
-  // {
-  //   path: '/aasDescriptorOld',
-  //   method: 'get',
-  //   handler: async (req: Request, res: Response) => {
-  //     try {
-  //       console.log('Query parameters received:' + JSON.stringify(req.query));
-  //       if (req.query.receiverId && req.query.receiverIdType) {
-  //         res.json(
-  //           await registryApi.getEndpointsByReceiverId(
-  //             req.query.receiverId,
-  //             req.query.receiverIdType
-  //           )
-  //         );
-  //       } else if (req.query.receiverRole && req.query.semanticProtocol) {
-  //         res.json(
-  //           await registryApi.getEndpointsByReceiverRole(
-  //             req.query.receiverRole,
-  //             req.query.semanticProtocol
-  //           )
-  //         );
-  //       } else
-  //         throw new RegistryError(
-  //           'Mandatory query parameters: receiverId and receiverIdType, or receiverRole and semanticProtocol',
-  //           422
-  //         );
-  //     } catch (e) {
-  //       console.log(e);
-  //       res.statusCode = e.r_statusCode || 500;
-  //       res.end(JSON.stringify(e));
-  //     }
-  //   }
-  // },
+  {
+    //TODO: Add validation that aasId==req.body.identification.id
+    path: '/aasDescriptor',
+    method: 'delete',
+    handler: async (req: Request, res: Response) => {
+      try {
+        console.log('Query parameters received:' + JSON.stringify(req.query));
+        if (req.query.aasId) {
+          res.json(
+            await registryApi.deleteAASDescriptorByAASId(
+              req.query.aasId
+            )
+          );
+        } else
+          throw new RegistryError(
+            'Mandatory query parameters: aasId is not found in request',
+            422
+          );
+      } catch (e) {
+        console.log(e);
+        res.statusCode = e.r_statusCode || 500;
+        res.end(JSON.stringify(e));
+      }
+    }
+  },
   {
     path: '/listAllEndpoints',
     method: 'get',

@@ -24,7 +24,7 @@ export class AASDescriptorEntity {
     @Column()
     idType!: string;
 
-    @OneToOne(type => AssetEntity)
+    @OneToOne(type => AssetEntity,  {onDelete: 'CASCADE'})
     @JoinColumn()
     asset!: AssetEntity;
 
@@ -38,7 +38,8 @@ export class AASDescriptorEntity {
       })
     signature!: string;
 
-    @OneToMany(type => EndpointEntity, endpoint => endpoint.aasdescriptor) // note: we will create author property in the Photo class below
+
+      @OneToMany(type => EndpointEntity, endpoint => endpoint.aasdescriptor,{onDelete: 'CASCADE'})
     endpoints!: EndpointEntity[];
 
 

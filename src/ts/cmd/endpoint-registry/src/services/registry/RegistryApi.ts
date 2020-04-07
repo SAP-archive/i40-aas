@@ -14,9 +14,9 @@ import {
   IAASDescriptor
 } from './daos/interfaces/IApiRequests';
 import { TIdType } from 'i40-aas-objects/dist/src/types/IdTypeEnum';
+import { DeleteResult } from 'typeorm';
 
 class RegistryApi {
-
 
   async readAASDescriptorByAASId(
     aasId: string
@@ -35,22 +35,15 @@ class RegistryApi {
       console.log(result);
       return result;
   }
-
-  async deleteRecordByIdentifier(identifier: IIdentifier): Promise<number> {
+  async deleteAASDescriptorByAASId(
+    aasId: string
+  ): Promise<DeleteResult|undefined> {
     var registryDao: iRegistry = await RegistryFactory.getRegistry();
-    try {
-      if (!identifier.id) {
-        throw new RegistryError('Missing parameter id', 422);
-      }
-      var result = await registryDao.deleteAasByAasId(identifier);
-      console.log('Deleted rows: ' + result);
+      var result = await registryDao.deleteAasDescriptorByAasId(aasId);
+      console.log(result);
       return result;
-    } catch (e) {
-      throw e;
-    } finally {
-      registryDao.release();
-    }
   }
+
 
   async readRecordBySemanticProtocolAndRole(
     sProtocol: string,

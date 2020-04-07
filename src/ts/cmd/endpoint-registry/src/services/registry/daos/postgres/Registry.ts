@@ -3,11 +3,7 @@ import {
   IRegistryResultSet,
   RegistryResultSet
 } from '../interfaces/IRegistryResultSet';
-import { IdTypeEnum } from 'i40-aas-objects';
 import { IIdentifier } from 'i40-aas-objects';
-import { RegistryError } from '../../../../utils/RegistryError';
-import { IData } from '../../../../utils/IData';
-import { IJointRecord, IEndpointRecord } from '../interfaces/IQueryResults';
 import {
   IAASDescriptor,
   IAssignRoles,
@@ -20,11 +16,10 @@ import {
   ICreateRoleResultSet
 } from '../interfaces/IRegistryRolesSet';
 import { AssetEntity } from '../Entities/AssetEntity';
-import { Connection, createConnection, UpdateResult } from 'typeorm';
+import { Connection, createConnection, UpdateResult, DeleteResult } from 'typeorm';
 import { EndpointEntity } from '../Entities/EndpointEntity';
 import { AASDescriptorEntity } from '../Entities/AASDescriptorEntity';
 import { AASDescriptorResponse } from '../Responses/AASDescriptorResponse';
-import { Identifiable } from 'i40-aas-objects/dist/src/characteristics/Identifiable';
 import { Identifier } from '../Responses/Identifier';
 import { TIdType } from 'i40-aas-objects/src/types/IdTypeEnum';
 import { GenericDescriptor } from '../Responses/GenericDescriptor';
@@ -34,13 +29,10 @@ class Registry implements iRegistry {
     throw new Error("Method not implemented.");
   }
   constructor(private readonly client: Connection) {
-    //https://node-postgres.com/
-    //this.db = db;
   }
   release() {
-    // if (this.client && this.client.release) {
-    //   this.client.release();
-    // }
+    throw new Error('not implemented');
+
   }
 
   async createAsset(asset: ICreateAsset): Promise<ICreateAsset> {
@@ -61,7 +53,7 @@ class Registry implements iRegistry {
     }
   }
 
-  async registerAas(record: IAASDescriptor): Promise<void> {
+  async registerAas(record: IAASDescriptor): Promise<IAASDescriptor | undefined> {
     //TODO: remove cast once migration complete
 
     try {
@@ -97,9 +89,9 @@ class Registry implements iRegistry {
 
         })
       );
-      //create Endpoints for this AAS
-
-    } catch (error) { console.log(error) }
+        return record;
+    } catch (error) { console.log(error)
+    return undefined }
 
   }
 
@@ -107,8 +99,6 @@ class Registry implements iRegistry {
 
     try {
       //This is the most efficient way in terms of performance to update entities in your database (see https://typeorm.io/#/update-query-builder )
-
-
       console.debug("cert "+record.descriptor.certificate_x509_i40);
 
       let aasDescriptor = await this.client
@@ -124,16 +114,7 @@ class Registry implements iRegistry {
 
       console.log("AASDescriptor updated in Db " + JSON.stringify(aasDescriptor));
 
-      //TODO: is there a way to avoid this call (using the previous update maybe?)
-      let aasDescriptorRepository = this.client.getRepository(AASDescriptorEntity);
-      let resultAasDescriptor = await aasDescriptorRepository.findOne({
-        where: [
-          { id: record.identification.id },],
-        relations: ["endpoints", "asset"]
-      });
-
       //updated each Endpoint refering to this AAS
-      if (resultAasDescriptor) {
         await Promise.all(
           record.descriptor.endpoints.map(async endpoint => {
 
@@ -152,45 +133,50 @@ class Registry implements iRegistry {
 
           })
         );
-      }
-
       return record
 
     } catch (error) { console.log("Error caught " + error)
   return undefined}
 
-
   }
-
-  async deleteAasByAasId(aasId: IIdentifier): Promise<number> {
-    //This will remove all records associated with aasId from
-    //all tables due to constraints in the DB setup
-    console.log(' ********* AASID ' + aasId.id);
+  async deleteAasDescriptorByAasId(aasId: string): Promise<DeleteResult|undefined> {
 
     try {
-      const deleteRowsCount = await this.client.query(
-        'WITH deleted AS (DELETE FROM asset_administration_shells WHERE "aasId" = $1 RETURNING *) SELECT count(*) FROM deleted;',
-        [aasId.id]
-      );
-      if (deleteRowsCount.rows.length < 1) {
-        console.log('No entry with this aasId');
+      let aasDescriptor = await this.client
+        .createQueryBuilder()
+        .delete()
+        .from(AASDescriptorEntity)
+        .where("id = :id", { id: aasId })
+        .execute();
 
-        return +deleteRowsCount.rows[0].count;
-      } else {
-        //TODO: parse the json to get the correct rowscount
-        console.log('  Deleted rows ' + deleteRowsCount.rows.length);
-        return +deleteRowsCount.rows[0].count;
-      }
-    } catch (e) {
-      throw e;
-    }
-  }
+      console.log("AASDescriptor deleted in Db " + JSON.stringify(aasDescriptor));
 
-  listAasByAssetId(assetId: IIdentifier): Promise<IRegistryResultSet[]> {
-    throw new Error('Method not implemented.');
-  }
-  listAas(): Promise<IRegistryResultSet[]> {
-    throw new Error('Method not implemented.');
+      //updated each Endpoint refering to this AAS
+      /*
+        await Promise.all(
+          record.descriptor.endpoints.map(async endpoint => {
+
+            let updateResult = await this.client
+              .createQueryBuilder()
+              .update(EndpointEntity)
+              .set({
+                address: endpoint.address,
+                type: endpoint.type
+              })
+              .where("aasdescriptor = :aasdescriptor", { aasdescriptor: record.identification.id })
+              .andWhere("address = :address", { address: endpoint.address})
+              .execute();
+
+            console.log("Endpoint Upated in Db ", updateResult);
+
+          })
+        );
+        */
+      return aasDescriptor;
+
+    } catch (error) { console.log("Error caught " + error)
+  return undefined}
+
   }
 
   async createSemanticProtocol(
