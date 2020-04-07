@@ -1,2 +1,0 @@
-docker stop some-rabbit
-docker stop some-mongo
