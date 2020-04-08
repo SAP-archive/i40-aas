@@ -16,7 +16,7 @@ env:
     - SERVICE=https-endpoint-egress
     - SERVICE=https-endpoint-ingress
     - SERVICE=onboarding-skill
-    - SERVICE=storage-adapter-mongodb
+#    - SERVICE=storage-adapter-mongodb
     - SERVICE=grpc-endpoint-ingress
     - SERVICE=grpc-endpoint-egress
     - SERVICE=initializer
