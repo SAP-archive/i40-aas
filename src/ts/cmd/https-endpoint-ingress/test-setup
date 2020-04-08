@@ -1,0 +1,3 @@
+#source ./test-setup
+export CORE_INGRESS_HTTP_USER=test
+export CORE_INGRESS_HTTP_PASSWORD=test
