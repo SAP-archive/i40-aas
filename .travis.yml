@@ -1,27 +1,31 @@
 dist: bionic
-language: generic
+language: minimal
 git:
   depth: 1
 
-if: branch = master #AND type = push
+if: branch = repair-tests #AND type = push
 
 env:
-  - SVC=adapter-registry
-  - SVC=data-manager
-  - SVC=endpoint-registry
-  - SVC=https-endpoint-egress
-  - SVC=https-endpoint-ingress
-  - SVC=onboarding-skill
-  - SVC=storage-adapter-mongodb
-  - SVC=grpc-endpoint-ingress
-  - SVC=grpc-endpoint-egress
-  - SVC=initializer
-  - SVC=endpoint-resolver
+  global:
+#    - SVC_PREFIX="${AZURE_CONTAINER_REGISTRY}/i40-aas-"
+    - BUILD_TAG=$(cat .git/refs/heads/${TRAVIS_BRANCH})
+  matrix:
+    - SVC=adapter-registry
+    - SVC=data-manager
+    - SVC=endpoint-registry
+    - SVC=https-endpoint-egress
+    - SVC=https-endpoint-ingress
+    - SVC=onboarding-skill
+    - SVC=storage-adapter-mongodb
+    - SVC=grpc-endpoint-ingress
+    - SVC=grpc-endpoint-egress
+    - SVC=initializer
+    - SVC=endpoint-resolver
 
 install:
   - make --version
   - docker --version
   - docker-compose --version
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+#  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - make build-$SVC
-  - make push-$SVC
+#  - make push-$SVC
