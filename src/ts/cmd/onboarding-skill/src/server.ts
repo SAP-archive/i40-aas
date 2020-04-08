@@ -42,6 +42,12 @@ let ROOT_TOPIC = checkEnvVar('SKILLS_ONBOARDING_ROOT_TOPIC');
 let TOPIC = ROOT_TOPIC + '.*';
 let MY_URI = checkEnvVar('SKILLS_ONBOARDING_URI');
 let MY_ROLE = checkEnvVar('SKILLS_ONBOARDING_ROLE');
+
+// The queue is generated based on the binding key and is unique for the client
+// GUID + CORE_EGRESS_HTTP_BROKER_BINDINGKEY; //TODO: here also from env variable??	
+
+let BROKER_QUEUE = ROOT_TOPIC +"/"+ uuid(); //TODO: here also from env variable??	
+
 let COLLECTION_IN_DATABASE = checkEnvVar(
   'SKILLS_ONBOARDING_STATES_COLLECTION'
 );
