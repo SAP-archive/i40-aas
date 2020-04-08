@@ -46,8 +46,8 @@ stages:
 
 jobs:
   include:
-# BROKEN
-    - stage: unit-test #lib-test
+    - stage: lib-test
+      name: TS AMQP-Client pkg
       language: node_js
       node_js: lts/*
       install:
@@ -58,9 +58,9 @@ jobs:
       script:
         - npm run test
 
-# WORKS
-    - stage: unit-test #lib-test
-      language: go
+    - stage: lib-test
+      name: Go AMQP-Client pkg
+      language: go 
       env: GO111MODULE="on"
       install:
         - docker-compose up -d rabbitmq
@@ -69,9 +69,9 @@ jobs:
       script:
         - go test
 
-# WORKS
-    - stage: unit-test #lib-test
-      language: go
+    - stage: lib-test
+      name: Go interaction pkg
+      language: go 
       env: GO111MODULE="on"
       install:
         - cd src/go/pkg/interaction
@@ -79,9 +79,9 @@ jobs:
       script:
         - go test
 
-# WORKS
-    - stage: unit-test #lib-test
-      language: go
+    - stage: lib-test
+      name: Go logging pkg
+      language: go 
       env: GO111MODULE="on"
       install:
         - cd src/go/pkg/logging
@@ -181,27 +181,27 @@ jobs:
 	- npm run test-with-integration
 
     - stage: unit-test
-      language: go
-      env: GO111MODULE="on" SERVICE=grpc-endpoint-ingress
-      install:
+      language: go 
+      env: SERVICE=grpc-endpoint-ingress GO111MODULE="on"
+      install: 
         - cd src/go/cmd/${SERVICE}
         - go mod download
       script:
         - go test
 
     - stage: unit-test
-      language: go
-      env: GO111MODULE="on" SERVICE=grpc-endpoint-egress
-      install:
+      language: go 
+      env: SERVICE=grpc-endpoint-egress GO111MODULE="on"
+      install: 
         - cd src/go/cmd/${SERVICE}
         - go mod download
       script:
         - go test
 
     - stage: unit-test
-      language: go
-      env: GO111MODULE="on" SERVICE=endpoint-resolver
-      install:
+      language: go 
+      env: SERVICE=endpoint-resolver GO111MODULE="on"
+      install: 
         - cd src/go/cmd/${SERVICE}
         - go mod download
       script:
