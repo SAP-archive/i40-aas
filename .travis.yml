@@ -21,13 +21,13 @@ env:
     - SERVICE=grpc-endpoint-egress
     - SERVICE=initializer
     - SERVICE=endpoint-resolver
-
+      
 before_install:
   - make --version
   - docker --version
   - docker-compose --version
 
-install:
+install: 
   - if [ $TRAVIS_BRANCH = master ]; then
       SVC_PREFIX="sapi40/i40-aas-";
       echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin;
@@ -48,202 +48,202 @@ stages:
   - name: deploy
     if: type = push
 
-jobs:
+jobs: 
   include:
-# BROKEN
-    - stage: unit-test #lib-test
+    - stage: lib-test
       language: node_js
       node_js: lts/*
-      install:
-	- cd src/ts/pkg/AMQP-Client
-	- npm install
-	- ./test/integration-test-setup
-	- sleep 30
+      install: 
+        - cd src/ts/pkg/AMQP-Client
+        - npm install
+        - source ./test/integration-test-setup 
+        - sleep 30
       script:
-	- npm run test
+        - npm run test
 
-# WORKS
-    - stage: unit-test #lib-test
-      language: go
+    - stage: lib-test
+      language: go 
       env: GO111MODULE="on"
-      install:
-	- docker-compose up -d rabbitmq
-	- cd src/go/pkg/amqpclient
-	- go mod download
+      install: 
+        - docker-compose up -d rabbitmq
+        - cd src/go/pkg/amqpclient
+        - go mod download
       script:
-	- go test
+        - go test 
 
-# WORKS
-    - stage: unit-test #lib-test
-      language: go
+    - stage: lib-test
+      language: go 
       env: GO111MODULE="on"
-      install:
-	- cd src/go/pkg/interaction
-	- go mod download
+      install: 
+        - cd src/go/pkg/interaction
+        - go mod download
       script:
-	- go test
+        - go test 
 
-# WORKS
-    - stage: unit-test #lib-test
-      language: go
+    - stage: lib-test
+      language: go 
       env: GO111MODULE="on"
-      install:
-	- cd src/go/pkg/logging
-	- go mod download
+      install: 
+        - cd src/go/pkg/logging
+        - go mod download
       script:
-	- go test
+        - go test 
 
     - stage: unit-test
       language: node_js
       node_js: lts/*
       env: SERVICE=onboarding-skill
-      install:
-	- cd src/ts/cmd/${SERVICE}
-	- npm install
-	- cd ./node_modules/AMQP-Client
-	- npm install
-	- npm run build
-	- cd ../../
-	- source ./integration-test-setup
-	- sleep 30
-      script:
-	- npm run test
-	- npm run test-with-integration
+      install: 
+        - cd src/ts/cmd/${SERVICE}
+        - npm install
+        - cd ./node_modules/AMQP-Client
+        - npm install
+        - npm run build
+        - cd ../../
+        - source ./integration-test-setup 
+        - sleep 30
+      script: 
+        - npm run test
+        - npm run test-with-integration
 
     - stage: unit-test
       language: node_js
       node_js: lts/*
       env: SERVICE=data-manager
-      install:
-	- cd src/ts/cmd/${SERVICE}
-	- npm install
-      script:
-	- npm test
-
+      install: 
+        - cd src/ts/cmd/${SERVICE}
+        - npm install
+        - source ./test/integration-test-setup 
+      script: 
+        - npm test
 
     - stage: unit-test
       language: node_js
       node_js: lts/*
       env: SERVICE=adapter-registry
-      install:
-	- cd src/ts/cmd/${SERVICE}
-	- npm install
-      script:
-	- npm test
+      install: 
+        - cd src/ts/cmd/${SERVICE}
+        - npm install
+        - source ./test/integration-test-setup
+      script: 
+        - npm test
 
     - stage: unit-test
       language: node_js
       node_js: lts/*
       env: SERVICE=endpoint-registry
-      install:
-	- cd src/ts/cmd/${SERVICE}
-	- npm i
-	- ./integration-test-setup
-	- sleep 30
-      script:
-	- npm run test
-	- npm run test-with-integration
+      install: 
+        - cd src/ts/cmd/${SERVICE}
+        - npm install
+        - source ./integration-test-setup 
+        - sleep 30 
+      script: 
+        - npm run test
+        - npm run test-with-integration
 
     - stage: unit-test
       language: node_js
       node_js: lts/*
       env: SERVICE=https-endpoint-egress
-      install:
-	- cd src/ts/cmd/${SERVICE}
-	- npm install
-	- cd ./node_modules/AMQP-Client
-	- npm install
-	- npm run build
-	- cd ../../
-      script:
-	- npm test
+      install: 
+        - cd src/ts/cmd/${SERVICE}
+        - npm install
+        - cd ./node_modules/AMQP-Client
+        - npm install
+        - npm run build
+        - cd ../../
+        - source ./test/integration-test-setup 
+        - sleep 30
+      script: 
+        - npm test
 
     - stage: unit-test
       language: node_js
       node_js: lts/*
       env: SERVICE=https-endpoint-ingress
-      install:
-	- cd src/ts/cmd/${SERVICE}
-	- npm install
-	- cd ./node_modules/AMQP-Client
-	- npm install
-	- npm run build
-	- cd ../../
-      script:
-	- npm test
+      install: 
+        - cd src/ts/cmd/${SERVICE}
+        - npm install
+        - cd ./node_modules/AMQP-Client
+        - npm install
+        - npm run build
+        - cd ../../
+        - source ./test/integration-test-setup 
+        - sleep 30
+      script: 
+        - npm run itest
 
     - stage: unit-test
       language: node_js
       node_js: lts/*
       env: SERVICE=storage-adapter-mongodb
-      install:
-	- cd src/ts/cmd/${SERVICE}
-	- npm i
-	- source ./integration-test-setup
-	- sleep 30
-      script:
-	- npm run test-with-integration
+      install: 
+        - cd src/ts/cmd/${SERVICE}
+        - npm install
+        - source ./integration-test-setup 
+        - sleep 30
+      script: 
+        - npm run test-with-integration
 
     - stage: unit-test
-      language: go
+      language: go 
       env: GO111MODULE="on" SERVICE=grpc-endpoint-ingress
-      install:
-	- cd src/go/cmd/${SERVICE}
-	- go mod download
-      script:
-	- go test
+      install: 
+        - cd src/go/cmd/${SERVICE}
+        - go mod download
+      script: 
+        - go test
 
     - stage: unit-test
-      language: go
+      language: go 
       env: GO111MODULE="on" SERVICE=grpc-endpoint-egress
-      install:
-	- cd src/go/cmd/${SERVICE}
-	- go mod download
-      script:
-	- go test
+      install: 
+        - cd src/go/cmd/${SERVICE}
+        - go mod download
+      script: 
+        - go test
 
     - stage: unit-test
-      language: go
+      language: go 
       env: GO111MODULE="on" SERVICE=endpoint-resolver
-      install:
-	- cd src/go/cmd/${SERVICE}
-	- go mod download
-      script:
-	- go test
+      install: 
+        - cd src/go/cmd/${SERVICE}
+        - go mod download
+      script: 
+        - go test
 
-## WORKS
     - stage: integration-test
       language: node_js
       node_js: lts/*
-      install:
-	- npm install -g newman
-	- make
-	- docker-compose -f docker-compose.yml up -d --force-recreate
-	- sleep 60
+      install: 
+        - npm install -g newman
+        - make 
+        - docker-compose -f docker-compose.yml up -d --force-recreate
+        - sleep 60
       script:
-	- newman run docs/postman/AAS.postman_collection.json
+        - newman run docs/postman/AAS.postman_collection.json
 
     - stage: deploy
       before_install:
-	- sudo apt-get update
-	- sudo apt-get install ca-certificates curl apt-transport-https lsb-release gnupg
-	- curl -sL https://packages.microsoft.com/keys/microsoft.asc |
-	    gpg --dearmor |
-	    sudo tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null
-	- AZ_REPO=$(lsb_release -cs)
-	- echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" |
-	    sudo tee /etc/apt/sources.list.d/azure-cli.list
-	- sudo apt-get update && sudo apt-get install azure-cli
-	- curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.15.10/bin/linux/amd64/kubectl
-	- chmod +x ./kubectl
-	- sudo mv ./kubectl /usr/local/bin/kubectl
-#        - (AZ_PASS=$(cat azure-service-principal.txt) && az login --service-principal -u $service_principal_id -p $AZ_PASS --tenant $SAP_TENANT)
-#        - az aks get-credentials -n i40aas -g i40-aas
+        - openssl aes-256-cbc -K $encrypted_260941c77da3_key -iv $encrypted_260941c77da3_iv -in azure-service-principal.txt.enc -out azure-service-principal.txt -d        - sudo apt-get update 
+        - sudo apt-get install ca-certificates curl apt-transport-https lsb-release gnupg
+        - curl -sL https://packages.microsoft.com/keys/microsoft.asc | 
+            gpg --dearmor | 
+            sudo tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null
+        - AZ_REPO=$(lsb_release -cs)
+        - echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | 
+            sudo tee /etc/apt/sources.list.d/azure-cli.list
+        - sudo apt-get update && sudo apt-get install azure-cli
+        - curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.15.10/bin/linux/amd64/kubectl
+        - chmod +x ./kubectl
+        - sudo mv ./kubectl /usr/local/bin/kubectl
+        - (AZ_PASS=$(cat azure-service-principal.txt) && az login --service-principal -u $service_principal_id -p $AZ_PASS --tenant $SAP_TENANT)
+        - az aks get-credentials -n i40aas -g i40-aas
 #        - kubectl get pods -n aas-${TRAVIS_BRANCH}
-	- curl -LO https://get.helm.sh/helm-v3.1.2-linux-amd64.tar.gz
-	- tar -zxvf helm-v3.1.2-linux-amd64.tar.gz
-	- sudo mv linux-amd64/helm /usr/local/bin/helm
+        - curl -LO https://get.helm.sh/helm-v3.1.2-linux-amd64.tar.gz
+        - tar -zxvf helm-v3.1.2-linux-amd64.tar.gz
+        - sudo mv linux-amd64/helm /usr/local/bin/helm
       install:
-	- az version
-	- kubectl config get-contexts
-	- helm version
+        - az version
+        - kubectl config get-contexts
+        - helm version 
