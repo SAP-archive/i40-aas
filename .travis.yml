@@ -5,27 +5,11 @@ git:
 
 if: branch = repair-tests #AND type = push
 
-env:
-  global:
-#    - SVC_PREFIX="${AZURE_CONTAINER_REGISTRY}/i40-aas-"
-    - BUILD_TAG=$(cat .git/refs/heads/${TRAVIS_BRANCH})
-  matrix:
-    - SERVICE=adapter-registry
-    - SERVICE=data-manager
-    - SERVICE=endpoint-registry
-    - SERVICE=https-endpoint-egress
-    - SERVICE=https-endpoint-ingress
-    - SERVICE=onboarding-skill
-    - SERVICE=storage-adapter-mongodb
-    - SERVICE=grpc-endpoint-ingress
-    - SERVICE=grpc-endpoint-egress
-    - SERVICE=initializer
-    - SERVICE=endpoint-resolver
-
 install:
   - make --version
   - docker --version
   - docker-compose --version
 #  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - make build-single
+  - make 
+  - make install
 #  - make push-single
