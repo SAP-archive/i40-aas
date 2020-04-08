@@ -1,5 +1,5 @@
-BUILD_TAG = $(shell cat .git/refs/heads/master)
-SVC_PREFIX = sapi40/i40-aas-
+BUILD_TAG ?= $(shell cat .git/refs/heads/master)
+SVC_PREFIX ?= sapi40/i40-aas-
 
 
 .DEFAULT_GOAL := build
@@ -46,7 +46,8 @@ dev:
 .PHONY: build-single
 build-single:
 	BUILD_TAG=$(BUILD_TAG) docker-compose -f docker-compose.dev.yml build i40-aas-$(SERVICE)
-	BUILD_TAG=$(BUILD_TAG) docker tag $(SVC_PREFIX)$(SERVICE):$(BUILD_TAG) $(SVC_PREFIX)$(SERVICE):latest
+	BUILD_TAG=$(BUILD_TAG) docker tag sapi40/i40-aas-$(SERVICE):$(BUILD_TAG) $(SVC_PREFIX)$(SERVICE):latest
+	BUILD_TAG=$(BUILD_TAG) docker tag sapi40/i40-aas-$(SERVICE):$(BUILD_TAG) $(SVC_PREFIX)$(SERVICE):$(BUILD_TAG)
 
 ## Travis CI instruction (separate build & push per service)
 .PHONY: push-single
