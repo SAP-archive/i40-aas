@@ -1,5 +1,5 @@
 import { Submodel, IFrame } from 'i40-aas-objects';
-import { AmqpClient } from 'AMQP-Client/lib/AMQPClient';
+import { AmqpClient } from 'AMQP-Client/lib/AmqpClient';
 
 import { IMessageSender } from '../messaginginterface/IMessageSender';
 import { IConversationMember } from 'i40-aas-objects/dist/src/interaction/ConversationMember';
@@ -10,7 +10,7 @@ class MessageSender implements IMessageSender {
   sendTo(frame: IFrame, interactionElements?: Submodel[]) {
     let message: any = {
       frame: frame,
-      interactionElements: interactionElements ? interactionElements : []
+      interactionElements: interactionElements ? interactionElements : [],
     };
     this.amqpClient.publish(
       this.httpEgressEndpointRoutingKey,
@@ -21,7 +21,7 @@ class MessageSender implements IMessageSender {
   replyTo(sourceFrame: IFrame, type: string, interactionElements?: Submodel[]) {
     let message: any = {
       frame: this.getReplyFrame(sourceFrame, type),
-      interactionElements: interactionElements ? interactionElements : []
+      interactionElements: interactionElements ? interactionElements : [],
     };
     this.amqpClient.publish(
       this.httpEgressEndpointRoutingKey,
