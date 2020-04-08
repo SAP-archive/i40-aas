@@ -11,5 +11,4 @@ install:
   - docker-compose --version
 #  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - make 
-  - make install
 #  - make push-single
