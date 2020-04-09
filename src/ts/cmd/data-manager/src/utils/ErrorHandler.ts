@@ -20,7 +20,7 @@ export const badRequestError = () => {
 };
 
 export const clientError = (err: Error, res: Response, next: NextFunction) => {
-  logger.debug("Error_object " + err.name);
+  //logger.debug("Error_object " + err.name);
   if (err instanceof HTTPClientError) {
     logger.error("Client error " + err);
     res.status(err.statusCode).send(err.message);

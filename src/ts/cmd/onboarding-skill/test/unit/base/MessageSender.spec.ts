@@ -1,16 +1,16 @@
 import sinon from 'sinon';
 import fs from 'fs';
 import { MessageSender } from '../../../src/base/messaging/MessageSender';
-import { AmqpClient } from '../../../src/base/messaging/AmqpClient';
+import { AmqpClient } from 'AMQP-Client/lib/AmqpClient';
 import { InteractionMessage } from 'i40-aas-objects';
 
-describe('replyTo', function() {
-  this.beforeEach(function() {});
-  this.afterEach(function() {
+describe('replyTo', function () {
+  this.beforeEach(function () {});
+  this.afterEach(function () {
     sinon.restore();
   });
   //TODO: refactor to not test so many things in one test
-  it('inverts the sender and receiver when creating the reply frame of a message, adding own sender information', function() {
+  it('inverts the sender and receiver when creating the reply frame of a message, adding own sender information', function () {
     let message: InteractionMessage = JSON.parse(
       fs.readFileSync(
         process.cwd() + '/test/data/base/interaction_sample.json',
@@ -27,6 +27,7 @@ describe('replyTo', function() {
 
     let amqpClient: AmqpClient = new AmqpClient(
       BROCKER_URL,
+      '5762',
       BROKER_EXCHANGE,
       BROKER_USER,
       BROKER_PASSWORD,
@@ -37,11 +38,11 @@ describe('replyTo', function() {
       {
         identification: {
           id: MY_URI,
-          idType: 'Custom'
+          idType: 'Custom',
         },
         role: {
-          name: MY_ROLE
-        }
+          name: MY_ROLE,
+        },
       },
       HTTP_ENDPOINT_ROUTING_KEY
     );
@@ -79,13 +80,13 @@ describe('replyTo', function() {
   });
 });
 
-describe('start', function() {
-  this.beforeEach(function() {});
-  this.afterEach(function() {
+describe('start', function () {
+  this.beforeEach(function () {});
+  this.afterEach(function () {
     sinon.restore();
   });
   //TODO: refactor to not test so many things in one test
-  it('sets up publishing and calls back', function() {
+  it('sets up publishing and calls back', function () {
     let HTTP_ENDPOINT_ROUTING_KEY = 'http.client';
     let BROCKER_URL = 'a.b.c';
     let BROKER_EXCHANGE = 'amq.topic';
@@ -96,6 +97,7 @@ describe('start', function() {
 
     let amqpClient: AmqpClient = new AmqpClient(
       BROCKER_URL,
+      '5762',
       BROKER_EXCHANGE,
       BROKER_USER,
       BROKER_PASSWORD,
@@ -109,11 +111,11 @@ describe('start', function() {
       {
         identification: {
           id: MY_URI,
-          idType: 'Custom'
+          idType: 'Custom',
         },
         role: {
-          name: MY_ROLE
-        }
+          name: MY_ROLE,
+        },
       },
       HTTP_ENDPOINT_ROUTING_KEY
     );

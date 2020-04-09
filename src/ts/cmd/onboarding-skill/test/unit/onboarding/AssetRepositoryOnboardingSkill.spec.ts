@@ -10,7 +10,7 @@ import { IMessageSender } from '../../../src/base/messaginginterface/IMessageSen
 import { SimpleMongoDbClient } from '../../../src/base/persistence/SimpleMongoDbClient';
 
 import Axios, { AxiosError } from 'axios';
-import { AmqpClient } from '../../../src/base/messaging/AmqpClient';
+import { AmqpClient } from 'AMQP-Client/lib/AmqpClient';
 import { InteractionMessage } from 'i40-aas-objects';
 import { IConversationMember } from 'i40-aas-objects/dist/src/interaction/ConversationMember';
 import { MyExternalRestServiceCaller } from '../../../src/services/onboarding/MyExternalRestServiceCaller';
@@ -32,11 +32,11 @@ function makeRequestError(statusCode: number): AxiosError<any> {
       status: statusCode,
       statusText: '',
       headers: {},
-      config: {}
+      config: {},
     },
     toJSON: () => {
       throw new Error('Not implemented in mock');
-    }
+    },
   };
   Object.assign(error, axiosProps);
   return error as AxiosError;
@@ -45,7 +45,7 @@ function makeMockDbClient() {
   return new SimpleMongoDbClient('tests', '', '', '');
 }
 
-describe('applyEvent', function() {
+describe('applyEvent', function () {
   let message = <InteractionMessage>{
     frame: {
       type: 'type',
@@ -53,35 +53,35 @@ describe('applyEvent', function() {
       receiver: {
         identification: {
           id: 'receiver-id',
-          idType: 'Custom'
+          idType: 'Custom',
         },
         role: {
-          name: 'central-asset-repository'
-        }
+          name: 'central-asset-repository',
+        },
       },
       semanticProtocol: 'semprot',
       sender: {
         identification: {
           id: 'sender-id',
-          idType: 'Custom'
+          idType: 'Custom',
         },
         role: {
-          name: 'sender'
-        }
+          name: 'sender',
+        },
       },
-      conversationId: 'conversationId'
+      conversationId: 'conversationId',
     },
-    interactionElements: [{}]
+    interactionElements: [{}],
   };
-  this.beforeEach(function() {});
-  this.afterEach(function() {
+  this.beforeEach(function () {});
+  this.afterEach(function () {
     sinon.restore();
   });
   //TODO: refactor to not test so many things in one test
   it(
     'sends out correct messages when creating an instance and ends up in' +
       'InstancePublished via CreatingInstance, counting up versions correctly',
-    function(done) {
+    function (done) {
       let conversationId = 'abcd1234';
       let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
         <IMessageSender>{}
@@ -117,7 +117,7 @@ describe('applyEvent', function() {
         'PUBLISHINSTANCE_FROM_OPERATOR',
         conversationId,
         message,
-        state => {
+        (state) => {
           if (state.value === 'InstancePublished') {
             sinon.assert.calledWith(
               fakeStoreInDb,
@@ -144,7 +144,7 @@ describe('applyEvent', function() {
       );
     }
   );
-  it('moves into WaitForApproval when requestApproval is set, sending out the correct messages', function(done) {
+  it('moves into WaitForApproval when requestApproval is set, sending out the correct messages', function (done) {
     let conversationId = 'abcd1234';
     let messageSender: MessageSender = new MessageSender(
       <AmqpClient>{},
@@ -174,7 +174,7 @@ describe('applyEvent', function() {
 
     let skill: Skill = new Skill(
       new MyInitializer(messageDispatcher, restClient, {
-        askForApproval: true
+        askForApproval: true,
       }),
       dbClient
     );
@@ -183,7 +183,7 @@ describe('applyEvent', function() {
       'PUBLISHINSTANCE_FROM_OPERATOR',
       conversationId,
       message,
-      state => {
+      (state) => {
         if (state.value === 'WaitingForApproval') {
           sinon.assert.calledWith(
             fakesendTo,
@@ -200,7 +200,7 @@ describe('applyEvent', function() {
     );
   });
 
-  it('moves into CreatingInstance from WaitForApproval on receipt of APPROVED_FROM_APPROVER (when requestApproval is set), sending out the correct messages', function(done) {
+  it('moves into CreatingInstance from WaitForApproval on receipt of APPROVED_FROM_APPROVER (when requestApproval is set), sending out the correct messages', function (done) {
     let messageFromApprover = <InteractionMessage>{
       frame: {
         type: 'approved',
@@ -208,25 +208,25 @@ describe('applyEvent', function() {
         receiver: {
           identification: {
             id: 'receiver-id',
-            idType: 'Custom'
+            idType: 'Custom',
           },
           role: {
-            name: 'central-asset-repository'
-          }
+            name: 'central-asset-repository',
+          },
         },
         semanticProtocol: 'semprot',
         sender: {
           identification: {
             id: 'sender-id',
-            idType: 'Custom'
+            idType: 'Custom',
           },
           role: {
-            name: 'approver'
-          }
+            name: 'approver',
+          },
         },
-        conversationId: 'conversationId'
+        conversationId: 'conversationId',
       },
-      interactionElements: [{}]
+      interactionElements: [{}],
     };
 
     let conversationId = 'abcd1234';
@@ -258,7 +258,7 @@ describe('applyEvent', function() {
           process.cwd() +
             '/test/data/onboarding/sample-state-wait-for-approval.json',
           'utf8'
-        )
+        ),
       })
     );
 
@@ -273,7 +273,7 @@ describe('applyEvent', function() {
 
     let skill: Skill = new Skill(
       new MyInitializer(messageDispatcher, restClient, {
-        askForApproval: true
+        askForApproval: true,
       }),
       dbClient
     );
@@ -282,7 +282,7 @@ describe('applyEvent', function() {
       'APPROVED_FROM_APPROVER',
       conversationId,
       messageFromApprover,
-      state => {
+      (state) => {
         if (state.value === 'InstancePublished') {
           sinon.assert.notCalled(fakeReplyTo);
           sinon.assert.calledOnce(fakecreateInstanceOnCAR);
@@ -299,7 +299,7 @@ describe('applyEvent', function() {
     );
   });
 
-  it('sends back a requestRefused on receipt of REQUESTREFUSED_FROM_APPROVER (when requestApproval is set)', function(done) {
+  it('sends back a requestRefused on receipt of REQUESTREFUSED_FROM_APPROVER (when requestApproval is set)', function (done) {
     let messageFromApprover = <InteractionMessage>{
       frame: {
         type: 'approved',
@@ -307,25 +307,25 @@ describe('applyEvent', function() {
         receiver: {
           identification: {
             id: 'receiver-id',
-            idType: 'Custom'
+            idType: 'Custom',
           },
           role: {
-            name: 'central-asset-repository'
-          }
+            name: 'central-asset-repository',
+          },
         },
         semanticProtocol: 'semprot',
         sender: {
           identification: {
             id: 'sender-id',
-            idType: 'Custom'
+            idType: 'Custom',
           },
           role: {
-            name: 'approver'
-          }
+            name: 'approver',
+          },
         },
-        conversationId: 'conversationId'
+        conversationId: 'conversationId',
       },
-      interactionElements: [{}]
+      interactionElements: [{}],
     };
 
     let conversationId = 'abcd1234';
@@ -358,7 +358,7 @@ describe('applyEvent', function() {
           process.cwd() +
             '/test/data/onboarding/sample-state-wait-for-approval.json',
           'utf8'
-        )
+        ),
       })
     );
 
@@ -367,7 +367,7 @@ describe('applyEvent', function() {
 
     let skill: Skill = new Skill(
       new MyInitializer(messageDispatcher, restClient, {
-        askForApproval: true
+        askForApproval: true,
       }),
       dbClient
     );
@@ -376,7 +376,7 @@ describe('applyEvent', function() {
       'REQUESTREFUSED_FROM_APPROVER',
       conversationId,
       messageFromApprover,
-      state => {
+      (state) => {
         if (state.value === 'OperationFailed') {
           sinon.assert.calledWith(
             fakeSendTo,
@@ -391,7 +391,7 @@ describe('applyEvent', function() {
     );
   });
 
-  it('sends error to the right role, if there is an error creating an instance after approval', function(done) {
+  it('sends error to the right role, if there is an error creating an instance after approval', function (done) {
     let messageFromApprover = <InteractionMessage>{
       frame: {
         type: 'approved',
@@ -399,25 +399,25 @@ describe('applyEvent', function() {
         receiver: {
           identification: {
             id: 'receiver-id',
-            idType: 'Custom'
+            idType: 'Custom',
           },
           role: {
-            name: 'central-asset-repository'
-          }
+            name: 'central-asset-repository',
+          },
         },
         semanticProtocol: 'semprot',
         sender: {
           identification: {
             id: 'sender-id',
-            idType: 'Custom'
+            idType: 'Custom',
           },
           role: {
-            name: 'Approver'
-          }
+            name: 'Approver',
+          },
         },
-        conversationId: 'conversationId'
+        conversationId: 'conversationId',
       },
-      interactionElements: [{}]
+      interactionElements: [{}],
     };
 
     let conversationId = 'abcd1234';
@@ -450,7 +450,7 @@ describe('applyEvent', function() {
           process.cwd() +
             '/test/data/onboarding/sample-state-wait-for-approval.json',
           'utf8'
-        )
+        ),
       })
     );
 
@@ -465,7 +465,7 @@ describe('applyEvent', function() {
 
     let skill: Skill = new Skill(
       new MyInitializer(messageDispatcher, restClient, {
-        askForApproval: true
+        askForApproval: true,
       }),
       dbClient
     );
@@ -474,7 +474,7 @@ describe('applyEvent', function() {
       'APPROVED_FROM_APPROVER',
       conversationId,
       messageFromApprover,
-      state => {
+      (state) => {
         if (state.value === 'OperationFailed') {
           sinon.assert.notCalled(fakeReplyTo);
           sinon.assert.calledOnce(fakecreateInstanceOnCAR);
@@ -491,7 +491,7 @@ describe('applyEvent', function() {
     );
   });
 
-  it('sends back a requestRefused on receipt of NOTUNDERSTOOD_FROM_APPROVER (when requestApproval is set)', function(done) {
+  it('sends back a requestRefused on receipt of NOTUNDERSTOOD_FROM_APPROVER (when requestApproval is set)', function (done) {
     let messageFromApprover = <InteractionMessage>{
       frame: {
         type: 'approved',
@@ -499,25 +499,25 @@ describe('applyEvent', function() {
         receiver: {
           identification: {
             id: 'receiver-id',
-            idType: 'Custom'
+            idType: 'Custom',
           },
           role: {
-            name: 'central-asset-repository'
-          }
+            name: 'central-asset-repository',
+          },
         },
         semanticProtocol: 'semprot',
         sender: {
           identification: {
             id: 'sender-id',
-            idType: 'Custom'
+            idType: 'Custom',
           },
           role: {
-            name: 'approver'
-          }
+            name: 'approver',
+          },
         },
-        conversationId: 'conversationId'
+        conversationId: 'conversationId',
       },
-      interactionElements: [{}]
+      interactionElements: [{}],
     };
 
     let conversationId = 'abcd1234';
@@ -550,7 +550,7 @@ describe('applyEvent', function() {
           process.cwd() +
             '/test/data/onboarding/sample-state-wait-for-approval.json',
           'utf8'
-        )
+        ),
       })
     );
 
@@ -559,7 +559,7 @@ describe('applyEvent', function() {
 
     let skill: Skill = new Skill(
       new MyInitializer(messageDispatcher, restClient, {
-        askForApproval: true
+        askForApproval: true,
       }),
       dbClient
     );
@@ -568,7 +568,7 @@ describe('applyEvent', function() {
       'NOTUNDERSTOOD_FROM_APPROVER',
       conversationId,
       messageFromApprover,
-      state => {
+      (state) => {
         if (state.value === 'OperationFailed') {
           sinon.assert.calledWith(
             fakeSendTo,
@@ -583,7 +583,7 @@ describe('applyEvent', function() {
     );
   });
 
-  it('sends back a requestRefused on receipt of ERROR_FROM_APPROVER (when requestApproval is set)', function(done) {
+  it('sends back a requestRefused on receipt of ERROR_FROM_APPROVER (when requestApproval is set)', function (done) {
     let messageFromApprover = <InteractionMessage>{
       frame: {
         type: 'approved',
@@ -591,25 +591,25 @@ describe('applyEvent', function() {
         receiver: {
           identification: {
             id: 'receiver-id',
-            idType: 'Custom'
+            idType: 'Custom',
           },
           role: {
-            name: 'central-asset-repository'
-          }
+            name: 'central-asset-repository',
+          },
         },
         semanticProtocol: 'semprot',
         sender: {
           identification: {
             id: 'sender-id',
-            idType: 'Custom'
+            idType: 'Custom',
           },
           role: {
-            name: 'approver'
-          }
+            name: 'approver',
+          },
         },
-        conversationId: 'conversationId'
+        conversationId: 'conversationId',
       },
-      interactionElements: [{}]
+      interactionElements: [{}],
     };
 
     let conversationId = 'abcd1234';
@@ -641,7 +641,7 @@ describe('applyEvent', function() {
           process.cwd() +
             '/test/data/onboarding/sample-state-wait-for-approval.json',
           'utf8'
-        )
+        ),
       })
     );
 
@@ -650,7 +650,7 @@ describe('applyEvent', function() {
 
     let skill: Skill = new Skill(
       new MyInitializer(messageDispatcher, restClient, {
-        askForApproval: true
+        askForApproval: true,
       }),
       dbClient
     );
@@ -659,7 +659,7 @@ describe('applyEvent', function() {
       'ERROR_FROM_APPROVER',
       conversationId,
       messageFromApprover,
-      state => {
+      (state) => {
         if (state.value === 'OperationFailed') {
           sinon.assert.calledWith(
             fakeSendTo,
@@ -674,7 +674,7 @@ describe('applyEvent', function() {
     );
   });
 
-  it('sends a notUnderstood to the right role, if there is a 400 error creating an instance after approval', function(done) {
+  it('sends a notUnderstood to the right role, if there is a 400 error creating an instance after approval', function (done) {
     let messageFromApprover = <InteractionMessage>{
       frame: {
         type: 'approved',
@@ -682,25 +682,25 @@ describe('applyEvent', function() {
         receiver: {
           identification: {
             id: 'receiver-id',
-            idType: 'Custom'
+            idType: 'Custom',
           },
           role: {
-            name: 'central-asset-repository'
-          }
+            name: 'central-asset-repository',
+          },
         },
         semanticProtocol: 'semprot',
         sender: {
           identification: {
             id: 'sender-id',
-            idType: 'Custom'
+            idType: 'Custom',
           },
           role: {
-            name: 'Approver'
-          }
+            name: 'Approver',
+          },
         },
-        conversationId: 'conversationId'
+        conversationId: 'conversationId',
       },
-      interactionElements: [{}]
+      interactionElements: [{}],
     };
 
     let conversationId = 'abcd1234';
@@ -732,7 +732,7 @@ describe('applyEvent', function() {
           process.cwd() +
             '/test/data/onboarding/sample-state-wait-for-approval.json',
           'utf8'
-        )
+        ),
       })
     );
 
@@ -747,7 +747,7 @@ describe('applyEvent', function() {
 
     let skill: Skill = new Skill(
       new MyInitializer(messageDispatcher, restClient, {
-        askForApproval: true
+        askForApproval: true,
       }),
       dbClient
     );
@@ -756,7 +756,7 @@ describe('applyEvent', function() {
       'APPROVED_FROM_APPROVER',
       conversationId,
       messageFromApprover,
-      state => {
+      (state) => {
         if (state.value === 'OperationFailed') {
           sinon.assert.notCalled(fakeReplyTo);
           sinon.assert.calledOnce(fakecreateInstanceOnCAR);
@@ -773,7 +773,7 @@ describe('applyEvent', function() {
     );
   });
 
-  it('sends a requestRefused to the right role, if there is a 401 error creating an instance after approval', function(done) {
+  it('sends a requestRefused to the right role, if there is a 401 error creating an instance after approval', function (done) {
     let messageFromApprover = <InteractionMessage>{
       frame: {
         type: 'approved',
@@ -781,25 +781,25 @@ describe('applyEvent', function() {
         receiver: {
           identification: {
             id: 'receiver-id',
-            idType: 'Custom'
+            idType: 'Custom',
           },
           role: {
-            name: 'central-asset-repository'
-          }
+            name: 'central-asset-repository',
+          },
         },
         semanticProtocol: 'semprot',
         sender: {
           identification: {
             id: 'sender-id',
-            idType: 'Custom'
+            idType: 'Custom',
           },
           role: {
-            name: 'Approver'
-          }
+            name: 'Approver',
+          },
         },
-        conversationId: 'conversationId'
+        conversationId: 'conversationId',
       },
-      interactionElements: [{}]
+      interactionElements: [{}],
     };
 
     let conversationId = 'abcd1234';
@@ -831,7 +831,7 @@ describe('applyEvent', function() {
           process.cwd() +
             '/test/data/onboarding/sample-state-wait-for-approval.json',
           'utf8'
-        )
+        ),
       })
     );
 
@@ -846,7 +846,7 @@ describe('applyEvent', function() {
 
     let skill: Skill = new Skill(
       new MyInitializer(messageDispatcher, restClient, {
-        askForApproval: true
+        askForApproval: true,
       }),
       dbClient
     );
@@ -855,7 +855,7 @@ describe('applyEvent', function() {
       'APPROVED_FROM_APPROVER',
       conversationId,
       messageFromApprover,
-      state => {
+      (state) => {
         if (state.value === 'OperationFailed') {
           sinon.assert.notCalled(fakeReplyTo);
           sinon.assert.calledOnce(fakecreateInstanceOnCAR);
@@ -872,7 +872,7 @@ describe('applyEvent', function() {
     );
   });
 
-  it('sends a error to the right role, if there is a 500 error creating an instance after approval', function(done) {
+  it('sends a error to the right role, if there is a 500 error creating an instance after approval', function (done) {
     let messageFromApprover = <InteractionMessage>{
       frame: {
         type: 'approved',
@@ -880,25 +880,25 @@ describe('applyEvent', function() {
         receiver: {
           identification: {
             id: 'receiver-id',
-            idType: 'Custom'
+            idType: 'Custom',
           },
           role: {
-            name: 'central-asset-repository'
-          }
+            name: 'central-asset-repository',
+          },
         },
         semanticProtocol: 'semprot',
         sender: {
           identification: {
             id: 'sender-id',
-            idType: 'Custom'
+            idType: 'Custom',
           },
           role: {
-            name: 'Approver'
-          }
+            name: 'Approver',
+          },
         },
-        conversationId: 'conversationId'
+        conversationId: 'conversationId',
       },
-      interactionElements: [{}]
+      interactionElements: [{}],
     };
 
     let conversationId = 'abcd1234';
@@ -931,7 +931,7 @@ describe('applyEvent', function() {
           process.cwd() +
             '/test/data/onboarding/sample-state-wait-for-approval.json',
           'utf8'
-        )
+        ),
       })
     );
 
@@ -946,7 +946,7 @@ describe('applyEvent', function() {
 
     let skill: Skill = new Skill(
       new MyInitializer(messageDispatcher, restClient, {
-        askForApproval: true
+        askForApproval: true,
       }),
       dbClient
     );
@@ -955,7 +955,7 @@ describe('applyEvent', function() {
       'APPROVED_FROM_APPROVER',
       conversationId,
       messageFromApprover,
-      state => {
+      (state) => {
         if (state.value === 'OperationFailed') {
           sinon.assert.notCalled(fakeReplyTo);
           sinon.assert.calledOnce(fakecreateInstanceOnCAR);
@@ -972,7 +972,7 @@ describe('applyEvent', function() {
     );
   });
 
-  it('moves into WaitingForType if requestType is set, sending out the correct messages', function(done) {
+  it('moves into WaitingForType if requestType is set, sending out the correct messages', function (done) {
     let conversationId = 'abcd1234';
     let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
       <IMessageSender>{}
@@ -1007,7 +1007,7 @@ describe('applyEvent', function() {
 
     let skill: Skill = new Skill(
       new MyInitializer(messageDispatcher, restClient, {
-        askForType: true
+        askForType: true,
       }),
       dbClient
     );
@@ -1016,7 +1016,7 @@ describe('applyEvent', function() {
       'PUBLISHINSTANCE_FROM_OPERATOR',
       conversationId,
       message,
-      state => {
+      (state) => {
         if (state.value === 'WaitingForType') {
           sinon.assert.calledOnce(fakerequestTypeFromManufacturer);
           sinon.assert.calledOnce(fakesendResponseInstanceToOperator);
@@ -1026,20 +1026,20 @@ describe('applyEvent', function() {
     );
   });
 
-  it('switches sender to receiver when replying to a message', async function() {
+  it('switches sender to receiver when replying to a message', async function () {
     let conversationId = 'abcd1234';
-    let amqpClient = new AmqpClient('a', 'b', 'c', 'd', '');
+    let amqpClient = new AmqpClient('a', 'a1', 'b', 'c', 'd', '');
     let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
       new MessageSender(
         amqpClient,
         {
           identification: {
             id: 'myUri',
-            idType: 'Custom'
+            idType: 'Custom',
           },
           role: {
-            name: 'myRole'
-          }
+            name: 'myRole',
+          },
         },
         'routingKey'
       )
@@ -1060,7 +1060,7 @@ describe('applyEvent', function() {
         serializedState: fs.readFileSync(
           process.cwd() + '/test/data/onboarding/sample-state-record.json',
           'utf8'
-        )
+        ),
       })
     );
 
@@ -1084,7 +1084,7 @@ describe('applyEvent', function() {
     );
   });
 
-  it('sends out not understood if it receives a publish instance message when in state InstancePublished', async function() {
+  it('sends out not understood if it receives a publish instance message when in state InstancePublished', async function () {
     let conversationId = 'abcd1234';
     let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
       <IMessageSender>{}
@@ -1105,7 +1105,7 @@ describe('applyEvent', function() {
         serializedState: fs.readFileSync(
           process.cwd() + '/test/data/onboarding/sample-state-final.json',
           'utf8'
-        )
+        ),
       })
     );
 
@@ -1129,7 +1129,7 @@ describe('applyEvent', function() {
     sinon.assert.calledOnce(fakereplyNotUnderstood);
   });
 
-  it('sends out not understood if it receives an illegal interaction', async function() {
+  it('sends out not understood if it receives an illegal interaction', async function () {
     let conversationId = 'abcd1234';
     let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
       <IMessageSender>{}
@@ -1151,7 +1151,7 @@ describe('applyEvent', function() {
           process.cwd() +
             '/test/data/onboarding/sample-state-record-intermediate.json',
           'utf8'
-        )
+        ),
       })
     );
 
@@ -1175,7 +1175,7 @@ describe('applyEvent', function() {
     sinon.assert.calledOnce(fakereplyNotUnderstood);
   });
 
-  it('reacts correctly if a state is loaded from persistent store', function(done) {
+  it('reacts correctly if a state is loaded from persistent store', function (done) {
     let conversationId = 'abcd1234';
     let messageSender: MessageSender = new MessageSender(
       <AmqpClient>{},
@@ -1202,7 +1202,7 @@ describe('applyEvent', function() {
           process.cwd() +
             '/test/data/onboarding/sample-state-record-intermediate.json',
           'utf8'
-        )
+        ),
       })
     );
     sinon.replace(dbClient, 'update', sinon.fake());
@@ -1211,7 +1211,7 @@ describe('applyEvent', function() {
 
     let skill: Skill = new Skill(
       new MyInitializer(messageDispatcher, restClient, {
-        askForType: true
+        askForType: true,
       }),
       dbClient
     );
@@ -1220,7 +1220,7 @@ describe('applyEvent', function() {
       'RESPONSETYPE_FROM_MANUFACTURER',
       conversationId,
       message,
-      state => {
+      (state) => {
         if (state.value === 'InstanceAndTypePublished') {
           expect(fakeSendTo.called).to.be.true;
           sinon.assert.calledWith(
@@ -1234,7 +1234,7 @@ describe('applyEvent', function() {
     );
   });
 
-  it('does not send out a responseInstance if there was an error in writing to the database after entering InstancePublished', function(done) {
+  it('does not send out a responseInstance if there was an error in writing to the database after entering InstancePublished', function (done) {
     let conversationId = 'abcd1234';
     let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
       <IMessageSender>{}
@@ -1274,7 +1274,7 @@ describe('applyEvent', function() {
       conversationId,
       message,
       () => {},
-      state => {
+      (state) => {
         if (state.value === 'InstancePublished') {
           sinon.assert.notCalled(fakesendResponseInstanceToOperator);
           sinon.assert.called(fakeSendError);
@@ -1284,7 +1284,7 @@ describe('applyEvent', function() {
     );
   });
 
-  it('responds with notUnderstood if a 400 error takes place in creating an instance', function(done) {
+  it('responds with notUnderstood if a 400 error takes place in creating an instance', function (done) {
     let conversationId = 'abcd1234';
     let messageSender: MessageSender = new MessageSender(
       <AmqpClient>{},
@@ -1328,7 +1328,7 @@ describe('applyEvent', function() {
       'PUBLISHINSTANCE_FROM_OPERATOR',
       conversationId,
       message,
-      state => {
+      (state) => {
         if (state.value === 'OperationFailed') {
           sinon.assert.notCalled(fakesendResponseInstanceToOperator);
           sinon.assert.calledWith(
@@ -1342,7 +1342,7 @@ describe('applyEvent', function() {
     );
   });
 
-  it('responds with requestRefused in case it receives a 401 from the storage adapter', function(done) {
+  it('responds with requestRefused in case it receives a 401 from the storage adapter', function (done) {
     let conversationId = 'abcd1234';
     let messageSender: MessageSender = new MessageSender(
       <AmqpClient>{},
@@ -1385,7 +1385,7 @@ describe('applyEvent', function() {
       'PUBLISHINSTANCE_FROM_OPERATOR',
       conversationId,
       message,
-      state => {
+      (state) => {
         if (state.value === 'OperationFailed') {
           sinon.assert.calledWith(
             sendTo,
@@ -1399,7 +1399,7 @@ describe('applyEvent', function() {
     );
   });
 
-  it('responds with error in case it receives a 500 from the storage adapter', function(done) {
+  it('responds with error in case it receives a 500 from the storage adapter', function (done) {
     let conversationId = 'abcd1234';
     let messageSender: MessageSender = new MessageSender(
       <AmqpClient>{},
@@ -1434,7 +1434,7 @@ describe('applyEvent', function() {
       'PUBLISHINSTANCE_FROM_OPERATOR',
       conversationId,
       message,
-      state => {
+      (state) => {
         if (state.value === 'OperationFailed') {
           sinon.assert.calledWith(
             sendTo,
@@ -1447,7 +1447,7 @@ describe('applyEvent', function() {
     );
   });
 
-  it('replies with an error to whoever sent the last message if a programming error occurs during transition', async function() {
+  it('replies with an error to whoever sent the last message if a programming error occurs during transition', async function () {
     let conversationId = 'abcd1234';
     let messageSender: MessageSender = new MessageSender(
       <AmqpClient>{},
@@ -1475,7 +1475,7 @@ describe('applyEvent', function() {
           process.cwd() +
             '/test/data/onboarding/sample-state-record-intermediate.json',
           'utf8'
-        )
+        ),
       })
     );
 
@@ -1514,7 +1514,7 @@ describe('applyEvent', function() {
     );*/
   });
 
-  it('moves into InstancePublished if the manufacturer refuses the type request', function(done) {
+  it('moves into InstancePublished if the manufacturer refuses the type request', function (done) {
     let conversationId = 'abcd1234';
     let messageSender: MessageSender = new MessageSender(
       <AmqpClient>{},
@@ -1543,7 +1543,7 @@ describe('applyEvent', function() {
           process.cwd() +
             '/test/data/onboarding/sample-state-record-intermediate.json',
           'utf8'
-        )
+        ),
       })
     );
 
@@ -1559,7 +1559,7 @@ describe('applyEvent', function() {
       'REQUESTREFUSED_FROM_MANUFACTURER',
       conversationId,
       message,
-      state => {
+      (state) => {
         if (state.value === 'InstancePublished') {
           done();
         } else {
@@ -1569,7 +1569,7 @@ describe('applyEvent', function() {
     );
   });
 
-  it('moves into InstancePublished if the manufacturer replies with notUnderstood', function(done) {
+  it('moves into InstancePublished if the manufacturer replies with notUnderstood', function (done) {
     let conversationId = 'abcd1234';
     let messageSender: MessageSender = new MessageSender(
       <AmqpClient>{},
@@ -1597,7 +1597,7 @@ describe('applyEvent', function() {
           process.cwd() +
             '/test/data/onboarding/sample-state-record-intermediate.json',
           'utf8'
-        )
+        ),
       })
     );
 
@@ -1613,7 +1613,7 @@ describe('applyEvent', function() {
       'NOTUNDERSTOOD_FROM_MANUFACTURER',
       conversationId,
       message,
-      state => {
+      (state) => {
         if (state.value === 'InstancePublished') {
           done();
         } else {
@@ -1622,7 +1622,7 @@ describe('applyEvent', function() {
       }
     );
   });
-  it('moves into InstancePublished if the manufacturer replies with error', function(done) {
+  it('moves into InstancePublished if the manufacturer replies with error', function (done) {
     let conversationId = 'abcd1234';
     let messageSender: MessageSender = new MessageSender(
       <AmqpClient>{},
@@ -1650,7 +1650,7 @@ describe('applyEvent', function() {
           process.cwd() +
             '/test/data/onboarding/sample-state-record-intermediate.json',
           'utf8'
-        )
+        ),
       })
     );
 
@@ -1666,7 +1666,7 @@ describe('applyEvent', function() {
       'ERROR_FROM_MANUFACTURER',
       conversationId,
       message,
-      state => {
+      (state) => {
         if (state.value === 'InstancePublished') {
           done();
         } else {

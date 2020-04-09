@@ -7,13 +7,12 @@ import { SimpleMongoDbClient } from './base/persistence/SimpleMongoDbClient';
 import { IDatabaseClient } from './base/persistenceinterface/IDatabaseClient';
 import { logger } from './log';
 import { TIdType, IdTypeEnum } from 'i40-aas-objects/dist/src/types/IdTypeEnum';
-import { AmqpClient } from 'AMQP-Client/lib/AMQPClient';
+import { AmqpClient } from 'AMQP-Client/lib/AmqpClient';
 import { MyExternalRestServiceCaller } from './services/onboarding/MyExternalRestServiceCaller';
 import { MyInitializer } from './services/onboarding/MyInitializer';
 import { uuid } from 'uuidv4';
 
-
-const dotenv = require("dotenv");
+const dotenv = require('dotenv');
 dotenv.config();
 
 function checkEnvVar(variableName: string): string {
@@ -44,7 +43,7 @@ let TOPIC = ROOT_TOPIC + '.*';
 // The queue is generated based on the binding key and is unique for the client
 // GUID + CORE_EGRESS_HTTP_BROKER_BINDINGKEY; //TODO: here also from env variable??
 
-let BROKER_QUEUE = ROOT_TOPIC +"/"+ uuid(); //TODO: here also from env variable??
+let BROKER_QUEUE = ROOT_TOPIC + '/' + uuid(); //TODO: here also from env variable??
 
 let MY_URI = checkEnvVar('SKILLS_ONBOARDING_APPROVAL_URI');
 let MY_ROLE = checkEnvVar('SKILLS_ONBOARDING_APPROVAL_ROLE');
@@ -62,7 +61,7 @@ let BROKER_PORT = checkEnvVar('CORE_BROKER_PORT');
 let BROKER_EXCHANGE = checkEnvVar('CORE_EGRESS_EXCHANGE');
 let BROKER_USER = checkEnvVar('CORE_EGRESS_USER');
 let BROKER_PASSWORD = checkEnvVar('CORE_EGRESS_PASSWORD');
-let HTTPS_ENDPOINT_ROUTING_KEY = checkEnvVar('CORE_ENDPOINT_RESOLVER_QUEUE');
+let CORE_EGRESS_ROUTINGKEY = checkEnvVar('CORE_EGRESS_ROUTINGKEY');
 
 let MONGODB_HOST = checkEnvVar('SKILLS_ONBOARDING_DATABASE_HOST');
 let MONGODB_PORT = checkEnvVar('SKILLS_ONBOARDING_DATABASE_PORT');
@@ -85,13 +84,13 @@ let messageDispatcher: MyAasMessageDispatcher = new MyAasMessageDispatcher(
     {
       identification: {
         id: MY_URI,
-        idType: IdTypeEnum.IRI
+        idType: IdTypeEnum.IRI,
       },
       role: {
-        name: MY_ROLE
-      }
+        name: MY_ROLE,
+      },
     },
-    HTTPS_ENDPOINT_ROUTING_KEY
+    CORE_EGRESS_ROUTINGKEY
   )
 );
 
@@ -121,7 +120,7 @@ let skill = new Skill(
         : false,
       askForType: process.env.ONBOARDING_SKILL_REQUEST_TYPE
         ? eval(process.env.ONBOARDING_SKILL_REQUEST_TYPE)
-        : false
+        : false,
     }
   ),
   dbClient

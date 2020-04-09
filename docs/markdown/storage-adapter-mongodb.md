@@ -10,13 +10,19 @@
 
 ## The big picture
 
-![The big picture](../images/big_picture_mongodb.png "Where this component fits in.")
+This component is shown as "MongoDB Application Adapter".
+
+![The big picture](../images/AAS_SERVICE_REVISED.png).
+
 
 ## Developer notes
 
 #### Implementation
 
-### Unit Tests
+### Integration Tests
 
-- Run unit tests using `npm run test`
-- Run unit tests with coverage with `npm run coverage`
+Setup can be done with `source ./integration-test-setup`.
+
+- To run integration tests: `npm run test-with-integration`
+- To run coverage with integration tests: `npm run coverage-with-integration`
+  To cleanup: `./integration-test-teardown`

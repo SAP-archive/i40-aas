@@ -1,13 +1,15 @@
-import { IMessageBrokerClient,IMessageReceiver,Subscription  } from '../src/AMQPClient';
+import {
+  IMessageBrokerClient,
+  IMessageReceiver,
+  Subscription,
+} from '../src/AmqpClient';
 import { Client } from 'mqtt';
 
 var mqtt = require('mqtt');
 
 class SapMqttClient implements IMessageBrokerClient {
-
-
   isConnected(): boolean {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
   private subscription: Subscription | undefined;
   private client: Client;
@@ -22,8 +24,8 @@ class SapMqttClient implements IMessageBrokerClient {
     private brockerUser: string,
     private brokerPass: string
   ) {
-    this.client = mqtt.connect(this.mqttHost, { protocol: 'mqtt' });
-    this.client.on('connect', function() {
+    this.client = mqtt.connect('mqtt://' + this.mqttHost);
+    this.client.on('connect', function () {
       console.debug('mqtt connected');
     });
   }
@@ -34,9 +36,9 @@ class SapMqttClient implements IMessageBrokerClient {
       let subscriptionTopic: string = this.subscription.topic;
       let messageReceiver: IMessageReceiver = this.subscription.messageReceiver;
 
-      this.client.on('connect', function() {
+      this.client.on('connect', function () {
         console.debug('mqtt connected - now subscribing');
-        that.client.subscribe(subscriptionTopic, function(err) {
+        that.client.subscribe(subscriptionTopic, function (err) {
           if (err) {
             throw new Error('Error receiving message');
           }
@@ -45,7 +47,7 @@ class SapMqttClient implements IMessageBrokerClient {
         if (cb) cb();
       });
 
-      this.client.on('message', function(topic, message) {
+      this.client.on('message', function (topic, message) {
         if (topic === subscriptionTopic) {
           messageReceiver.receive(message.toString());
         }
@@ -57,7 +59,7 @@ class SapMqttClient implements IMessageBrokerClient {
 
   publish(routingKey: string, msg: string): void {
     this.client.publish(routingKey, msg, () =>
-    console.debug('message published from mqtt client')
+      console.debug('message published from mqtt client')
     );
     console.debug(
       'mqtt client sent to exchange for topic ' +

@@ -8,8 +8,6 @@ yarn-error.log*
 
 dist/
 
-package-lock.json
-
 .vscode
 .vscode/
 
@@ -44,7 +42,6 @@ build/Release
 
 # Dependency directories
 node_modules/
-*package-lock.json
 jspm_packages/
 
 # TypeScript v1 declaration files
@@ -68,14 +65,6 @@ typings/
 # next.js build output
 .next
 
-
-
-#######################
-# exclude all initializer scripts
-.compose/volumes/initializer/*
-# except for
-!.compose/volumes/initializer/sample_config.sh
-
 #######################
 # ignore everything that is likely encryption-related
 *.pem
@@ -84,9 +73,9 @@ typings/
 *.priv
 
 # exclude the whole .compose/cert* directory
-.compose/volumes/certs/*
+/src/compose/volumes/certs/*
 # except for
-!.compose/volumes/certs/.gitkeep
+!/src/compose/volumes/certs/.gitkeep
 
 #######################
 # ignore all .env files
