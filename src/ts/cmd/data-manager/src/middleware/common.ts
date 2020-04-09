@@ -6,11 +6,6 @@ import { logger } from "../utils/log";
 
 import * as basicAuth from "express-basic-auth";
 
-
-
-const dotenv = require("dotenv");
-dotenv.config();
-
 let CORE_DATA_MANAGER_USER: string | undefined = process.env.CORE_DATA_MANAGER_USER;
 let CORE_DATA_MANAGER_PASSWORD: string | undefined = process.env.CORE_DATA_MANAGER_PASSWORD;
 
