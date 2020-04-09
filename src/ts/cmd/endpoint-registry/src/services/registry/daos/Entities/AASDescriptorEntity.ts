@@ -1,6 +1,7 @@
 import { AssetEntity } from "./AssetEntity";
 import { EndpointEntity } from "./EndpointEntity";
-import { Entity, Column, PrimaryColumn, OneToOne, JoinColumn, OneToMany } from "typeorm";
+import { Entity, Column, PrimaryColumn, OneToOne, JoinColumn, OneToMany, ManyToMany, JoinTable } from "typeorm";
+import { RoleEntity } from "./RoleEntity";
 
 //import { IdTypeEnum } from 'i40-aas-objects/src/types/IdTypeEnum';
 
@@ -42,5 +43,7 @@ export class AASDescriptorEntity {
       @OneToMany(type => EndpointEntity, endpoint => endpoint.aasdescriptor,{onDelete: 'CASCADE'})
     endpoints!: EndpointEntity[];
 
-
+    @ManyToMany(type => RoleEntity,{onUpdate:'CASCADE', onDelete: 'CASCADE'})
+    @JoinTable()
+    roles!: RoleEntity[];
 }
