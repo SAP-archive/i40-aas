@@ -4,6 +4,7 @@ WORKDIR /cmd/endpoint-registry
 
 ## copy package.json first and install dependencies to leverage caching
 COPY cmd/endpoint-registry/package.json /cmd/endpoint-registry
+COPY cmd/endpoint-registry/package-lock.json /cmd/endpoint-registry
 
 ## install & backup production dependencies
 RUN npm install --production \
