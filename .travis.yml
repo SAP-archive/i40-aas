@@ -177,17 +177,17 @@ jobs:
       script: 
         - npm run itest
 
-    - stage: unit-test
-      language: node_js
-      node_js: lts/*
-      env: SERVICE=storage-adapter-mongodb
-      install: 
-        - cd src/ts/cmd/${SERVICE}
-        - npm install
-        - source ./integration-test-setup 
-        - sleep 30
-      script: 
-        - npm run test-with-integration
+#    - stage: unit-test
+#      language: node_js
+#      node_js: lts/*
+#      env: SERVICE=storage-adapter-mongodb
+#      install: 
+#        - cd src/ts/cmd/${SERVICE}
+#        - npm install
+#        - source ./integration-test-setup 
+#        - sleep 30
+#      script: 
+#        - npm run test-with-integration
 
     - stage: unit-test
       language: go 
