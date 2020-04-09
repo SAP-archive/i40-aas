@@ -5,6 +5,9 @@ WORKDIR /cmd/adapter-registry
 ## copy package.json first and install dependencies to leverage caching
 COPY cmd/adapter-registry/package.json /cmd/adapter-registry
 
+## copy package-lock.json 
+COPY cmd/adapter-registry/package-lock.json /cmd/adapter-registry
+
 ## install & backup production dependencies
 RUN npm install --production \
     && mkdir /production-dependencies/ \
