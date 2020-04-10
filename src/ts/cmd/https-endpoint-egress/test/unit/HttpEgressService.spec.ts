@@ -1,13 +1,13 @@
-import Axios from 'axios';
-import { BrokerMessageInterpreter } from '../../src/messaging/BrokerMessageInterpreter';
-import { doesNotReject } from 'assert';
-import { logger } from '../../src/utils/log';
-import sinon from 'sinon';
-import { IResolverMessage } from '../../src/messaging/interfaces/IResolverMessage';
+import Axios from "axios";
+import { BrokerMessageInterpreter } from "../../src/messaging/BrokerMessageInterpreter";
+import { doesNotReject } from "assert";
+import { logger } from "../../src/utils/log";
+import sinon from "sinon";
+import { IResolverMessage } from "../../src/messaging/interfaces/IResolverMessage";
 import { AmqpClient, Subscription } from 'AMQP-Client/lib/AmqpClient';
 
-var chai = require('chai');
-var chaiAsPromised = require('chai-as-promised');
+var chai = require("chai");
+var chaiAsPromised = require("chai-as-promised");
 chai.use(chaiAsPromised);
 
 // Then either:

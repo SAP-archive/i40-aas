@@ -1,6 +1,6 @@
 import { AmqpClient } from 'AMQP-Client/lib/AmqpClient';
-import { BrokerMessageInterpreter } from './messaging/BrokerMessageInterpreter';
-import { logger } from './utils/log';
+import { BrokerMessageInterpreter } from "./messaging/BrokerMessageInterpreter";
+import { logger } from "./utils/log";
 
 
 // Message broker Config

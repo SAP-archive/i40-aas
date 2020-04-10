@@ -20,28 +20,28 @@ spec:
     spec:
       containers:
       - name: grpc-endpoint-egress
-	image: "{{ .Values.image.repository }}/i40-aas-grpc-endpoint-egress:{{ .Values.image.release }}"
-	env:
-	- name: LOGGING_LOGLEVEL
-	  value: {{ .Values.logging.logLevel | quote }}
-	- name: LOGGING_LOGOUTPUT
-	  value: {{ .Values.logging.logOutput | quote }}
-	- name: CORE_BROKER_HOST
-	  valueFrom:
-	    configMapKeyRef:
-	      name: {{ .Release.Name }}-host-collection
-	      key: CORE_BROKER_HOST
-	- name: CORE_BROKER_PORT
-	  value: {{ .Values.core.broker.port.amqp | quote }}
-	- name: CORE_EGRESS_EXCHANGE
-	  value: {{ .Values.core.egress.exchange | quote }}
-	- name: CORE_EGRESS_GRPC_QUEUE
-	  value: {{ .Values.core.egress.grpc.queue | quote }}
-	- name: CORE_EGRESS_GRPC_CTAG
-	  value: {{ .Values.core.egress.grpc.ctag | quote }}
-	envFrom:
-	- secretRef:
-	    name: {{ .Release.Name }}-core-egress
+        image: "{{ .Values.image.repository }}/i40-aas-grpc-endpoint-egress:{{ .Values.image.release }}"
+        env:
+        - name: LOGGING_LOGLEVEL
+          value: {{ .Values.logging.logLevel | quote }}
+        - name: LOGGING_LOGOUTPUT
+          value: {{ .Values.logging.logOutput | quote }}
+        - name: CORE_BROKER_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-host-collection
+              key: CORE_BROKER_HOST
+        - name: CORE_BROKER_PORT
+          value: {{ .Values.core.broker.port.amqp | quote }}
+        - name: CORE_EGRESS_EXCHANGE
+          value: {{ .Values.core.egress.exchange | quote }}
+        - name: CORE_EGRESS_GRPC_QUEUE
+          value: {{ .Values.core.egress.grpc.queue | quote }}
+        - name: CORE_EGRESS_GRPC_CTAG
+          value: {{ .Values.core.egress.grpc.ctag | quote }}
+        envFrom:
+        - secretRef:
+            name: {{ .Release.Name }}-core-egress
         volumeMounts:
         - name: certs
           mountPath: "/certs"
@@ -56,7 +56,7 @@ spec:
 #          periodSeconds: 60
       volumes:
       - name: certs
-	secret:
-	  secretName: {{ .Values.certificates.secretName }}
-	  optional: true
+        secret:
+          secretName: {{ .Values.certificates.secretName }}
+          optional: true
 ---

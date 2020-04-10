@@ -39,26 +39,26 @@ spec:
         image: "{{ .Values.image.repository }}/i40-aas-grpc-endpoint-ingress:{{ .Values.image.release }}"
         ports:
         - name: endpoint
-	  containerPort: {{ .Values.core.ingress.grpc.port }}
-	env:
-	- name: LOGGING_LOGLEVEL
-	  value: {{ .Values.logging.logLevel | quote }}
-	- name: LOGGING_LOGOUTPUT
-	  value: {{ .Values.logging.logOutput | quote }}
-	- name: CORE_BROKER_HOST
-	  valueFrom:
-	    configMapKeyRef:
-	      name: {{ .Release.Name }}-host-collection
-	      key: CORE_BROKER_HOST
-	- name: CORE_BROKER_PORT
-	  value: {{ .Values.core.broker.port.amqp | quote }}
-	- name: CORE_INGRESS_EXCHANGE
-	  value: {{ .Values.core.ingress.exchange | quote }}
-	- name: CORE_INGRESS_GRPC_PORT
-	  value: {{ .Values.core.ingress.grpc.port | quote }}
-	envFrom:
-	- secretRef:
-	    name: {{ .Release.Name }}-core-ingress
+          containerPort: {{ .Values.core.ingress.grpc.port }}
+        env:
+        - name: LOGGING_LOGLEVEL
+          value: {{ .Values.logging.logLevel | quote }}
+        - name: LOGGING_LOGOUTPUT
+          value: {{ .Values.logging.logOutput | quote }}
+        - name: CORE_BROKER_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-host-collection
+              key: CORE_BROKER_HOST
+        - name: CORE_BROKER_PORT
+          value: {{ .Values.core.broker.port.amqp | quote }}
+        - name: CORE_INGRESS_EXCHANGE
+          value: {{ .Values.core.ingress.exchange | quote }}
+        - name: CORE_INGRESS_GRPC_PORT
+          value: {{ .Values.core.ingress.grpc.port | quote }}
+        envFrom:
+        - secretRef:
+            name: {{ .Release.Name }}-core-ingress
         volumeMounts:
         - name: certs
           mountPath: "/certs"
@@ -73,7 +73,7 @@ spec:
 #          periodSeconds: 60
       volumes:
       - name: certs
-	secret:
-	  secretName: {{ .Values.certificates.secretName }}
-	  optional: true
+        secret:
+          secretName: {{ .Values.certificates.secretName }}
+          optional: true
 ---

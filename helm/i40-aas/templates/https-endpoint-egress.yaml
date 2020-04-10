@@ -39,28 +39,28 @@ spec:
           image: "{{ .Values.image.repository }}/i40-aas-https-endpoint-egress:{{ .Values.image.release }}"
           ports:
             - name: endpoint
-	      containerPort: 3000
-	  env:
-	    - name: LOGGING_LOGLEVEL
-	      value: {{ .Values.logging.logLevel | quote }}
-	    - name: LOGGING_LOGOUTPUT
-	      value: {{ .Values.logging.logOutput | quote }}
-	    - name: CORE_BROKER_HOST
-	      valueFrom:
-		configMapKeyRef:
-		  name: {{ .Release.Name }}-host-collection
-		  key: CORE_BROKER_HOST
-	    - name: CORE_BROKER_PORT
-	      value: {{ .Values.core.broker.port.amqp | quote }}
-	    - name: CORE_EGRESS_EXCHANGE
-	      value: {{ .Values.core.egress.exchange | quote }}
-	    - name: CORE_EGRESS_HTTP_QUEUE
-	      value: {{ .Values.core.egress.http.queue | quote }}
-	    - name: CORE_EGRESS_HTTP_CTAG
-	      value: {{ .Values.core.egress.http.ctag | quote }}
-	  envFrom:
-	    - secretRef:
-		name: {{ .Release.Name }}-core-egress
-	  resources:
-	    {{- toYaml .Values.resources | nindent 12 }}
+              containerPort: 3000
+          env:
+            - name: LOGGING_LOGLEVEL
+              value: {{ .Values.logging.logLevel | quote }}
+            - name: LOGGING_LOGOUTPUT
+              value: {{ .Values.logging.logOutput | quote }}
+            - name: CORE_BROKER_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Name }}-host-collection
+                  key: CORE_BROKER_HOST
+            - name: CORE_BROKER_PORT
+              value: {{ .Values.core.broker.port.amqp | quote }}
+            - name: CORE_EGRESS_EXCHANGE
+              value: {{ .Values.core.egress.exchange | quote }}
+            - name: CORE_EGRESS_HTTP_QUEUE
+              value: {{ .Values.core.egress.http.queue | quote }}
+            - name: CORE_EGRESS_HTTP_CTAG
+              value: {{ .Values.core.egress.http.ctag | quote }}
+          envFrom:
+            - secretRef:
+                name: {{ .Release.Name }}-core-egress
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
 ---
