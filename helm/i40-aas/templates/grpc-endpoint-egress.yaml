@@ -29,13 +29,13 @@ spec:
         - name: CORE_BROKER_HOST
           valueFrom:
             configMapKeyRef:
-	      name: {{ .Release.Name }}-host-collection
-	      key: CORE_BROKER_HOST
-	- name: CORE_BROKER_PORT
-	  value: {{ .Values.core.broker.port.amqp | quote }}
-	- name: CORE_EGRESS_EXCHANGE
-	  value: {{ .Values.core.egress.exchange | quote }}
-	- name: CORE_EGRESS_GRPC_QUEUE
+              name: {{ .Release.Name }}-host-collection
+              key: CORE_BROKER_HOST
+        - name: CORE_BROKER_PORT
+          value: {{ .Values.core.broker.port.amqp | quote }}
+        - name: CORE_EGRESS_EXCHANGE
+          value: {{ .Values.core.egress.exchange | quote }}
+        - name: CORE_EGRESS_GRPC_QUEUE
           value: {{ .Values.core.egress.grpc.queue | quote }}
         - name: CORE_EGRESS_GRPC_CTAG
           value: {{ .Values.core.egress.grpc.ctag | quote }}
