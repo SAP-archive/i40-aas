@@ -70,8 +70,8 @@ jobs:
         - docker-compose up -d rabbitmq
         - cd src/go/pkg/amqpclient
         - go mod download
-      script:
-      	- go test
+      sscript:
+        - go test
 
     - stage: lib-test
       name: Go interaction pkg
@@ -81,7 +81,7 @@ jobs:
         - cd src/go/pkg/interaction
         - go mod download
       script:
-      	- go test
+        - go test
 
     - stage: lib-test
       name: Go logging pkg
@@ -119,7 +119,7 @@ jobs:
         - npm install
         - source ./test/integration-test-setup
       script:
-      	- npm test
+        - npm test
 
     - stage: unit-test
       language: node_js
@@ -130,7 +130,7 @@ jobs:
         - npm install
         - source ./test/integration-test-setup
       script:
-      	- npm test
+        - npm test
 
     - stage: unit-test
       language: node_js
