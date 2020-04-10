@@ -105,11 +105,6 @@ describe('the BrokerMessageInterpreter ', function () {
     sinon.assert.notCalled(fakeAASConnectorCall);
   });
 
-  it('logs Success when it receives a 200 response from the AAS if the POST was successfull', async function () {
-    let resolverMessage:
-      | IResolverMessage
-      | undefined = (brokerMessage as unknown) as IResolverMessage;
-
   it("logs Success when it receives a 200 response from the AAS if the POST was successfull", async function () {
     let resolverMessage: IResolverMessage | undefined = brokerMessage as unknown as IResolverMessage;
 
