@@ -6,6 +6,7 @@
   - [Overview](#overview)
   - [Architecture](#architecture)
   - [Configuration](#configuration)
+  - [Development](#development)
 - [Further Information](#further-information)
 - [FAQs](#faqs)
 
@@ -36,6 +37,25 @@ The following shows the services in a [TAM](http://www.fmc-modeling.org/fmc-and-
 ### Configuration
 
 Service configuration is handled via environment variables. In each service's `environment:` section in [docker-compose.yml](../docker-compose.yml) is a full list of environment variables used, some of which can be configured via the [.env](../.env) file in the repository root.
+
+### Development
+
+Local changes affecting a single service require building that service locally. To avoid having to build all images one can leverage a corresponding [pattern rule](https://www.gnu.org/software/make/manual/html_node/Pattern-Rules.html) specified in the [Makefile](../Makefile):
+```bash
+## arbitrary <SERVICE>
+make build-<SERVICE>
+
+## e.g. endpoint-resolver
+make build-endpoint-resolver
+```
+Alternatively, `docker-compose` can be used:
+```bash
+## arbitrary <SERVICE>
+docker-compose -f docker-compose.dev.yml build i40-aas-<SERVICE>
+
+## e.g. endpoint-resolver
+docker-compose -f docker-compose.dev.yml build i40-aas-endpoint-resolver
+```
 
 ## Further Information
 
