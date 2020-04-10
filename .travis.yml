@@ -244,7 +244,7 @@ jobs:
         - sudo mv ./kubectl /usr/local/bin/kubectl
         - (AZ_PASS=$(cat azure-service-principal.txt) && az login --service-principal -u $service_principal_id -p $AZ_PASS --tenant $SAP_TENANT)
         - az aks get-credentials -n i40aas -g i40-aas
-      #        - kubectl get pods -n aas-${TRAVIS_BRANCH}
+#        - kubectl get pods -n aas-${TRAVIS_BRANCH}
         - curl -LO https://get.helm.sh/helm-v3.1.2-linux-amd64.tar.gz
         - tar -zxvf helm-v3.1.2-linux-amd64.tar.gz
         - sudo mv linux-amd64/helm /usr/local/bin/helm
