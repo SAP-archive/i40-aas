@@ -4,6 +4,8 @@ import {createConnection, AdvancedConsoleLogger, Connection} from "typeorm";
 import { AssetEntity } from "../entities/AssetEntity";
 import { EndpointEntity } from "../entities/EndpointEntity";
 import { AASDescriptorEntity } from "../entities/AASDescriptorEntity";
+import { RoleEntity } from "../entities/RoleEntity";
+import { SemanticProtocolEntity } from "../entities/SemanticProtocolEntity";
 
  class DatabaseConnection{
   host: string;
@@ -31,7 +33,7 @@ connectDB(){
     password: this.password,
     database: this.database,
     entities: [
-      AssetEntity, EndpointEntity, AASDescriptorEntity
+      AssetEntity, EndpointEntity, AASDescriptorEntity, RoleEntity, SemanticProtocolEntity
     ],
     synchronize: true,
     logging: false

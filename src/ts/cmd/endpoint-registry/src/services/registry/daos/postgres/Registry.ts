@@ -3,14 +3,6 @@ import {
   IRegistryResultSet,
   RegistryResultSet
 } from '../interfaces/IRegistryResultSet';
-import { IIdentifier } from 'i40-aas-objects';
-import {
-  IAASDescriptor,
-  IAssignRoles,
-  ICreateRole,
-  ICreateSemanticProtocol,
-  ICreateAsset
-} from '../interfaces/IApiRequests';
 import {
   RegistryRolesResultSet,
   ICreateRoleResultSet
@@ -23,34 +15,16 @@ import { AASDescriptorResponse } from '../responses/AASDescriptorResponse';
 import { Identifier } from '../responses/Identifier';
 import { TIdType } from 'i40-aas-objects/src/types/IdTypeEnum';
 import { GenericDescriptor } from '../responses/GenericDescriptor';
+import { IAASDescriptor } from '../interfaces/IAASDescriptor';
+import { ISemanticProtocol } from '../interfaces/ISemanticProtocol';
+import { SemanticProtocolEntity } from '../entities/SemanticProtocolEntity';
+import { RoleEntity } from '../entities/RoleEntity';
 
 class Registry implements iRegistry {
   readRecordByAasId(aasId: string): Promise<void> {
     throw new Error("Method not implemented.");
   }
   constructor(private readonly client: Connection) {
-  }
-  release() {
-    throw new Error('not implemented');
-
-  }
-
-  async createAsset(asset: ICreateAsset): Promise<ICreateAsset> {
-    try {
-      const insertAssetResult = await this.client.query(
-        ' INSERT INTO public.assets( "assetId", "idType") VALUES ($1, $2);',
-        [asset.assetId.id, asset.assetId.idType]
-      );
-      return asset;
-    } catch (e) {
-      //TODO: all error messages should be converted to user readable messages in this class
-      if (e.code == 23505) {
-        console.log('Asset already exist');
-        throw new Error('Asset already exist');
-      } else {
-        throw e;
-      }
-    }
   }
 
   async registerAas(record: IAASDescriptor): Promise<IAASDescriptor | undefined> {
@@ -89,9 +63,11 @@ class Registry implements iRegistry {
 
         })
       );
-        return record;
-    } catch (error) { console.log(error)
-    return undefined }
+      return record;
+    } catch (error) {
+      console.log(error)
+      return undefined
+    }
 
   }
 
@@ -99,7 +75,7 @@ class Registry implements iRegistry {
 
     try {
       //This is the most efficient way in terms of performance to update entities in your database (see https://typeorm.io/#/update-query-builder )
-      console.debug("cert "+record.descriptor.certificate_x509_i40);
+      console.debug("cert " + record.descriptor.certificate_x509_i40);
 
       let aasDescriptor = await this.client
         .createQueryBuilder()
@@ -115,31 +91,33 @@ class Registry implements iRegistry {
       console.log("AASDescriptor updated in Db " + JSON.stringify(aasDescriptor));
 
       //updated each Endpoint refering to this AAS
-        await Promise.all(
-          record.descriptor.endpoints.map(async endpoint => {
+      await Promise.all(
+        record.descriptor.endpoints.map(async endpoint => {
 
-            let updateResult = await this.client
-              .createQueryBuilder()
-              .update(EndpointEntity)
-              .set({
-                address: endpoint.address,
-                type: endpoint.type
-              })
-              .where("aasdescriptor = :aasdescriptor", { aasdescriptor: record.identification.id })
-              .andWhere("address = :address", { address: endpoint.address})
-              .execute();
+          let updateResult = await this.client
+            .createQueryBuilder()
+            .update(EndpointEntity)
+            .set({
+              address: endpoint.address,
+              type: endpoint.type
+            })
+            .where("aasdescriptor = :aasdescriptor", { aasdescriptor: record.identification.id })
+            .andWhere("address = :address", { address: endpoint.address })
+            .execute();
 
-            console.log("Endpoint Upated in Db ", updateResult);
+          console.log("Endpoint Upated in Db ", updateResult);
 
-          })
-        );
+        })
+      );
       return record
 
-    } catch (error) { console.log("Error caught " + error)
-  return undefined}
+    } catch (error) {
+      console.log("Error caught " + error)
+      return undefined
+    }
 
   }
-  async deleteAasDescriptorByAasId(aasId: string): Promise<DeleteResult|undefined> {
+  async deleteAasDescriptorByAasId(aasId: string): Promise<DeleteResult | undefined> {
 
     try {
       let aasDescriptor = await this.client
@@ -174,70 +152,66 @@ class Registry implements iRegistry {
         */
       return aasDescriptor;
 
-    } catch (error) { console.log("Error caught " + error)
-  return undefined}
+    } catch (error) {
+      console.log("Error caught " + error)
+      return undefined
+    }
 
   }
 
   async createSemanticProtocol(
-    record: import('../interfaces/IApiRequests').ICreateSemanticProtocol
-  ): Promise<ICreateSemanticProtocol> {
+    record: import('../interfaces/ISemanticProtocol').ISemanticProtocol
+  ): Promise<ISemanticProtocol | undefined> {
     try {
-      const insertRolesResult = await this.client.query(
-        'INSERT INTO public.semantic_protocols("protocolId") VALUES ($1);',
-        [record.semanticProtocol]
+      //get an Entityrepository for the AASDescriptor and the Asset
+      let aasDescriptorRepository = this.client.getRepository(AASDescriptorEntity);
+
+      //1. create a semantic protocol and save it to the DB
+      let semProtocol = new SemanticProtocolEntity();
+      semProtocol.id = record.identification.id;
+      semProtocol.idType = record.identification.idType;
+
+      let savedProtocol = await this.client.manager.save(semProtocol);
+      console.log("Asset Saved in Db ", savedProtocol);
+
+      //2. create Roles associated with this semanticProtocol
+      // have seperate handlers for each entity and report errors e.g. when assetid present
+
+      await Promise.all(
+        record.roles.map(async role => {
+          let rE = new RoleEntity();
+          rE.semProtocol = semProtocol; //many to one relation
+          rE.name = role.name;
+
+          await this.client.manager.save(rE);
+          console.log("Endpoint Saved in Db ", rE);
+
+
+          //3. for each role assign a the role to a AASDescriptor, docu see here, https://github.com/typeorm/typeorm/blob/master/docs/relational-query-builder.md
+          //we need only the ids from the AAS IIdentifier
+          var aasIds = role.aasDescriptorIds.map(identification =>  identification.id );
+          console.log("AAS Ids ", JSON.stringify(aasIds));
+
+          await Promise.all(
+            aasIds.map(async id => {
+              await this.client
+                .createQueryBuilder()
+                .relation(AASDescriptorEntity, "roles")
+                .of(id)
+                .add(rE.roleId);
+            }));
+        })
       );
-    } catch (e) {
-      if (e.code == 23505) {
-        console.log('Role already exist');
-      } else {
-        throw e;
-      }
+
+
+      return record;
+    } catch (error) {
+      console.log("Error while creating the relations "+error)
+      return undefined
     }
 
-    console.log(record);
-    return record;
-  }
-  async assignRoles(record: IAssignRoles): Promise<RegistryRolesResultSet> {
-    try {
-      //create endpoint entry
-      console.log(
-        'aasId ' + record.aasId.id + ' with role id ' + record.roleId
-      );
-
-      const insertRolesResult = await this.client.query(
-        'INSERT INTO public.aas_role("aasId","roleId")  VALUES ($1, $2);',
-        [record.aasId.id, record.roleId]
-      );
-    } catch (e) {
-      if (e.code == 23505) {
-        console.log('Role Assignment already exists');
-      } else {
-        throw e;
-      }
-    }
-
-    console.log(record);
-    return record;
   }
 
-  async createRole(record: ICreateRole): Promise<ICreateRoleResultSet> {
-    try {
-      const insertRolesResult = await this.client.query(
-        'INSERT INTO public.roles( "roleId", "protocolId") VALUES ($1, $2);',
-        [record.roleId, record.semanticProtocol]
-      );
-    } catch (e) {
-      if (e.code == 23505) {
-        console.log('Role already exist');
-      } else {
-        throw e;
-      }
-    }
-
-    console.log(record);
-    return record;
-  }
   async readAASDescriptorByAasId(
     aasId: string
   ): Promise<IAASDescriptor | undefined> {

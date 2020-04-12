@@ -1,11 +1,6 @@
 import { IEndpoint } from "../interfaces/IEndpoint";
+import { IGenericDescriptor } from "../interfaces/IAASDescriptor";
 
-
-interface IGenericDescriptor {
-  endpoints: Array<IEndpoint>;
-  certificate_x509_i40: string;
-  signature: string;
-}
 
 class GenericDescriptor implements IGenericDescriptor {
   endpoints: IEndpoint[]; certificate_x509_i40: string;
@@ -26,6 +21,5 @@ class GenericDescriptor implements IGenericDescriptor {
 }
 
 export {
-  IGenericDescriptor,
   GenericDescriptor
 }

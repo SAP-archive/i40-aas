@@ -1,6 +1,6 @@
-import { IAASDescriptor } from "../interfaces/IApiRequests";
 import { IIdentifier } from "i40-aas-objects";
 import { GenericDescriptor } from "./GenericDescriptor";
+import { IAASDescriptor } from "../interfaces/IAASDescriptor";
 
 
 class AASDescriptorResponse implements IAASDescriptor {

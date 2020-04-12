@@ -7,7 +7,7 @@ import { RoleEntity } from "./RoleEntity";
 
 
 //TODO: import from AAS-Objects
- enum IdTypeEnum {
+enum IdTypeEnum {
   IRDI = 'IRDI',
   IRI = 'IRI',
   Custom = 'Custom',
@@ -17,33 +17,35 @@ import { RoleEntity } from "./RoleEntity";
 @Entity()
 export class AASDescriptorEntity {
 
-    @PrimaryColumn({
-      length: 1024
-      })
-    id!: string;
+  @PrimaryColumn({
+    length: 1024
+  })
+  id!: string;
 
-    @Column()
-    idType!: string;
+  @Column()
+  idType!: string;
 
-    @OneToOne(type => AssetEntity,  {onDelete: 'CASCADE'})
-    @JoinColumn()
-    asset!: AssetEntity;
+  @OneToOne(type => AssetEntity, { onDelete: 'CASCADE' })
+  @JoinColumn()
+  asset!: AssetEntity;
 
-    @Column({
-      length: 1024
-      })
-    certificate_x509_i40!: string;
+  @Column({
+    length: 1024
+  })
+  certificate_x509_i40!: string;
 
-    @Column({
-      length: 1024
-      })
-    signature!: string;
+  @Column({
+    length: 1024
+  })
+  signature!: string;
 
 
-      @OneToMany(type => EndpointEntity, endpoint => endpoint.aasdescriptor,{onDelete: 'CASCADE'})
-    endpoints!: EndpointEntity[];
+  @OneToMany(type => EndpointEntity, endpoint => endpoint.aasdescriptor, { onDelete: 'CASCADE' })
+  endpoints!: EndpointEntity[];
 
-    @ManyToMany(type => RoleEntity,{onUpdate:'CASCADE', onDelete: 'CASCADE'})
-    @JoinTable()
-    roles!: RoleEntity[];
+//TODO: check here is this approach makes more sense https://www.youtube.com/watch?v=8kZ7W-bI5qQ
+
+  @ManyToMany(type => RoleEntity, { onUpdate: 'CASCADE', onDelete: 'CASCADE' })
+  @JoinTable()
+  roles!: RoleEntity[];
 }

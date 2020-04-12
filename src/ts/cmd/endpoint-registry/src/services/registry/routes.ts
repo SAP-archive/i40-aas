@@ -1,13 +1,8 @@
 import { Request, Response } from 'express';
 import { IdTypeEnum } from 'i40-aas-objects';
 import { RegistryError } from '../../utils/RegistryError';
-import {
-  ICreateRole,
-  IAssignRoles,
-  IAASDescriptor,
-  ICreateAsset
-} from './daos/interfaces/IApiRequests';
 import { RegistryApi } from './RegistryApi';
+import { IAASDescriptor } from './daos/interfaces/IAASDescriptor';
 
 
 var registryApi = new RegistryApi();
@@ -42,64 +37,20 @@ export default [
       res.json(req.body);
     }
   },
+
   {
-    path: '/roles',
-    method: 'post',
+    path: '/semanticProtocol',
+    method: 'put',
     handler: async (req: Request, res: Response) => {
-      console.log('/roles POST request received');
-      //console.log('try to create a role');
-      var rolesArray: ICreateRole[] = req.body;
-      console.log('Received body:' + req.body);
-      console.log('Body has ' + rolesArray.length + ' elements.');
+      console.log('/semanticprotocol PUT request received');
       try {
-        await Promise.all(
-          rolesArray.map(async role => {
-            console.log('Handling role ' + role.roleId);
-            await registryApi.createRole(role);
-            console.log('Role ' + role.roleId + ' successfully created.');
-          })
-        );
-      } catch (e) {
-        console.log('There was an error creating roles');
-        res.end(e.message);
-        return;
-      }
-      console.log('Now sending back response of /roles POST request');
-      res.json(req.body);
-    }
-  },
-  {
-    path: '/roleassignment',
-    method: 'post',
-    handler: async (req: Request, res: Response) => {
-      console.log('/roleassignment POST request received');
-      //console.log('try to create a role assignment to AAS');
-      var assignmentArray: IAssignRoles[] = req.body;
-      try {
-        await Promise.all(
-          assignmentArray.map(async assignment => {
-            await registryApi.assignRolesToAAS(assignment);
-          })
-        );
-      } catch (e) {
-        res.end(e.message);
-        return;
-      }
-      console.log('Now sending back response of /roleassignment POST request');
-      res.json(req.body);
-    }
-  },
-  {
-    path: '/semanticprotocol',
-    method: 'post',
-    handler: async (req: Request, res: Response) => {
-      console.log('/semanticprotocol POST request received');
-      try {
-        res.json(await registryApi.createSemanticProtocol(req.body));
-        console.log('Sent back response of /semanticprotocol POST request');
+        await registryApi.createSemanticProtocol(req.body);
+        console.log('Sent back response of /semanticprotocol PUT request');
+        res.json(req.body);
       } catch (e) {
         res.end(e.message);
       }
+
     }
   },
   {

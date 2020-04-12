@@ -22,8 +22,6 @@ let user: any = {};
 if (process.env.CORE_REGISTRIES_ENDPOINTS_USER && process.env.CORE_REGISTRIES_ENDPOINTS_PASSWORD) {
   user[process.env.CORE_REGISTRIES_ENDPOINTS_USER] = process.env.CORE_REGISTRIES_ENDPOINTS_PASSWORD;
 }
-console.log("user "+ process.env.CORE_REGISTRIES_ENDPOINTS_PASSWORD)
-
 export const handleBasicAuth = (router: Router) =>
   router.use(
     basicAuth.default({

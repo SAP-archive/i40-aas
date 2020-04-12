@@ -47,7 +47,8 @@
     "generic-pool": "^3.7.1",
     "i40-aas-objects": "0.2.6",
     "pg": "^7.11.0",
-    "ts-postgres": "^1.1.0"
+    "ts-postgres": "^1.1.0",
+    "tsc-watch": "^4.2.3"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",

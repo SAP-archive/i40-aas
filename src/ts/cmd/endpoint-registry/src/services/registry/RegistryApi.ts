@@ -6,15 +6,10 @@ import {
   IRegistryResultSet
 } from './daos/interfaces/IRegistryResultSet';
 import { iRegistry } from './daos/interfaces/IRegistry';
-import {
-  ICreateRole,
-  ICreateSemanticProtocol,
-  IAssignRoles,
-  ICreateAsset,
-  IAASDescriptor
-} from './daos/interfaces/IApiRequests';
+import {  ISemanticProtocol} from './daos/interfaces/ISemanticProtocol';
 import { TIdType } from 'i40-aas-objects/dist/src/types/IdTypeEnum';
 import { DeleteResult } from 'typeorm';
+import { IAASDescriptor } from './daos/interfaces/IAASDescriptor';
 
 class RegistryApi {
 
@@ -61,8 +56,6 @@ class RegistryApi {
       return result;
     } catch (e) {
       throw e;
-    } finally {
-      registryDao.release();
     }
   }
 
@@ -74,48 +67,11 @@ class RegistryApi {
       return result;
     } catch (e) {
       throw e;
-    } finally {
-      registryDao.release();
-    }
-  }
-  async createRole(req: ICreateRole) {
-    var registryDao: iRegistry = await RegistryFactory.getRegistry();
-    try {
-      var result = await registryDao.createRole(req);
-      console.log(result);
-      return result;
-    } catch (e) {
-      throw e;
-    } finally {
-      registryDao.release();
     }
   }
 
-  async createAsset(req: ICreateAsset) {
-    var registryDao: iRegistry = await RegistryFactory.getRegistry();
-    try {
-      var result = await registryDao.createAsset(req);
-      console.log(result);
-      return result;
-    } catch (e) {
-      throw e;
-    } finally {
-      registryDao.release();
-    }
-  }
-  async assignRolesToAAS(req: IAssignRoles) {
-    var registryDao: iRegistry = await RegistryFactory.getRegistry();
-    try {
-      var result = await registryDao.assignRoles(req);
-      console.log(result);
-      return result;
-    } catch (e) {
-      throw e;
-    } finally {
-      registryDao.release();
-    }
-  }
-  async createSemanticProtocol(req: ICreateSemanticProtocol) {
+
+  async createSemanticProtocol(req: ISemanticProtocol) {
     var registryDao: iRegistry = await RegistryFactory.getRegistry();
     try {
       var result = await registryDao.createSemanticProtocol(req);
@@ -123,8 +79,6 @@ class RegistryApi {
       return result;
     } catch (e) {
       throw e;
-    } finally {
-      registryDao.release();
     }
   }
 
@@ -159,9 +113,7 @@ class RegistryApi {
     } catch (e) {
       console.log(e);
       throw e;
-    } finally {
-      registryDao.release();
-    }
+    } 
   }
 }
 
