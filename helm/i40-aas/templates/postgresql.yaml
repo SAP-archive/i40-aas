@@ -95,7 +95,7 @@ spec:
         name: {{ .Release.Name }}-endpoint-registry-postgres
         labels:
           service: endpoint-registry-postgres
-          {{- include "i40-aas.labels" . | nindent 8 }}
+          {{- include "i40-aas.labels" . | nindent 10 }}
       spec:
         storageClassName: {{ .Values.storageClassName }}
         accessModes:
