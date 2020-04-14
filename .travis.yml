@@ -16,7 +16,7 @@ env:
     - SVC=https-endpoint-egress
     - SVC=https-endpoint-ingress
     - SVC=onboarding-skill
-#    - SVC=storage-adapter-mongodb
+    - SVC=storage-adapter-mongodb
     - SVC=grpc-endpoint-ingress
     - SVC=grpc-endpoint-egress
     - SVC=initializer
@@ -177,17 +177,17 @@ jobs:
       script:
         - npm run itest
 
-#    - stage: unit-test
-#      language: node_js
-#      node_js: lts/*
-#      env: SVC=storage-adapter-mongodb
-#      install:
-#        - cd src/ts/cmd/${SVC}
-#        - npm install
-#        - source ./integration-test-setup
-#        - sleep 30
-#      script:
-#        - npm run test-with-integration
+    - stage: unit-test
+      language: node_js
+      node_js: lts/*
+      env: SVC=storage-adapter-mongodb
+      install:
+        - cd src/ts/cmd/${SVC}
+        - npm install
+        - source ./integration-test-setup
+        - sleep 30
+      script:
+        - npm run test-with-integration
 
     - stage: unit-test
       language: go
