@@ -5,9 +5,8 @@ import { IAASDescriptor } from "../interfaces/IAASDescriptor";
 
 class AASDescriptorResponse implements IAASDescriptor {
   identification: IIdentifier;
-  asset: IIdentifier;
+  asset: IIdentifier ;
   descriptor: GenericDescriptor;
-
 
 
   constructor(identification: IIdentifier, asset: IIdentifier, descriptor: GenericDescriptor) {

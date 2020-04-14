@@ -37,22 +37,6 @@ export default [
       res.json(req.body);
     }
   },
-
-  {
-    path: '/semanticProtocol',
-    method: 'put',
-    handler: async (req: Request, res: Response) => {
-      console.log('/semanticprotocol PUT request received');
-      try {
-        await registryApi.createSemanticProtocol(req.body);
-        console.log('Sent back response of /semanticprotocol PUT request');
-        res.json(req.body);
-      } catch (e) {
-        res.end(e.message);
-      }
-
-    }
-  },
   {
     path: '/aasDescriptor',
     method: 'get',
@@ -139,5 +123,34 @@ export default [
         res.end(JSON.stringify(e));
       }
     }
-  }
+  }, {
+    path: '/semanticProtocol',
+    method: 'put',
+    handler: async (req: Request, res: Response) => {
+      console.log('/semanticprotocol PUT request received');
+      try {
+        await registryApi.createSemanticProtocol(req.body);
+        console.log('Sent back response of /semanticprotocol PUT request');
+        res.json(req.body);
+      } catch (e) {
+        res.end(e.message);
+      }
+
+    }
+  }, {
+    path: '/semanticProtocol/role/aasDescriptors',
+    method: 'get',
+    handler: async (req: Request, res: Response) => {
+      console.log('GET AASDescriptor by semanticprotocol and role name request received');
+      try {
+        console.log('Query parameters received:' + JSON.stringify(req.query));
+        var response = await registryApi.readAASBySemanticProtocolAndRole(req.query.semanticProtocolId, req.query.roleName)
+       // console.log('Sent back response of /semanticprotocol GET request');
+        res.json(response);
+      } catch (e) {
+        res.end(e.message);
+      }
+
+    }
+  },
 ];

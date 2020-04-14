@@ -19,6 +19,7 @@ import { IAASDescriptor } from '../interfaces/IAASDescriptor';
 import { ISemanticProtocol } from '../interfaces/ISemanticProtocol';
 import { SemanticProtocolEntity } from '../entities/SemanticProtocolEntity';
 import { RoleEntity } from '../entities/RoleEntity';
+import { RegistryError } from '../../../../utils/RegistryError';
 
 class Registry implements iRegistry {
   readRecordByAasId(aasId: string): Promise<void> {
@@ -189,7 +190,7 @@ class Registry implements iRegistry {
 
           //3. for each role assign a the role to a AASDescriptor, docu see here, https://github.com/typeorm/typeorm/blob/master/docs/relational-query-builder.md
           //we need only the ids from the AAS IIdentifier
-          var aasIds = role.aasDescriptorIds.map(identification =>  identification.id );
+          var aasIds = role.aasDescriptorIds.map(identification => identification.id);
           console.log("AAS Ids ", JSON.stringify(aasIds));
 
           await Promise.all(
@@ -198,7 +199,7 @@ class Registry implements iRegistry {
                 .createQueryBuilder()
                 .relation(AASDescriptorEntity, "roles")
                 .of(id)
-                .add(rE.roleId);
+                .add(rE.id);
             }));
         })
       );
@@ -206,7 +207,7 @@ class Registry implements iRegistry {
 
       return record;
     } catch (error) {
-      console.log("Error while creating the relations "+error)
+      console.log("Error while creating the relations " + error)
       return undefined
     }
 
@@ -214,156 +215,89 @@ class Registry implements iRegistry {
 
   async readAASDescriptorByAasId(
     aasId: string
-  ): Promise<IAASDescriptor | undefined> {
-
-    //get an Entityrepository for the AASDescriptor and the Asset
-    let aasDescriptorRepository = this.client.getRepository(AASDescriptorEntity);
-    let aasAssetRepository = this.client.getRepository(AssetEntity);
-
-    //Load the AASDescriptor object from the DB as well as the related Objects (Endpoints, Asset)
-    let resultAasDescriptor = await aasDescriptorRepository.findOne({
-      where: [
-        { id: aasId },],
-      relations: ["endpoints", "asset"]
-    });
-
-    if (resultAasDescriptor) {
-      console.debug("asset id " + JSON.stringify(resultAasDescriptor));
-      let resultAsset = await aasAssetRepository.findOne({ id: resultAasDescriptor.asset.id })
-      let aasDescrIdentifier = new Identifier(resultAasDescriptor.id, resultAasDescriptor.idType as TIdType);
-      let descr = new GenericDescriptor(resultAasDescriptor.endpoints, resultAasDescriptor.certificate_x509_i40, resultAasDescriptor.signature);
-      if (resultAsset) {
-        let assetIdentifier = new Identifier(resultAsset.id, resultAsset.idType as TIdType);
-
-        let response = new AASDescriptorResponse(aasDescrIdentifier, assetIdentifier, descr);
-        return response;
-      }
-    }
-    //if not found return undefined
-    return undefined;
-
-  }
-
-
-  async readEndpointBySemanticProtocolAndRole(
-    sProtocol: string,
-    role: string
-  ): Promise<Array<RegistryResultSet>> {
-    /*
+  ): Promise<IAASDescriptor> {
     try {
-      var s =
-        'SELECT public.assets."idType" as "assetIdType", ' +
-        'public.assets."assetId",aasWithProtocols."aasId",aasWithProtocols."idType" as "aasIdType", ' +
-        'aasWithProtocols."protocol_name" ,aasWithProtocols."protocol_version", aasWithProtocols."roleId",aasWithProtocols."URL",aasWithProtocols."target" ' +
-        'FROM ((SELECT * FROM public.aas_role ' +
-        'INNER JOIN public.asset_administration_shells ' +
-        'USING ("aasId") ' +
-        'WHERE "roleId" = (SELECT "roleId" FROM public.roles where ' +
-        '"protocolId" = $1 and "roleId" = $2 ' +
-        'limit 1)) as res ' +
-        'INNER JOIN public.endpoints ' +
-        'USING("aasId")) as aasWithProtocols INNER JOIN public.assets USING ("assetId") ';
-      const resultOfQuery = await this.client.query(s, [sProtocol, role]);
-      const queryResultRows: Array<IJointRecord> = resultOfQuery.rows;
-      var recordsByAasId: IData = {};
-      await Promise.all(
-        queryResultRows.map(function(row: IJointRecord) {
-          //TODO:is there a way to get rid of the if statement
-          //using something like a collector
-          //use something like node-transform
-          if (!recordsByAasId[row.aasId]) {
-            recordsByAasId[row.aasId] = new RegistryResultSet(
-              { id: row.aasId, idType: row.aasIdType },
-              [
-                new Endpoint(
-                  row.URL,
-                  row.target,
-                  row.protocol_name,
-                  row.protocol_version
-                )
-              ],
-              { id: row.assetId, idType: row.aasIdType }
-            );
-          } else {
-            recordsByAasId[row.aasId].endpoints.push(
-              new Endpoint(
-                row.URL,
-                row.target,
-                row.protocol_name,
-                row.protocol_version
-              )
-            );
-          }
-        })
-      );
-      var result: Array<RegistryResultSet> = [];
-      Object.keys(recordsByAasId).forEach(function(key) {
-        result.push(recordsByAasId[key]);
+
+
+      //get an Entityrepository for the AASDescriptor and the Asset
+      let aasDescriptorRepository = this.client.getRepository(AASDescriptorEntity);
+      let aasAssetRepository = this.client.getRepository(AssetEntity);
+
+
+      //Load the AASDescriptor object from the DB as well as the related Objects (Endpoints, Asset)
+      let resultAasDescriptor = await aasDescriptorRepository.findOne({
+        where: [
+          { id: aasId },],
+        relations: ["endpoints", "asset"]
       });
-      return result;
+
+      if (resultAasDescriptor) {
+        console.debug("asset id " + JSON.stringify(resultAasDescriptor));
+        let resultAsset = await aasAssetRepository.findOne({ id: resultAasDescriptor.asset.id })
+        let aasDescrIdentifier = new Identifier(resultAasDescriptor.id, resultAasDescriptor.idType as TIdType);
+        let descr = new GenericDescriptor(resultAasDescriptor.endpoints, resultAasDescriptor.certificate_x509_i40, resultAasDescriptor.signature);
+        if (resultAsset) {
+          let assetIdentifier = new Identifier(resultAsset.id, resultAsset.idType as TIdType);
+
+          let response = new AASDescriptorResponse(aasDescrIdentifier, assetIdentifier, descr);
+          return response;
+        }
+      }
+      return {} as AASDescriptorResponse;
     } catch (err) {
       throw new RegistryError(err, 500);
     }
-    */
-    return [];
+    //if not found return undefined
+
+
+  }
+
+
+  async readAASDescriptorsBySemanticProtocolAndRole(
+    sProtocol: string,
+    roleName: string
+  ): Promise<Array<IAASDescriptor> | undefined> {
+
+    console.log("Try getting roleIds");
+
+
+    //Find the roles associated with the {protocolid, rolename}
+    let roleIds = await this.client
+      .createQueryBuilder()
+      .select("role")
+      .from(RoleEntity, "role")
+      .where("role.name = :name", { name: roleName })
+      .andWhere("role.semProtocol = :semProtocol", { semProtocol: sProtocol })
+      .getMany();
+
+    console.log("Roles found in Db " + JSON.stringify(roleIds));
+
+
+    const aasDescriptorEntities = await this.client
+      .getRepository(AASDescriptorEntity)
+      .createQueryBuilder("aasDescriptor")
+      .innerJoinAndSelect("aasDescriptor.roles", "role")
+      .getMany();
+
+    //we need only the ids from the AAS IIdentifier
+    var aasIds = aasDescriptorEntities.map(identification => identification.id);
+    console.log("AASDescriptorIds for the given roles " + JSON.stringify(aasIds));
+
+    //get the AASDescriptorResponses (with Endpoints and Assets) to return
+    //TODO: there should be maybe a more efficient way to do this (inner joins)
+
+    var AASDescriptors = await Promise.all(
+      aasIds.map(async id => {
+        return await this.readAASDescriptorByAasId(id)
+      }));
+
+    console.log("AASDescriptorResponses for the given roles " + JSON.stringify(AASDescriptors));
+
+    return AASDescriptors;
   }
 
   async listAllEndpoints(): Promise<Array<RegistryResultSet>> {
-    /* try {
-       //TODO: Nested SELECTS make it hard to read, first level only required to disambiguate idType?
-       var s = `SELECT  "aasId", "aasIdType" ,"idType" as "assetIdType", "URL", "protocol_name", "protocol_version", "roleId","assetId","target" FROM (SELECT "aasId", "idType" as "aasIdType", "URL", "protocol_name", "protocol_version", "roleId","assetId", "target"
-       FROM (SELECT *
-           FROM public.aas_role
-                     INNER JOIN public.asset_administration_shells
-       USING ("aasId")
-           ) as res
-       INNER JOIN public.endpoints
-       USING
-       ("aasId"))as res2 INNER JOIN public.assets
-     USING ("assetId")`;
-       const resultOfQuery = await this.client.query(s);
-       const queryResultRows: Array<IJointRecord> = resultOfQuery.rows;
-       var recordsByAasId: IData = {};
-       //TODO: better to use map here in order to avoid if statement
-       //inside loop
-       //use node-transform perhaps
-       queryResultRows.forEach(function(row: IJointRecord) {
-         if (!recordsByAasId[row.aasId]) {
-           recordsByAasId[row.aasId] = new RegistryResultSet(
-             { id: row.aasId, idType: row.aasIdType },
-             [
-               new Endpoint(
-                 row.URL,
-                 row.target,
-                 row.protocol_name,
-                 row.protocol_version
-               )
-             ],
-             { id: row.assetId, idType: row.aasIdType }
-           );
-         } else {
-           recordsByAasId[row.aasId].endpoints.push(
-             new Endpoint(
-               row.URL,
-               row.target,
-               row.protocol_name,
-               row.protocol_version
-             )
-           );
-         }
-       });
 
-       //TODO: this could be combined with the traversal just above
-       var result: Array<RegistryResultSet> = [];
-       Object.keys(recordsByAasId).forEach(function(key) {
-         result.push(recordsByAasId[key]);
-       });
-       return result;
-     } catch (err) {
-       throw new RegistryError(err, 500);
-     }
-   }
-   */
     return []
   }
 }

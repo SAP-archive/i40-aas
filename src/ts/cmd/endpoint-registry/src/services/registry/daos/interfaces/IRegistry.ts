@@ -13,10 +13,10 @@ interface iRegistry {
   deleteAasDescriptorByAasId(aasId: string): Promise<DeleteResult|undefined>;
   listAllEndpoints(): Promise<Array<RegistryResultSet>>;
   createSemanticProtocol(req: ISemanticProtocol): void;
-  readEndpointBySemanticProtocolAndRole(
+  readAASDescriptorsBySemanticProtocolAndRole(
     sProtocol: string,
     role: string
-  ): Promise<any>;
+  ): Promise<Array<IAASDescriptor>| undefined>;
 }
 
 export { iRegistry };

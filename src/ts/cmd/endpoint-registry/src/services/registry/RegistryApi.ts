@@ -40,23 +40,20 @@ class RegistryApi {
   }
 
 
-  async readRecordBySemanticProtocolAndRole(
+  async readAASBySemanticProtocolAndRole(
     sProtocol: string,
     role: string
   ): Promise<any> {
-    console.log(sProtocol);
-    console.log(role);
+
     var registryDao: iRegistry = await RegistryFactory.getRegistry();
-    try {
-      var result = await registryDao.readEndpointBySemanticProtocolAndRole(
+
+    var result = await registryDao.readAASDescriptorsBySemanticProtocolAndRole(
         sProtocol,
         role
       );
       console.log(JSON.stringify(result, null, 3));
       return result;
-    } catch (e) {
-      throw e;
-    }
+
   }
 
   async register(req: IAASDescriptor) {
@@ -82,27 +79,6 @@ class RegistryApi {
     }
   }
 
-  async getEndpointsByReceiverId(
-    receiverId: string,
-    receiverIdType: TIdType
-  ): Promise<IAASDescriptor | undefined> {
-    return this.readAASDescriptorByAASId(receiverId);
-  }
-
-  //TODO: why is this extra level of indirection needed?
-  //getEndpointsByReceiverRolejust forwards the call
-  async getEndpointsByReceiverRole(
-    receiverRole: string,
-    semanticProtocol: string
-  ): Promise<Array<IRegistryResultSet>> {
-    if (!semanticProtocol) {
-      throw new RegistryError('Missing parameter semanticProtocol', 422);
-    }
-    return this.readRecordBySemanticProtocolAndRole(
-      semanticProtocol,
-      receiverRole
-    );
-  }
 
   async getAllEndpointsList(): Promise<Array<IRegistryResultSet>> {
     var registryDao: iRegistry = await RegistryFactory.getRegistry();
@@ -113,7 +89,7 @@ class RegistryApi {
     } catch (e) {
       console.log(e);
       throw e;
-    } 
+    }
   }
 }
 
