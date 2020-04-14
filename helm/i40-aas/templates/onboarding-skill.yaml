@@ -63,6 +63,8 @@ spec:
               value: {{ .Values.core.broker.port.amqp | quote }}
             - name: CORE_EGRESS_EXCHANGE
               value: {{ .Values.core.egress.exchange | quote }}
+            - name: CORE_EGRESS_ROUTINGKEY
+              value: {{ .Values.core.egress.routingKey | quote }}
             - name: CORE_INGRESS_EXCHANGE
               value: {{ .Values.core.ingress.exchange | quote }}
             - name: CORE_ENDPOINT_RESOLVER_QUEUE

@@ -65,6 +65,8 @@ core:
 
   egress:
     exchange: egress
+    routingKey: egress.generic
+    
     user: guest
     password: guest
 
@@ -136,6 +138,9 @@ skills:
       # Put an empty string "" to generate a random value (20 character, alpha-numeric)
       user: mongouser
       password: mongopassword
+  
+  echo:
+    port: 1880
 
 replicaCount: 1
 
