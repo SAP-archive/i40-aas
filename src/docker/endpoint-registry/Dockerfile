@@ -35,8 +35,6 @@ COPY --from=builder /production-dependencies/node_modules /cmd/endpoint-registry
 COPY cmd/endpoint-registry/package.json /cmd/endpoint-registry
 
 COPY cmd/endpoint-registry/start.sh /cmd/endpoint-registry
-COPY cmd/endpoint-registry/prepareDB.sh /cmd/endpoint-registry
-COPY cmd/endpoint-registry/sql/* /cmd/endpoint-registry/sql/
 
 USER aasuser
 EXPOSE 4400

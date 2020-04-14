@@ -1,12 +1,4 @@
 import { iRegistry } from '../interfaces/IRegistry';
-import {
-  IRegistryResultSet,
-  RegistryResultSet
-} from '../interfaces/IRegistryResultSet';
-import {
-  RegistryRolesResultSet,
-  ICreateRoleResultSet
-} from '../interfaces/IRegistryRolesSet';
 import { AssetEntity } from '../entities/AssetEntity';
 import { Connection, createConnection, UpdateResult, DeleteResult } from 'typeorm';
 import { EndpointEntity } from '../entities/EndpointEntity';
@@ -20,9 +12,12 @@ import { ISemanticProtocol } from '../interfaces/ISemanticProtocol';
 import { SemanticProtocolEntity } from '../entities/SemanticProtocolEntity';
 import { RoleEntity } from '../entities/RoleEntity';
 import { RegistryError } from '../../../../utils/RegistryError';
+import { IEndpoint } from '../interfaces/IEndpoint';
 
 class Registry implements iRegistry {
-  readRecordByAasId(aasId: string): Promise<void> {
+
+
+  listAllEndpoints(): Promise<IEndpoint[]> {
     throw new Error("Method not implemented.");
   }
   constructor(private readonly client: Connection) {
@@ -296,7 +291,7 @@ class Registry implements iRegistry {
     return AASDescriptors;
   }
 
-  async listAllEndpoints(): Promise<Array<RegistryResultSet>> {
+  async listAll(): Promise<Array<IEndpoint>> {
 
     return []
   }

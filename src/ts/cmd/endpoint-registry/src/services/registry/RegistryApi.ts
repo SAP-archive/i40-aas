@@ -1,15 +1,9 @@
 import { RegistryFactory } from './daos/postgres/RegistryFactory';
-import { IIdentifier } from 'i40-aas-objects';
-import { RegistryError } from '../../utils/RegistryError';
-import {
-  RegistryResultSet,
-  IRegistryResultSet
-} from './daos/interfaces/IRegistryResultSet';
 import { iRegistry } from './daos/interfaces/IRegistry';
 import {  ISemanticProtocol} from './daos/interfaces/ISemanticProtocol';
-import { TIdType } from 'i40-aas-objects/dist/src/types/IdTypeEnum';
 import { DeleteResult } from 'typeorm';
 import { IAASDescriptor } from './daos/interfaces/IAASDescriptor';
+import { IEndpoint } from './daos/interfaces/IEndpoint';
 
 class RegistryApi {
 
@@ -80,7 +74,7 @@ class RegistryApi {
   }
 
 
-  async getAllEndpointsList(): Promise<Array<IRegistryResultSet>> {
+  async getAllEndpointsList(): Promise<Array<IEndpoint>> {
     var registryDao: iRegistry = await RegistryFactory.getRegistry();
     try {
       var result = await registryDao.listAllEndpoints();

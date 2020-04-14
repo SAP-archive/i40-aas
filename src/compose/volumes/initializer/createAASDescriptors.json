@@ -1,0 +1,24 @@
+  {
+    "identification": {
+        "id": "SAP_CentralAssetRepository",
+        "idType": "IRI"
+    },
+    "descriptor": {
+    "endpoints": [
+        {
+            "address": "i40-aas-grpc-endpoint-ingress:8384",
+            "type": "cloud"
+        },
+        {
+          "address":  "{{i40-aas-http-endpoint-ingress}}" ,
+          "type": "cloud"
+      }
+    ],
+      "certificate_x509_i40": "sample_crt",
+    "signature": "sample_sig"
+    },
+    "asset": {
+        "id": "Sample-Asset-Id",
+        "idType": "IRI"
+    }
+  }
