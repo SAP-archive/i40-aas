@@ -9,16 +9,21 @@ class RegistryFactory {
 
   static async getRegistry(): Promise<Registry> {
 
-    var client = getConnection();
-
-    //await client.connect();
-    if (client)
-      return new Registry(client);
-    else {
-      console.error("No database Connection could be established")
-      throw Error("No database Connection could be established")
+    //try to get the db connection. The first time a request comes in this will fail
+    //and a new connection will be established
+    try{
+      let client = getConnection();
+      console.log("Client "+client)
+    return new Registry(client);
     }
+    catch(error)
+      {console.error("No database Connection could be established, will try reconnecting")
+      await this.createDBConnection();
+      return new Registry(getConnection());
+    }
+
   }
+
 
 
   static async createDBConnection() {

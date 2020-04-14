@@ -37,7 +37,7 @@ export default [
     }
   },
   {
-    path: '/aasDescriptor',
+    path: '/AASDescriptor',
     method: 'get',
     handler: async (req: Request, res: Response) => {
       try {

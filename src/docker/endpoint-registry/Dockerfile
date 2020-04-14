@@ -22,9 +22,6 @@ RUN npm run clean \
 ###################################
 FROM node:lts-alpine as prod
 
-RUN apk update && apk upgrade \
-    && apk add --no-cache bash postgresql postgresql-contrib netcat-openbsd
-
 RUN adduser -D aasuser
 
 WORKDIR /cmd/endpoint-registry
@@ -34,9 +31,7 @@ COPY --from=builder /cmd/endpoint-registry/dist /cmd/endpoint-registry/dist
 COPY --from=builder /production-dependencies/node_modules /cmd/endpoint-registry/node_modules
 COPY cmd/endpoint-registry/package.json /cmd/endpoint-registry
 
-COPY cmd/endpoint-registry/start.sh /cmd/endpoint-registry
-
 USER aasuser
 EXPOSE 4400
 
-ENTRYPOINT [ "./start.sh" ]
+ENTRYPOINT [ "npm", "start" ]
