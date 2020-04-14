@@ -1,0 +1,86 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-initializer
+  labels:
+    service: initializer
+    {{- include "i40-aas.labels" . | nindent 4 }}
+spec:
+  template:
+    spec:
+      containers:
+      - name: initializer
+        image: "{{ .Values.image.repository }}/i40-aas-initializer:{{ .Values.image.release }}"
+        env:
+        - name: LOGGING_LOGLEVEL
+          value: {{ .Values.logging.logLevel | quote }}
+        - name: LOGGING_LOGOUTPUT
+          value: {{ .Values.logging.logOutput | quote }}
+        - name: CORE_BROKER_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-host-collection
+              key: CORE_BROKER_HOST
+        - name: CORE_BROKER_PORT
+          value: {{ .Values.core.broker.port.amqp | quote }}
+        - name: CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-host-collection
+              key: CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST
+        - name: CORE_REGISTRIES_ENDPOINTS_DATABASE_PORT
+          value: {{ .Values.core.registries.endpoints.database.port | quote }}
+        - name: CORE_REGISTRIES_ENDPOINTS_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-host-collection
+              key: CORE_REGISTRIES_ENDPOINTS_HOST
+        - name: CORE_REGISTRIES_ENDPOINTS_PORT
+          value: {{ .Values.core.registries.endpoints.port | quote }}
+        - name: CORE_DATA_MANAGER_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-host-collection
+              key: CORE_DATA_MANAGER_HOST
+        - name: CORE_DATA_MANAGER_PORT
+          value: {{ .Values.core.dataManager.port | quote }}
+        - name: APPLICATION_ADAPTERS_MONGODB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-host-collection
+              key: APPLICATION_ADAPTERS_MONGODB_HOST
+        - name: APPLICATION_ADAPTERS_MONGODB_PORT
+          value: {{ .Values.applicationAdapters.mongoDb.port | quote }}
+        - name: CORE_REGISTRIES_ADAPTERS_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-host-collection
+              key: CORE_REGISTRIES_ADAPTERS_HOST
+        - name: CORE_REGISTRIES_ADAPTERS_PORT
+          value: {{ .Values.core.registries.adapters.port | quote }}
+        - name: CORE_INGRESS_HTTP_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-host-collection
+              key: CORE_INGRESS_HTTP_HOST
+        - name: CORE_INGRESS_HTTP_PORT
+          value: {{ .Values.core.ingress.http.port | quote }}
+        - name: CORE_INGRESS_GRPC_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-host-collection
+              key: CORE_INGRESS_GRPC_HOST
+        - name: CORE_INGRESS_GRPC_PORT
+          value: {{ .Values.core.ingress.grpc.port | quote }}
+        volumeMounts:
+        - name: scripts
+          mountPath: "/initializer"
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+      volumes:
+      - name: scripts
+        configMap:
+          name: {{ .Values.initializer.configMapName }}
+          optional: true
+---
