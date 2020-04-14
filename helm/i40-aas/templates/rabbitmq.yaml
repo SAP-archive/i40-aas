@@ -2,32 +2,6 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Release.Name }}-rabbitmq
-  labels:
-    service: rabbitmq
-    {{- include "i40-aas.labels" . | nindent 4 }}
-data:
-  RABBITMQ_AMQP_HOST: {{ .Release.Name }}-rabbitmq-0.{{ .Release.Name }}-rabbitmq
-  RABBITMQ_AMQP_PORT: "5672"
-  RABBITMQ_MQTT_PORT: "1883"
-  RABBITMQ_BROKER_TOPIC_EGRESS: {{ .Values.config.rabbitmqBrokerTopicEgress }}
-  RABBITMQ_BROKER_EXCHANGE: {{ .Values.config.rabbitmqBrokerExchange }}
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: {{ .Release.Name }}-rabbitmq
-  labels:
-    service: rabbitmq
-    {{- include "i40-aas.labels" . | nindent 4 }}
-type: Opaque
-stringData:
-  RABBITMQ_BROKER_USER: {{ .Values.credentials.rabbitmqBrokerUser | default (randAlphaNum 20) }}
-  RABBITMQ_BROKER_PASSWORD: {{ .Values.credentials.rabbitmqBrokerPassword | default (randAlphaNum 20) }}
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
   name: {{ .Release.Name }}-rabbitmq-plugins
   labels:
     service: rabbitmq
@@ -48,12 +22,12 @@ spec:
   ports:
   - name: amqp
     protocol: TCP
-    port: 5672
-    targetPort: 5672
+    port: {{ .Values.core.broker.port.amqp }}
+    targetPort: messages
   - name: mqtt
     protocol: TCP
-    port: 1883
-    targetPort: 1883
+    port: {{ .Values.core.broker.port.mqtt }}
+    targetPort: mqtt
   selector:
     service: rabbitmq
     {{- include "i40-aas.selectorLabels" . | nindent 4 }}
@@ -102,13 +76,13 @@ spec:
         - name: RABBITMQ_DEFAULT_USER
           valueFrom:
             secretKeyRef:
-              name: {{ .Release.Name }}-rabbitmq
-              key: RABBITMQ_BROKER_USER
+              name: {{ .Release.Name }}-core-broker-admin
+              key: CORE_BROKER_ADMIN_USER
         - name: RABBITMQ_DEFAULT_PASS
           valueFrom:
             secretKeyRef:
-              name: {{ .Release.Name }}-rabbitmq
-              key: RABBITMQ_BROKER_PASSWORD
+              name: {{ .Release.Name }}-core-broker-admin
+              key: CORE_BROKER_ADMIN_PASSWORD
         ports:
         - name: messages
           containerPort: 5672

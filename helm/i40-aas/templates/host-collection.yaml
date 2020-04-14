@@ -1,0 +1,19 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-host-collection
+  labels:
+    service: host-collection
+    {{- include "i40-aas.labels" . | nindent 4 }}
+data:
+  CORE_BROKER_HOST: "{{ .Release.Name }}-rabbitmq-0.{{ .Release.Name }}-rabbitmq"
+  CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST: "{{ .Release.Name }}-postgres-0.{{ .Release.Name }}-postgres"
+  CORE_REGISTRIES_ENDPOINTS_HOST: "{{ .Release.Name }}-endpoint-registry"
+  CORE_DATA_MANAGER_HOST: "{{ .Release.Name }}-data-manager"
+  CORE_REGISTRIES_ADAPTERS_HOST: "{{ .Release.Name }}-adapter-registry-0.{{ .Release.Name }}-adapter-registry"
+  CORE_INGRESS_HTTP_HOST: "{{ .Release.Name }}-https-endpoint-ingress"
+  CORE_INGRESS_GRPC_HOST: "{{ .Release.Name }}-grpc-endpoint-ingress"
+  APPLICATION_ADAPTERS_MONGODB_HOST: "{{ .Release.Name }}-storage-adapter-mongodb"
+  SKILLS_ONBOARDING_DATABASE_HOST: "{{ .Release.Name }}-mongodb-0.{{ .Release.Name }}-mongodb"
+---
