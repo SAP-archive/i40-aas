@@ -144,6 +144,12 @@ skills:
 
 replicaCount: 1
 
+ingress:
+  certManager: {}
+#    clusterIssuer: ""
+#    acmeChallengeType: ""
+  host: ""
+
 image:
   repository: sapi40
   release: latest 
