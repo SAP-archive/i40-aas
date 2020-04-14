@@ -1,22 +1,13 @@
 ---
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: batch/v1
+kind: Job
 metadata:
   name: {{ .Release.Name }}-initializer
   labels:
     service: initializer
     {{- include "i40-aas.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.replicaCount }}
-  selector:
-    matchLabels:
-      service: initializer
-      {{- include "i40-aas.selectorLabels" . | nindent 6 }}
   template:
-    metadata:
-      labels:
-        service: initializer
-        {{- include "i40-aas.selectorLabels" . | nindent 8 }}
     spec:
       containers:
       - name: initializer

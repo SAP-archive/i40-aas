@@ -91,16 +91,16 @@ spec:
                   name: {{ .Release.Name }}-core-registries-endpoints-database-pgadmin
                   key: CORE_REGISTRIES_ENDPOINTS_DATABASE_PGADMIN_PASSWORD
   volumeClaimTemplates:
-  - metadata:
-      name: {{ .Release.Name }}-endpoint-registry-postgres
-      labels:
-        service: endpoint-registry-postgres
-        {{- include "i40-aas.labels" . | nindent 8 }}
-    spec:
-      storageClassName: {{ .Values.storageClassName }}
-      accessModes:
-        - ReadWriteOnce
-      resources:
-        requests:
-          storage: 100Mi
+    - metadata:
+        name: {{ .Release.Name }}-endpoint-registry-postgres
+        labels:
+          service: endpoint-registry-postgres
+          {{- include "i40-aas.labels" . | nindent 8 }}
+      spec:
+        storageClassName: {{ .Values.storageClassName }}
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 100Mi
 ---

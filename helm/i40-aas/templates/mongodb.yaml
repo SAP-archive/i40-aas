@@ -76,16 +76,16 @@ spec:
             - mountPath: /data/db
               name: {{ .Release.Name }}-mongodb
   volumeClaimTemplates:
-  - metadata:
-      name: {{ .Release.Name }}-mongodb
-      labels:
-        service: mongodb
-        {{- include "i40-aas.labels" . | nindent 8 }}
-    spec:
-      storageClassName: {{ .Values.storageClassName }}
-      accessModes:
-        - ReadWriteOnce
-      resources:
-        requests:
-          storage: 100Mi
+    - metadata:
+        name: {{ .Release.Name }}-mongodb
+        labels:
+          service: mongodb
+          {{- include "i40-aas.labels" . | nindent 8 }}
+      spec:
+        storageClassName: {{ .Values.storageClassName }}
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 100Mi
 ---
