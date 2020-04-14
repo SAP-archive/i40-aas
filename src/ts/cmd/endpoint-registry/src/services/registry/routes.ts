@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { IdTypeEnum } from 'i40-aas-objects';
 import { RegistryError } from '../../utils/RegistryError';
 import { RegistryApi } from './RegistryApi';
 import { IAASDescriptor } from './daos/interfaces/IAASDescriptor';
