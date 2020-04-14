@@ -13,7 +13,7 @@ echo $(date +%H:%M:%S)" - AASDescriptors registered..."
 
 
 
-curl --location --request POST $CORE_REGISTRIES_ENDPOINTS_HOST:$CORE_REGISTRIES_ENDPOINTS_PORT'/semanticProtocol' \
+curl --location --request PUT $CORE_REGISTRIES_ENDPOINTS_HOST:$CORE_REGISTRIES_ENDPOINTS_PORT'/semanticProtocol' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Basic YWRtaW46YWRtaW4=' \
 -d @createSemanticProtocols.json \
