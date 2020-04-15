@@ -1,6 +1,6 @@
 import { RegistryFactory } from './daos/postgres/RegistryFactory';
 import { iRegistry } from './daos/interfaces/IRegistry';
-import {  ISemanticProtocol} from './daos/interfaces/ISemanticProtocol';
+import {  ISemanticProtocol} from './daos/postgres/ISemanticProtocol';
 import { DeleteResult } from 'typeorm';
 import { IAASDescriptor } from './daos/interfaces/IAASDescriptor';
 import { IEndpoint } from './daos/interfaces/IEndpoint';
@@ -66,6 +66,16 @@ class RegistryApi {
     var registryDao: iRegistry = await RegistryFactory.getRegistry();
     try {
       var result = await registryDao.createSemanticProtocol(req);
+      console.log(result);
+      return result;
+    } catch (e) {
+      throw e;
+    }
+  }
+  async deleteSemanticProtocol(req: string) {
+    var registryDao: iRegistry = await RegistryFactory.getRegistry();
+    try {
+      var result = await registryDao.deleteSemanticProtocolById(req);
       console.log(result);
       return result;
     } catch (e) {

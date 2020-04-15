@@ -138,16 +138,28 @@ export default [
     }
   },
    {
-    path: '/semanticProtocols',
+    path: '/semanticProtocols/:sematicProtocolId',
     method: 'delete',
     handler: async (req: Request, res: Response) => {
       console.log('/semanticprotocol DELETE request received');
+
       try {
-        await registryApi.createSemanticProtocol(req.body);
-        console.log('Sent back response of /semanticprotocol PUT request');
-        res.json(req.body);
+        console.log('Path parameters received:' + JSON.stringify(req.params));
+        if (req.params.sematicProtocolId) {
+          res.json(
+            await registryApi.deleteSemanticProtocol(
+              req.params.sematicProtocolId
+            )
+          );
+        } else
+          throw new RegistryError(
+            'Mandatory path parameters: aasId is not found in request',
+            422
+          );
       } catch (e) {
-        res.end(e.message);
+        console.log(e);
+        res.statusCode = e.r_statusCode || 500;
+        res.end(JSON.stringify(e));
       }
 
     }
