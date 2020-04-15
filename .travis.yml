@@ -226,7 +226,7 @@ jobs:
         - docker-compose -f docker-compose.yml up -d --force-recreate
         - sleep 60
       script:
-        - newman run docs/postman/AAS.postman_collection.json
+        - newman run docs/postman/AAS.postman_collection.json --delay-request 1000
 
     - stage: deploy
       before_install:

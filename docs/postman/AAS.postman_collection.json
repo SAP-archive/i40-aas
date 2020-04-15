@@ -571,7 +571,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{i40-aas-data-manager}}/submodels",
+							"raw": "{{i40-aas-data-manager}}/submodels?submodelid=sap.com/aas/submodels/part-100-device-information-model/sampleSM",
 							"host": [
 								"{{i40-aas-data-manager}}"
 							],
@@ -581,8 +581,7 @@
 							"query": [
 								{
 									"key": "submodelid",
-									"value": "sap.com/aas/submodels/part-100-device-information-model/sampleSM",
-									"disabled": true
+									"value": "sap.com/aas/submodels/part-100-device-information-model/sampleSM"
 								}
 							]
 						}
@@ -688,37 +687,37 @@
 	],
 	"variable": [
 		{
-			"id": "f75426e1-4efe-42eb-b0e4-686e01a58226",
+			"id": "78c1913f-838f-4cc9-a4cd-48143b922066",
 			"key": "endpoint_ingress_user",
 			"value": "admin",
 			"type": "string"
 		},
 		{
-			"id": "d4c05e39-2792-4136-b2bb-7b202dbab46c",
+			"id": "39644d9c-7095-4f41-bc04-a28ba6528516",
 			"key": "endpoint_ingress_pwd",
 			"value": "admin",
 			"type": "string"
 		},
 		{
-			"id": "791b8de8-ca0b-40d1-bb6d-a311216543d7",
+			"id": "480e0db0-a771-4b37-9caa-91e52f0bb92b",
 			"key": "i40-aas-http-endpoint-ingress",
 			"value": "http://localhost:2000",
 			"type": "string"
 		},
 		{
-			"id": "eedb4461-b328-441b-926a-f7a152c1d726",
+			"id": "c3373d1a-bc9c-40f8-b56c-15faf944040e",
 			"key": "i40-aas-endpoint-registry",
 			"value": "http://localhost:4400",
 			"type": "string"
 		},
 		{
-			"id": "417c3c4d-0d13-4360-926d-7e4b67ebca2d",
+			"id": "17df9fba-2231-49af-87e5-dbefadf8f492",
 			"key": "i40-aas-data-manager",
 			"value": "http://localhost:4000",
 			"type": "string"
 		},
 		{
-			"id": "f859f605-342e-42c6-8116-14fc6bd25f55",
+			"id": "fb0b688a-f44c-4fb5-be68-dacaf28ff53d",
 			"key": "i40-aas-adapter-registry",
 			"value": "http://localhost:4500",
 			"type": "string"
