@@ -21,6 +21,8 @@ function makeDummyAASDescriptor(tag: string) {
     },
     descriptor: {
       endpoints: [{ address: 'url' + tag, type: 'cloud' }],
+      certificate_x509_i40: 'cert' + tag,
+      signature: 'sig' + tag,
     },
   };
 }
@@ -48,13 +50,21 @@ describe('Tests with a simple data model', function () {
   it('saves a descriptor in the the database', async function () {
     logger.debug('Connecting using ' + user + '/' + password);
     var uniqueTestId = 'simpleDataTest';
-    chai
-      .request(app)
+    var requester = chai.request(app).keepOpen();
+
+    requester
       .put('/AASDescriptors')
       .auth(user, password)
       .send(makeDummyAASDescriptor(uniqueTestId))
       .then((res: any) => {
         chai.expect(res.status).to.eql(200); // expression which will be true if response status equal to 200
-      });
+        requester
+          .get('/AASDescriptors')
+          .auth(user, password)
+          .then((res: any) => {
+            chai.expect(res.status).to.eql(200);
+          });
+      })
+      .then(() => requester.close());
   });
 });
