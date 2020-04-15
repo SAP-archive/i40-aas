@@ -8,13 +8,24 @@ import { Identifier } from '../responses/Identifier';
 import { TIdType } from 'i40-aas-objects/src/types/IdTypeEnum';
 import { GenericDescriptor } from '../responses/GenericDescriptor';
 import { IAASDescriptor } from '../interfaces/IAASDescriptor';
-import { ISemanticProtocol } from '../interfaces/ISemanticProtocol';
+import { ISemanticProtocol } from './ISemanticProtocol';
 import { SemanticProtocolEntity } from '../entities/SemanticProtocolEntity';
 import { RoleEntity } from '../entities/RoleEntity';
 import { RegistryError } from '../../../../utils/RegistryError';
 import { IEndpoint } from '../interfaces/IEndpoint';
 
 class Registry implements iRegistry {
+
+
+
+
+
+  readSemanticProtocolById(semanticProtocolId: string): Promise<DeleteResult | undefined> {
+    throw new Error("Method not implemented.");
+  }
+  updateSemanticProtocolById(semanticProtocolId: string): Promise<DeleteResult | undefined> {
+    throw new Error("Method not implemented.");
+  }
 
 
   listAllEndpoints(): Promise<IEndpoint[]> {
@@ -130,27 +141,7 @@ class Registry implements iRegistry {
 
       console.log("AASDescriptor deleted in Db " + JSON.stringify(aasDescriptor));
 
-      //updated each Endpoint refering to this AAS
-      /*
-        await Promise.all(
-          record.descriptor.endpoints.map(async endpoint => {
 
-            let updateResult = await this.client
-              .createQueryBuilder()
-              .update(EndpointEntity)
-              .set({
-                address: endpoint.address,
-                type: endpoint.type
-              })
-              .where("aasdescriptor = :aasdescriptor", { aasdescriptor: record.identification.id })
-              .andWhere("address = :address", { address: endpoint.address})
-              .execute();
-
-            console.log("Endpoint Upated in Db ", updateResult);
-
-          })
-        );
-        */
       return aasDescriptor;
 
     } catch (error) {
@@ -161,7 +152,7 @@ class Registry implements iRegistry {
   }
 
   async createSemanticProtocol(
-    record: import('../interfaces/ISemanticProtocol').ISemanticProtocol
+    record: import('./ISemanticProtocol').ISemanticProtocol
   ): Promise<ISemanticProtocol | undefined> {
     try {
       //get an Entityrepository for the AASDescriptor and the Asset
@@ -211,6 +202,22 @@ class Registry implements iRegistry {
       return undefined
     }
 
+  }
+
+
+  async deleteSemanticProtocolById(semanticProtocolId: string): Promise<DeleteResult> {
+    //NOTE: the endpoints will be on delete
+
+    let aasDescriptor = await this.client
+      .createQueryBuilder()
+      .delete()
+      .from(SemanticProtocolEntity)
+      .where("id = :id", { id: semanticProtocolId })
+      .execute();
+
+    console.log("SemanticProtocol deleted in Db " + JSON.stringify(aasDescriptor));
+
+    return aasDescriptor;
   }
 
   async readAASDescriptorByAasId(
