@@ -17,6 +17,11 @@ export class EndpointEntity {
       })
     type!: string;
 
+    @Column({
+      length: 1024
+      })
+    target!: string;
+
     //AASDescriptor : many Endpoints
     @ManyToOne(type => AASDescriptorEntity, aasdescriptor => aasdescriptor.endpoints,{onDelete: 'CASCADE'})
     aasdescriptor!: AASDescriptorEntity;

@@ -54,6 +54,7 @@ class Registry implements iRegistry {
           ep.aasdescriptor = aasDescriptor; //one to many relation
           ep.address = endpoint.address;
           ep.type = endpoint.type;
+          ep.target = endpoint.target;
           await this.client.manager.save(ep);
           console.log("Endpoint Saved in Db ", ep);
 

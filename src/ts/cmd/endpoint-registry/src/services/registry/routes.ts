@@ -151,7 +151,8 @@ export default [
       }
 
     }
-  }, {
+  },
+  {
     path: '/semanticProtocols/:semanticProtocolId/role/:roleName/AASDescriptors',
     method: 'get',
     handler: async (req: Request, res: Response) => {
