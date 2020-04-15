@@ -21,6 +21,7 @@ env:
     - SVC=grpc-endpoint-egress
     - SVC=initializer
     - SVC=endpoint-resolver
+    - SVC=echo-skill
 
 before_install:
   - make --version
@@ -36,9 +37,9 @@ install:
       cat azure-service-principal.txt | docker login $AZURE_CONTAINER_REGISTRY -u $service_principal_id --password-stdin;
     fi
   - make build-$SVC
-#  - if [ $TRAVIS_EVENT_TYPE = push ]; then
-#      make push-$SVC;
-#    fi
+  - if [ $TRAVIS_EVENT_TYPE = push ]; then
+      make push-$SVC;
+    fi
 
 stages:
   - lib-test
@@ -244,11 +245,16 @@ jobs:
         - sudo mv ./kubectl /usr/local/bin/kubectl
         - (AZ_PASS=$(cat azure-service-principal.txt) && az login --service-principal -u $service_principal_id -p $AZ_PASS --tenant $SAP_TENANT)
         - az aks get-credentials -n i40aas -g i40-aas
-#        - kubectl get pods -n aas-${TRAVIS_BRANCH}
         - curl -LO https://get.helm.sh/helm-v3.1.2-linux-amd64.tar.gz
         - tar -zxvf helm-v3.1.2-linux-amd64.tar.gz
         - sudo mv linux-amd64/helm /usr/local/bin/helm
-      install:
         - az version
         - kubectl config get-contexts
         - helm version
+      install:
+        - if [ $TRAVIS_BRANCH = master ]; then
+            helm upgrade master helm/i40-aas --atomic -n aas-master --set image.release=$BUILD_TAG
+            helm upgrade oi4 helm/i40-aas --atomic -n aas-oi4 --set image.release=$BUILD_TAG
+          else
+            helm upgrade canary helm/i40-aas --atomic -n aas-canary --set image.release=$BUILD_TAG
+          fi
