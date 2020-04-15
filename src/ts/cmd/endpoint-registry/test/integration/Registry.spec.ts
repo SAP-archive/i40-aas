@@ -29,6 +29,102 @@ function makeDummyAASDescriptor(tag: string) {
   };
 }
 
+function makeAASDescriptorWithUri(tag: string, uri: string) {
+  return <IAASDescriptor>{
+    identification: {
+      id: 'aasId' + tag,
+      idType: 'IRI',
+    },
+    asset: {
+      id: 'assetId' + tag,
+      idType: 'IRI',
+    },
+    descriptor: {
+      endpoints: [{ address: uri, type: 'type' + tag, target: 'cloud' }],
+      certificate_x509_i40: 'cert' + tag,
+      signature: 'sig' + tag,
+    },
+  };
+}
+
+function makeAASDescriptorWithUriAndProtocol(
+  tag: string,
+  uri: string,
+  type: string
+) {
+  return <IAASDescriptor>{
+    identification: {
+      id: 'aasId' + tag,
+      idType: 'IRI',
+    },
+    asset: {
+      id: 'assetId' + tag,
+      idType: 'IRI',
+    },
+    descriptor: {
+      endpoints: [{ address: uri, type: type, target: 'cloud' }],
+      certificate_x509_i40: 'cert' + tag,
+      signature: 'sig' + tag,
+    },
+  };
+}
+
+function makeAASDescriptorWithAasId(tag: string, id: string) {
+  return <IAASDescriptor>{
+    identification: {
+      id: id,
+      idType: 'IRI',
+    },
+    asset: {
+      id: 'assetId' + tag,
+      idType: 'IRI',
+    },
+    descriptor: {
+      endpoints: [
+        { address: 'uri' + tag, type: 'type' + tag, target: 'cloud' },
+      ],
+      certificate_x509_i40: 'cert' + tag,
+      signature: 'sig' + tag,
+    },
+  };
+}
+
+function makeAASDescriptorWithEmptyUri(tag: string) {
+  return <IAASDescriptor>{
+    identification: {
+      id: 'aasId' + tag,
+      idType: 'IRI',
+    },
+    asset: {
+      id: 'assetId' + tag,
+      idType: 'IRI',
+    },
+    descriptor: {
+      endpoints: [{ address: '', type: 'type' + tag, target: 'cloud' }],
+      certificate_x509_i40: 'cert' + tag,
+      signature: 'sig' + tag,
+    },
+  };
+}
+
+function makeAASDescriptorWithoutUri(tag: string) {
+  return <IAASDescriptor>{
+    identification: {
+      id: 'aasId' + tag,
+      idType: 'IRI',
+    },
+    asset: {
+      id: 'assetId' + tag,
+      idType: 'IRI',
+    },
+    descriptor: {
+      endpoints: [{ type: 'type' + tag, target: 'cloud' }],
+      certificate_x509_i40: 'cert' + tag,
+      signature: 'sig' + tag,
+    },
+  };
+}
+
 function checkEnvVar(variableName: string) {
   let retVal = process.env[variableName];
   if (retVal) {
@@ -54,7 +150,6 @@ describe('Tests with a simple data model', function () {
   });
 
   it('saves a descriptor in the the database', async function () {
-    logger.debug('Connecting using ' + user + '/' + password);
     var uniqueTestId = 'simpleDataTest' + Math.random();
     var requester = chai.request(app).keepOpen();
 
@@ -63,19 +158,135 @@ describe('Tests with a simple data model', function () {
       .auth(user, password)
       .send(makeDummyAASDescriptor(uniqueTestId))
       .then(async (res: any) => {
-        logger.debug('made one call');
         chai.expect(res.status).to.eql(200); // expression which will be true if response status equal to 200
         await requester
           .get('/AASDescriptors/' + 'aasId' + uniqueTestId)
           .auth(user, password)
           .then((res: any) => {
             chai.expect(res.status).to.eql(200);
-            logger.debug('test complete');
           });
       })
       .then(() => {
         requester.close();
-        //done();
       });
+  });
+
+  it('returns a 500 error if an endpoint with the given uri and type already exists in the registry', async function () {
+    var uniqueTestId = 'simpleDataTest' + Math.random();
+    var requester = chai.request(app).keepOpen();
+
+    await requester
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(makeAASDescriptorWithUriAndProtocol(uniqueTestId, 'test', 'test'))
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200); // expression which will be true if response status equal to 200
+        uniqueTestId = 'simpleDataTest' + Math.random();
+        await requester
+          .put('/AASDescriptors')
+          .auth(user, password)
+          .send(
+            makeAASDescriptorWithUriAndProtocol(uniqueTestId, 'test', 'test')
+          )
+          .then((res: any) => {
+            chai.expect(res.status).to.eql(500);
+          });
+      })
+      .then(() => {
+        requester.close();
+      });
+  });
+
+  it('returns a 500 error if an endpoint with the given uri already exists in the registry', async function () {
+    var uniqueTestId = 'simpleDataTest' + Math.random();
+    var requester = chai.request(app).keepOpen();
+
+    await requester
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(makeAASDescriptorWithUri(uniqueTestId, 'test'))
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200); // expression which will be true if response status equal to 200
+        uniqueTestId = 'simpleDataTest' + Math.random();
+        await requester
+          .put('/AASDescriptors')
+          .auth(user, password)
+          .send(makeAASDescriptorWithUri(uniqueTestId, 'test'))
+          .then((res: any) => {
+            chai.expect(res.status).to.eql(500);
+          });
+      })
+      .then(() => {
+        requester.close();
+      });
+  });
+
+  it('returns a 500 error if an aas with the given id already exists in the registry', async function () {
+    var uniqueTestId = 'simpleDataTest' + Math.random();
+    var requester = chai.request(app).keepOpen();
+
+    await requester
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(makeAASDescriptorWithAasId(uniqueTestId, 'test'))
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200); // expression which will be true if response status equal to 200
+        uniqueTestId = 'simpleDataTest' + Math.random();
+        await requester
+          .put('/AASDescriptors')
+          .auth(user, password)
+          .send(makeAASDescriptorWithAasId(uniqueTestId, 'test'))
+          .then((res: any) => {
+            chai.expect(res.status).to.eql(500);
+          });
+      })
+      .then(() => {
+        requester.close();
+      });
+  });
+
+  it('returns a 401 error if the uri is empty in the provided json object', async function () {
+    var uniqueTestId = 'simpleDataTest' + Math.random();
+    var requester = chai.request(app).keepOpen();
+
+    await chai
+      .request(app)
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(makeAASDescriptorWithEmptyUri(uniqueTestId))
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(401); // expression which will be true if response status equal to 200
+      });
+  });
+
+  it('returns a 401 error if the uri is missing in the provided json object', async function () {
+    var uniqueTestId = 'simpleDataTest' + Math.random();
+    var requester = chai.request(app).keepOpen();
+
+    await chai
+      .request(app)
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(makeAASDescriptorWithoutUri(uniqueTestId))
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(401); // expression which will be true if response status equal to 200
+      });
+  });
+
+  it('returns a 500 error if a connection to the db could not be got', async function () {
+    var uniqueTestId = 'simpleDataTest' + Math.random();
+    var host = process.env.CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST;
+    process.env.CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST = 'blah';
+    await chai
+      .request(app)
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(makeDummyAASDescriptor(uniqueTestId))
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(500); // expression which will be true if response status equal to 200
+      })
+      .finally(
+        () => (process.env.CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST = host)
+      );
   });
 });
