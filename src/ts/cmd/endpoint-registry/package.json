@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "dev": "tsc-watch --onSuccess \"node ./dist/server.js\"",
-    "test": "mocha --require ts-node/register --exit test/unit/**/*.spec.ts",
+    "test": "npm run test-integration-only",
+    "test-unit-only": "mocha --require ts-node/register --exit test/unit/**/*.spec.ts",
     "test-integration-only": "mocha --require ts-node/register --exit test/integration/**/*.spec.ts",
     "test-with-integration": "mocha --require ts-node/register --exit test/integration/**/*.spec.ts test/unit/**/*.spec.ts",
     "coverage": "nyc --reporter html --reporter text npm test",
