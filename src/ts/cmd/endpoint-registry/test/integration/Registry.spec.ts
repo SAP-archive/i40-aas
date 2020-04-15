@@ -29,6 +29,26 @@ function makeDummyAASDescriptor(tag: string) {
   };
 }
 
+function makeAASDescriptorWithSlashes(tag: string) {
+  return <IAASDescriptor>{
+    identification: {
+      id: 'aasId/' + tag,
+      idType: 'IRI',
+    },
+    asset: {
+      id: 'assetId' + tag,
+      idType: 'IRI',
+    },
+    descriptor: {
+      endpoints: [
+        { address: 'url' + tag, type: 'type' + tag, target: 'cloud' },
+      ],
+      certificate_x509_i40: 'cert' + tag,
+      signature: 'sig' + tag,
+    },
+  };
+}
+
 function makeAASDescriptorWithUri(tag: string, uri: string) {
   return <IAASDescriptor>{
     identification: {
@@ -137,10 +157,6 @@ function checkEnvVar(variableName: string) {
   }
 }
 
-function sleep(millis: number) {
-  return new Promise((resolve) => setTimeout(resolve, millis));
-}
-
 describe('Tests with a simple data model', function () {
   var user = process.env.CORE_REGISTRIES_ENDPOINTS_USER;
   var password = process.env.CORE_REGISTRIES_ENDPOINTS_PASSWORD;
@@ -171,31 +187,63 @@ describe('Tests with a simple data model', function () {
       });
   });
 
-  it('returns a 500 error if an endpoint with the given uri and type already exists in the registry', async function () {
+  it('can handle slashes in the id', async function () {
     var uniqueTestId = 'simpleDataTest' + Math.random();
     var requester = chai.request(app).keepOpen();
 
     await requester
       .put('/AASDescriptors')
       .auth(user, password)
-      .send(makeAASDescriptorWithUriAndProtocol(uniqueTestId, 'test', 'test'))
+      .send(makeAASDescriptorWithSlashes(uniqueTestId))
       .then(async (res: any) => {
         chai.expect(res.status).to.eql(200); // expression which will be true if response status equal to 200
-        uniqueTestId = 'simpleDataTest' + Math.random();
         await requester
-          .put('/AASDescriptors')
+          .get('/AASDescriptors/' + 'aasId%2F' + uniqueTestId)
           .auth(user, password)
-          .send(
-            makeAASDescriptorWithUriAndProtocol(uniqueTestId, 'test', 'test')
-          )
           .then((res: any) => {
-            chai.expect(res.status).to.eql(500);
+            chai.expect(res.status).to.eql(200);
           });
       })
       .then(() => {
         requester.close();
       });
   });
+
+  it(
+    'returns a 500 error if an endpoint with the given uri and type already' +
+      'exists in the registry and removes all traces of the failed descriptor',
+    async function () {
+      var uniqueTestId = 'simpleDataTest' + Math.random();
+      var requester = chai.request(app).keepOpen();
+
+      await requester
+        .put('/AASDescriptors')
+        .auth(user, password)
+        .send(makeAASDescriptorWithUriAndProtocol(uniqueTestId, 'test', 'test'))
+        .then(async (res: any) => {
+          chai.expect(res.status).to.eql(200); // expression which will be true if response status equal to 200
+          uniqueTestId = 'simpleDataTest' + Math.random();
+          await requester
+            .put('/AASDescriptors')
+            .auth(user, password)
+            .send(
+              makeAASDescriptorWithUriAndProtocol(uniqueTestId, 'test', 'test')
+            )
+            .then(async (res: any) => {
+              chai.expect(res.status).to.eql(500);
+              await requester
+                .get('/AASDescriptors/' + uniqueTestId)
+                .auth(user, password)
+                .then((res: any) => {
+                  chai.expect(res.status).to.eql(404);
+                });
+            });
+        })
+        .then(() => {
+          requester.close();
+        });
+    }
+  );
 
   it('returns a 500 error if an endpoint with the given uri already exists in the registry', async function () {
     var uniqueTestId = 'simpleDataTest' + Math.random();
@@ -268,7 +316,7 @@ describe('Tests with a simple data model', function () {
       });
   });
 
-  it('returns a 401 error if the uri is missing in the provided json object', async function () {
+  xit('returns a 401 error if the uri is missing in the provided json object', async function () {
     var uniqueTestId = 'simpleDataTest' + Math.random();
     var requester = chai.request(app).keepOpen();
 
