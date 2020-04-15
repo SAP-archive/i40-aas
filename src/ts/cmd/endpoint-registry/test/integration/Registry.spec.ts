@@ -316,7 +316,7 @@ describe('Tests with a simple data model', function () {
       });
   });
 
-  xit('returns a 401 error if the uri is missing in the provided json object', async function () {
+  it('returns a 401 error if the uri is missing in the provided json object', async function () {
     var uniqueTestId = 'simpleDataTest' + Math.random();
     var requester = chai.request(app).keepOpen();
 
