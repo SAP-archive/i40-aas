@@ -51,7 +51,6 @@ func main() {
 		Protocol: "http",
 		Host:     os.Getenv("CORE_REGISTRIES_ENDPOINTS_HOST"),
 		Port:     registryPort,
-		Route:    os.Getenv("CORE_REGISTRIES_ENDPOINTS_URL_SUFFIX"),
 		User:     os.Getenv("CORE_REGISTRIES_ENDPOINTS_USER"),
 		Password: os.Getenv("CORE_REGISTRIES_ENDPOINTS_PASSWORD"),
 	}
@@ -71,6 +70,9 @@ func main() {
 	config = &Config{
 		AMQPConfig:             amqpCfg,
 		EndpointRegistryConfig: endpointRegCfg,
+		Queue:                  "generic",
+		BindingKey:             os.Getenv("CORE_EGRESS_ROUTINGKEY"),
+		Ctag:                   os.Getenv("CORE_ENDPOINT_RESOLVER_CTAG"),
 	}
 
 	resolver, err = NewEndpointResolver(config)
