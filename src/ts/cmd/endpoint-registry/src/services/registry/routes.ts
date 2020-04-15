@@ -17,7 +17,7 @@ function updateResponseForConflict(error: any, res: Response) {
 //TODO: request validation checks
 export default [
   {
-    path: '/AASDescriptor',
+    path: '/AASDescriptors',
     method: 'put',
     handler: async (req: Request, res: Response) => {
       console.log('/administrationshells POST request received');
@@ -37,20 +37,20 @@ export default [
     }
   },
   {
-    path: '/AASDescriptor',
+    path: '/AASDescriptors/:aasId',
     method: 'get',
     handler: async (req: Request, res: Response) => {
       try {
-        console.log('Query parameters received:' + JSON.stringify(req.query));
-        if (req.query.aasId) {
+        console.log('Path parameters received:' + JSON.stringify(req.params.aasId));
+        if (req.params.aasId) {
           res.json(
             await registryApi.readAASDescriptorByAASId(
-              req.query.aasId
+              req.params.aasId
             )
           );
         } else
           throw new RegistryError(
-            'Mandatory query parameters: aasId is not found in request',
+            'Mandatory path parameters: aasId is not found in request',
             422
           );
       } catch (e) {
@@ -62,12 +62,12 @@ export default [
   },
   {
     //TODO: Add validation that aasId==req.body.identification.id
-    path: '/aasDescriptor',
+    path: '/AASDescriptors/:aasId',
     method: 'patch',
     handler: async (req: Request, res: Response) => {
       try {
-        console.log('Query parameters received:' + JSON.stringify(req.query));
-        if (req.query.aasId) {
+        console.log('Path parameters received:' + JSON.stringify(req.params));
+        if (req.params.aasId) {
           res.json(
             await registryApi.updateAASDescriptorByAASId(
               req.body
@@ -75,7 +75,7 @@ export default [
           );
         } else
           throw new RegistryError(
-            'Mandatory query parameters: aasId is not found in request',
+            'Mandatory path parameters: aasId is not found in request',
             422
           );
       } catch (e) {
@@ -87,20 +87,20 @@ export default [
   },
   {
     //TODO: Add validation that aasId==req.body.identification.id
-    path: '/aasDescriptor',
+    path: '/AASDescriptors/:aasId',
     method: 'delete',
     handler: async (req: Request, res: Response) => {
       try {
-        console.log('Query parameters received:' + JSON.stringify(req.query));
-        if (req.query.aasId) {
+        console.log('Path parameters received:' + JSON.stringify(req.params));
+        if (req.params.aasId) {
           res.json(
             await registryApi.deleteAASDescriptorByAASId(
-              req.query.aasId
+              req.params.aasId
             )
           );
         } else
           throw new RegistryError(
-            'Mandatory query parameters: aasId is not found in request',
+            'Mandatory path parameters: aasId is not found in request',
             422
           );
       } catch (e) {
@@ -123,10 +123,25 @@ export default [
       }
     }
   }, {
-    path: '/semanticProtocol',
+    path: '/semanticProtocols',
     method: 'put',
     handler: async (req: Request, res: Response) => {
       console.log('/semanticprotocol PUT request received');
+      try {
+        await registryApi.createSemanticProtocol(req.body);
+        console.log('Sent back response of /semanticprotocol PUT request');
+        res.json(req.body);
+      } catch (e) {
+        res.end(e.message);
+      }
+
+    }
+  },
+   {
+    path: '/semanticProtocols',
+    method: 'delete',
+    handler: async (req: Request, res: Response) => {
+      console.log('/semanticprotocol DELETE request received');
       try {
         await registryApi.createSemanticProtocol(req.body);
         console.log('Sent back response of /semanticprotocol PUT request');
@@ -142,7 +157,7 @@ export default [
     handler: async (req: Request, res: Response) => {
       console.log('GET AASDescriptor by semanticprotocol and role name request received');
       try {
-        console.log('Query parameters received:' + JSON.stringify(req.params));
+        console.log('Path parameters received:' + JSON.stringify(req.params));
         var response = await registryApi.readAASBySemanticProtocolAndRole(req.params.semanticProtocolId, req.params.roleName)
        // console.log('Sent back response of /semanticprotocol GET request');
         res.json(response);
