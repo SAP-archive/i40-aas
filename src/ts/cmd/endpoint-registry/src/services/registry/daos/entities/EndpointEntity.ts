@@ -1,20 +1,19 @@
-import {Entity, Column, PrimaryGeneratedColumn, Unique, ManyToOne} from "typeorm";
+import {Entity, Column, PrimaryGeneratedColumn, Unique, ManyToOne, Index, PrimaryColumn} from "typeorm";
 import { AASDescriptorEntity } from "./AASDescriptorEntity";
 
 @Entity()
 //the combination for address and type should also be unique (to avoid saving double)
-@Unique("url_address", ["address", "type"])
+
 export class EndpointEntity {
 
-    @PrimaryGeneratedColumn()
-    endpointId!: number;
+  @PrimaryColumn({
+    length: 1024
+    })
+   address!: string;
 
-    @Column()
-    address!: string;
-
-    @Column({
-      length: 1024
-      })
+   @PrimaryColumn({
+    length: 1024
+    })
     type!: string;
 
     @Column({

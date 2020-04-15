@@ -36,6 +36,8 @@ class Registry implements iRegistry {
       let savedAsset = await this.client.manager.save(asset);
       console.log("Asset Saved in Db ", asset);
 
+      let aasDescriptorRepository = this.client.getRepository(AASDescriptorEntity);
+      let endpointsRepository = this.client.getRepository(EndpointEntity);
 
       //finally create the AASDescriptor in DB
       let aasDescriptor = new AASDescriptorEntity();
@@ -44,7 +46,9 @@ class Registry implements iRegistry {
       aasDescriptor.asset = record.asset;
       aasDescriptor.certificate_x509_i40 = record.descriptor.certificate_x509_i40;
       aasDescriptor.signature = record.descriptor.signature;
-      await this.client.manager.save(aasDescriptor);
+      //await this.client.manager.save(aasDescriptor);
+      let savedAASDescriptor = await aasDescriptorRepository.save(aasDescriptor);
+
       console.log("AASDescriptor Saved in Db ", aasDescriptor);
 
 
@@ -55,7 +59,7 @@ class Registry implements iRegistry {
           ep.address = endpoint.address;
           ep.type = endpoint.type;
           ep.target = endpoint.target;
-          await this.client.manager.save(ep);
+          await endpointsRepository.save(ep);
           console.log("Endpoint Saved in Db ", ep);
 
         })

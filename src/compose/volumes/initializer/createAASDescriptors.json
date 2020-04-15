@@ -6,13 +6,11 @@
     "descriptor": {
       "endpoints": [
         {
-            "endpointId": 3,
             "address": "i40-aas-grpc-endpoint-ingress:8384",
             "type": "grpc",
             "target": "cloud"
         },
         {
-            "endpointId": 4,
             "address": "http://admin:admin@i40-aas-https-endpoint-ingress:2000/interaction",
             "type": "http",
             "target": "cloud"
