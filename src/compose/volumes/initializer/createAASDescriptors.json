@@ -10,7 +10,7 @@
             "type": "cloud"
         },
         {
-          "address":  "{{i40-aas-http-endpoint-ingress}}" ,
+          "address":  "http://admin:admin@i40-aas-https-endpoint-ingress:2000/interaction" ,
           "type": "cloud"
       }
     ],
