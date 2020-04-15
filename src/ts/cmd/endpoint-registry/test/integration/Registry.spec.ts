@@ -221,7 +221,7 @@ describe('Tests with a simple data model', function () {
       });
   });
 
-  it('returns a 500 error if an aas with the given id already exists in the registry', async function () {
+  it('replaces the descriptor if a descriptor with the given id already exists in the registry', async function () {
     var uniqueTestId = 'simpleDataTest' + Math.random();
     var requester = chai.request(app).keepOpen();
 
@@ -235,9 +235,18 @@ describe('Tests with a simple data model', function () {
         await requester
           .put('/AASDescriptors')
           .auth(user, password)
-          .send(makeAASDescriptorWithAasId(uniqueTestId, 'test'))
-          .then((res: any) => {
-            chai.expect(res.status).to.eql(500);
+          .send(makeAASDescriptorWithAasId(uniqueTestId + '2', 'test'))
+          .then(async (res: any) => {
+            chai.expect(res.status).to.eql(200);
+            await requester
+              .get('/AASDescriptors/test')
+              .auth(user, password)
+              .then((res: any) => {
+                chai.expect(res.status).to.eql(200);
+                chai
+                  .expect(res.body.asset.id)
+                  .to.eql('assetId' + uniqueTestId + '2');
+              });
           });
       })
       .then(() => {
