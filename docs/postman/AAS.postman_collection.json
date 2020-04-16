@@ -36,7 +36,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "  {\n    \"identification\": {\n        \"id\": \"SAP_CentralAssetRepository\",\n        \"idType\": \"IRI\"\n    },\n    \"descriptor\": {\n    \"endpoints\": [\n        {\n            \"address\": \"i40-aas-grpc-endpoint-ingress:8384\",\n            \"type\": \"grpc\",\n            \"target\": \"cloud\"\n        },\n        {\n          \"address\":  \"http://admin:admin@i40-aas-https-endpoint-ingress:2000/interaction\" ,\n          \"type\": \"http\",\n          \"target\": \"cloud\"\n      }\n    ],\n      \"certificate_x509_i40\": \"sample_crt\",\n    \"signature\": \"sample_sig\"\n    },\n    \"asset\": {\n        \"id\": \"Sample-Asset-Id\",\n        \"idType\": \"IRI\"\n    }\n  }\n",
+							"raw": "  {\n    \"identification\": {\n        \"id\": \"www.sampleOperator/aas\",\n        \"idType\": \"IRI\"\n    },\n    \"descriptor\": {\n    \"endpoints\": [\n        {\n            \"address\": \"i40-aas-grpc-endpoint-ingress:8384\",\n            \"type\": \"grpc\",\n            \"target\": \"cloud\"\n        },\n        {\n          \"address\":  \"http://admin:admin@i40-aas-https-endpoint-ingress:2000/interaction\" ,\n          \"type\": \"http\",\n          \"target\": \"cloud\"\n      }\n    ],\n      \"certificate_x509_i40\": \"sample_crt\",\n    \"signature\": \"sample_sig\"\n    },\n    \"asset\": {\n        \"id\": \"Sample-Asset-Id\",\n        \"idType\": \"IRI\"\n    }\n  }\n",
 							"options": {
 								"raw": {}
 							}
@@ -93,10 +93,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"identification\": {\n    \"id\": \"i40:registry-semanticProtocol/onboarding\",\n    \"idType\": \"Custom\"\n  },\n  \"roles\": [\n    {\n      \"name\": \"Manufacturer\",\n      \"aasDescriptorIds\": [\n        {\n          \"id\": \"SAP_CentralAssetRepository\",\n          \"idType\": \"IRI\"\n        }\n      ]\n    }\n  ]\n}",
-							"options": {
-								"raw": {}
-							}
+							"raw": "{\n  \"identification\": {\n    \"id\": \"i40:registry-semanticProtocol/onboarding\",\n    \"idType\": \"Custom\"\n  },\n  \"roles\": [\n    {\n      \"name\": \"operator\",\n      \"aasDescriptorIds\": [\n        {\n          \"id\": \"www.sampleOperator/aas\",\n          \"idType\": \"IRI\"\n        }\n      ]\n    }\n  ]\n}"
 						},
 						"url": {
 							"raw": "{{i40-aas-endpoint-registry}}/semanticProtocols",
@@ -187,7 +184,7 @@
 								},
 								{
 									"key": "roleName",
-									"value": "Manufacturer"
+									"value": "operator"
 								}
 							]
 						}
@@ -287,7 +284,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"identification\": {\n        \"id\": \"SAP_CentralAssetRepository\",\n        \"idType\": \"IRI\"\n    },\n    \"descriptor\": {\n        \"endpoints\": [\n            {\n                \"address\": \"i40-aas-grpc-endpoint-ingress:8384\",\n                \"type\": \"cloud\"\n            },\n            {\n                \"address\": \"{{i40-aas-http-endpoint-ingress}}\",\n                \"type\": \"edge\"\n            }\n        ],\n        \"certificate_x509_i40\": \"sample_crt\",\n        \"signature\": \"sample_sig\"\n    },\n    \"asset\": {\n        \"id\": \"SAP_CentralAssetRepository\",\n        \"idType\": \"IRI\"\n    }\n}"
+							"raw": "{\n    \"identification\": {\n        \"id\": \"www.sampleOperator/aas\",\n        \"idType\": \"IRI\"\n    },\n    \"descriptor\": {\n        \"endpoints\": [\n            {\n                \"address\": \"i40-aas-grpc-endpoint-ingress:8384\",\n                \"type\": \"cloud\"\n            },\n            {\n                \"address\": \"{{i40-aas-http-endpoint-ingress}}\",\n                \"type\": \"edge\"\n            }\n        ],\n        \"certificate_x509_i40\": \"sample_crt\",\n        \"signature\": \"sample_sig_new\"\n    },\n    \"asset\": {\n        \"id\": \"SAP_CentralAssetRepository\",\n        \"idType\": \"IRI\"\n    }\n}"
 						},
 						"url": {
 							"raw": "{{i40-aas-endpoint-registry}}/AASDescriptors/:aasId",
@@ -313,7 +310,7 @@
 							"variable": [
 								{
 									"key": "aasId",
-									"value": "SAP_CentralAssetRepository"
+									"value": "www.sampleOperator%2Faas"
 								}
 							]
 						}
@@ -499,7 +496,7 @@
 							"variable": [
 								{
 									"key": "aasId",
-									"value": "SAP_CentralAssetRepository"
+									"value": "www.sampleOperator/aas"
 								}
 							]
 						}
@@ -821,37 +818,37 @@
 	],
 	"variable": [
 		{
-			"id": "b5b70c55-e98f-4fe3-b968-c966244c947e",
+			"id": "619da7a6-6ca3-41d9-9f0f-9c2d7c53bccd",
 			"key": "endpoint_ingress_user",
 			"value": "admin",
 			"type": "string"
 		},
 		{
-			"id": "6c0b9ece-a150-4a34-81a1-cd36a701bbd5",
+			"id": "0d88dca3-be93-4928-ac1a-33b2ba6a3569",
 			"key": "endpoint_ingress_pwd",
 			"value": "admin",
 			"type": "string"
 		},
 		{
-			"id": "45b2bcb4-4b08-4c84-bb0e-d63719a8ad66",
+			"id": "071fb923-1d82-432f-99a2-0bf392767bdb",
 			"key": "i40-aas-http-endpoint-ingress",
 			"value": "http://localhost:2000",
 			"type": "string"
 		},
 		{
-			"id": "2514d389-4743-446e-8cb9-99776f631fe5",
+			"id": "175feb54-caeb-42cb-a23d-1ee1c163d061",
 			"key": "i40-aas-endpoint-registry",
 			"value": "http://localhost:4400",
 			"type": "string"
 		},
 		{
-			"id": "9a88f1d8-9290-4394-9d1b-345ccc6c0295",
+			"id": "b3969bf0-b21e-4491-9f16-719df368041e",
 			"key": "i40-aas-data-manager",
 			"value": "http://localhost:4000",
 			"type": "string"
 		},
 		{
-			"id": "14274c65-255b-41d6-bf62-ac50bea1b227",
+			"id": "5451eb49-c4b2-4506-8939-44715dd579ce",
 			"key": "i40-aas-adapter-registry",
 			"value": "http://localhost:4500",
 			"type": "string"
