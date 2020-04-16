@@ -1,9 +1,9 @@
 import { RegistryFactory } from './daos/postgres/RegistryFactory';
 import { iRegistry } from './daos/interfaces/IRegistry';
-import {  ISemanticProtocol} from './daos/postgres/ISemanticProtocol';
 import { DeleteResult } from 'typeorm';
 import { IAASDescriptor } from './daos/interfaces/IAASDescriptor';
 import { IEndpoint } from './daos/interfaces/IEndpoint';
+import { ISemanticProtocol } from './daos/postgres/ISemanticProtocol';
 
 class RegistryApi {
 
@@ -44,6 +44,19 @@ class RegistryApi {
     var result = await registryDao.readAASDescriptorsBySemanticProtocolAndRole(
         sProtocol,
         role
+      );
+      console.log(JSON.stringify(result, null, 3));
+      return result;
+
+  }
+  async readSemanticProtocolBySemanticProtocolId(
+    sProtocol: string,
+  ): Promise<any> {
+
+    var registryDao: iRegistry = await RegistryFactory.getRegistry();
+
+    var result = await registryDao.readSemanticProtocolById(
+        sProtocol
       );
       console.log(JSON.stringify(result, null, 3));
       return result;

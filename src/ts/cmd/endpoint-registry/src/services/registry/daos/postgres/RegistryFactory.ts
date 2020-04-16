@@ -10,7 +10,6 @@ class RegistryFactory {
     //and a new connection will be established
     try {
       let client = getConnection();
-      logger.debug('Client ' + client);
       return new Registry(client);
     } catch (error) {
       logger.error(
