@@ -5,10 +5,10 @@
   },
   "roles": [
     {
-      "name": "Manufacturer",
+      "name": "operator",
       "aasDescriptorIds": [
         {
-          "id": "SAP_CentralAssetRepository",
+          "id": "www.sampleOperator/aas",
           "idType": "IRI"
         }
       ]

@@ -1,6 +1,6 @@
   {
     "identification": {
-        "id": "SAP_CentralAssetRepository",
+        "id": "www.sampleOperator/aas",
         "idType": "IRI"
     },
     "descriptor": {
