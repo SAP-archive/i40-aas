@@ -52,6 +52,8 @@ spec:
                   key: CORE_BROKER_HOST
             - name: CORE_BROKER_PORT
               value: {{ .Values.core.broker.port.amqp | quote }}
+            - name: CORE_INGRESS_EXCHANGE
+              value: {{ .Values.core.ingress.exchange | quote }}
             - name: CORE_INGRESS_HTTP_PORT
               value: {{ .Values.core.ingress.http.port | quote }}
           envFrom:
