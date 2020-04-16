@@ -38,6 +38,7 @@ function replaceTargetInFirstEndpoint(
   replacement: string
 ) {
   descriptor.descriptor.endpoints[0].target = replacement;
+  return descriptor;
 }
 
 function replaceAddressInFirstEndpoint(
@@ -45,14 +46,17 @@ function replaceAddressInFirstEndpoint(
   replacement: string
 ) {
   descriptor.descriptor.endpoints[0].address = replacement;
+  return descriptor;
 }
 
 function removeAddressInFirstEndpoint(descriptor: IAASDescriptor) {
   (<unknown>descriptor.descriptor.endpoints[0].address) = undefined;
+  return descriptor;
 }
 
 function replaceAasId(descriptor: IAASDescriptor, replacement: string) {
   descriptor.identification.id = replacement;
+  return descriptor;
 }
 
 function replaceAddressAndTypeInFirstEndpoint(
@@ -62,6 +66,7 @@ function replaceAddressAndTypeInFirstEndpoint(
 ) {
   descriptor.descriptor.endpoints[0].address = addressReplacement;
   descriptor.descriptor.endpoints[0].type = typeReplacement;
+  return descriptor;
 }
 
 function checkEnvVar(variableName: string) {
@@ -275,6 +280,38 @@ describe('Tests with a simple data model', function () {
                 chai
                   .expect(res.body.asset.id)
                   .to.eql('assetId' + newUniqueTestId);
+              });
+          });
+      })
+      .then(() => {
+        requester.close();
+      });
+  });
+
+  it('patches the descriptor if requested', async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
+
+    await requester
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(replaceAasId(makeGoodAASDescriptor(uniqueTestId), 'test'))
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200);
+        var newUniqueTestId = 'simpleDataTest' + getRandomInteger();
+        await requester
+          .patch('/AASDescriptors/test')
+          .auth(user, password)
+          .send({ identification: { idType: 'Custom' } })
+          .then(async (res: any) => {
+            chai.expect(res.status).to.eql(200);
+            await requester
+              .get('/AASDescriptors/test')
+              .auth(user, password)
+              .then((res: any) => {
+                chai.expect(res.status).to.eql(200);
+                chai.expect(res.body.asset.id).to.eql('assetId' + uniqueTestId);
+                chai.expect(res.body.identification.idType).to.eql('Custom');
               });
           });
       })
