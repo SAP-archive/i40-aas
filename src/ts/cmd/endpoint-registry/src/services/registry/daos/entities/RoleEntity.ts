@@ -1,5 +1,6 @@
-import { Entity, PrimaryColumn, Column, PrimaryGeneratedColumn, ManyToOne,JoinTable,Unique } from "typeorm";
+import { Entity, PrimaryColumn, Column, PrimaryGeneratedColumn, ManyToOne,JoinTable,Unique, ManyToMany } from "typeorm";
 import { SemanticProtocolEntity } from "./SemanticProtocolEntity";
+import { AASDescriptorEntity } from "./AASDescriptorEntity";
 
 
 @Entity()
@@ -7,18 +8,14 @@ import { SemanticProtocolEntity } from "./SemanticProtocolEntity";
 @Unique("singleRoleNameForProtocol", ["name", "semProtocol"])
 
 export class RoleEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   id!: string;
 
-    //TODO: the type could be enum if the AASObjects used enum
-    //instead of union type for Identifier
-    /*
-    @Column( {type: "enum",
-    enum: IdTypeEnum,
-    default: IdTypeEnum.Custom}
-    )*/
     @Column()
     name!: string;
+
+    @ManyToMany(type => AASDescriptorEntity, aasDescriptor => aasDescriptor.roles)
+    aasDescriptors!: AASDescriptorEntity[];
 
 
     @ManyToOne(type => SemanticProtocolEntity, semanticProtocol => semanticProtocol.roles,{onDelete: 'CASCADE'})

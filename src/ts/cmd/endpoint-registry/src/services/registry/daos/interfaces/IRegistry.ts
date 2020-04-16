@@ -6,13 +6,13 @@ import { IAASDescriptor } from './IAASDescriptor';
 import { IEndpoint } from './IEndpoint';
 
 interface iRegistry {
-  readAASDescriptorByAasId(aasId: string): Promise<IAASDescriptor|undefined>;
+  readAASDescriptorByAasId(aasId: string): Promise<IAASDescriptor>;
   registerAas(req: IAASDescriptor): Promise<IAASDescriptor | undefined>;
   updateAasDescriptorByAasId(req: IAASDescriptor): Promise<IAASDescriptor | undefined>;
   deleteAasDescriptorByAasId(aasId: string): Promise<DeleteResult|undefined>;
   deleteSemanticProtocolById(semanticProtocolId: string): Promise<DeleteResult|undefined>;
-  readSemanticProtocolById(semanticProtocolId: string): Promise<DeleteResult|undefined>;
-  updateSemanticProtocolById(semanticProtocolId: string): Promise<DeleteResult|undefined>;
+  readSemanticProtocolById(semanticProtocolId: string): Promise<ISemanticProtocol>;
+  updateSemanticProtocolById(semanticProtocolId: string): Promise<ISemanticProtocol>;
   listAllEndpoints(): Promise<Array<IEndpoint>>;
   createSemanticProtocol(req: ISemanticProtocol): void;
   readAASDescriptorsBySemanticProtocolAndRole(
