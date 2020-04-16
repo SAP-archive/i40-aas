@@ -36,6 +36,9 @@ install:
       openssl aes-256-cbc -K $encrypted_260941c77da3_key -iv $encrypted_260941c77da3_iv -in azure-service-principal.txt.enc -out azure-service-principal.txt -d;
       cat azure-service-principal.txt | docker login $AZURE_CONTAINER_REGISTRY -u $service_principal_id --password-stdin;
     fi
+  - if [[ -n $TRAVIS_PULL_REQUEST_BRANCH ]]; then
+      BUILD_TAG=$TRAVIS_PULL_REQUEST_BRANCH;
+    fi
   - make build-$SVC
   - if [ $TRAVIS_EVENT_TYPE = push ]; then
       make push-$SVC;
@@ -71,7 +74,7 @@ jobs:
         - docker-compose up -d rabbitmq
         - cd src/go/pkg/amqpclient
         - go mod download
-      sscript:
+      script:
         - go test
 
     - stage: lib-test
