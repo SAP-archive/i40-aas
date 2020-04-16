@@ -1,6 +1,5 @@
 import { IAASDescriptor } from '../../src/services/registry/daos/interfaces/IAASDescriptor';
 import { logger } from '../../src/log';
-//const client = getConnection();
 
 const chai = require('chai');
 const chaiHttp = require('chai-http');
@@ -9,7 +8,32 @@ const app = require('../../src/server').app;
 chai.should();
 chai.use(chaiHttp);
 
-function makeDummyAASDescriptor(tag: string) {
+function getRandomInteger() {
+  return Math.floor(Math.random() * 100000);
+}
+
+function makeGoodAASDescriptor(idTag: string) {
+  return <IAASDescriptor>{
+    identification: {
+      id: 'aasId' + idTag,
+      idType: 'IRI',
+    },
+    asset: {
+      id: 'assetId' + idTag,
+      idType: 'IRI',
+    },
+    descriptor: {
+      endpoints: [
+        { address: 'abc.def', type: 'type', target: 'cloud' },
+        { address: 'efg.hij', type: 'type', target: 'edge' },
+      ],
+      certificate_x509_i40: 'certificate',
+      signature: 'signature',
+    },
+  };
+}
+
+function makeAASDescriptorWithBadTarget(tag: string) {
   return <IAASDescriptor>{
     identification: {
       id: 'aasId' + tag,
@@ -21,7 +45,27 @@ function makeDummyAASDescriptor(tag: string) {
     },
     descriptor: {
       endpoints: [
-        { address: 'url' + tag, type: 'type' + tag, target: 'cloud' },
+        { address: '%%d//d' + tag, type: 'type' + tag, target: 'blah' },
+      ],
+      certificate_x509_i40: 'cert' + tag,
+      signature: 'sig' + tag,
+    },
+  };
+}
+
+function makeAASDescriptorWithBadUri(tag: string) {
+  return <IAASDescriptor>{
+    identification: {
+      id: 'aasId' + tag,
+      idType: 'IRI',
+    },
+    asset: {
+      id: 'assetId' + tag,
+      idType: 'IRI',
+    },
+    descriptor: {
+      endpoints: [
+        { address: '%%d//d' + tag, type: 'type' + tag, target: 'blah' },
       ],
       certificate_x509_i40: 'cert' + tag,
       signature: 'sig' + tag,
@@ -166,13 +210,13 @@ describe('Tests with a simple data model', function () {
   });
 
   it('saves a descriptor in the the database', async function () {
-    var uniqueTestId = 'simpleDataTest' + Math.random();
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
     var requester = chai.request(app).keepOpen();
 
     await requester
       .put('/AASDescriptors')
       .auth(user, password)
-      .send(makeDummyAASDescriptor(uniqueTestId))
+      .send(makeGoodAASDescriptor(uniqueTestId))
       .then(async (res: any) => {
         chai.expect(res.status).to.eql(200); // expression which will be true if response status equal to 200
         await requester
@@ -188,7 +232,7 @@ describe('Tests with a simple data model', function () {
   });
 
   it('can handle slashes in the id', async function () {
-    var uniqueTestId = 'simpleDataTest' + Math.random();
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
     var requester = chai.request(app).keepOpen();
 
     await requester
@@ -213,7 +257,7 @@ describe('Tests with a simple data model', function () {
     'returns a 500 error if an endpoint with the given uri and type already' +
       'exists in the registry and removes all traces of the failed descriptor',
     async function () {
-      var uniqueTestId = 'simpleDataTest' + Math.random();
+      var uniqueTestId = 'simpleDataTest' + getRandomInteger();
       var requester = chai.request(app).keepOpen();
 
       await requester
@@ -222,7 +266,7 @@ describe('Tests with a simple data model', function () {
         .send(makeAASDescriptorWithUriAndProtocol(uniqueTestId, 'test', 'test'))
         .then(async (res: any) => {
           chai.expect(res.status).to.eql(200); // expression which will be true if response status equal to 200
-          uniqueTestId = 'simpleDataTest' + Math.random();
+          uniqueTestId = 'simpleDataTest' + getRandomInteger();
           await requester
             .put('/AASDescriptors')
             .auth(user, password)
@@ -246,7 +290,7 @@ describe('Tests with a simple data model', function () {
   );
 
   it('returns a 500 error if an endpoint with the given uri already exists in the registry', async function () {
-    var uniqueTestId = 'simpleDataTest' + Math.random();
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
     var requester = chai.request(app).keepOpen();
 
     await requester
@@ -255,7 +299,7 @@ describe('Tests with a simple data model', function () {
       .send(makeAASDescriptorWithUri(uniqueTestId, 'test'))
       .then(async (res: any) => {
         chai.expect(res.status).to.eql(200); // expression which will be true if response status equal to 200
-        uniqueTestId = 'simpleDataTest' + Math.random();
+        uniqueTestId = 'simpleDataTest' + getRandomInteger();
         await requester
           .put('/AASDescriptors')
           .auth(user, password)
@@ -270,7 +314,7 @@ describe('Tests with a simple data model', function () {
   });
 
   it('replaces the descriptor if a descriptor with the given id already exists in the registry', async function () {
-    var uniqueTestId = 'simpleDataTest' + Math.random();
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
     var requester = chai.request(app).keepOpen();
 
     await requester
@@ -279,7 +323,7 @@ describe('Tests with a simple data model', function () {
       .send(makeAASDescriptorWithAasId(uniqueTestId, 'test'))
       .then(async (res: any) => {
         chai.expect(res.status).to.eql(200); // expression which will be true if response status equal to 200
-        uniqueTestId = 'simpleDataTest' + Math.random();
+        uniqueTestId = 'simpleDataTest' + getRandomInteger();
         await requester
           .put('/AASDescriptors')
           .auth(user, password)
@@ -302,8 +346,8 @@ describe('Tests with a simple data model', function () {
       });
   });
 
-  it('returns a 401 error if the uri is empty in the provided json object', async function () {
-    var uniqueTestId = 'simpleDataTest' + Math.random();
+  it('returns a 401 error if the uri is an empty string in the provided json object', async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
     var requester = chai.request(app).keepOpen();
 
     await chai
@@ -316,8 +360,22 @@ describe('Tests with a simple data model', function () {
       });
   });
 
-  it('returns a 401 error if the uri is missing in the provided json object', async function () {
+  it('returns a 401 error if a bad target is provided', async function () {
     var uniqueTestId = 'simpleDataTest' + Math.random();
+    var requester = chai.request(app).keepOpen();
+
+    await chai
+      .request(app)
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(makeAASDescriptorWithBadTarget(uniqueTestId))
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(401); // expression which will be true if response status equal to 200
+      });
+  });
+
+  it('returns a 401 error if the uri is missing in the provided json object', async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
     var requester = chai.request(app).keepOpen();
 
     await chai
@@ -330,15 +388,29 @@ describe('Tests with a simple data model', function () {
       });
   });
 
+  it('returns a 401 error if the uri is badly formatted in the provided json object', async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
+
+    await chai
+      .request(app)
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(makeAASDescriptorWithBadUri(uniqueTestId))
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(401); // expression which will be true if response status equal to 200
+      });
+  });
+
   it('returns a 500 error if a connection to the db could not be got', async function () {
-    var uniqueTestId = 'simpleDataTest' + Math.random();
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
     var host = process.env.CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST;
     process.env.CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST = 'blah';
     await chai
       .request(app)
       .put('/AASDescriptors')
       .auth(user, password)
-      .send(makeDummyAASDescriptor(uniqueTestId))
+      .send(makeGoodAASDescriptor(uniqueTestId))
       .then(async (res: any) => {
         chai.expect(res.status).to.eql(500); // expression which will be true if response status equal to 200
       })
