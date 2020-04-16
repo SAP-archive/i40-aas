@@ -53,8 +53,8 @@ spec:
           value: {{ .Values.core.egress.exchange | quote }}
         - name: CORE_ENDPOINT_RESOLVER_CTAG
           value: {{ .Values.core.endpointResolver.ctag | quote }}
-        - name: CORE_ENDPOINT_RESOLVER_QUEUE
-          value: {{ .Values.core.endpointResolver.queue | quote }}
+        - name: CORE_EGRESS_ROUTINGKEY
+          value: {{ .Values.core.egress.routingKey | quote }}
         - name: CORE_REGISTRIES_ENDPOINTS_HOST
           valueFrom:
             configMapKeyRef:
