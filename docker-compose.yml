@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   ########################################################
-  #### i40-aas containers
+  #### i40-aas core containers
   ##########################################
   i40-aas-https-endpoint-ingress:
     image: sapi40/i40-aas-https-endpoint-ingress
