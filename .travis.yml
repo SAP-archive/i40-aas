@@ -3,7 +3,7 @@ language: minimal
 git:
   depth: 1
 
-if: (branch = ci-rework ) AND (type = push OR type = pull_request)
+if: (branch = canary OR branch = master ) AND (type = push OR type = pull_request)
 
 env:
   global:
@@ -243,18 +243,22 @@ jobs:
         - curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.15.10/bin/linux/amd64/kubectl
         - chmod +x ./kubectl
         - sudo mv ./kubectl /usr/local/bin/kubectl
-        - (AZ_PASS=$(cat azure-service-principal.txt) && az login --service-principal -u $service_principal_id -p $AZ_PASS --tenant $SAP_TENANT)
-        - az aks get-credentials -n i40aas -g i40-aas
         - curl -LO https://get.helm.sh/helm-v3.1.2-linux-amd64.tar.gz
         - tar -zxvf helm-v3.1.2-linux-amd64.tar.gz
         - sudo mv linux-amd64/helm /usr/local/bin/helm
+      install:
         - az version
+        - (AZ_PASS=$(cat azure-service-principal.txt) && az login --service-principal -u $service_principal_id -p $AZ_PASS --tenant $SAP_TENANT)
+        - az aks get-credentials -n i40aas -g i40-aas
         - kubectl config get-contexts
         - helm version
-      install:
-        - if [ $TRAVIS_BRANCH = master ]; then
-            helm upgrade master helm/i40-aas --atomic --reuse-values -n aas-master --set image.release=$BUILD_TAG;
-            helm upgrade oi4 helm/i40-aas --atomic --reuse-values -n aas-oi4 --set image.release=$BUILD_TAG;
-          else
-            helm upgrade canary helm/i40-aas --atomic --reuse-values -n aas-canary --set image.release=$BUILD_TAG;
-          fi
+      deploy:
+        - provider: script
+          script: helm upgrade master helm/i40-aas --atomic --reuse-values -n aas-master --set image.release=$BUILD_TAG && \
+                  helm upgrade oi4 helm/i40-aas --atomic --reuse-values -n aas-oi4 --set image.release=$BUILD_TAG
+          on:
+            branch: master
+        - provider: script
+          script: helm upgrade canary helm/i40-aas --atomic --reuse-values -n aas-canary --set image.release=$BUILD_TAG
+          on:
+            branch: canary
