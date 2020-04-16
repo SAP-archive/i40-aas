@@ -60,6 +60,8 @@ spec:
             - name: database
               containerPort: 5432
           env:
+            - name: POSTGRES_DB
+              value: {{ .Values.core.registries.endpoints.database.name | quote }}
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
