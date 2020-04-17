@@ -1,0 +1,11 @@
+#source ./integration-test-setup
+export CORE_BROKER_HOST=localhost
+export CORE_BROKER_PORT=5672
+export CORE_EGRESS_USER=guest
+export CORE_EGRESS_PASSWORD=guest
+export CORE_EGRESS_EXCHANGE=egress
+export CORE_EGRESS_HTTP_USER=admin
+export CORE_EGRESS_HTTP_PASSWORD=admin
+export CORE_EGRESS_HTTP_QUEUE=http
+
+docker run --rm -d --name test-rabbit -p 5672:5672 -p 1883:1883 rabbitmq:3-management

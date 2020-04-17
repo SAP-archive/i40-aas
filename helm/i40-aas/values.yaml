@@ -38,16 +38,18 @@ core:
     port:
       amqp: 5672
       mqtt: 1883
-      ui: 80
+      ui: 15672
 
     admin:
-      # Put an empty string "" to generate a random value (20 character, alpha-numeric)
+      ## overwrites the default user (ref.: https://hub.docker.com/_/rabbitmq)
+      ## that can be used to access the management console
+      ##
+      ## Put an empty string "" to generate a random value (20 character, alpha-numeric)
       user: admin
       password: admin
 
   endpointResolver:
     ctag: endpoint-resolver
-    queue: generic
 
   ingress:
     exchange: ingress
@@ -59,12 +61,14 @@ core:
 
     http:
       port: 2000
-      # Put an empty string "" to generate a random value (20 character, alpha-numeric)
+      ## Put an empty string "" to generate a random value (20 character, alpha-numeric)
       user: admin
       password: admin
 
   egress:
     exchange: egress
+    routingKey: egress.generic
+    
     user: guest
     password: guest
 
@@ -106,7 +110,8 @@ core:
         password: postgres
 
         super:
-          # Put an empty string "" to generate a random value (20 character, alpha-numeric)
+          ## superuser credentials required within postgres image
+          ## Put an empty string "" to generate a random value (20 character, alpha-numeric)
           user: postgres
           password: postgres
 
@@ -136,8 +141,17 @@ skills:
       # Put an empty string "" to generate a random value (20 character, alpha-numeric)
       user: mongouser
       password: mongopassword
+  
+  echo:
+    port: 1880
 
 replicaCount: 1
+
+ingress:
+  certManager: {}
+#    clusterIssuer: ""
+#    acmeChallengeType: ""
+  host: ""
 
 image:
   repository: sapi40
@@ -147,6 +161,8 @@ image:
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
+
+storageClassName: default
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -163,9 +179,3 @@ resources: {}
   # requests:
   #   cpu: 25m
   #   memory: 270Mi
-
-storageClassName: default
-
-
-
-
