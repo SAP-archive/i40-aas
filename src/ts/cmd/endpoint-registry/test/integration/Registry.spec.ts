@@ -346,6 +346,47 @@ describe('Tests with a simple data model', function () {
       });
   });
 
+  it('can delete an endpoint address', async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
+
+    await requester
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(
+        replaceAasId(makeGoodAASDescriptor(uniqueTestId), 'test' + uniqueTestId)
+      )
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200);
+        var newUniqueTestId = 'simpleDataTest' + getRandomInteger();
+        await requester
+          .put('/AASDescriptors')
+          .auth(user, password)
+          .send(
+            replaceEndpoints(makeGoodAASDescriptor(uniqueTestId), [
+              makeGoodAASDescriptor(newUniqueTestId).descriptor.endpoints[0],
+            ])
+          )
+          .then(async (res: any) => {
+            chai.expect(res.status).to.eql(200);
+            await requester
+              .get('/AASDescriptors/test' + uniqueTestId)
+              .auth(user, password)
+              .then((res: any) => {
+                chai.expect(res.status).to.eql(200);
+                chai
+                  .expect(res.body.descriptor.endpoints[0].address)
+                  .to.eql('abc.def/' + newUniqueTestId);
+
+                chai.expect(res.body.descriptor.endpoints.length).to.eql(1);
+              });
+          });
+      })
+      .then(() => {
+        requester.close();
+      });
+  });
+
   it('patches the descriptor if requested', async function () {
     var uniqueTestId = 'simpleDataTest' + getRandomInteger();
     var requester = chai.request(app).keepOpen();
