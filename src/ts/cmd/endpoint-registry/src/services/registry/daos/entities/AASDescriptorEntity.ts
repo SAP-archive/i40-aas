@@ -25,7 +25,7 @@ export class AASDescriptorEntity {
   @Column()
   idType!: string;
 
-  @OneToOne(type => AssetEntity, { onDelete: 'CASCADE' })
+  @OneToOne(type => AssetEntity, { onUpdate: 'CASCADE',onDelete: 'CASCADE' })
   @JoinColumn()
   asset!: AssetEntity;
 
@@ -40,7 +40,7 @@ export class AASDescriptorEntity {
   signature!: string;
 
 
-  @OneToMany(type => EndpointEntity, endpoint => endpoint.aasdescriptor, { onDelete: 'CASCADE' })
+  @OneToMany(type => EndpointEntity, endpoint => endpoint.aasdescriptor, { onUpdate: 'CASCADE',onDelete: 'CASCADE' })
   endpoints!: EndpointEntity[];
 
 //TODO: check here is this approach makes more sense https://www.youtube.com/watch?v=8kZ7W-bI5qQ

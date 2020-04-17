@@ -1,6 +1,6 @@
 import { iRegistry } from '../interfaces/IRegistry';
 import { AssetEntity } from '../entities/AssetEntity';
-import { Connection, createConnection, UpdateResult, DeleteResult } from 'typeorm';
+import { Connection, createConnection, UpdateResult, DeleteResult, getConnection } from 'typeorm';
 import { EndpointEntity } from '../entities/EndpointEntity';
 import { AASDescriptorEntity } from '../entities/AASDescriptorEntity';
 import { AASDescriptorResponse } from '../responses/AASDescriptorResponse';
@@ -36,17 +36,22 @@ class Registry implements iRegistry {
     //TODO: remove cast once migration complete
 
     try {
+
+      let aasDescriptorRepository = this.client.getRepository(AASDescriptorEntity);
+      let endpointsRepository = this.client.getRepository(EndpointEntity);
+      let assetssRepository = this.client.getRepository(AssetEntity);
+
+
+
       //create Asset associated with this AAS
       // have seperate handlers for each entity and report errors e.g. when assetid present
       let asset = new AssetEntity();
       asset.id = record.asset.id;
       asset.idType = record.asset.idType;
 
-      let savedAsset = await this.client.manager.save(asset);
+      let savedAsset = await assetssRepository.save(asset);
       console.log("Asset Saved in Db ", asset);
 
-      let aasDescriptorRepository = this.client.getRepository(AASDescriptorEntity);
-      let endpointsRepository = this.client.getRepository(EndpointEntity);
 
       //finally create the AASDescriptor in DB
       let aasDescriptor = new AASDescriptorEntity();
@@ -59,7 +64,7 @@ class Registry implements iRegistry {
       //Create if not exists, update if it does
       let savedAASDescriptor = await aasDescriptorRepository.save(aasDescriptor);
 
-      console.log("AASDescriptor Saved in Db ", aasDescriptor);
+      console.log("AASDescriptor Saved in Db ", savedAASDescriptor);
 
 
       await Promise.all(
@@ -85,14 +90,34 @@ class Registry implements iRegistry {
   async updateAasDescriptorByAasId(record: IAASDescriptor): Promise<IAASDescriptor | undefined> {
 
     try {
+      //we need the current
+      let aasDescriptorRepository = this.client.getRepository(AASDescriptorEntity);
+
+      let aasLoaded = await aasDescriptorRepository.findOne({
+        where: [
+          { id: record.identification.id }],
+        relations: ["asset"]
+      });
+
+
+      //update the Asset associated with the AAS. Relation will be updated on cascade
+      let updatedAsset = await this.client
+        .createQueryBuilder()
+        .update(AssetEntity)
+        .set({
+          id: record.asset.id,
+          idType: record.asset.idType
+        })
+        .where("id = :id", { id: aasLoaded?.asset.id })
+        .execute();
+      console.log("Asset updated in Db " + JSON.stringify(updatedAsset));
+
       //This is the most efficient way in terms of performance to update entities in your database (see https://typeorm.io/#/update-query-builder )
-      console.debug("cert " + record.descriptor.certificate_x509_i40);
 
       let aasDescriptor = await this.client
         .createQueryBuilder()
         .update(AASDescriptorEntity)
         .set({
-          asset: record.asset,
           certificate_x509_i40: record.descriptor.certificate_x509_i40,
           signature: record.descriptor.signature
         })
@@ -256,9 +281,6 @@ class Registry implements iRegistry {
       throw new RegistryError(err, 500);
     }
 
-    //if not found return undefined
-
-
   }
 
 
@@ -281,7 +303,7 @@ class Registry implements iRegistry {
 
     console.log("Roles found in Db " + JSON.stringify(roleIds));
 
-
+    // Find the AASDescriptors for the given roles
     const aasDescriptorEntities = await this.client
       .getRepository(AASDescriptorEntity)
       .createQueryBuilder("aasDescriptor")
@@ -309,11 +331,12 @@ class Registry implements iRegistry {
 
   async readSemanticProtocolById(semanticProtocolId: string): Promise<ISemanticProtocol> {
 
+    console.log("Reached")
 
     try {
       //get an Entityrepository for the AASDescriptor and the Asset
       let semProtocolRepository = this.client.getRepository(SemanticProtocolEntity);
-    //  let rolesRepository = this.client.getRepository(RoleEntity);
+      let rolesRepository = this.client.getRepository(RoleEntity);
 
       //Load the AASDescriptor object from the DB as well as the related Objects (Endpoints, Asset)
       let resultSemanticProtocol = await semProtocolRepository.findOne({
@@ -322,13 +345,26 @@ class Registry implements iRegistry {
         relations: ["roles"]
       }) as SemanticProtocolEntity;
 
-      console.log("Semanticprotocol loaded  " + JSON.stringify(resultSemanticProtocol))
+      // Find the AASDescriptors for the given roles
+      //TODO: this needs to be revised
+      const aasDescriptorEntities = await this.client
+        .getRepository(AASDescriptorEntity)
+        .createQueryBuilder("aasDescriptor")
+        .innerJoinAndSelect("aasDescriptor.roles", "role")
+        .getMany();
+
+
+      console.log("Descriptors loaded  " + JSON.stringify(aasDescriptorEntities))
+
+      // Find the AASDescriptors for the given roles
 
       //get the IRole Array for returning, contruct from the RoleEntity
-      let rolesArr:IRole[] = resultSemanticProtocol.roles.map(function (roleEntity) {
+      let rolesArr: IRole[] = resultSemanticProtocol.roles.map((roleEntity) => {
+
         return {
-         name:  roleEntity.name,
-         aasDescriptorIds: roleEntity.aasDescriptors
+
+          name: roleEntity.name,
+          aasDescriptorIds: aasDescriptorEntities
         } as IRole
       });
       let protocolIdentifier = new Identifier(resultSemanticProtocol.id, resultSemanticProtocol.idType as TIdType);
@@ -345,10 +381,6 @@ class Registry implements iRegistry {
     }
 
   }
-
-
-
-
   async listAll(): Promise<Array<IEndpoint>> {
 
     return []
