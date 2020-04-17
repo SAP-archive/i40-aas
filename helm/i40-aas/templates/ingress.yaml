@@ -1,0 +1,62 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}
+  labels: 
+    service: adapter-registry
+    {{- include "i40-aas.labels" . | nindent 4 }}
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    {{- if .Values.ingress.certManager }}
+    cert-manager.io/cluster-issuer: {{ required "A valid .Values.ingress.certManager.clusterIssuer entry required!" .Values.ingress.certManager.clusterIssuer }}
+    cert-manager.io/acme-challenge-type: {{ required "A valid .Values.ingress.certManager.acmeChallengeType entry required!" .Values.ingress.certManager.acmeChallengeType }}
+    {{- end }}
+spec:
+  {{- if and .Values.ingress.certManager .Values.ingress.host }}
+  tls:
+  - hosts:
+    - {{ .Values.ingress.host }}
+    secretName: tls-secret
+  {{- end}}
+  rules:
+  - {{- if .Values.ingress.host }}
+    host: {{ .Values.ingress.host }}
+    {{- end }}
+    http:
+      paths:
+      - backend: 
+          serviceName: {{ .Release.Name }}-https-endpoint-ingress
+          servicePort: {{ .Values.core.ingress.http.port }}
+        path: /https-endpoint/(interaction(.*))
+      - backend: 
+          serviceName: {{ .Release.Name }}-grpc-endpoint-ingress
+          servicePort: {{ .Values.core.ingress.grpc.port }}
+        path: /grpc-endpoint/(.*)
+      - backend: 
+          serviceName: {{ .Release.Name }}-adapter-registry-api
+          servicePort: {{ .Values.core.registries.adapters.port }}
+        path: /adapter-registry/(.*)
+      - backend: 
+          serviceName: {{ .Release.Name }}-endpoint-registry
+          servicePort: {{ .Values.core.registries.endpoints.port }}
+        path: /endpoint-registry/(.*)
+      - backend: 
+          serviceName: {{ .Release.Name }}-storage-adapter-mongodb
+          servicePort: {{ .Values.applicationAdapters.mongoDb.port }}
+        path: /storage-adapter-mongodb/(.*)
+      - backend:
+          serviceName: {{ .Release.Name }}-rabbitmq-ui
+          servicePort: {{ .Values.core.broker.port.ui }}
+        path: /rabbitmq/(.*)
+      - backend: 
+          serviceName: {{ .Release.Name }}-mongodb
+          servicePort: {{ .Values.skills.onboarding.database.port }}
+        path: /mongodb/(.*)
+      - backend:
+          serviceName: {{ .Release.Name }}-pgadmin
+          servicePort: {{ .Values.core.registries.endpoints.database.pgAdmin.port }}
+        path: /(.*)
+
+

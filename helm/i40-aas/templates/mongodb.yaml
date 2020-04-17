@@ -80,7 +80,7 @@ spec:
         name: {{ .Release.Name }}-mongodb
         labels:
           service: mongodb
-          {{- include "i40-aas.labels" . | nindent 8 }}
+          {{- include "i40-aas.labels" . | nindent 10 }}
       spec:
         storageClassName: {{ .Values.storageClassName }}
         accessModes:

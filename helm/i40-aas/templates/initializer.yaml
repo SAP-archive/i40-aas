@@ -1,4 +1,5 @@
----
+{{- /*
+ ---
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -9,6 +10,7 @@ metadata:
 spec:
   template:
     spec:
+      restartPolicy: OnFailure
       containers:
       - name: initializer
         image: "{{ .Values.image.repository }}/i40-aas-initializer:{{ .Values.image.release }}"
@@ -84,3 +86,5 @@ spec:
           name: {{ .Values.initializer.configMapName }}
           optional: true
 ---
+ 
+*/ -}}

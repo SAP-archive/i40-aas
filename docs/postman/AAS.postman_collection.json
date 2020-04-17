@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "3ab29a58-b0b1-41c5-9da7-df23acbeda5d",
+		"_postman_id": "3e8f17cd-53af-47da-b424-44ee82356f12",
 		"name": "AAS-Service",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -527,44 +527,46 @@
 				"id": "3f54fb8e-224e-4ba7-b20f-f5d7c596843d",
 				"type": "text/javascript",
 				"exec": [
-					""
+					"// pm.test(\"Status code is 200\", function () {",
+					"//     pm.response.to.have.status(200);",
+					"// });"
 				]
 			}
 		}
 	],
 	"variable": [
 		{
-			"id": "dec89164-370e-4ea2-9d26-f86a47dab01e",
+			"id": "fe7dfd51-efb0-4273-91b6-f039c9586039",
 			"key": "endpoint_ingress_user",
 			"value": "admin",
 			"type": "string"
 		},
 		{
-			"id": "739ee403-f1d9-4d00-ba03-7e8e78529ab8",
+			"id": "ead26a00-1455-4f2e-99d9-293f77444661",
 			"key": "endpoint_ingress_pwd",
 			"value": "admin",
 			"type": "string"
 		},
 		{
-			"id": "0daa529a-8cdf-443a-bf55-f5583c9929a9",
+			"id": "93c469e4-271f-42fe-9486-dac792b97e88",
 			"key": "i40-aas-http-endpoint-ingress",
 			"value": "http://localhost:2000",
 			"type": "string"
 		},
 		{
-			"id": "351da946-dbf1-489e-995e-541f7fc9accf",
+			"id": "f0b618e7-7e5b-43da-912a-cc3651b25b12",
 			"key": "i40-aas-endpoint-registry",
 			"value": "http://localhost:4400",
 			"type": "string"
 		},
 		{
-			"id": "49a0772e-33da-40b2-9a28-485109a592d2",
+			"id": "1a80fe6c-ffe1-482e-8706-4fdd8f963b26",
 			"key": "i40-aas-data-manager",
 			"value": "http://localhost:4000",
 			"type": "string"
 		},
 		{
-			"id": "dd52a28d-6e37-4119-8794-e404a81b0f1b",
+			"id": "89edd925-4a0e-4e63-858e-bd7e6ccf9095",
 			"key": "i40-aas-adapter-registry",
 			"value": "http://localhost:4500",
 			"type": "string"
