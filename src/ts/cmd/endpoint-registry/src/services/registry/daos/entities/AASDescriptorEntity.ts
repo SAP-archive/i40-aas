@@ -40,7 +40,8 @@ export class AASDescriptorEntity {
   signature!: string;
 
 
-  @OneToMany(type => EndpointEntity, endpoint => endpoint.aasdescriptor, { onUpdate: 'CASCADE',onDelete: 'CASCADE' })
+  @OneToMany(type => EndpointEntity, endpoint => endpoint.aasdescriptor, {cascade:true})
+  @JoinTable()
   endpoints!: EndpointEntity[];
 
 //TODO: check here is this approach makes more sense https://www.youtube.com/watch?v=8kZ7W-bI5qQ

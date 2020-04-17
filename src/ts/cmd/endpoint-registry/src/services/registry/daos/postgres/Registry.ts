@@ -60,25 +60,16 @@ class Registry implements iRegistry {
       aasDescriptor.asset = record.asset;
       aasDescriptor.certificate_x509_i40 = record.descriptor.certificate_x509_i40;
       aasDescriptor.signature = record.descriptor.signature;
+
+      aasDescriptor.endpoints = record.descriptor.endpoints as EndpointEntity[]
+      console.log("Endpoints ", aasDescriptor.endpoints);
+
       //await this.client.manager.save(aasDescriptor);
       //Create if not exists, update if it does
       let savedAASDescriptor = await aasDescriptorRepository.save(aasDescriptor);
 
       console.log("AASDescriptor Saved in Db ", savedAASDescriptor);
 
-
-      await Promise.all(
-        record.descriptor.endpoints.map(async endpoint => {
-          let ep = new EndpointEntity();
-          ep.aasdescriptor = aasDescriptor; //one to many relation
-          ep.address = endpoint.address;
-          ep.type = endpoint.type;
-          ep.target = endpoint.target;
-          await endpointsRepository.save(ep);
-          console.log("Endpoint Saved in Db ", ep);
-
-        })
-      );
       return record;
     } catch (error) {
       console.log(error)
@@ -139,6 +130,7 @@ class Registry implements iRegistry {
             })
             .where("aasdescriptor = :aasdescriptor", { aasdescriptor: record.identification.id })
             .andWhere("address = :address", { address: endpoint.address })
+            //.onConflict(`("userId") DO UPDATE SET UUID = :uuid`)
             .execute();
 
           console.log("Endpoint Upated in Db ", updateResult);

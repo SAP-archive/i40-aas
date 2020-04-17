@@ -1,4 +1,4 @@
-import {Entity, Column, PrimaryGeneratedColumn, Unique, ManyToOne, Index, PrimaryColumn} from "typeorm";
+import {Entity, Column, PrimaryGeneratedColumn, Unique, ManyToOne, Index, PrimaryColumn, JoinTable} from "typeorm";
 import { AASDescriptorEntity } from "./AASDescriptorEntity";
 
 @Entity()
@@ -9,6 +9,7 @@ export class EndpointEntity {
   @PrimaryColumn({
     length: 1024
     })
+    //TODO: validate if this is a valid URL format
    address!: string;
 
    @PrimaryColumn({
@@ -22,7 +23,8 @@ export class EndpointEntity {
     target!: string;
 
     //AASDescriptor : many Endpoints
-    @ManyToOne(type => AASDescriptorEntity, aasdescriptor => aasdescriptor.endpoints,{onDelete: 'CASCADE'})
+    @ManyToOne(type => AASDescriptorEntity, aasdescriptor => aasdescriptor.endpoints)
+    @JoinTable()
     aasdescriptor!: AASDescriptorEntity;
 
 
