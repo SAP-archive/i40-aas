@@ -47,6 +47,7 @@
     "express-basic-auth": "^1.2.0",
     "generic-pool": "^3.7.1",
     "i40-aas-objects": "0.2.6",
+    "lodash": "^4.17.15",
     "pg": "^7.11.0",
     "ts-postgres": "^1.1.0",
     "typeorm": "^0.2.24",
