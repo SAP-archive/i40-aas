@@ -331,8 +331,6 @@ class Registry implements iRegistry {
 
   async readSemanticProtocolById(semanticProtocolId: string): Promise<ISemanticProtocol> {
 
-    console.log("Reached")
-
     try {
       //get an Entityrepository for the AASDescriptor and the Asset
       let semProtocolRepository = this.client.getRepository(SemanticProtocolEntity);
