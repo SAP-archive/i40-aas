@@ -1,7 +1,7 @@
-BUILD_TAG = $(shell cat .git/refs/heads/master)
+BUILD_TAG ?= $(shell cat .git/refs/heads/master)
 
 ## DockerHub
-REGISTRY = sapi40
+REGISTRY ?= sapi40
 
 
 
@@ -49,7 +49,8 @@ dev:
 .PHONY: build-%
 build-%:
 	BUILD_TAG=$(BUILD_TAG) docker-compose -f docker-compose.dev.yml build i40-aas-$*
-	BUILD_TAG=$(BUILD_TAG) docker tag $(REGISTRY)/i40-aas-$*:$(BUILD_TAG) $(REGISTRY)/i40-aas-$*:latest
+	BUILD_TAG=$(BUILD_TAG) docker tag sapi40/i40-aas-$*:$(BUILD_TAG) $(REGISTRY)/i40-aas-$*:latest
+	BUILD_TAG=$(BUILD_TAG) docker tag sapi40/i40-aas-$*:$(BUILD_TAG) $(REGISTRY)/i40-aas-$*:$(BUILD_TAG)
 
 ## push a single service image
 .PHONY: push-%
