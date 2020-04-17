@@ -14,7 +14,10 @@ export class RoleEntity {
     @Column()
     name!: string;
 
-    @ManyToMany(type => AASDescriptorEntity, aasDescriptor => aasDescriptor.roles)
+    @ManyToMany(type => AASDescriptorEntity, aasDescriptor => aasDescriptor.roles, {
+      eager: true
+  } )
+  @JoinTable()
     aasDescriptors!: AASDescriptorEntity[];
 
 

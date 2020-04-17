@@ -11,7 +11,7 @@ export class SemanticProtocolEntity {
   idType!: string;
 
       //Role : many SemanticProtocols
-      @OneToMany(type => RoleEntity, role => role.semProtocol,{onUpdate: 'CASCADE', onDelete: 'CASCADE'})
+      @OneToMany(type => RoleEntity, role => role.semProtocol,{onUpdate: 'CASCADE', onDelete: 'CASCADE', eager:true})
       roles!: RoleEntity[];
 
 }
