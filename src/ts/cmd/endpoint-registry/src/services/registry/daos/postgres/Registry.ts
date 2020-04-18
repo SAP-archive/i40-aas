@@ -33,7 +33,6 @@ class Registry implements iRegistry {
   }
 
   async registerAas(record: IAASDescriptor): Promise<IAASDescriptor | undefined> {
-    //TODO: remove cast once migration complete
 
     try {
 
@@ -61,10 +60,13 @@ class Registry implements iRegistry {
       aasDescriptor.certificate_x509_i40 = record.descriptor.certificate_x509_i40;
       aasDescriptor.signature = record.descriptor.signature;
 
+      //The Endpoints array is replaced with the one in the request. It is not possible to
+      //update individual endpoints since no endpoint-id is used.
+      //Thus, the client should sent the whole endpoints array every time (i.e.) first get then put
+
       aasDescriptor.endpoints = record.descriptor.endpoints as EndpointEntity[]
       console.log("Endpoints ", aasDescriptor.endpoints);
 
-      //await this.client.manager.save(aasDescriptor);
       //Create if not exists, update if it does
       let savedAASDescriptor = await aasDescriptorRepository.save(aasDescriptor);
 
@@ -78,33 +80,32 @@ class Registry implements iRegistry {
 
   }
 
-  async updateAasDescriptorByAasId(record: IAASDescriptor): Promise<IAASDescriptor | undefined> {
+  async updateAasDescriptorByAasId(record: IAASDescriptor): Promise<IAASDescriptor> {
 
     try {
       //we need the current
       let aasDescriptorRepository = this.client.getRepository(AASDescriptorEntity);
 
-      let aasLoaded = await aasDescriptorRepository.findOne({
-        where: [
-          { id: record.identification.id }],
-        relations: ["asset"]
-      });
+      //try to find the AASDescriptor in the DB
+      var loadedAASDescriptor = await aasDescriptorRepository.findOne({id:record.identification.id});
+      if(loadedAASDescriptor){
 
+      //The Endpoints array is replaced with the one in the request. It is not possible to
+      //update individual endpoints since no endpoint-id is used.
+      //Thus, the client should sent the whole endpoints array every time (i.e.) first get then put
+      console.debug("Updating Endpoints ... ");
 
-      //update the Asset associated with the AAS. Relation will be updated on cascade
-      let updatedAsset = await this.client
-        .createQueryBuilder()
-        .update(AssetEntity)
-        .set({
-          id: record.asset.id,
-          idType: record.asset.idType
-        })
-        .where("id = :id", { id: aasLoaded?.asset.id })
-        .execute();
-      console.log("Asset updated in Db " + JSON.stringify(updatedAsset));
+        loadedAASDescriptor.endpoints = record.descriptor.endpoints as EndpointEntity[]
+        loadedAASDescriptor.asset = record.asset;
+        loadedAASDescriptor.certificate_x509_i40 = record.descriptor.certificate_x509_i40
+        loadedAASDescriptor.signature = record.descriptor.signature
+           //Create if not exists, update if it does
+        let savedAasDescriptor = await aasDescriptorRepository.save(loadedAASDescriptor);
 
-      //This is the most efficient way in terms of performance to update entities in your database (see https://typeorm.io/#/update-query-builder )
+      //TODO: maybe do this with a .save as above?
+      console.debug("Updating Descriptor ... ");
 
+      /* alternative to updating
       let aasDescriptor = await this.client
         .createQueryBuilder()
         .update(AASDescriptorEntity)
@@ -114,34 +115,20 @@ class Registry implements iRegistry {
         })
         .where("id = :id", { id: record.identification.id })
         .execute();
+        */
 
-      console.log("AASDescriptor updated in Db " + JSON.stringify(aasDescriptor));
+      console.log("AASDescriptor updated in Db " + JSON.stringify(savedAasDescriptor));
 
-      //updated each Endpoint refering to this AAS
-      await Promise.all(
-        record.descriptor.endpoints.map(async endpoint => {
-
-          let updateResult = await this.client
-            .createQueryBuilder()
-            .update(EndpointEntity)
-            .set({
-              address: endpoint.address,
-              type: endpoint.type
-            })
-            .where("aasdescriptor = :aasdescriptor", { aasdescriptor: record.identification.id })
-            .andWhere("address = :address", { address: endpoint.address })
-            //.onConflict(`("userId") DO UPDATE SET UUID = :uuid`)
-            .execute();
-
-          console.log("Endpoint Upated in Db ", updateResult);
-
-        })
-      );
       return record
+    }
+    else{ console.log("No AASDescriptor with this Id in DB "+record.identification.id)
+      throw new RegistryError("Resource not found in Database", 404);
+    }
 
     } catch (error) {
       console.log("Error caught " + error)
-      return undefined
+      throw new RegistryError(error, 500);
+
     }
 
   }
@@ -162,7 +149,8 @@ class Registry implements iRegistry {
 
     } catch (error) {
       console.log("Error caught " + error)
-      return undefined
+      throw new RegistryError(error, 500);
+
     }
 
   }
@@ -220,7 +208,7 @@ class Registry implements iRegistry {
 
     } catch (error) {
       console.log("Error caught " + error)
-      return record
+      throw new RegistryError(error, 500);
     }
   }
 
@@ -269,8 +257,9 @@ class Registry implements iRegistry {
 
 
 
-    } catch (err) {
-      throw new RegistryError(err, 500);
+    } catch (error) {
+      console.log("Error caught " + error)
+      throw new RegistryError(error, 500);
     }
 
   }

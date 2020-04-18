@@ -25,7 +25,7 @@ export class AASDescriptorEntity {
   @Column()
   idType!: string;
 
-  @OneToOne(type => AssetEntity, { onUpdate: 'CASCADE',onDelete: 'CASCADE' })
+  @OneToOne(type => AssetEntity, {cascade:true})
   @JoinColumn()
   asset!: AssetEntity;
 
