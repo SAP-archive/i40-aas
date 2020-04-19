@@ -18,6 +18,27 @@ function updateResponseForConflict(error: any, res: Response) {
 //TODO: request validation checks
 export default [
   {
+    path: '/admin/AASDescriptors',
+    method: 'put',
+    handler: async (req: Request, res: Response, next: NextFunction) => {
+      logger.debug('/administrationshells PUT request received');
+      var registerAASRequest: IAASDescriptor = req.body;
+
+      try {
+        await registryApi.registerOrReplace(registerAASRequest);
+        res.status(200).send(req.body);
+        logger.debug(
+          'Now sending back response of /administrationshells PUT request'
+        );
+      } catch (err) {
+        logger.error(' Error occurerd during processing of the request ' + err);
+        next(err);
+      }
+
+
+    }
+  },
+  {
     path: '/AASDescriptors',
     method: 'put',
     handler: async (req: Request, res: Response, next: NextFunction) => {

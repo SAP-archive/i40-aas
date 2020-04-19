@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-curl --location --request PUT $CORE_REGISTRIES_ENDPOINTS_HOST:$CORE_REGISTRIES_ENDPOINTS_PORT'/AASDescriptors' \
+curl --location --request PUT $CORE_REGISTRIES_ENDPOINTS_HOST:$CORE_REGISTRIES_ENDPOINTS_PORT'/admin/AASDescriptors' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Basic YWRtaW46YWRtaW4=' \
 -d @createAASDescriptors.json \

@@ -63,6 +63,16 @@ class RegistryApi {
 
   }
 
+  async registerOrReplace(req: IAASDescriptor) {
+    var registryDao: iRegistry = await RegistryFactory.getRegistry();
+    try {
+      var result = await registryDao.upsertAASDescriptor(req);
+      console.log(result);
+      return result;
+    } catch (e) {
+      throw e;
+    }
+  }
   async register(req: IAASDescriptor) {
     var registryDao: iRegistry = await RegistryFactory.getRegistry();
     try {
