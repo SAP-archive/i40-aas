@@ -11,10 +11,10 @@ import { IAASDescriptor } from '../interfaces/IAASDescriptor';
 import { ISemanticProtocol } from './ISemanticProtocol';
 import { SemanticProtocolEntity } from '../entities/SemanticProtocolEntity';
 import { RoleEntity } from '../entities/RoleEntity';
-import { RegistryError } from '../../../../utils/RegistryError';
 import { IEndpoint } from '../interfaces/IEndpoint';
 import { SemanticProtocolResponse } from '../responses/SemanticProtocolResponse';
 import { IRole } from '../interfaces/IRole';
+import { HTTP422Error } from '../../../../utils/httpErrors';
 
 class Registry implements iRegistry {
 
@@ -32,7 +32,7 @@ class Registry implements iRegistry {
   constructor(private readonly client: Connection) {
   }
 
-  async registerAas(record: IAASDescriptor): Promise<IAASDescriptor | undefined> {
+  async upsertAASDescriptor(record: IAASDescriptor): Promise<IAASDescriptor | undefined> {
 
     try {
 
@@ -80,6 +80,63 @@ class Registry implements iRegistry {
 
   }
 
+
+
+  async createAASDescriptor(record: IAASDescriptor): Promise<IAASDescriptor | undefined> {
+
+    try {
+
+      let aasDescriptorRepository = this.client.getRepository(AASDescriptorEntity);
+      let assetssRepository = this.client.getRepository(AssetEntity);
+
+      //check if the AASDescriptor is already registered in DB
+      var loadedAASDescriptor = await aasDescriptorRepository.findOne({id:record.identification.id});
+      if(loadedAASDescriptor == undefined){
+
+      //create Asset associated with this AAS
+      // have seperate handlers for each entity and report errors e.g. when assetid present
+      let asset = new AssetEntity();
+      asset.id = record.asset.id;
+      asset.idType = record.asset.idType;
+
+      let savedAsset = await assetssRepository.save(asset);
+      console.log("Asset Saved in Db ", asset);
+
+
+      //finally create the AASDescriptor in DB
+      let aasDescriptor = new AASDescriptorEntity();
+      aasDescriptor.id = record.identification.id;
+      aasDescriptor.idType = record.identification.idType;
+      aasDescriptor.asset = record.asset;
+      aasDescriptor.certificate_x509_i40 = record.descriptor.certificate_x509_i40;
+      aasDescriptor.signature = record.descriptor.signature;
+
+      //The Endpoints array is replaced with the one in the request. It is not possible to
+      //update individual endpoints since no endpoint-id is used.
+      //Thus, the client should sent the whole endpoints array every time (i.e.) first get then put
+
+      aasDescriptor.endpoints = record.descriptor.endpoints as EndpointEntity[]
+      console.log("Endpoints ", aasDescriptor.endpoints);
+
+      //Create if not exists, update if it does
+      let savedAASDescriptor = await aasDescriptorRepository.save(aasDescriptor);
+
+      console.log("AASDescriptor Saved in Db ", savedAASDescriptor);
+
+      return record;
+      }
+      else{
+        console.log("Resource alredy registered in Database")
+        throw new HTTP422Error("Resource alredy registered in Database");
+      }
+    } catch (error) {
+      console.log("Registry error caught: " + error)
+      throw error;
+
+    }
+
+  }
+
   async updateAasDescriptorByAasId(record: IAASDescriptor): Promise<IAASDescriptor> {
 
     try {
@@ -122,12 +179,12 @@ class Registry implements iRegistry {
       return record
     }
     else{ console.log("No AASDescriptor with this Id in DB "+record.identification.id)
-      throw new RegistryError("Resource not found in Database", 404);
+      throw new HTTP422Error("Resource not found in Database");
     }
 
     } catch (error) {
       console.log("Error caught " + error)
-      throw new RegistryError(error, 500);
+      throw error;
 
     }
 
@@ -149,7 +206,7 @@ class Registry implements iRegistry {
 
     } catch (error) {
       console.log("Error caught " + error)
-      throw new RegistryError(error, 500);
+      throw error;
 
     }
 
@@ -208,7 +265,7 @@ class Registry implements iRegistry {
 
     } catch (error) {
       console.log("Error caught " + error)
-      throw new RegistryError(error, 500);
+      throw error;
     }
   }
 
@@ -259,7 +316,7 @@ class Registry implements iRegistry {
 
     } catch (error) {
       console.log("Error caught " + error)
-      throw new RegistryError(error, 500);
+      throw error;
     }
 
   }
@@ -355,7 +412,7 @@ class Registry implements iRegistry {
 
     } catch (error) {
       console.log("Error caught " + error)
-      throw new RegistryError(error, 500);
+      throw error;
 
     }
 

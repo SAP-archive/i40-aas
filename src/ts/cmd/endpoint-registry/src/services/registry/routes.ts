@@ -1,7 +1,8 @@
-import { Request, Response } from 'express';
-import { RegistryError } from '../../utils/RegistryError';
+import { Request, Response, NextFunction } from 'express';
 import { RegistryApi } from './RegistryApi';
 import { IAASDescriptor } from './daos/interfaces/IAASDescriptor';
+import * as logger from 'winston';
+import { HTTP422Error } from '../../utils/httpErrors';
 
 
 var registryApi = new RegistryApi();
@@ -19,27 +20,29 @@ export default [
   {
     path: '/AASDescriptors',
     method: 'put',
-    handler: async (req: Request, res: Response) => {
-      console.log('/administrationshells POST request received');
+    handler: async (req: Request, res: Response, next: NextFunction) => {
+      logger.debug('/administrationshells PUT request received');
       var registerAASRequest: IAASDescriptor = req.body;
 
       try {
         await registryApi.register(registerAASRequest);
-      } catch (e) {
-        updateResponseForConflict(e, res);
-        res.end(e.message);
-        return;
+
+        res.status(200).send(req.body);
+        logger.debug(
+          'Now sending back response of /administrationshells PUT request'
+        );
+      } catch (err) {
+        logger.error(' Error occurerd during processing of the request ' + err);
+        next(err);
       }
-      console.log(
-        'Now sending back response of /administrationshells POST request'
-      );
-      res.json(req.body);
+
+
     }
   },
   {
     path: '/AASDescriptors/:aasId',
     method: 'get',
-    handler: async (req: Request, res: Response) => {
+    handler: async (req: Request, res: Response, next: NextFunction) => {
       try {
         console.log('Path parameters received:' + JSON.stringify(req.params.aasId));
         if (req.params.aasId) {
@@ -49,10 +52,8 @@ export default [
             )
           );
         } else
-          throw new RegistryError(
-            'Mandatory path parameters: aasId is not found in request',
-            422
-          );
+          throw new HTTP422Error(
+            'Mandatory path parameters: aasId is not found in request');
       } catch (e) {
         console.log(e);
         res.statusCode = e.r_statusCode || 500;
@@ -64,7 +65,7 @@ export default [
     //TODO: Add validation that aasId==req.body.identification.id
     path: '/AASDescriptors/:aasId',
     method: 'patch',
-    handler: async (req: Request, res: Response) => {
+    handler: async (req: Request, res: Response, next: NextFunction) => {
       try {
         console.log('Path parameters received:' + JSON.stringify(req.params));
         if (req.params.aasId) {
@@ -74,9 +75,8 @@ export default [
             )
           );
         } else
-          throw new RegistryError(
-            'Mandatory path parameters: aasId is not found in request',
-            422
+          throw new HTTP422Error(
+            'Mandatory path parameters: aasId is not found in request'
           );
       } catch (e) {
         console.log(e);
@@ -89,7 +89,7 @@ export default [
     //TODO: Add validation that aasId==req.body.identification.id
     path: '/AASDescriptors/:aasId',
     method: 'delete',
-    handler: async (req: Request, res: Response) => {
+    handler: async (req: Request, res: Response, next: NextFunction) => {
       try {
         console.log('Path parameters received:' + JSON.stringify(req.params));
         if (req.params.aasId) {
@@ -99,10 +99,8 @@ export default [
             )
           );
         } else
-          throw new RegistryError(
-            'Mandatory path parameters: aasId is not found in request',
-            422
-          );
+          throw new HTTP422Error(
+            'Mandatory path parameters: aasId is not found in request'          );
       } catch (e) {
         console.log(e);
         res.statusCode = e.r_statusCode || 500;
@@ -113,7 +111,7 @@ export default [
   {
     path: '/listAllEndpoints',
     method: 'get',
-    handler: async (req: Request, res: Response) => {
+    handler: async (req: Request, res: Response, next: NextFunction) => {
       try {
         res.json(await registryApi.getAllEndpointsList());
       } catch (e) {
@@ -125,7 +123,7 @@ export default [
   }, {
     path: '/semanticProtocols',
     method: 'put',
-    handler: async (req: Request, res: Response) => {
+    handler: async (req: Request, res: Response, next: NextFunction) => {
       console.log('/semanticprotocol PUT request received');
       try {
         await registryApi.createSemanticProtocol(req.body);
@@ -140,7 +138,7 @@ export default [
    {
     path: '/semanticProtocols/:sematicProtocolId',
     method: 'delete',
-    handler: async (req: Request, res: Response) => {
+    handler: async (req: Request, res: Response, next: NextFunction) => {
       console.log('/semanticprotocol DELETE request received');
 
       try {
@@ -152,10 +150,8 @@ export default [
             )
           );
         } else
-          throw new RegistryError(
-            'Mandatory path parameters: aasId is not found in request',
-            422
-          );
+          throw new HTTP422Error(
+            'Mandatory path parameters: sematicProtocolId is not found in request'          );
       } catch (e) {
         console.log(e);
         res.statusCode = e.r_statusCode || 500;
@@ -167,7 +163,7 @@ export default [
   {
     path: '/semanticProtocols/:semanticProtocolId/role/:roleName/AASDescriptors',
     method: 'get',
-    handler: async (req: Request, res: Response) => {
+    handler: async (req: Request, res: Response, next: NextFunction) => {
       console.log('GET AASDescriptor by semanticprotocol and role name request received');
       try {
         console.log('Path parameters received:' + JSON.stringify(req.params));
@@ -183,7 +179,7 @@ export default [
   {
     path: '/semanticProtocols/:semanticProtocolId',
     method: 'get',
-    handler: async (req: Request, res: Response) => {
+    handler: async (req: Request, res: Response, next: NextFunction) => {
       console.log('GET SemanticProtocol by semanticprotocol request received');
       try {
         console.log('Path parameters received:' + JSON.stringify(req.params));

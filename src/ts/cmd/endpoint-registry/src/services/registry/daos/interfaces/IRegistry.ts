@@ -7,7 +7,7 @@ import { IEndpoint } from './IEndpoint';
 
 interface iRegistry {
   readAASDescriptorByAasId(aasId: string): Promise<IAASDescriptor>;
-  registerAas(req: IAASDescriptor): Promise<IAASDescriptor | undefined>;
+  createAASDescriptor(req: IAASDescriptor): Promise<IAASDescriptor | undefined>;
   updateAasDescriptorByAasId(req: IAASDescriptor): Promise<IAASDescriptor | undefined>;
   deleteAasDescriptorByAasId(aasId: string): Promise<DeleteResult|undefined>;
   deleteSemanticProtocolById(semanticProtocolId: string): Promise<DeleteResult|undefined>;

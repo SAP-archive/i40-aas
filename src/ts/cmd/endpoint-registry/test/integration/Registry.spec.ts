@@ -1,5 +1,4 @@
 import { IAASDescriptor } from '../../src/services/registry/daos/interfaces/IAASDescriptor';
-import { logger } from '../../src/log';
 import { IEndpoint } from '../../src/services/registry/daos/interfaces/IEndpoint';
 
 const chai = require('chai');

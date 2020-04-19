@@ -2,7 +2,7 @@ const { Pool } = require('pg');
 import { Registry } from './Registry';
 import { DatabaseConnection } from './DatabaseConnection';
 import { Connection, createConnection, getConnection } from 'typeorm';
-import { logger } from '../../../../log';
+import { logger } from '../../../../utils/log';
 
 class RegistryFactory {
   static async getRegistry(): Promise<Registry> {
