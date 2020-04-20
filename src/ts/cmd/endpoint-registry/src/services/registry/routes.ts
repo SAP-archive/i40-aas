@@ -75,10 +75,10 @@ export default [
         } else
           throw new HTTP422Error(
             'Mandatory path parameters: aasId is not found in request');
-      } catch (e) {
-        console.log(e);
-        res.statusCode = e.r_statusCode || 500;
-        res.end(JSON.stringify(e));
+      } catch (err) {
+        console.log(err);
+        next(err);
+
       }
     }
   },

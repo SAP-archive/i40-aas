@@ -14,7 +14,8 @@ import { RoleEntity } from '../entities/RoleEntity';
 import { IEndpoint } from '../interfaces/IEndpoint';
 import { SemanticProtocolResponse } from '../responses/SemanticProtocolResponse';
 import { IRole } from '../interfaces/IRole';
-import { HTTP422Error } from '../../../../utils/httpErrors';
+import { HTTP422Error, HTTP404Error } from '../../../../utils/httpErrors';
+import { logger } from '../../../../utils/log';
 
 class Registry implements iRegistry {
 
@@ -288,6 +289,7 @@ class Registry implements iRegistry {
   async readAASDescriptorByAasId(
     aasId: string
   ): Promise<IAASDescriptor> {
+
     try {
       //get an Entityrepository for the AASDescriptor and the Asset
       let aasDescriptorRepository = this.client.getRepository(AASDescriptorEntity);
@@ -301,7 +303,7 @@ class Registry implements iRegistry {
         relations: ["endpoints", "asset"]
       }) as AASDescriptorEntity;
 
-
+      if(resultAasDescriptor) {
       console.debug("asset id " + JSON.stringify(resultAasDescriptor));
       let resultAsset = await aasAssetRepository.findOne({ id: resultAasDescriptor.asset.id }) as AssetEntity
       let aasDescrIdentifier = new Identifier(resultAasDescriptor.id, resultAasDescriptor.idType as TIdType);
@@ -311,6 +313,10 @@ class Registry implements iRegistry {
 
       let response = new AASDescriptorResponse(aasDescrIdentifier, assetIdentifier, descr);
       return response;
+      }
+      else{
+        throw new HTTP404Error("No AASDescriptor found with aasId: "+ aasId);
+      }
 
 
 
@@ -360,8 +366,8 @@ class Registry implements iRegistry {
         return await this.readAASDescriptorByAasId(id)
       }));
 
-    console.log("AASDescriptorResponses for the given roles " + JSON.stringify(AASDescriptors));
-
+    logger.debug("AASDescriptorResponses for the given roles " + JSON.stringify(AASDescriptors));
+    
     return AASDescriptors;
   }
 
