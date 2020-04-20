@@ -398,7 +398,7 @@ describe('Tests with a simple data model', function () {
       )
       .then(async (res: any) => {
         chai.expect(res.status).to.eql(200);
-        var newUniqueTestId = 'simpleDataTest' + getRandomInteger();
+        //var newUniqueTestId = 'simpleDataTest' + getRandomInteger();
         await requester
           .patch('/AASDescriptors/test' + uniqueTestId)
           .auth(user, password)
@@ -420,7 +420,7 @@ describe('Tests with a simple data model', function () {
       });
   });
 
-  it('returns a 401 error if the uri is an empty string in the provided json object', async function () {
+  it('returns a 400 error if the uri is an empty string in the provided json object', async function () {
     var uniqueTestId = 'simpleDataTest' + getRandomInteger();
     var requester = chai.request(app).keepOpen();
 
@@ -432,11 +432,11 @@ describe('Tests with a simple data model', function () {
         replaceAddressInFirstEndpoint(makeGoodAASDescriptor(uniqueTestId), '')
       )
       .then(async (res: any) => {
-        chai.expect(res.status).to.eql(401);
+        chai.expect(res.status).to.eql(400);
       });
   });
 
-  it('returns a 401 error if a bad target is provided', async function () {
+  it('returns a 400 error if a bad target is provided', async function () {
     var uniqueTestId = 'simpleDataTest' + Math.random();
     var requester = chai.request(app).keepOpen();
 
@@ -451,11 +451,11 @@ describe('Tests with a simple data model', function () {
         )
       )
       .then(async (res: any) => {
-        chai.expect(res.status).to.eql(401);
+        chai.expect(res.status).to.eql(400);
       });
   });
 
-  it('returns a 401 error if the uri is missing in the provided json object', async function () {
+  it('returns a 400 error if the uri is missing in the provided json object', async function () {
     var uniqueTestId = 'simpleDataTest' + getRandomInteger();
     var requester = chai.request(app).keepOpen();
 
@@ -465,11 +465,11 @@ describe('Tests with a simple data model', function () {
       .auth(user, password)
       .send(removeAddressInFirstEndpoint(makeGoodAASDescriptor(uniqueTestId)))
       .then(async (res: any) => {
-        chai.expect(res.status).to.eql(401);
+        chai.expect(res.status).to.eql(400);
       });
   });
 
-  it('returns a 401 error if a uri is badly formatted in the provided json object', async function () {
+  it('returns a 400 error if a uri is badly formatted in the provided json object', async function () {
     var uniqueTestId = 'simpleDataTest' + getRandomInteger();
 
     await chai
@@ -483,7 +483,7 @@ describe('Tests with a simple data model', function () {
         )
       )
       .then(async (res: any) => {
-        chai.expect(res.status).to.eql(401);
+        chai.expect(res.status).to.eql(400);
       });
   });
 
