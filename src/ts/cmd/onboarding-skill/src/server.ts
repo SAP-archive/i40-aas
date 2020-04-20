@@ -37,18 +37,18 @@ let DATA_MANAGER_BASE_URL =
   ':' +
   checkEnvVar('CORE_DATA_MANAGER_PORT');
 
-let ROOT_TOPIC = checkEnvVar('SKILLS_ONBOARDING_APPROVAL_ROOT_TOPIC');
+let ROOT_TOPIC = checkEnvVar('SKILLS_ONBOARDING_ROOT_TOPIC');
 let TOPIC = ROOT_TOPIC + '.*';
+let MY_URI = checkEnvVar('SKILLS_ONBOARDING_URI');
+let MY_ROLE = checkEnvVar('SKILLS_ONBOARDING_ROLE');
 
 // The queue is generated based on the binding key and is unique for the client
-// GUID + CORE_EGRESS_HTTP_BROKER_BINDINGKEY; //TODO: here also from env variable??
+// GUID + CORE_EGRESS_HTTP_BROKER_BINDINGKEY; //TODO: here also from env variable??	
 
-let BROKER_QUEUE = ROOT_TOPIC + '/' + uuid(); //TODO: here also from env variable??
+let BROKER_QUEUE = ROOT_TOPIC +"/"+ uuid(); //TODO: here also from env variable??	
 
-let MY_URI = checkEnvVar('SKILLS_ONBOARDING_APPROVAL_URI');
-let MY_ROLE = checkEnvVar('SKILLS_ONBOARDING_APPROVAL_ROLE');
 let COLLECTION_IN_DATABASE = checkEnvVar(
-  'SKILLS_ONBOARDING_APPROVAL_STATES_COLLECTION'
+  'SKILLS_ONBOARDING_STATES_COLLECTION'
 );
 let MONGO_INITDB_DATABASE = checkEnvVar('SKILLS_ONBOARDING_DATABASE_NAME');
 let MONGO_INITDB_ROOT_USERNAME = checkEnvVar('SKILLS_ONBOARDING_DATABASE_USER');

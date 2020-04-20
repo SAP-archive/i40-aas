@@ -25,9 +25,9 @@ process.on("uncaughtException", e => {
   });
 
 
-const PORT = 4500 ;
+const PORT = process.env.CORE_REGISTRIES_ADAPTERS_PORT || 4500 ;
 const server = http.createServer(router);
 
-server.listen(PORT, () => logger.info(`A St. Adapter Registry Service is running http://localhost:${PORT}...`));
+server.listen(PORT, () => logger.info(`A Application Adapter Registry Service is running http://localhost:${PORT}...`));
 
 export {router as app};

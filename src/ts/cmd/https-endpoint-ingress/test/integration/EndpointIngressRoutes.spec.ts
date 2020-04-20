@@ -45,7 +45,7 @@ describe('the server', async function() {
       .get("/health")
       .auth(INGRESS_ADMIN_USER, INGRESS_ADMIN_PASS)
       .then(function(res: any) {
-        chai.expect(res.text).to.eql("Server Up!");
+	chai.expect(res.text).to.eql("Server Up!");
       });
   });
 
@@ -55,9 +55,9 @@ describe('the server', async function() {
     .send({
       "id": 234242,
       "data":{
-        "displayname":"name",
-        "avatar":"displayname"
-        }
+	"displayname":"name",
+	"avatar":"displayname"
+	}
       })
     .then((res:any) => {
       chai.expect(res.status).to.eql(401);// expression which will be true if response status equal to 200
@@ -71,76 +71,76 @@ describe('the server', async function() {
       .set("content-type", "application/json")
       .send(interaction)
       .then((res:any) => {
-        //chai.assert(res.body.displayname).to.eql('name'); // assertion expression which will be true if "displayname" equal to "name"
-        chai.expect(res.status).to.eql(200);// expression which will be true if response status equal to 200
-        done();
+	//chai.assert(res.body.displayname).to.eql('name'); // assertion expression which will be true if "displayname" equal to "name"
+	chai.expect(res.status).to.eql(200);// expression which will be true if response status equal to 200
+	done();
       });
     });
 
     it("will give a 400 response if the input is not parseable", async function() {
       return chai
-        .request(app)
-        .post("/interaction")
-        .auth(INGRESS_ADMIN_USER, INGRESS_ADMIN_PASS)
-        .set("content-type", "application/json")
-        .send(interaction + "xx")
-        .then(function(res: any) {
-          chai.expect(res).to.have.status(400);
-        });
+	.request(app)
+	.post("/interaction")
+	.auth(INGRESS_ADMIN_USER, INGRESS_ADMIN_PASS)
+	.set("content-type", "application/json")
+	.send(interaction + "xx")
+	.then(function(res: any) {
+	  chai.expect(res).to.have.status(400);
+	});
     });
     it("will give a 404 Not Found response if the endpoint not found", async function() {
       return chai
-        .request(app)
-        .post("/foo")
-        .auth(INGRESS_ADMIN_USER, INGRESS_ADMIN_PASS)
-        .set("content-type", "application/json")
-        .send(interaction)
-        .then(function(res: any) {
-          chai.expect(res).to.have.status(404);
-        });
+	.request(app)
+	.post("/foo")
+	.auth(INGRESS_ADMIN_USER, INGRESS_ADMIN_PASS)
+	.set("content-type", "application/json")
+	.send(interaction)
+	.then(function(res: any) {
+	  chai.expect(res).to.have.status(404);
+	});
     });
 
     it("will give a 422 response if the receiver role is missing", async function() {
 
       let request = {
-        "frame":
-        {
-          "semanticProtocol": "i40:registry-semanticProtocol/onboarding",
-          "type": "publishInstance",
-          "messageId": "Sample_Msg_ID_000",
-          "replyBy": 29993912,
-          "receiver": {
-          },
-          "sender": {
-                    "identification": {
-                    "id":  "https://i40-test-aas-server.cfapps.eu10.hana.ondemand.com/aas",
-                    "idType": "URI"
-          }
-                    ,"role":{"name":"Operator" }
-          },
-          "conversationId": "Foo_Conv_ID_000"
-        },"interactionElements": [] };
+	"frame":
+	{
+	  "semanticProtocol": "i40:registry-semanticProtocol/onboarding",
+	  "type": "publishInstance",
+	  "messageId": "Sample_Msg_ID_000",
+	  "replyBy": 29993912,
+	  "receiver": {
+	  },
+	  "sender": {
+		    "identification": {
+		    "id":  "https://i40-test-aas-server.cfapps.eu10.hana.ondemand.com/aas",
+		    "idType": "URI"
+	  }
+		    ,"role":{"name":"Operator" }
+	  },
+	  "conversationId": "Foo_Conv_ID_000"
+	},"interactionElements": [] };
 
       return chai
-        .request(app)
-        .post("/interaction")
-        .auth(INGRESS_ADMIN_USER, INGRESS_ADMIN_PASS)
-        .set("content-type", "application/json")
-        .send(request)
-        .then(function(res: any) {
-          chai.expect(res).to.have.status(422);
-        });
+	.request(app)
+	.post("/interaction")
+	.auth(INGRESS_ADMIN_USER, INGRESS_ADMIN_PASS)
+	.set("content-type", "application/json")
+	.send(request)
+	.then(function(res: any) {
+	  chai.expect(res).to.have.status(422);
+	});
     });
 
     it("will give a 404 response body empty", async function() {
       return chai
-        .request(app)
-        .post("/submodel")
-        .auth(INGRESS_ADMIN_USER, INGRESS_ADMIN_PASS)
-        .set("content-type", "application/json")
-        .send()
-        .then(function(res: any) {
-          chai.expect(res).to.have.status(404);
-        });
+	.request(app)
+	.post("/submodel")
+	.auth(INGRESS_ADMIN_USER, INGRESS_ADMIN_PASS)
+	.set("content-type", "application/json")
+	.send()
+	.then(function(res: any) {
+	  chai.expect(res).to.have.status(404);
+	});
     });
   });

@@ -1,5 +1,8 @@
-BUILD_TAG = $(shell cat .git/refs/heads/master)
-SVC_PREFIX = sapi40/i40-aas-
+BUILD_TAG ?= $(shell cat .git/refs/heads/master)
+
+## DockerHub
+REGISTRY ?= sapi40
+
 
 
 .DEFAULT_GOAL := build
@@ -42,14 +45,15 @@ install:
 dev:
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --force-recreate
 
-## Travis CI instruction (separate build & push per service)
-.PHONY: build-single
-build-single:
-	BUILD_TAG=$(BUILD_TAG) docker-compose -f docker-compose.dev.yml build i40-aas-$(SERVICE)
-	BUILD_TAG=$(BUILD_TAG) docker tag $(SVC_PREFIX)$(SERVICE):$(BUILD_TAG) $(SVC_PREFIX)$(SERVICE):latest
+## build and tag a single service image
+.PHONY: build-%
+build-%:
+	BUILD_TAG=$(BUILD_TAG) docker-compose -f docker-compose.dev.yml build i40-aas-$*
+	BUILD_TAG=$(BUILD_TAG) docker tag sapi40/i40-aas-$*:$(BUILD_TAG) $(REGISTRY)/i40-aas-$*:latest
+	BUILD_TAG=$(BUILD_TAG) docker tag sapi40/i40-aas-$*:$(BUILD_TAG) $(REGISTRY)/i40-aas-$*:$(BUILD_TAG)
 
-## Travis CI instruction (separate build & push per service)
-.PHONY: push-single
-push-single:
-	BUILD_TAG=$(BUILD_TAG) docker push $(SVC_PREFIX)$(SERVICE):$(BUILD_TAG)
-	BUILD_TAG=$(BUILD_TAG) docker push $(SVC_PREFIX)$(SERVICE):latest
+## push a single service image
+.PHONY: push-%
+push-%:
+	BUILD_TAG=$(BUILD_TAG) docker push $(REGISTRY)/i40-aas-$*:$(BUILD_TAG)
+	BUILD_TAG=$(BUILD_TAG) docker push $(REGISTRY)/i40-aas-$*:latest

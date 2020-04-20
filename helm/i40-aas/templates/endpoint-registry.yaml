@@ -1,32 +1,5 @@
 ---
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .Release.Name }}-endpoint-registry
-  labels:
-    service: endpoint-registry
-    {{- include "i40-aas.labels" . | nindent 4 }}
-data:
-  # Networking
-  ENDPOINT_REGISTRY_PROTOCOL: http
-  ENDPOINT_REGISTRY_HOST: {{ .Release.Name }}-endpoint-registry
-  ENDPOINT_REGISTRY_PORT: "80"
-  # Exposed Routes
-  ENDPOINT_REGISTRY_URL_SUFFIX: /assetadministrationshells
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: {{ .Release.Name }}-endpoint-registry
-  labels:
-    service: endpoint-registry
-    {{- include "i40-aas.labels" . | nindent 4 }}
-type: Opaque
-stringData:
-  ENDPOINT_REGISTRY_ADMIN_USER: {{ .Values.credentials.endpointRegistryAdminUser | default (randAlphaNum 20) }}
-  ENDPOINT_REGISTRY_ADMIN_PASSWORD: {{ .Values.credentials.endpointRegistryAdminPassword | default (randAlphaNum 20) }}
----
-apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Release.Name }}-endpoint-registry
@@ -36,7 +9,7 @@ metadata:
 spec:
   ports:
   - targetPort: endpoint
-    port: 80
+    port: {{ .Values.core.registries.endpoints.port }}
     protocol: TCP
   selector:
     service: endpoint-registry
@@ -66,16 +39,26 @@ spec:
         image: "{{ .Values.image.repository }}/i40-aas-endpoint-registry:{{ .Values.image.release }}"
         ports:
         - name: endpoint
-          containerPort: 4400
+          containerPort: {{ .Values.core.registries.endpoints.port }}
+        env:
+        - name: LOGGING_LOGLEVEL
+          value: {{ .Values.logging.logLevel | quote }}
+        - name: LOGGING_LOGOUTPUT
+          value: {{ .Values.logging.logOutput | quote }}
+        - name: CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-host-collection
+              key: CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST
+        - name: CORE_REGISTRIES_ENDPOINTS_DATABASE_PORT
+          value: {{ .Values.core.registries.endpoints.database.port | quote }}
+        - name: CORE_REGISTRIES_ENDPOINTS_DATABASE_NAME
+          value: {{ .Values.core.registries.endpoints.database.name | quote }}
         envFrom:
         - secretRef:
-            name: {{ .Release.Name }}-endpoint-registry-postgres
+            name: {{ .Release.Name }}-core-registries-endpoints-database
         - secretRef:
-            name: {{ .Release.Name }}-endpoint-registry
-        - configMapRef:
-            name: {{ .Release.Name }}-endpoint-registry-postgres
-        - configMapRef:
-            name: {{ .Release.Name }}-endpoint-registry
+            name: {{ .Release.Name }}-core-registries-endpoints
         resources:
           {{- toYaml .Values.resources | nindent 10 }}
         livenessProbe:

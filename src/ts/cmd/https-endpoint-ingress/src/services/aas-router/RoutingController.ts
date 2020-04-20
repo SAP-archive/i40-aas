@@ -1,6 +1,6 @@
-import { publishMessageToBrokerTopic } from './InteractionHandler';
+import {  publishMessageToBrokerTopic } from "./InteractionHandler";
 import { AmqpClient } from 'AMQP-Client/lib/AmqpClient';
-import * as logger from 'winston';
+import * as logger from "winston";
 
 let brokerClient: AmqpClient;
 
