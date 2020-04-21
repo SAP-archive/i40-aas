@@ -258,7 +258,7 @@ services:
       - MONGO_INITDB_DATABASE=${SKILLS_ONBOARDING_DATABASE_NAME}
   ##########################################
   endpoint-registry-postgres:
-    image: postgres:alpine
+    image: postgres:12.0-alpine
     ports:
       - "${CORE_REGISTRIES_ENDPOINTS_DATABASE_PORT}:${CORE_REGISTRIES_ENDPOINTS_DATABASE_PORT}"
     environment:
@@ -267,11 +267,14 @@ services:
       - POSTGRES_DB=${CORE_REGISTRIES_ENDPOINTS_DATABASE_NAME}
   ##########################################
   rabbitmq:
-    image: rabbitmq:3-management
+    image: rabbitmq:3.8.3-management-alpine
     ports:
       - "${CORE_BROKER_PORT}:${CORE_BROKER_PORT}"
       - "${CORE_BROKER_PORT_UI}:${CORE_BROKER_PORT_UI}"
       - "${CORE_BROKER_PORT_MQTT}:${CORE_BROKER_PORT_MQTT}"
     volumes:
       - ./src/compose/volumes/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
+    environment:
+      - RABBITMQ_DEFAULT_USER=${CORE_BROKER_ADMIN_USER}
+      - RABBITMQ_DEFAULT_PASS=${CORE_BROKER_ADMIN_PASSWORD}
   ##########################################
