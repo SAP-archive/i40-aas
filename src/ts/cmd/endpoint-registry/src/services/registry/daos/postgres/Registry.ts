@@ -1,6 +1,6 @@
 import { iRegistry } from '../interfaces/IRegistry';
 import { AssetEntity } from '../entities/AssetEntity';
-import { Connection, createConnection, UpdateResult, DeleteResult, getConnection } from 'typeorm';
+import { Connection, createConnection, UpdateResult, DeleteResult, getConnection, In } from 'typeorm';
 import { EndpointEntity } from '../entities/EndpointEntity';
 import { AASDescriptorEntity } from '../entities/AASDescriptorEntity';
 import { AASDescriptorResponse } from '../responses/AASDescriptorResponse';
@@ -23,6 +23,7 @@ class Registry implements iRegistry {
 
 
   updateSemanticProtocolById(semanticProtocolId: string): Promise<ISemanticProtocol> {
+   logger.error("Tried to insert an already registered endpoint in Database")
     throw new Error("Method not implemented.");
   }
 
@@ -89,44 +90,48 @@ class Registry implements iRegistry {
 
       let aasDescriptorRepository = this.client.getRepository(AASDescriptorEntity);
       let assetssRepository = this.client.getRepository(AssetEntity);
+      let endpointsRepository = this.client.getRepository(EndpointEntity);
 
       //check if the AASDescriptor is already registered in DB
-      var loadedAASDescriptor = await aasDescriptorRepository.findOne({id:record.identification.id});
-      if(loadedAASDescriptor == undefined){
+      var loadedAASDescriptor = await aasDescriptorRepository.findOne({ id: record.identification.id });
+      if (loadedAASDescriptor == undefined) {
 
-      //create Asset associated with this AAS
-      // have seperate handlers for each entity and report errors e.g. when assetid present
-      let asset = new AssetEntity();
-      asset.id = record.asset.id;
-      asset.idType = record.asset.idType;
+        var endpointsIds = record.descriptor.endpoints.map(id => id.address)
+        var types = record.descriptor.endpoints.map(type => type.type)
 
-      let savedAsset = await assetssRepository.save(asset);
-      console.log("Asset Saved in Db ", asset);
+        //The Endpoints array is set with the one in the request. It is not possible to
+        //update individual endpoints since no endpoint-id is used.
+        //Thus, the client should sent the whole endpoints array every time (i.e.) first get then put
+        var endpointsFound = await endpointsRepository.find({
+          address: In(endpointsIds),
+          type: In(types)
+        })
+
+        if (endpointsFound.length > 0) {
+          throw new HTTP422Error("Duplicate Endpoint-Ids found in Database. Transaction will be cancelled ...")
+        }
 
 
-      //finally create the AASDescriptor in DB
-      let aasDescriptor = new AASDescriptorEntity();
-      aasDescriptor.id = record.identification.id;
-      aasDescriptor.idType = record.identification.idType;
-      aasDescriptor.asset = record.asset;
-      aasDescriptor.certificate_x509_i40 = record.descriptor.certificate_x509_i40;
-      aasDescriptor.signature = record.descriptor.signature;
+        //finally create the AASDescriptor in DB
+        let aasDescriptor = new AASDescriptorEntity();
+        aasDescriptor.id = record.identification.id;
+        aasDescriptor.idType = record.identification.idType;
+        aasDescriptor.asset = record.asset;
+        aasDescriptor.certificate_x509_i40 = record.descriptor.certificate_x509_i40;
+        aasDescriptor.signature = record.descriptor.signature;
 
-      //The Endpoints array is replaced with the one in the request. It is not possible to
-      //update individual endpoints since no endpoint-id is used.
-      //Thus, the client should sent the whole endpoints array every time (i.e.) first get then put
 
-      aasDescriptor.endpoints = record.descriptor.endpoints as EndpointEntity[]
-      console.log("Endpoints ", aasDescriptor.endpoints);
+        aasDescriptor.endpoints = record.descriptor.endpoints as EndpointEntity[]
+        console.log("Endpoints ", aasDescriptor.endpoints);
 
-      //Create if not exists, update if it does
-      let savedAASDescriptor = await aasDescriptorRepository.save(aasDescriptor);
+        //Create if not exists, update if it does
+        let savedAASDescriptor = await aasDescriptorRepository.save(aasDescriptor);
 
-      console.log("AASDescriptor Saved in Db ", savedAASDescriptor);
+        console.log("AASDescriptor Saved in Db ", savedAASDescriptor);
 
-      return record;
+        return record;
       }
-      else{
+      else {
         console.log("Resource alredy registered in Database")
         throw new HTTP422Error("Resource alredy registered in Database");
       }
@@ -145,43 +150,44 @@ class Registry implements iRegistry {
       let aasDescriptorRepository = this.client.getRepository(AASDescriptorEntity);
 
       //try to find the AASDescriptor in the DB
-      var loadedAASDescriptor = await aasDescriptorRepository.findOne({id:record.identification.id});
-      if(loadedAASDescriptor){
+      var loadedAASDescriptor = await aasDescriptorRepository.findOne({ id: record.identification.id });
+      if (loadedAASDescriptor) {
 
-      //The Endpoints array is replaced with the one in the request. It is not possible to
-      //update individual endpoints since no endpoint-id is used.
-      //Thus, the client should sent the whole endpoints array every time (i.e.) first get then put
-      console.debug("Updating Endpoints ... ");
+        //The Endpoints array is replaced with the one in the request. It is not possible to
+        //update individual endpoints since no endpoint-id is used.
+        //Thus, the client should sent the whole endpoints array every time (i.e.) first get then put
+        console.debug("Updating Endpoints ... ");
 
         loadedAASDescriptor.endpoints = record.descriptor.endpoints as EndpointEntity[]
         loadedAASDescriptor.asset = record.asset;
         loadedAASDescriptor.certificate_x509_i40 = record.descriptor.certificate_x509_i40
         loadedAASDescriptor.signature = record.descriptor.signature
-           //Create if not exists, update if it does
+        //Create if not exists, update if it does
         let savedAasDescriptor = await aasDescriptorRepository.save(loadedAASDescriptor);
 
-      //TODO: maybe do this with a .save as above?
-      console.debug("Updating Descriptor ... ");
+        //TODO: maybe do this with a .save as above?
+        console.debug("Updating Descriptor ... ");
 
-      /* alternative to updating
-      let aasDescriptor = await this.client
-        .createQueryBuilder()
-        .update(AASDescriptorEntity)
-        .set({
-          certificate_x509_i40: record.descriptor.certificate_x509_i40,
-          signature: record.descriptor.signature
-        })
-        .where("id = :id", { id: record.identification.id })
-        .execute();
-        */
+        /* alternative to updating
+        let aasDescriptor = await this.client
+          .createQueryBuilder()
+          .update(AASDescriptorEntity)
+          .set({
+            certificate_x509_i40: record.descriptor.certificate_x509_i40,
+            signature: record.descriptor.signature
+          })
+          .where("id = :id", { id: record.identification.id })
+          .execute();
+          */
 
-      console.log("AASDescriptor updated in Db " + JSON.stringify(savedAasDescriptor));
+        console.log("AASDescriptor updated in Db " + JSON.stringify(savedAasDescriptor));
 
-      return record
-    }
-    else{ console.log("No AASDescriptor with this Id in DB "+record.identification.id)
-      throw new HTTP422Error("Resource not found in Database");
-    }
+        return record
+      }
+      else {
+        console.log("No AASDescriptor with this Id in DB " + record.identification.id)
+        throw new HTTP422Error("Resource not found in Database");
+      }
 
     } catch (error) {
       console.log("Error caught " + error)
@@ -193,12 +199,20 @@ class Registry implements iRegistry {
   async deleteAasDescriptorByAasId(aasId: string): Promise<DeleteResult | undefined> {
 
     try {
-      let aasDescriptor = await this.client
-        .createQueryBuilder()
-        .delete()
-        .from(AASDescriptorEntity)
-        .where("id = :id", { id: aasId })
-        .execute();
+
+      let aasDescriptorRepository = this.client.getRepository(AASDescriptorEntity);
+      var aasDescriptor= await (await aasDescriptorRepository.delete(aasId))
+      logger.debug("Affected rows: "+aasDescriptor.affected?.valueOf())
+
+      if(aasDescriptor.affected?.valueOf() == 0){
+       throw new HTTP422Error("No Resource with this aasId found in Database: "+aasId)
+      }
+      // let aasDescriptor = await this.client
+      //   .createQueryBuilder()
+      //   .delete()
+      //   .from(AASDescriptorEntity)
+      //   .where("id = :id", { id: aasId })
+      //   .execute();
 
       console.log("AASDescriptor deleted in Db " + JSON.stringify(aasDescriptor));
 
@@ -303,19 +317,19 @@ class Registry implements iRegistry {
         relations: ["endpoints", "asset"]
       }) as AASDescriptorEntity;
 
-      if(resultAasDescriptor) {
-      console.debug("asset id " + JSON.stringify(resultAasDescriptor));
-      let resultAsset = await aasAssetRepository.findOne({ id: resultAasDescriptor.asset.id }) as AssetEntity
-      let aasDescrIdentifier = new Identifier(resultAasDescriptor.id, resultAasDescriptor.idType as TIdType);
-      let descr = new GenericDescriptor(resultAasDescriptor.endpoints, resultAasDescriptor.certificate_x509_i40, resultAasDescriptor.signature);
+      if (resultAasDescriptor) {
+        console.debug("asset id " + JSON.stringify(resultAasDescriptor));
+        let resultAsset = await aasAssetRepository.findOne({ id: resultAasDescriptor.asset.id }) as AssetEntity
+        let aasDescrIdentifier = new Identifier(resultAasDescriptor.id, resultAasDescriptor.idType as TIdType);
+        let descr = new GenericDescriptor(resultAasDescriptor.endpoints, resultAasDescriptor.certificate_x509_i40, resultAasDescriptor.signature);
 
-      let assetIdentifier = new Identifier(resultAsset.id, resultAsset.idType as TIdType);
+        let assetIdentifier = new Identifier(resultAsset.id, resultAsset.idType as TIdType);
 
-      let response = new AASDescriptorResponse(aasDescrIdentifier, assetIdentifier, descr);
-      return response;
+        let response = new AASDescriptorResponse(aasDescrIdentifier, assetIdentifier, descr);
+        return response;
       }
-      else{
-        throw new HTTP404Error("No AASDescriptor found with aasId: "+ aasId);
+      else {
+        throw new HTTP404Error("No AASDescriptor found with aasId: " + aasId);
       }
 
 
@@ -367,7 +381,7 @@ class Registry implements iRegistry {
       }));
 
     logger.debug("AASDescriptorResponses for the given roles " + JSON.stringify(AASDescriptors));
-    
+
     return AASDescriptors;
   }
 

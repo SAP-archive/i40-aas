@@ -3,13 +3,12 @@ import { AASDescriptorEntity } from "./AASDescriptorEntity";
 
 @Entity()
 //the combination for address and type should also be unique (to avoid saving double)
-
 export class EndpointEntity {
 
   @PrimaryColumn({
     length: 1024
     })
-    //TODO: validate if this is a valid URL format
+    //TODO: validate here if this is a valid URL format
    address!: string;
 
    @PrimaryColumn({
@@ -23,8 +22,7 @@ export class EndpointEntity {
     target!: string;
 
     //AASDescriptor : many Endpoints
-    @ManyToOne(type => AASDescriptorEntity, aasdescriptor => aasdescriptor.endpoints)
-    @JoinTable()
+    @ManyToOne(type => AASDescriptorEntity, aasdescriptor => aasdescriptor.endpoints, { onDelete: 'CASCADE'})
     aasdescriptor!: AASDescriptorEntity;
 
 
