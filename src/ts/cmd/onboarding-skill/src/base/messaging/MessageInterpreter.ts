@@ -1,9 +1,8 @@
-//import * as logger from "winston";
 import { Skill } from '../Skill';
 import { AmqpClient, Subscription } from 'AMQP-Client/lib/AmqpClient';
 import { InteractionMessage } from 'i40-aas-objects';
 import { IMessageReceiver } from '../messaginginterface/IMessageReceiver';
-import { logger } from '../../log';
+const logger = require('../../log');
 
 class MessageInterpreter implements IMessageReceiver {
   constructor(private skill: Skill, private amqpClient: AmqpClient) {}

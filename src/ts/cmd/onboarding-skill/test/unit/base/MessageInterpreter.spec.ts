@@ -7,10 +7,11 @@ import sinon from 'sinon';
 import { MessageInterpreter } from '../../../src/base/messaging/MessageInterpreter';
 import { AmqpClient } from 'AMQP-Client/lib/AmqpClient';
 import { InteractionMessage } from 'i40-aas-objects';
-import { logger } from '../../../src/log';
+
 import { MyExternalRestServiceCaller } from '../../../src/services/onboarding/MyExternalRestServiceCaller';
 import { MyInitializer } from '../../../src/services/onboarding/MyInitializer';
 
+const logger = require('../../../src/log');
 var chai = require('chai');
 var chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);

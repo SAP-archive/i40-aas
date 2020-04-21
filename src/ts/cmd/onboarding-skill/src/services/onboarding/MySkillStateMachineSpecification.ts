@@ -1,7 +1,8 @@
 import { MachineOptions, EventObject, Machine, assign } from 'xstate';
 
-import { logger } from '../../log';
 import { ISkillContext } from '../../base/statemachineinterface/ISkillContext';
+
+const logger = require('../../log');
 
 //TODO:
 //the state machine could be specified such that any error/notUnderstood from a third party
@@ -20,34 +21,34 @@ class MySkillStateMachineSpecification {
           PUBLISHINSTANCE_FROM_OPERATOR: [
             {
               cond: 'notRequestApproval',
-              target: 'CreatingInstance'
+              target: 'CreatingInstance',
             },
             {
               cond: 'requestApproval',
               target: 'WaitingForApproval',
-              actions: ['requestApprovalFromApprover']
-            }
-          ]
-        }
+              actions: ['requestApprovalFromApprover'],
+            },
+          ],
+        },
       },
       WaitingForApproval: {
         on: {
           APPROVED_FROM_APPROVER: {
-            target: 'CreatingInstance'
+            target: 'CreatingInstance',
           },
           REQUESTREFUSED_FROM_APPROVER: {
             target: 'OperationFailed',
-            actions: ['sendRequestRefusedToOperator']
+            actions: ['sendRequestRefusedToOperator'],
           },
           NOTUNDERSTOOD_FROM_APPROVER: {
             target: 'OperationFailed',
-            actions: ['sendRequestRefusedToOperator']
+            actions: ['sendRequestRefusedToOperator'],
           },
           ERROR_FROM_APPROVER: {
             target: 'OperationFailed',
-            actions: ['sendRequestRefusedToOperator']
-          }
-        }
+            actions: ['sendRequestRefusedToOperator'],
+          },
+        },
       },
       CreatingInstance: {
         invoke: {
@@ -57,47 +58,47 @@ class MySkillStateMachineSpecification {
             {
               target: 'InstancePublished',
               cond: 'notRequestType',
-              actions: 'sendResponseInstanceToOperator'
+              actions: 'sendResponseInstanceToOperator',
             },
             {
               target: 'WaitingForType',
               cond: 'requestType',
-              actions: 'sendResponseToOperatorAndRequestType'
-            }
+              actions: 'sendResponseToOperatorAndRequestType',
+            },
           ],
           onError: {
             target: 'OperationFailed',
-            actions: 'sendCreationErrorToOperator'
-          }
-        }
+            actions: 'sendCreationErrorToOperator',
+          },
+        },
       },
       InstancePublished: {
-        type: 'final'
+        type: 'final',
       },
       InstanceAndTypePublished: {
-        type: 'final'
+        type: 'final',
       },
       OperationFailed: {
-        type: 'final'
+        type: 'final',
       },
       WaitingForType: {
         on: {
           RESPONSETYPE_FROM_MANUFACTURER: {
             target: 'InstanceAndTypePublished',
-            actions: ['sendResponseTypeToOperator']
+            actions: ['sendResponseTypeToOperator'],
           },
           NOTUNDERSTOOD_FROM_MANUFACTURER: {
-            target: 'InstancePublished'
+            target: 'InstancePublished',
           },
           ERROR_FROM_MANUFACTURER: {
-            target: 'InstancePublished'
+            target: 'InstancePublished',
           },
           REQUESTREFUSED_FROM_MANUFACTURER: {
-            target: 'InstancePublished'
-          }
-        }
-      }
-    }
+            target: 'InstancePublished',
+          },
+        },
+      },
+    },
   };
 
   private readonly options: Partial<
@@ -107,7 +108,7 @@ class MySkillStateMachineSpecification {
       createInstance: async (context: any, event: any) => {
         logger.debug('service createInstance called');
         await context.actionMap.createInstance(context, event);
-      }
+      },
     },
     guards: {
       notRequestType: (context: any, event: any) => {
@@ -121,7 +122,7 @@ class MySkillStateMachineSpecification {
       },
       requestApproval: (context: any, event: any) => {
         return context.configuration['askForApproval'];
-      }
+      },
     },
     actions: {
       sendCreationErrorToOperator: (context: any, event: any) =>
@@ -141,8 +142,8 @@ class MySkillStateMachineSpecification {
         context.actionMap.sendResponseTypeToOperator(context, event),
 
       requestApprovalFromApprover: (context, event) =>
-        context.actionMap.requestApprovalFromApprover(context, event)
-    }
+        context.actionMap.requestApprovalFromApprover(context, event),
+    },
   };
 
   getNewStateMachine() {

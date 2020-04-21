@@ -47,6 +47,7 @@
     "json-stringify-safe": "^5.0.1",
     "lodash": "^4.17.15",
     "md5": "^2.2.1",
+    "moment": "^2.24.0",
     "mongodb": "^3.3.0-beta2",
     "mqtt": "^3.0.0",
     "uuid": "^3.3.2",

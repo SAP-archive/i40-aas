@@ -5,15 +5,11 @@ import { MessageSender } from './base/messaging/MessageSender';
 import { WebClient } from './web/WebClient';
 import { SimpleMongoDbClient } from './base/persistence/SimpleMongoDbClient';
 import { IDatabaseClient } from './base/persistenceinterface/IDatabaseClient';
-import { logger } from './log';
 import { TIdType, IdTypeEnum } from 'i40-aas-objects/dist/src/types/IdTypeEnum';
 import { AmqpClient } from 'AMQP-Client/lib/AmqpClient';
 import { MyExternalRestServiceCaller } from './services/onboarding/MyExternalRestServiceCaller';
 import { MyInitializer } from './services/onboarding/MyInitializer';
 import { uuid } from 'uuidv4';
-
-const dotenv = require('dotenv');
-dotenv.config();
 
 function checkEnvVar(variableName: string): string {
   let retVal: string | undefined = process.env[variableName];
@@ -43,13 +39,11 @@ let MY_URI = checkEnvVar('SKILLS_ONBOARDING_URI');
 let MY_ROLE = checkEnvVar('SKILLS_ONBOARDING_ROLE');
 
 // The queue is generated based on the binding key and is unique for the client
-// GUID + CORE_EGRESS_HTTP_BROKER_BINDINGKEY; //TODO: here also from env variable??	
+// GUID + CORE_EGRESS_HTTP_BROKER_BINDINGKEY; //TODO: here also from env variable??
 
-let BROKER_QUEUE = ROOT_TOPIC +"/"+ uuid(); //TODO: here also from env variable??	
+let BROKER_QUEUE = ROOT_TOPIC + '/' + uuid(); //TODO: here also from env variable??
 
-let COLLECTION_IN_DATABASE = checkEnvVar(
-  'SKILLS_ONBOARDING_STATES_COLLECTION'
-);
+let COLLECTION_IN_DATABASE = checkEnvVar('SKILLS_ONBOARDING_STATES_COLLECTION');
 let MONGO_INITDB_DATABASE = checkEnvVar('SKILLS_ONBOARDING_DATABASE_NAME');
 let MONGO_INITDB_ROOT_USERNAME = checkEnvVar('SKILLS_ONBOARDING_DATABASE_USER');
 let MONGO_INITDB_ROOT_PASSWORD = checkEnvVar(
@@ -67,7 +61,7 @@ let MONGODB_HOST = checkEnvVar('SKILLS_ONBOARDING_DATABASE_HOST');
 let MONGODB_PORT = checkEnvVar('SKILLS_ONBOARDING_DATABASE_PORT');
 
 //Do not remove the next line as it initializes the logger
-const initializeLogger = require('./log');
+const logger = require('./log');
 
 let amqpClient = new AmqpClient(
   BROKER_HOST,

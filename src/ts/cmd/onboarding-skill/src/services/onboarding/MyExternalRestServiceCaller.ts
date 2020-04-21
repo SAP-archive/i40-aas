@@ -1,6 +1,7 @@
 import { WebClient } from '../../web/WebClient';
 import { AxiosResponse } from 'axios';
-import { logger } from '../../log';
+
+const logger = require('../../log');
 
 class MyExternalRestServiceCaller {
   constructor(

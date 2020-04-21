@@ -1,4 +1,3 @@
-import { logger } from '../../log';
 import { AxiosResponse } from 'axios';
 import { InteractionMessage } from 'i40-aas-objects';
 import { ISkillContext } from '../../base/statemachineinterface/ISkillContext';
@@ -6,6 +5,8 @@ import { Utils } from '../../base/Utils';
 
 import { MyExternalRestServiceCaller } from './MyExternalRestServiceCaller';
 import { MyAasMessageDispatcher } from './MyAasMessageDispatcher';
+
+const logger = require('../../log');
 
 class MySkillActionMap {
   constructor(

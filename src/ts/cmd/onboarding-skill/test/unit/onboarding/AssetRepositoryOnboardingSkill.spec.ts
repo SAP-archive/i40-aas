@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { logger } from '../../../src/log';
+
 import { Skill } from '../../../src/base/Skill';
 import sinon from 'sinon';
 import { MyAasMessageDispatcher } from '../../../src/services/onboarding/MyAasMessageDispatcher';
@@ -16,7 +16,7 @@ import { IConversationMember } from 'i40-aas-objects/dist/src/interaction/Conver
 import { MyExternalRestServiceCaller } from '../../../src/services/onboarding/MyExternalRestServiceCaller';
 import { MyInitializer } from '../../../src/services/onboarding/MyInitializer';
 
-const initializeLogger = require('../../../src/log');
+const logger = require('../../../src/log');
 
 //TODO: if tests fail they do not signal done to Mocha
 //assertions need to be put in a try catch block, signalling done("Error") in case of failure
