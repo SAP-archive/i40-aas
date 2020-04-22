@@ -2,6 +2,18 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+endpointregistrypostgres:
+  postgresqlDatabase: AAS_REGISTRY
+  postgresqlUsername: aas-user
+  # postgresqlPassword can be left empty. 
+  # In that case, a random 10 character alphanumeric string is generated. 
+  postgresqlPassword: ""
+  service: 
+    port: 5432
+  persistence:
+    storageClass: default
+    size: 1Gi
+
 # Optional
 certificates:
   # Kubernetes Secret resource in which TLS certificates are stored on the cluster.
@@ -45,14 +57,14 @@ core:
       ## that can be used to access the management console
       ##
       ## Put an empty string "" to generate a random value (20 character, alpha-numeric)
-      user: admin
-      password: admin
+      user: guest
+      password: guest
 
   endpointResolver:
     ctag: endpoint-resolver
 
   ingress:
-    exchange: ingress
+    exchange: egress
     user: guest
     password: guest
 
@@ -101,25 +113,6 @@ core:
       # Put an empty string "" to generate a random value (20 character, alpha-numeric)
       user: admin
       password: admin
-
-      database:
-        name: AAS_REGISTRY
-        port: 5432
-        # Put an empty string "" to generate a random value (20 character, alpha-numeric)
-        user: postgres
-        password: postgres
-
-        super:
-          ## superuser credentials required within postgres image
-          ## Put an empty string "" to generate a random value (20 character, alpha-numeric)
-          user: postgres
-          password: postgres
-
-        pgAdmin:
-          port: 8080
-          # Put an empty string "" to generate a random value (20 character, alpha-numeric)
-          user: test@test.com
-          password: admin
 
 applicationAdapters:
   mongoDb:

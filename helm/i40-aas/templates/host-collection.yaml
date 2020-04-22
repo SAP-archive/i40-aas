@@ -8,7 +8,7 @@ metadata:
     {{- include "i40-aas.labels" . | nindent 4 }}
 data:
   CORE_BROKER_HOST: "{{ .Release.Name }}-rabbitmq-0.{{ .Release.Name }}-rabbitmq"
-  CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST: "{{ .Release.Name }}-postgres-0.{{ .Release.Name }}-postgres"
+  CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST: "{{ .Release.Name }}-endpointregistrypostgres"
   CORE_REGISTRIES_ENDPOINTS_HOST: "{{ .Release.Name }}-endpoint-registry"
   CORE_DATA_MANAGER_HOST: "{{ .Release.Name }}-data-manager"
   CORE_REGISTRIES_ADAPTERS_HOST: "{{ .Release.Name }}-adapter-registry-0.{{ .Release.Name }}-adapter-registry"
