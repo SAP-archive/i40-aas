@@ -9,7 +9,7 @@ import { ISkillContext } from './statemachineinterface/ISkillContext';
 import { MessageDispatcherDeferredWrapper } from './MessageDispatcherDeferredWrapper';
 import { IInitializer } from './statemachineinterface/IInitializer';
 
-const logger = require('../log');
+const logger = require('aas-logger/lib/log');
 
 //Try to keep this generic. Do not mention roles or message types. Do not perform actions that
 //should be modelled in the state machine. This class should remain relatively constant. It
@@ -155,7 +155,7 @@ class Skill {
           logger.error(
             'The database cannot be written to. More specific:' + error.message
           );
-          logger.error(error.stack);
+
           //only respond to external trigger (once)
           if (state.event.type === event)
             this.initializer.getPlainAasMessageDispatcher().replyError(message);
@@ -165,7 +165,7 @@ class Skill {
 
       onboardingService.send(event);
     } catch (error) {
-      logger.error('The transition could not take place:' + error);
+      logger.error('The transition could not take place. ' + error.message);
       if (!context.message) {
         logger.error(
           'Asset repository skill cannot is missing in its context the message to reply to with an error!'

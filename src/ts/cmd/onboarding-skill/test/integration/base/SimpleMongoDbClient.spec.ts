@@ -6,8 +6,7 @@ var chai = require('chai');
 var chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 
-const logger = require('../../../src/log');
-
+const logger = require('aas-logger/lib/log');
 // Then either:
 var expect = chai.expect;
 // or:

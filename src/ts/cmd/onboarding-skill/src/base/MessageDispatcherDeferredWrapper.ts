@@ -2,7 +2,7 @@ import { CommandCollector } from './messaging/CommandCollector';
 import { ICommand } from './messaginginterface/ICommand';
 import { Utils } from './Utils';
 
-const logger = require('../log');
+const logger = require('aas-logger/lib/log');
 
 class MessageDispatcherDeferredWrapper {
   static wrap(messageDispatcher: any): any {

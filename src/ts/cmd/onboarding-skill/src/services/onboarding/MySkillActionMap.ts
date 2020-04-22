@@ -6,7 +6,7 @@ import { Utils } from '../../base/Utils';
 import { MyExternalRestServiceCaller } from './MyExternalRestServiceCaller';
 import { MyAasMessageDispatcher } from './MyAasMessageDispatcher';
 
-const logger = require('../../log');
+const logger = require('aas-logger/lib/log');
 
 class MySkillActionMap {
   constructor(

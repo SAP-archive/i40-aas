@@ -2,7 +2,7 @@ import { Skill } from '../Skill';
 import { AmqpClient, Subscription } from 'AMQP-Client/lib/AmqpClient';
 import { InteractionMessage } from 'i40-aas-objects';
 import { IMessageReceiver } from '../messaginginterface/IMessageReceiver';
-const logger = require('../../log');
+const logger = require('aas-logger/lib/log');
 
 class MessageInterpreter implements IMessageReceiver {
   constructor(private skill: Skill, private amqpClient: AmqpClient) {}
@@ -20,7 +20,7 @@ class MessageInterpreter implements IMessageReceiver {
       'Missing necessary data, ' +
         missingData.toString() +
         ', in incoming message:' +
-        message
+        JSON.stringify(message)
     );
     this.skill.receivedUnintelligibleMessage(message);
   }

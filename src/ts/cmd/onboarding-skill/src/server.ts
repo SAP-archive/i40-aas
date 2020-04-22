@@ -61,7 +61,7 @@ let MONGODB_HOST = checkEnvVar('SKILLS_ONBOARDING_DATABASE_HOST');
 let MONGODB_PORT = checkEnvVar('SKILLS_ONBOARDING_DATABASE_PORT');
 
 //Do not remove the next line as it initializes the logger
-const logger = require('./log');
+const logger = require('aas-logger/lib/log');
 
 let amqpClient = new AmqpClient(
   BROKER_HOST,

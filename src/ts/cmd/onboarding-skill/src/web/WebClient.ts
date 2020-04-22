@@ -1,6 +1,6 @@
 import Axios, { AxiosError, AxiosResponse, AxiosRequestConfig } from 'axios';
 
-const logger = require('../log');
+const logger = require('aas-logger/lib/log');
 
 class WebClient {
   constructor(

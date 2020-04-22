@@ -2,7 +2,7 @@ import mongodb, { MongoClient, Db, WriteOpResult } from 'mongodb';
 import { IDatabaseClient } from '../persistenceinterface/IDatabaseClient';
 import { IStateRecord } from '../persistenceinterface/IStateRecord';
 
-const logger = require('../../log');
+const logger = require('aas-logger/lib/log');
 
 class SimpleMongoDbClient implements IDatabaseClient {
   private uri: string;

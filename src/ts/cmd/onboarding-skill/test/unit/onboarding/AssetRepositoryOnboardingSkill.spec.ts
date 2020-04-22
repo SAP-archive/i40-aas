@@ -16,7 +16,7 @@ import { IConversationMember } from 'i40-aas-objects/dist/src/interaction/Conver
 import { MyExternalRestServiceCaller } from '../../../src/services/onboarding/MyExternalRestServiceCaller';
 import { MyInitializer } from '../../../src/services/onboarding/MyInitializer';
 
-const logger = require('../../../src/log');
+const logger = require('aas-logger/lib/log');
 
 //TODO: if tests fail they do not signal done to Mocha
 //assertions need to be put in a try catch block, signalling done("Error") in case of failure
@@ -1245,7 +1245,9 @@ describe('applyEvent', function () {
     );
     let dbClient = makeMockDbClient();
 
-    let fakeStoreInDb = sinon.fake.rejects({ result: 'error' });
+    let fakeStoreInDb = sinon.fake.rejects({
+      result: new Error('Could not store in DB'),
+    });
     sinon.replace(dbClient, 'connect', sinon.fake.resolves({}));
     sinon.replace(dbClient, 'disconnect', sinon.fake.resolves({}));
     sinon.replace(dbClient, 'update', fakeStoreInDb);

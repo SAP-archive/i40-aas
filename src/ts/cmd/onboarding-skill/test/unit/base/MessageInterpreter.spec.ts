@@ -11,7 +11,7 @@ import { InteractionMessage } from 'i40-aas-objects';
 import { MyExternalRestServiceCaller } from '../../../src/services/onboarding/MyExternalRestServiceCaller';
 import { MyInitializer } from '../../../src/services/onboarding/MyInitializer';
 
-const logger = require('../../../src/log');
+const logger = require('aas-logger/lib/log');
 var chai = require('chai');
 var chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);

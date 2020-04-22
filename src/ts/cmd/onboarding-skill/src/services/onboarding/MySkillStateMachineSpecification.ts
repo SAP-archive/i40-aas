@@ -2,7 +2,7 @@ import { MachineOptions, EventObject, Machine, assign } from 'xstate';
 
 import { ISkillContext } from '../../base/statemachineinterface/ISkillContext';
 
-const logger = require('../../log');
+const logger = require('aas-logger/lib/log');
 
 //TODO:
 //the state machine could be specified such that any error/notUnderstood from a third party
