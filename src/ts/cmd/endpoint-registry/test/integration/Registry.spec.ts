@@ -1,5 +1,7 @@
 import { IAASDescriptor } from '../../src/services/registry/daos/interfaces/IAASDescriptor';
 import { IEndpoint } from '../../src/services/registry/daos/interfaces/IEndpoint';
+import {getConnection, AdvancedConsoleLogger } from 'typeorm';
+import { EndpointEntity } from '../../src/services/registry/daos/entities/EndpointEntity'
 
 const chai = require('chai');
 const chaiHttp = require('chai-http');
@@ -77,16 +79,18 @@ function replaceAddressAndTypeInFirstEndpoint(
   descriptor.descriptor.endpoints[0].type = typeReplacement;
   return descriptor;
 }
-function replaceAddressTypeInFirstEndpointAndCertificate(
-  descriptor: IAASDescriptor,
+function replaceAddressTypeInFirstEndpointAndCertificateAndAsset(
+  originalAASDescriptor: IAASDescriptor,
   addressReplacement: string,
   typeReplacement: string,
   certificateReplacement: string,
+  assetReplacementId:string
 ) {
-  descriptor.descriptor.endpoints[0].address = addressReplacement;
-  descriptor.descriptor.endpoints[0].type = typeReplacement;
-  descriptor.descriptor.certificate_x509_i40 = certificateReplacement
-  return descriptor;
+  originalAASDescriptor.descriptor.endpoints[0].address = addressReplacement;
+  originalAASDescriptor.descriptor.endpoints[0].type = typeReplacement;
+  originalAASDescriptor.descriptor.certificate_x509_i40 = certificateReplacement
+  originalAASDescriptor.asset.id  = assetReplacementId;
+  return originalAASDescriptor;
 }
 
 function checkEnvVar(variableName: string) {
@@ -293,6 +297,43 @@ describe('Tests with a simple data model', function () {
     }
   );
 
+  it('is able to register the same descriptor again after deleting it '+
+  ' (meaning that related entities were correctly deleted', async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
+
+    await requester
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(makeGoodAASDescriptor(uniqueTestId))
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200);
+
+        await requester
+          .delete('/AASDescriptors/aasId' + uniqueTestId)
+          .auth(user, password)
+          .then(async (res: any) => {
+            chai.expect(res.status).to.eql(200);
+            await requester
+              .get('/AASDescriptors/aasId' + uniqueTestId)
+              .auth(user, password)
+              .then(async(res: any) => {
+                chai.expect(res.status).to.eql(404);
+//try to register the deleted resource again
+                await requester
+                .put('/AASDescriptors')
+                .auth(user, password)
+                .send(makeGoodAASDescriptor(uniqueTestId))
+                .then(async (res: any) => {
+                  chai.expect(res.status).to.eql(200);
+                });
+              });
+           });
+      })
+      .then(() => {
+        requester.close();
+      });
+  });
   it('deletes an existing descriptor by id', async function () {
     var uniqueTestId = 'simpleDataTest' + getRandomInteger();
     var requester = chai.request(app).keepOpen();
@@ -321,6 +362,7 @@ describe('Tests with a simple data model', function () {
         requester.close();
       });
   });
+
   it('returns a 422 Error if the AASDescriptor to be deleted cannot be found in Database', async function () {
     var uniqueTestId = 'simpleDataTest' + getRandomInteger();
     var requester = chai.request(app).keepOpen();
@@ -343,66 +385,41 @@ describe('Tests with a simple data model', function () {
         requester.close();
       });
   });
-/*
-  it('returns a 500 error if an endpoint with the given uri already exists in the registry', async function () {
+// Test /patch route
+  it('patches the descriptor if a descriptor with the given id already exists in the registry', async function () {
     var uniqueTestId = 'simpleDataTest' + getRandomInteger();
     var requester = chai.request(app).keepOpen();
 
     await requester
       .put('/AASDescriptors')
       .auth(user, password)
-      .send(
-        replaceAddressInFirstEndpoint(
-          makeGoodAASDescriptor(uniqueTestId),
-          'http://abc.com'
-        )
-      )
+      .send(makeGoodAASDescriptor(uniqueTestId))
       .then(async (res: any) => {
         chai.expect(res.status).to.eql(200);
-        var newUniqueTestId = 'simpleDataTest' + getRandomInteger();
+        //patch the previous AASDescriptor
         await requester
-          .put('/AASDescriptors')
+          .patch('/AASDescriptors/aasId' + uniqueTestId)
           .auth(user, password)
-          .send(
-            replaceAddressInFirstEndpoint(
-              makeGoodAASDescriptor(newUniqueTestId),
-              'http://abc.com'
-            )
-          )
-          .then((res: any) => {
-            chai.expect(res.status).to.eql(500);
-          });
-      })
-      .then(() => {
-        requester.close();
-      });
-  });
-
-  it('replaces the descriptor if a descriptor with the given id already exists in the registry', async function () {
-    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
-    var requester = chai.request(app).keepOpen();
-
-    await requester
-      .put('/AASDescriptors')
-      .auth(user, password)
-      .send(replaceAasId(makeGoodAASDescriptor(uniqueTestId), 'test'))
-      .then(async (res: any) => {
-        chai.expect(res.status).to.eql(200);
-        var newUniqueTestId = 'simpleDataTest' + getRandomInteger();
-        await requester
-          .put('/AASDescriptors')
-          .auth(user, password)
-          .send(replaceAasId(makeGoodAASDescriptor(newUniqueTestId), 'test'))
+          .send(replaceAddressTypeInFirstEndpointAndCertificateAndAsset(makeGoodAASDescriptor(uniqueTestId),
+          'http://def.com-'+uniqueTestId,"newType","new-Certificate","new-Asset-ID"+ uniqueTestId))
           .then(async (res: any) => {
             chai.expect(res.status).to.eql(200);
+            //read the AASDescriptor anc check if it was correctly updated
             await requester
-              .get('/AASDescriptors/test')
+              .get('/AASDescriptors/aasId' + uniqueTestId)
               .auth(user, password)
               .then((res: any) => {
+                console.debug("Endpoint is "+res.body.descriptor.endpoints[0].address)
                 chai.expect(res.status).to.eql(200);
                 chai
                   .expect(res.body.asset.id)
-                  .to.eql('assetId' + newUniqueTestId);
+                  .to.eql('new-Asset-ID' + uniqueTestId);
+                chai
+                  .expect(res.body.descriptor.endpoints[1].address)
+                  .to.eql('http://def.com-'+uniqueTestId);
+                chai
+                  .expect(res.body.descriptor.certificate_x509_i40)
+                  .to.eql("new-Certificate");
               });
           });
       })
@@ -410,7 +427,7 @@ describe('Tests with a simple data model', function () {
         requester.close();
       });
   });
-
+/*
   it('can update endpoint addresses', async function () {
     var uniqueTestId = 'simpleDataTest' + getRandomInteger();
     var requester = chai.request(app).keepOpen();
