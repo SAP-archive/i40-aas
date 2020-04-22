@@ -3,7 +3,7 @@ kind: Ingress
 metadata:
   name: {{ .Release.Name }}
   labels: 
-    service: adapter-registry
+    service: ingress
     {{- include "i40-aas.labels" . | nindent 4 }}
   annotations:
     kubernetes.io/ingress.class: nginx
@@ -54,9 +54,5 @@ spec:
           serviceName: {{ .Release.Name }}-mongodb
           servicePort: {{ .Values.skills.onboarding.database.port }}
         path: /mongodb/(.*)
-      - backend:
-          serviceName: {{ .Release.Name }}-pgadmin
-          servicePort: {{ .Values.core.registries.endpoints.database.pgAdmin.port }}
-        path: /(.*)
 
 

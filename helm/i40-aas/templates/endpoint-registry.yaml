@@ -51,12 +51,17 @@ spec:
               name: {{ .Release.Name }}-host-collection
               key: CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST
         - name: CORE_REGISTRIES_ENDPOINTS_DATABASE_PORT
-          value: {{ .Values.core.registries.endpoints.database.port | quote }}
+	  value: {{ .Values.endpointregistrypostgres.service.port | quote }}
         - name: CORE_REGISTRIES_ENDPOINTS_DATABASE_NAME
-          value: {{ .Values.core.registries.endpoints.database.name | quote }}
+	  value: {{ .Values.endpointregistrypostgres.postgresqlDatabase | quote }}
+	- name: CORE_REGISTRIES_ENDPOINTS_DATABASE_USER
+	  value: {{ .Values.endpointregistrypostgres.postgresqlUsername | quote }}
+	- name: CORE_REGISTRIES_ENDPOINTS_DATABASE_PASSWORD
+	  valueFrom:
+	    secretKeyRef:
+	      name: {{ .Release.Name }}-endpointregistrypostgres
+	      key: postgresql-password
         envFrom:
-        - secretRef:
-            name: {{ .Release.Name }}-core-registries-endpoints-database
         - secretRef:
             name: {{ .Release.Name }}-core-registries-endpoints
         resources:

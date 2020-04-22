@@ -32,7 +32,7 @@ spec:
               name: {{ .Release.Name }}-host-collection
               key: CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST
         - name: CORE_REGISTRIES_ENDPOINTS_DATABASE_PORT
-          value: {{ .Values.core.registries.endpoints.database.port | quote }}
+	  value: {{ .Values.endpointregistrypostgres.service.port | quote }}
         - name: CORE_REGISTRIES_ENDPOINTS_HOST
           valueFrom:
             configMapKeyRef:
