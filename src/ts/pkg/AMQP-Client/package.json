@@ -5,6 +5,7 @@
   "scripts": {
     "test": "mocha --require ts-node/register --exit test/**/*.spec.ts",
     "build": "tsc",
+    "clean": "rm -rf ./lib/* ",
     "test-client": "tsc-watch --onSuccess \"node ./lib/examples/test-client.js\"",
     "test-client-mqtt-to-amqp": "tsc-watch --onSuccess \"node ./lib/examples/test-client-mqtt-to-amqp.js\"",
     "test-client-amqp-to-mqtt": "tsc-watch --onSuccess \"node ./lib/examples/test-client-amqp-to-mqtt.js\""
@@ -13,6 +14,7 @@
   "author": "Orthodoxos Kipouridis, Kasim Rehman",
   "license": "MIT",
   "dependencies": {
+    "aas-logger": "file:../aas-logger",
     "@types/mocha": "^7.0.2",
     "@types/sinon": "^7.5.2",
     "amqplib": "^0.5.3",
