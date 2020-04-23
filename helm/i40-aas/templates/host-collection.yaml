@@ -7,7 +7,7 @@ metadata:
     service: host-collection
     {{- include "i40-aas.labels" . | nindent 4 }}
 data:
-  CORE_BROKER_HOST: "{{ .Release.Name }}-rabbitmq-0.{{ .Release.Name }}-rabbitmq"
+  CORE_BROKER_HOST: "{{ .Release.Name }}-rabbitmq"
   CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST: "{{ .Release.Name }}-endpointregistrypostgres"
   CORE_REGISTRIES_ENDPOINTS_HOST: "{{ .Release.Name }}-endpoint-registry"
   CORE_DATA_MANAGER_HOST: "{{ .Release.Name }}-data-manager"

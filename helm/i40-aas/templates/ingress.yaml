@@ -47,8 +47,8 @@ spec:
           servicePort: {{ .Values.applicationAdapters.mongoDb.port }}
         path: /storage-adapter-mongodb/(.*)
       - backend:
-          serviceName: {{ .Release.Name }}-rabbitmq-ui
-          servicePort: {{ .Values.core.broker.port.ui }}
+          serviceName: {{ .Release.Name }}-rabbitmq
+          servicePort: {{ .Values.rabbitmq.service.managerPort }}
         path: /rabbitmq/(.*)
       - backend: 
           serviceName: {{ .Release.Name }}-mongodb

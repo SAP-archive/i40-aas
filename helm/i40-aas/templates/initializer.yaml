@@ -25,7 +25,7 @@ spec:
               name: {{ .Release.Name }}-host-collection
               key: CORE_BROKER_HOST
         - name: CORE_BROKER_PORT
-          value: {{ .Values.core.broker.port.amqp | quote }}
+          value: {{ .Values.rabbitmq.service.port | quote }}
         - name: CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST
           valueFrom:
             configMapKeyRef:
