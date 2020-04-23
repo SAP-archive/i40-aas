@@ -427,8 +427,8 @@ describe('Tests with a simple data model', function () {
         requester.close();
       });
   });
-/*
-  it('can update endpoint addresses', async function () {
+
+  it('returns a 422 Error if the AASDescriptor to be updated (with the aasId) is not found in DB', async function () {
     var uniqueTestId = 'simpleDataTest' + getRandomInteger();
     var requester = chai.request(app).keepOpen();
 
@@ -436,37 +436,66 @@ describe('Tests with a simple data model', function () {
       .put('/AASDescriptors')
       .auth(user, password)
       .send(
-        replaceAasId(makeGoodAASDescriptor(uniqueTestId), 'test' + uniqueTestId)
+        makeGoodAASDescriptor(uniqueTestId)
       )
       .then(async (res: any) => {
         chai.expect(res.status).to.eql(200);
-        var newUniqueTestId = 'simpleDataTest' + getRandomInteger();
         await requester
-          .put('/AASDescriptors')
+        .patch('/AASDescriptors/aasId' + 'foobar'+ uniqueTestId )
+        .auth(user, password)
+          .send(
+            replaceAddressAndTypeInFirstEndpoint(
+              makeGoodAASDescriptor('foobar'+ uniqueTestId),
+              'http://abc.com/'+uniqueTestId,
+              'http'
+            )
+          )
+          .then(async (res: any) => {
+            chai.expect(res.status).to.eql(422);
+          });
+      })
+      .then(() => {
+        requester.close();
+      });
+  });
+
+
+// test PUT /admin/
+  it('can update endpoint addresses', async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
+
+    await requester
+      .put('/admin/AASDescriptors')
+      .auth(user, password)
+      .send(
+        makeGoodAASDescriptor(uniqueTestId)
+      )
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200);
+        await requester
+          .put('/admin/AASDescriptors')
           .auth(user, password)
           .send(
-            replaceEndpoints(
+            replaceAddressAndTypeInFirstEndpoint(
               makeGoodAASDescriptor(uniqueTestId),
-              makeGoodAASDescriptor(newUniqueTestId).descriptor.endpoints
+              'http://abc.com/'+uniqueTestId,
+              'http'
             )
           )
           .then(async (res: any) => {
             chai.expect(res.status).to.eql(200);
             await requester
-              .get('/AASDescriptors/test' + uniqueTestId)
-              .auth(user, password)
+            .get('/AASDescriptors/aasId' + uniqueTestId)
+            .auth(user, password)
               .then((res: any) => {
                 chai.expect(res.status).to.eql(200);
                 chai.expect(
                   _.some(res.body.descriptor.endpoints, {
-                    address: 'abc.def/' + newUniqueTestId,
+                    address: 'http://abc.com/'+uniqueTestId,
                   })
                 ).to.be.true;
-                chai.expect(
-                  _.some(res.body.descriptor.endpoints, {
-                    address: 'efg.hij/' + newUniqueTestId,
-                  })
-                ).to.be.true;
+
                 chai.expect(res.body.descriptor.endpoints.length).to.eql(2);
               });
           });
@@ -476,37 +505,41 @@ describe('Tests with a simple data model', function () {
       });
   });
 
+
   it('can delete an endpoint address', async function () {
     var uniqueTestId = 'simpleDataTest' + getRandomInteger();
     var requester = chai.request(app).keepOpen();
-
+//register an AASDescriptor with 2 Endpoints
     await requester
       .put('/AASDescriptors')
       .auth(user, password)
       .send(
-        replaceAasId(makeGoodAASDescriptor(uniqueTestId), 'test' + uniqueTestId)
+        makeGoodAASDescriptor(uniqueTestId)
       )
+      //patch the recource and remove one endpoint
       .then(async (res: any) => {
         chai.expect(res.status).to.eql(200);
-        var newUniqueTestId = 'simpleDataTest' + getRandomInteger();
+        //originally there were 2 endpoints
+        chai.expect(res.body.descriptor.endpoints.length).to.eql(2);
+
         await requester
-          .put('/AASDescriptors')
+          .patch('/AASDescriptors/aasId' + uniqueTestId)
           .auth(user, password)
           .send(
             replaceEndpoints(makeGoodAASDescriptor(uniqueTestId), [
-              makeGoodAASDescriptor(newUniqueTestId).descriptor.endpoints[0],
+              makeGoodAASDescriptor(uniqueTestId).descriptor.endpoints[0],
             ])
           )
           .then(async (res: any) => {
             chai.expect(res.status).to.eql(200);
             await requester
-              .get('/AASDescriptors/test' + uniqueTestId)
+              .get('/AASDescriptors/aasId' + uniqueTestId)
               .auth(user, password)
               .then((res: any) => {
                 chai.expect(res.status).to.eql(200);
                 chai
                   .expect(res.body.descriptor.endpoints[0].address)
-                  .to.eql('abc.def/' + newUniqueTestId);
+                  .to.eql('abc.def/' + uniqueTestId);
 
                 chai.expect(res.body.descriptor.endpoints.length).to.eql(1);
               });
@@ -516,40 +549,7 @@ describe('Tests with a simple data model', function () {
         requester.close();
       });
   });
-
-  it('patches the descriptor if requested', async function () {
-    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
-    var requester = chai.request(app).keepOpen();
-
-    await requester
-      .put('/AASDescriptors')
-      .auth(user, password)
-      .send(
-        replaceAasId(makeGoodAASDescriptor(uniqueTestId), 'test' + uniqueTestId)
-      )
-      .then(async (res: any) => {
-        chai.expect(res.status).to.eql(200);
-        //var newUniqueTestId = 'simpleDataTest' + getRandomInteger();
-        await requester
-          .patch('/AASDescriptors/test' + uniqueTestId)
-          .auth(user, password)
-          .send({ identification: { idType: 'Custom' } })
-          .then(async (res: any) => {
-            chai.expect(res.status).to.eql(200);
-            await requester
-              .get('/AASDescriptors/test' + uniqueTestId)
-              .auth(user, password)
-              .then((res: any) => {
-                chai.expect(res.status).to.eql(200);
-                chai.expect(res.body.asset.id).to.eql('assetId' + uniqueTestId);
-                chai.expect(res.body.identification.idType).to.eql('Custom');
-              });
-          });
-      })
-      .then(() => {
-        requester.close();
-      });
-  });
+/*
 
   it('returns a 400 error if the uri is an empty string in the provided json object', async function () {
     var uniqueTestId = 'simpleDataTest' + getRandomInteger();
