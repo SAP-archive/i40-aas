@@ -61,6 +61,10 @@ jobs:
       install:
         - cd src/ts/pkg/AMQP-Client
         - npm install
+        - cd ./node_modules/aas-logger
+        - npm install
+        - npm run build
+        - cd ../../
         - source ./test/integration-test-setup
         - sleep 30
       script:
