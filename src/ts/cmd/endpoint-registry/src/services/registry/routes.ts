@@ -3,6 +3,7 @@ import { RegistryApi } from './RegistryApi';
 import { IAASDescriptor } from './daos/interfaces/IAASDescriptor';
 import * as logger from 'winston';
 import { HTTP422Error } from '../../utils/httpErrors';
+import { validateAASDescriptorRequest } from '../../middleware/checks';
 
 
 var registryApi = new RegistryApi();
@@ -20,7 +21,8 @@ export default [
   {
     path: '/admin/AASDescriptors',
     method: 'put',
-    handler: async (req: Request, res: Response, next: NextFunction) => {
+    handler:[validateAASDescriptorRequest,
+     async (req: Request, res: Response, next: NextFunction) => {
       logger.debug('/administrationshells PUT request received');
       var registerAASRequest: IAASDescriptor = req.body;
 
@@ -37,11 +39,12 @@ export default [
 
 
     }
-  },
+    ]},
   {
     path: '/AASDescriptors',
     method: 'put',
-    handler: async (req: Request, res: Response, next: NextFunction) => {
+    handler:[validateAASDescriptorRequest,
+      async (req: Request, res: Response, next: NextFunction) => {
       logger.debug('/administrationshells PUT request received');
       var registerAASRequest: IAASDescriptor = req.body;
 
@@ -59,7 +62,7 @@ export default [
 
 
     }
-  },
+    ]},
   {
     path: '/AASDescriptors/:aasId',
     method: 'get',
@@ -83,13 +86,13 @@ export default [
     }
   },
   {
-    //TODO: Add validation that aasId==req.body.identification.id
     path: '/AASDescriptors/:aasId',
     method: 'patch',
-    handler: async (req: Request, res: Response, next: NextFunction) => {
+    handler:[validateAASDescriptorRequest,
+      async (req: Request, res: Response, next: NextFunction) => {
       try {
         console.log('Path parameters received:' + JSON.stringify(req.params));
-        if (req.params.aasId) {
+        if (req.params.aasId && req.params.aasId === req.body.identification.id ) {
           res.json(
             await registryApi.updateAASDescriptorByAASId(
               req.body
@@ -104,7 +107,7 @@ export default [
         next(err);
       }
     }
-  },
+    ]},
   {
     //TODO: Add validation that aasId==req.body.identification.id
     path: '/AASDescriptors/:aasId',

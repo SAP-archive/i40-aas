@@ -15,9 +15,15 @@ class RegistryFactory {
       logger.error(
         'No database Connection could be established, will try reconnecting'
       );
-      logger.error('Error:' + error);
-      await this.createDBConnection();
-      return new Registry(getConnection());
+      logger.error('Error:' + error)
+      try{
+        let client =  await this.createDBConnection();
+        return new Registry(getConnection());
+      }
+      catch(err){
+        throw new Error("No database Connection could be established: ")
+
+      }
     }
   }
 

@@ -113,6 +113,7 @@ describe('Tests with a simple data model', function () {
     checkEnvVar('CORE_REGISTRIES_ENDPOINTS_PASSWORD');
   });
 
+
   it('saves a descriptor in the the database', async function () {
     var uniqueTestId = 'simpleDataTest' + getRandomInteger();
     var requester = chai.request(app).keepOpen();
@@ -171,6 +172,32 @@ describe('Tests with a simple data model', function () {
       });
   });
 
+  it('returns a 404 error if the AASDescriptor with the given aasId is not found in the database', async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
+    var AASDescriptorRequest = makeGoodAASDescriptor(uniqueTestId);
+
+
+    await requester
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(AASDescriptorRequest)
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200);
+
+        await requester
+          .get('/AASDescriptors/' + "foobar")
+          .auth(user, password)
+          .then((res: any) => {
+            chai.expect(res.status).to.eql(404);
+         //   chai.expect((res.body as IAASDescriptor).identification.id).to.equal(uniqueTestId)
+          });
+
+      })
+      .then(() => {
+        requester.close();
+      });
+  });
   it('correctly retrieves a AASDescriptor from the DB using aasId', async function () {
     var uniqueTestId = 'simpleDataTest' + getRandomInteger();
     var requester = chai.request(app).keepOpen();
@@ -199,7 +226,7 @@ describe('Tests with a simple data model', function () {
   });
 
 
-
+// PUT AASDescriptor test
   it(
     'returns a 422 error if an endpoint with the given uri and type already' +
       'exists in the registry and removes all traces of the failed descriptor',
@@ -428,6 +455,37 @@ describe('Tests with a simple data model', function () {
       });
   });
 
+  it('returns a 422 Error if the identification.id in the AASDescriptor is different from the aasId in the path parameter', async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
+
+    await requester
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(
+        makeGoodAASDescriptor(uniqueTestId)
+      )
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200);
+        await requester
+        //the aasId as path parameter is different from the one in req body
+        .patch('/AASDescriptors/aasId' + uniqueTestId )
+        .auth(user, password)
+          .send(
+            replaceAddressAndTypeInFirstEndpoint(
+              makeGoodAASDescriptor('foobar'+ uniqueTestId),
+              'http://abc.com/'+uniqueTestId,
+              'http'
+            )
+          )
+          .then(async (res: any) => {
+            chai.expect(res.status).to.eql(422);
+          });
+      })
+      .then(() => {
+        requester.close();
+      });
+  });
   it('returns a 422 Error if the AASDescriptor to be updated (with the aasId) is not found in DB', async function () {
     var uniqueTestId = 'simpleDataTest' + getRandomInteger();
     var requester = chai.request(app).keepOpen();
@@ -549,7 +607,35 @@ describe('Tests with a simple data model', function () {
         requester.close();
       });
   });
+
+
+
+
+
+
+
+
 /*
+  it('returns a 500 error if a connection to the db could not be established', async function() {
+    this.timeout(10000) // all tests in this suite get 10 seconds before timeout
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var host = process.env.CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST;
+    process.env.CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST = 'blah';
+    await chai
+      .request(app)
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(makeGoodAASDescriptor(uniqueTestId))
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(500);
+      })
+      .finally(
+        () => (process.env.CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST = host)
+      );
+  });
+
+
+
 
   it('returns a 400 error if the uri is an empty string in the provided json object', async function () {
     var uniqueTestId = 'simpleDataTest' + getRandomInteger();
@@ -618,22 +704,6 @@ describe('Tests with a simple data model', function () {
       });
   });
 
-  it('returns a 500 error if a connection to the db could not be got', async function () {
-    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
-    var host = process.env.CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST;
-    process.env.CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST = 'blah';
-    await chai
-      .request(app)
-      .put('/AASDescriptors')
-      .auth(user, password)
-      .send(makeGoodAASDescriptor(uniqueTestId))
-      .then(async (res: any) => {
-        chai.expect(res.status).to.eql(500);
-      })
-      .finally(
-        () => (process.env.CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST = host)
-      );
-  });
 
   */
 });
