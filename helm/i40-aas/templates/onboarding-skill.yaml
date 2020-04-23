@@ -60,7 +60,7 @@ spec:
                   name: {{ .Release.Name }}-host-collection
                   key: CORE_BROKER_HOST
             - name: CORE_BROKER_PORT
-              value: {{ .Values.core.broker.port.amqp | quote }}
+	      value: {{ .Values.rabbitmq.service.port | quote }}
             - name: CORE_EGRESS_EXCHANGE
               value: {{ .Values.core.egress.exchange | quote }}
             - name: CORE_EGRESS_ROUTINGKEY
