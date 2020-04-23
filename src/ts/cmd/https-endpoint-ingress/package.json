@@ -23,6 +23,7 @@
   "dependencies": {
     "@hapi/boom": "^7.4.11",
     "AMQP-Client": "file:../../pkg/AMQP-Client",
+    "aas-logger": "file:../../pkg/aas-logger",
     "axios": "^0.19.0",
     "class-validator": "^0.9.1",
     "compression": "^1.7.4",
@@ -35,8 +36,7 @@
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
     "swagger-ui-express": "^4.0.6",
-    "uuidv4": "^6.0.6",
-    "winston": "^3.2.1"
+    "uuidv4": "^6.0.6"
   },
   "devDependencies": {
     "@types/chai": "^4.2.11",
@@ -59,7 +59,7 @@
     "nyc": "^14.1.1",
     "sinon": "^7.5.0",
     "ts-node": "^8.3.0",
-    "tsc-watch": "^2.4.0",
+    "tsc-watch": "^2.2.1",
     "typescript": "^3.5.2"
   }
 }
