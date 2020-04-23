@@ -30,6 +30,7 @@ const logger = createLogger({
   transports: [
     new transports.Console({
       format: myFormat(true),
+      level: process.env.LOGGING_LOGLEVEL || 'debug',
     }),
   ],
 });

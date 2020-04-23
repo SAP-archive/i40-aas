@@ -1,7 +1,8 @@
-import { Submodel } from "i40-aas-objects";
-import * as logger from "winston";
-import { WebClient } from "./WebClient/WebClient";
-import { IStorageAdapter } from "./interfaces/IStorageAdapter";
+import { Submodel } from 'i40-aas-objects';
+import { WebClient } from './WebClient/WebClient';
+import { IStorageAdapter } from './interfaces/IStorageAdapter';
+
+const logger = require('aas-logger/lib/log');
 
 class AdapterConnector {
   private webClient = new WebClient();
@@ -11,10 +12,10 @@ class AdapterConnector {
   }
 
   /**
-  * Make a post request to the storage adapter responsible for handling the Submodel type
-  * @param sm The submodel element
-  * @param adapter The storage adapter object
-  */
+   * Make a post request to the storage adapter responsible for handling the Submodel type
+   * @param sm The submodel element
+   * @param adapter The storage adapter object
+   */
   async postSubmoduleToAdapter(sm: Submodel, adapter: IStorageAdapter) {
     //get the url of the storage adapter from the object
     let adapter_url: string = adapter.url;
