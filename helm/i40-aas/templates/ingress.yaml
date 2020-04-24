@@ -51,8 +51,8 @@ spec:
           servicePort: {{ .Values.rabbitmq.service.managerPort }}
         path: /rabbitmq/(.*)
       - backend: 
-          serviceName: {{ .Release.Name }}-mongodb
-          servicePort: {{ .Values.skills.onboarding.database.port }}
+          serviceName: {{ .Release.Name }}-onboardingskillmongodb
+          servicePort: {{ .Values.onboardingskillmongodb.service.port }}
         path: /mongodb/(.*)
 
 

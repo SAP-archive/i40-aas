@@ -33,6 +33,22 @@ endpointregistrypostgres:
     storageClass: default
     size: 1Gi
 
+onboardingskillmongodb:
+  mongodbDatabase: mongodb
+  mongodbUsername: mongouser
+  mongodbPassword: mongopassword
+  mongodbDisableSystemLog: true
+  service:
+    port: 27017
+  persistence:
+    storageClass: default
+    size: 1Gi 
+  replicaSet:
+    enabled: true
+    replicas:
+      secondary: 0
+      arbiter: 0
+
 # Optional
 certificates:
   # Kubernetes Secret resource in which TLS certificates are stored on the cluster.
@@ -62,7 +78,7 @@ logging:
   # acceptepted values are
   #   - CONSOLE
   #   - JSON
-  logOutput: CONSOLE
+  logOutput: JSON
 
 core:
   endpointResolver:
@@ -134,13 +150,6 @@ skills:
     rootTopic: ingress.i40:registry-semanticProtocol/onboarding.CentralAssetRepository
     role: CentralAssetRepository
     uri: sap.com/aas/skills/onboarding/CentralAssetRepository
-
-    database:
-      name: mongodb
-      port: 27017
-      # Put an empty string "" to generate a random value (20 character, alpha-numeric)
-      user: mongouser
-      password: mongopassword
   
   echo:
     port: 1880
