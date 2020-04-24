@@ -1,6 +1,8 @@
-import request from "request-promise";
-import * as logger from "winston";
+import request from 'request-promise';
+
 import { AmqpClient } from 'AMQP-Client/lib/AmqpClient';
+
+const logger = require('aas-logger/lib/log');
 
 export const publishMessageToBrokerTopic = async (
   brokerClient: AmqpClient,

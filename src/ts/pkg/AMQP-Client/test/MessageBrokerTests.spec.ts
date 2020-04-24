@@ -1,11 +1,7 @@
-import {
-  IMessageBrokerClient,
-  IMessageReceiver,
-  Subscription,
-  AmqpClient
-} from '../src/AmqpClient';
+import { IMessageReceiver, Subscription, AmqpClient } from '../src/AmqpClient';
 import * as sinon from 'sinon';
 import { SapMqttClient } from '../examples/SapMqttClient';
+var logger = require('aas-logger/lib/log');
 var chai = require('chai');
 var chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
@@ -21,22 +17,22 @@ chai.should();
 
 var DEFAULT_PORT = '5672';
 
-describe('AmpqClient', function() {
+describe('AmpqClient', function () {
   let amqpClientSender: AmqpClient;
   let amqpClientReceiver: AmqpClient;
   let AMQP_URL = process.env.RABBITMQ_AMQP_HOST;
-  this.beforeEach(function() {});
-  this.afterEach(async function() {
+  this.beforeEach(function () {});
+  this.afterEach(async function () {
     if (amqpClientSender) amqpClientSender.cleanup();
     if (amqpClientReceiver) amqpClientReceiver.cleanup();
   });
 
-  this.beforeEach(function() {});
-  this.afterEach(function() {
+  this.beforeEach(function () {});
+  this.afterEach(function () {
     sinon.restore();
   });
 
-  it('can send and receive messages from the broker *if a message broker has been started*', function(done) {
+  it('can send and receive messages from the broker *if a message broker has been started*', function (done) {
     if (AMQP_URL === undefined) {
       throw new Error('No RABBITMQ_AMQP_HOST found in environment');
     }
@@ -63,9 +59,9 @@ describe('AmpqClient', function() {
         'test1.*',
         new (class MyMessageReceiver implements IMessageReceiver {
           receive(cm: string) {
-            console.debug(listenerId + ' got message:' + cm);
+            logger.debug(listenerId + ' got message:' + cm);
             expect(cm).to.include('ping');
-            console.debug('Test 1 done');
+            logger.debug('Test 1 done');
             done();
           }
         })()
@@ -77,12 +73,12 @@ describe('AmpqClient', function() {
       try {
         amqpClientSender.publish('test1.x', 'ping' + Date.now());
       } catch (error) {
-        console.debug('Could not publish:' + error);
+        logger.debug('Could not publish:' + error);
       }
     }, 100);
   });
 
-  it('can  receive mqtt messages from the broker *if a message broker has been started*', function(done) {
+  it('can  receive mqtt messages from the broker *if a message broker has been started*', function (done) {
     if (AMQP_URL === undefined) {
       throw new Error('No RABBITMQ_AMQP_HOST found in environment');
     }
@@ -105,9 +101,9 @@ describe('AmpqClient', function() {
         'test1b.*',
         new (class MyMessageReceiver implements IMessageReceiver {
           receive(cm: string) {
-            console.debug(listenerId + ' got message:' + cm);
+            logger.debug(listenerId + ' got message:' + cm);
             expect(cm).to.include('ping');
-            console.debug('Test 1b done');
+            logger.debug('Test 1b done');
             done();
           }
         })()
@@ -119,7 +115,7 @@ describe('AmpqClient', function() {
     setTimeout(() => mqttSender.publish('test1b.x', 'ping' + Date.now()), 100);
   });
 
-  it('can send mqtt messages to the broker *if a message broker has been started*', function(done) {
+  it('can send mqtt messages to the broker *if a message broker has been started*', function (done) {
     if (AMQP_URL === undefined) {
       throw new Error('No RABBITMQ_AMQP_HOST found in environment');
     }
@@ -141,9 +137,9 @@ describe('AmpqClient', function() {
         'test1c/x',
         new (class MyMessageReceiver implements IMessageReceiver {
           receive(cm: string) {
-            console.debug('mqtt listener got message:' + cm);
+            logger.debug('mqtt listener got message:' + cm);
             expect(cm).to.include('ping');
-            console.debug('Test 1c done');
+            logger.debug('Test 1c done');
             done();
           }
         })()
@@ -155,13 +151,13 @@ describe('AmpqClient', function() {
         try {
           amqpClientSender.publish('test1c.x', 'ping' + Date.now());
         } catch (error) {
-          console.debug('Could not publish:' + error);
+          logger.debug('Could not publish:' + error);
         }
       });
     });
   });
 
-  it('reconnects if first connect failed', function(done) {
+  it('reconnects if first connect failed', function (done) {
     let fakeConnect = sinon.fake.yields(
       new Error('Simulating disconnection'),
       null
@@ -195,7 +191,7 @@ describe('AmpqClient', function() {
 
     setTimeout(() => {
       sinon.restore();
-      console.debug('restored mock');
+      logger.debug('restored mock');
     }, 300);
 
     amqpClientReceiver.addSubscriptionData(
@@ -204,10 +200,10 @@ describe('AmpqClient', function() {
         new (class MyMessageReceiver implements IMessageReceiver {
           receive(cm: string) {
             testRunning = false;
-            console.debug(listenerId + ' got message:' + cm);
+            logger.debug(listenerId + ' got message:' + cm);
             expect(cm).to.include('ping');
             sinon.assert.called(fakeConnect);
-            console.debug('Test 2 done');
+            logger.debug('Test 2 done');
             done();
           }
         })()
@@ -222,13 +218,13 @@ describe('AmpqClient', function() {
           await AmqpClient.sleep(50);
           amqpClientSender.publish('test2.x', 'ping');
         } catch (error) {
-          console.debug('Could not publish:' + error);
+          logger.debug('Could not publish:' + error);
         }
       }
     }, 100);
   });
 
-  it('recovers from a dropped connection as a receiver', function(done) {
+  it('recovers from a dropped connection as a receiver', function (done) {
     if (AMQP_URL === undefined) {
       throw new Error('No RABBITMQ_AMQP_HOST found in environment');
     }
@@ -261,11 +257,11 @@ describe('AmpqClient', function() {
     setTimeout(() => {
       sinon.replace(amqpClientReceiver, 'connectToBroker', fakeConnect);
       amqpClientReceiver.killConnection(() => (connectionKilled = true));
-      console.debug('killed connection');
+      logger.debug('killed connection');
       //come back after 300ms
       setTimeout(() => {
         sinon.restore();
-        console.debug('restored mock');
+        logger.debug('restored mock');
       }, 300);
     }, 400);
 
@@ -274,11 +270,11 @@ describe('AmpqClient', function() {
         'test3.*',
         new (class MyMessageReceiver implements IMessageReceiver {
           receive(numberAsString: string) {
-            console.debug(listenerId + ' got message:' + numberAsString);
+            logger.debug(listenerId + ' got message:' + numberAsString);
             if (!connectionKilled) return;
             if (testRunning) {
               testRunning = false;
-              console.debug('Test 3 done');
+              logger.debug('Test 3 done');
               done();
             }
           }
@@ -290,12 +286,12 @@ describe('AmpqClient', function() {
     amqpClientReceiver.startListening();
     amqpClientSender.setupPublishing();
     setTimeout(async () => {
-      console.debug('Listening for messages');
+      logger.debug('Listening for messages');
       while (testRunning) {
         try {
           amqpClientSender.publish('test3.x', String(counter++));
         } catch (error) {
-          console.debug('Could not publish:' + error);
+          logger.debug('Could not publish:' + error);
         }
         await AmqpClient.sleep(50);
       }

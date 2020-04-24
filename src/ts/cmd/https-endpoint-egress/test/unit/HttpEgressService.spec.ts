@@ -1,13 +1,14 @@
-import Axios from "axios";
-import { BrokerMessageInterpreter } from "../../src/messaging/BrokerMessageInterpreter";
-import { doesNotReject } from "assert";
-import { logger } from "../../src/utils/log";
-import sinon from "sinon";
-import { IResolverMessage } from "../../src/messaging/interfaces/IResolverMessage";
-import { AmqpClient, Subscription } from 'AMQP-Client/lib/AmqpClient';
+import Axios from 'axios';
+import { BrokerMessageInterpreter } from '../../src/messaging/BrokerMessageInterpreter';
+import { doesNotReject } from 'assert';
 
-var chai = require("chai");
-var chaiAsPromised = require("chai-as-promised");
+import sinon from 'sinon';
+import { IResolverMessage } from '../../src/messaging/interfaces/IResolverMessage';
+import { AmqpClient } from 'AMQP-Client/lib/AmqpClient';
+
+const logger = require('aas-logger/lib/log');
+var chai = require('chai');
+var chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 
 // Then either:
@@ -28,7 +29,7 @@ describe('the BrokerMessageInterpreter ', function () {
     fs.readFile(filePath, 'utf8', function (err: any, fileContents: string) {
       if (err) throw err;
       brokerMessage = JSON.parse(fileContents);
-      console.log('BrokerMsg ' + brokerMessage);
+      logger.log('BrokerMsg ' + brokerMessage);
 
       done();
     });
@@ -40,10 +41,11 @@ describe('the BrokerMessageInterpreter ', function () {
 
   it('forwards the message to the AASConnector if it is parsable and contains ReceiverURL', async function () {
     let message = JSON.stringify(brokerMessage);
-    console.log('BrokerMsg ' + message);
+    logger.log('BrokerMsg ' + message);
     let spy = sinon.spy(logger, 'error');
 
-    let messageInterpreter: BrokerMessageInterpreter = new BrokerMessageInterpreter(new AmqpClient("a", "b", "c", "d", "e", "f")
+    let messageInterpreter: BrokerMessageInterpreter = new BrokerMessageInterpreter(
+      new AmqpClient('a', 'b', 'c', 'd', 'e', 'f')
     );
     let fakeAASConnectorCall = sinon.fake();
     sinon.replace(
@@ -58,9 +60,10 @@ describe('the BrokerMessageInterpreter ', function () {
     sinon.assert.notCalled(spy);
   });
 
-  it("logs an error if the message is non parsable or empty", async function () {
-    let message = "";
-    let messageInterpreter: BrokerMessageInterpreter = new BrokerMessageInterpreter(new AmqpClient("a", "b", "c", "d", "e", "f")
+  it('logs an error if the message is non parsable or empty', async function () {
+    let message = '';
+    let messageInterpreter: BrokerMessageInterpreter = new BrokerMessageInterpreter(
+      new AmqpClient('a', 'b', 'c', 'd', 'e', 'f')
     );
     let spy = sinon.spy(logger, 'error');
 
@@ -86,10 +89,11 @@ describe('the BrokerMessageInterpreter ', function () {
       | undefined = (brokerMessage as unknown) as IResolverMessage;
     resolverMessage.ReceiverURL = '';
     let receiverURL = resolverMessage.ReceiverURL;
-    console.log('ReceiverURL ' + receiverURL);
+    logger.log('ReceiverURL ' + receiverURL);
     let spy = sinon.spy(logger, 'error');
 
-    let messageInterpreter: BrokerMessageInterpreter = new BrokerMessageInterpreter(new AmqpClient("a", "b", "c", "d", "e", "f")
+    let messageInterpreter: BrokerMessageInterpreter = new BrokerMessageInterpreter(
+      new AmqpClient('a', 'b', 'c', 'd', 'e', 'f')
     );
     let fakeAASConnectorCall = sinon.fake();
     sinon.replace(
@@ -105,10 +109,13 @@ describe('the BrokerMessageInterpreter ', function () {
     sinon.assert.notCalled(fakeAASConnectorCall);
   });
 
-  it("logs Success when it receives a 200 response from the AAS if the POST was successfull", async function () {
-    let resolverMessage: IResolverMessage | undefined = brokerMessage as unknown as IResolverMessage;
+  it('logs Success when it receives a 200 response from the AAS if the POST was successfull', async function () {
+    let resolverMessage:
+      | IResolverMessage
+      | undefined = (brokerMessage as unknown) as IResolverMessage;
 
-    let messageInterpreter: BrokerMessageInterpreter = new BrokerMessageInterpreter(new AmqpClient("a", "b", "c", "d", "e", "f")
+    let messageInterpreter: BrokerMessageInterpreter = new BrokerMessageInterpreter(
+      new AmqpClient('a', 'b', 'c', 'd', 'e', 'f')
     );
 
     let fakePost = sinon.fake.resolves({
@@ -129,7 +136,8 @@ describe('the BrokerMessageInterpreter ', function () {
   it('logs Error when it receives a non-200 response from the AAS if the POST was successfull', async function () {
     let message = JSON.stringify(brokerMessage);
 
-    let messageInterpreter: BrokerMessageInterpreter = new BrokerMessageInterpreter(new AmqpClient("a", "b", "c", "d", "e", "f")
+    let messageInterpreter: BrokerMessageInterpreter = new BrokerMessageInterpreter(
+      new AmqpClient('a', 'b', 'c', 'd', 'e', 'f')
     );
     let spy = sinon.spy(logger, 'error');
 

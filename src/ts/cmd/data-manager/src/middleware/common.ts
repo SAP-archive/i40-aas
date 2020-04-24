@@ -1,19 +1,22 @@
-import { Router } from "express";
-import cors from "cors";
-import parser from "body-parser";
-import compression from "compression";
-import { logger } from "../utils/log";
+import { Router } from 'express';
+import cors from 'cors';
+import parser from 'body-parser';
+import compression from 'compression';
 
-import * as basicAuth from "express-basic-auth";
+const logger = require('aas-logger/lib/log');
 
-let CORE_DATA_MANAGER_USER: string | undefined = process.env.CORE_DATA_MANAGER_USER;
-let CORE_DATA_MANAGER_PASSWORD: string | undefined = process.env.CORE_DATA_MANAGER_PASSWORD;
+import * as basicAuth from 'express-basic-auth';
 
-if (!CORE_DATA_MANAGER_USER  || !CORE_DATA_MANAGER_PASSWORD) {
-  logger.error(" [Basic auth] No  username or password was found in environment");
+let CORE_DATA_MANAGER_USER: string | undefined =
+  process.env.CORE_DATA_MANAGER_USER;
+let CORE_DATA_MANAGER_PASSWORD: string | undefined =
+  process.env.CORE_DATA_MANAGER_PASSWORD;
+
+if (!CORE_DATA_MANAGER_USER || !CORE_DATA_MANAGER_PASSWORD) {
+  logger.error(
+    ' [Basic auth] No  username or password was found in environment'
+  );
 }
-
-
 
 export const handleCors = (router: Router) =>
   router.use(cors({ credentials: true, origin: true }));
@@ -35,6 +38,6 @@ export const handleBasicAuth = (router: Router) =>
   router.use(
     basicAuth.default({
       users: user,
-      challenge: true
+      challenge: true,
     })
   );

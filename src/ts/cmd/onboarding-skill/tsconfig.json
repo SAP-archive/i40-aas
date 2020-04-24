@@ -66,6 +66,6 @@
     /* Advanced Options */
     "resolveJsonModule": true /* Include modules imported with '.json' extension */
   },
-  "include": ["src/**/*.ts", "test/test-client.ts", "test/test-client-mqtt.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
 }
