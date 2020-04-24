@@ -4,6 +4,7 @@ import { DeleteResult } from 'typeorm';
 import { IAASDescriptor } from './daos/interfaces/IAASDescriptor';
 import { IEndpoint } from './daos/interfaces/IEndpoint';
 import { ISemanticProtocol } from './daos/interfaces/ISemanticProtocol';
+const logger = require('aas-logger/lib/log');
 
 class RegistryApi {
 

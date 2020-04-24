@@ -1,8 +1,7 @@
-const { Pool } = require('pg');
 import { Registry } from './Registry';
 import { DatabaseConnection } from './DatabaseConnection';
-import { Connection, createConnection, getConnection } from 'typeorm';
-import { logger } from '../../../../utils/log';
+import {getConnection } from 'typeorm';
+const logger = require('aas-logger/lib/log');
 
 class RegistryFactory {
   static async getRegistry(): Promise<Registry> {
@@ -21,7 +20,7 @@ class RegistryFactory {
         return new Registry(getConnection());
       }
       catch(err){
-        throw new Error("No database Connection could be established: ")
+        throw new Error("No database Connection could be established: "+err)
 
       }
     }

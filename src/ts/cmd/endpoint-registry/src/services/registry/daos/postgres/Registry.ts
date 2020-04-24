@@ -15,7 +15,7 @@ import { IEndpoint } from '../interfaces/IEndpoint';
 import { SemanticProtocolResponse } from '../responses/SemanticProtocolResponse';
 import { IRole } from '../interfaces/IRole';
 import { HTTP422Error, HTTP404Error } from '../../../../utils/httpErrors';
-import { logger } from '../../../../utils/log';
+const logger = require('aas-logger/lib/log');
 
 class Registry implements iRegistry {
 

@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import { RegistryApi } from './RegistryApi';
 import { IAASDescriptor } from './daos/interfaces/IAASDescriptor';
-import * as logger from 'winston';
 import { HTTP422Error } from '../../utils/httpErrors';
 import { validateAASDescriptorRequest } from '../../middleware/checks';
 import { ISemanticProtocol } from './daos/interfaces/ISemanticProtocol';
+const logger = require('aas-logger/lib/log');
 
 
 var registryApi = new RegistryApi();

@@ -9,6 +9,9 @@ import middleware from './middleware';
 import 'reflect-metadata';
 import { RegistryFactory } from './services/registry/daos/postgres/RegistryFactory';
 
+
+const logger = require('aas-logger/lib/log');
+
 const router = express();
 applyRoutes(healthRoute, router);
 applyMiddleware(middleware, router);

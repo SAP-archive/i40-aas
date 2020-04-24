@@ -4,7 +4,7 @@ import {
   HTTP404Error,
   HTTP400Error
 } from "../utils/httpErrors";
-import { logger } from "../utils/log";
+const logger = require('aas-logger/lib/log');
 
 /**
  * This class offers a dedicated object which encapsulates the logic of how we manage errors

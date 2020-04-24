@@ -1,9 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { HTTP400Error, HTTP422Error, HTTP404Error } from "../utils/httpErrors";
-import { Submodel } from "i40-aas-objects";
-import { logger } from "../utils/log";
+const logger = require('aas-logger/lib/log');
 import { IAASDescriptor } from "../services/registry/daos/interfaces/IAASDescriptor";
-import { AASDescriptorResponse } from "../services/registry/daos/responses/AASDescriptorResponse";
 import { IEndpoint } from "../services/registry/daos/interfaces/IEndpoint";
 
 export const checkReqBodyEmpty = (
