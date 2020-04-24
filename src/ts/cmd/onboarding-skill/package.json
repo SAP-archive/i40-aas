@@ -44,7 +44,6 @@
     "aas-logger": "file:../../pkg/aas-logger",
     "axios": "^0.19.0",
     "i40-aas-objects": "0.2.6",
-    "json-stringify-safe": "^5.0.1",
     "lodash": "^4.17.15",
     "md5": "^2.2.1",
     "mongodb": "^3.3.0-beta2",

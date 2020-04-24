@@ -15,17 +15,16 @@
   "license": "MIT",
   "dependencies": {
     "aas-logger": "file:../aas-logger",
-    "@types/mocha": "^7.0.2",
-    "@types/sinon": "^7.5.2",
     "amqplib": "^0.5.3",
-    "async-mqtt": "^2.4.2",
     "mqtt": "^3.0.0"
   },
   "devDependencies": {
     "@types/amqplib": "^0.5.13",
+    "@types/mocha": "^7.0.2",
+    "@types/sinon": "^7.5.2",
+    "@types/node": "^7.5.2",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
-    "chai-http": "^4.3.0",
     "mocha": "^7.1.1",
     "nyc": "^15.0.0",
     "sinon": "^7.3.2",
