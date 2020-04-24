@@ -1,4 +1,4 @@
----
+ ---
 apiVersion: v1
 kind: Service
 metadata:
@@ -51,9 +51,16 @@ spec:
                   name: {{ .Release.Name }}-host-collection
                   key: SKILLS_ONBOARDING_DATABASE_HOST
             - name: SKILLS_ONBOARDING_DATABASE_PORT
-              value: {{ .Values.skills.onboarding.database.port | quote }}
+	      value: "{{ .Values.onboardingskillmongodb.service.port }}/?authSource={{ .Values.onboardingskillmongodb.mongodbDatabase }}"
             - name: SKILLS_ONBOARDING_DATABASE_NAME
-              value: {{ .Values.skills.onboarding.database.name | quote }}
+	      value: {{ .Values.onboardingskillmongodb.mongodbDatabase | quote }}
+	    - name: SKILLS_ONBOARDING_DATABASE_USER
+	      value: {{ .Values.onboardingskillmongodb.mongodbUsername | quote }}
+	    - name: SKILLS_ONBOARDING_DATABASE_PASSWORD
+	      valueFrom:
+		secretKeyRef:
+		  name: {{ .Release.Name }}-onboardingskillmongodb
+		  key: mongodb-password
             - name: CORE_BROKER_HOST
               valueFrom:
                 configMapKeyRef:
@@ -93,8 +100,6 @@ spec:
             - name: CORE_DATA_MANAGER_SUBMODELS_ROUTE
               value: {{ .Values.core.dataManager.submodelsRoute | quote }}
           envFrom:
-            - secretRef:
-                name: {{ .Release.Name }}-skills-onboarding-database
             - secretRef:
                 name: {{ .Release.Name }}-core-egress
             - secretRef:
