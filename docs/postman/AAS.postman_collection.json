@@ -811,9 +811,7 @@
 				"id": "3f54fb8e-224e-4ba7-b20f-f5d7c596843d",
 				"type": "text/javascript",
 				"exec": [
-					"// pm.test(\"Status code is 200\", function () {",
-					"//     pm.response.to.have.status(200);",
-					"// });"
+					""
 				]
 			}
 		}
