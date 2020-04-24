@@ -39,7 +39,7 @@ class Registry implements iRegistry {
       asset.idType = record.asset.idType;
 
       let savedAsset = await assetssRepository.save(asset);
-      console.log("Asset Saved in Db ", asset);
+      logger.debug("Asset Saved in Db ", asset);
 
 
       //finally create the AASDescriptor in DB
@@ -55,16 +55,16 @@ class Registry implements iRegistry {
       //Thus, the client should sent the whole endpoints array every time (i.e.) first get then put
 
       aasDescriptor.endpoints = record.descriptor.endpoints as EndpointEntity[]
-      console.log("Endpoints ", aasDescriptor.endpoints);
+      logger.debug("Endpoints ", aasDescriptor.endpoints);
 
       //Create if not exists, update if it does
       let savedAASDescriptor = await aasDescriptorRepository.save(aasDescriptor);
 
-      console.log("AASDescriptor Saved in Db ", savedAASDescriptor);
+      logger.debug("AASDescriptor Saved in Db ", savedAASDescriptor);
 
       return record;
     } catch (error) {
-      console.log(error)
+      logger.error(error)
       return undefined
     }
 
@@ -110,21 +110,21 @@ class Registry implements iRegistry {
 
 
         aasDescriptor.endpoints = record.descriptor.endpoints as EndpointEntity[]
-        console.log("Endpoints ", aasDescriptor.endpoints);
+        logger.debug("Endpoints ", aasDescriptor.endpoints);
 
         //Create if not exists, update if it does
         let savedAASDescriptor = await aasDescriptorRepository.save(aasDescriptor);
 
-        console.log("AASDescriptor Saved in Db ", savedAASDescriptor);
+        logger.debug("AASDescriptor Saved in Db ", savedAASDescriptor);
 
         return record;
       }
       else {
-        console.log("Resource alredy registered in Database")
+        logger.error("Resource alredy registered in Database")
         throw new HTTP422Error("Resource alredy registered in Database");
       }
     } catch (error) {
-      console.log("Registry error caught: " + error)
+      logger.error("Registry error caught: " + error)
       throw error;
 
     }
@@ -144,7 +144,6 @@ class Registry implements iRegistry {
         //The Endpoints array is replaced with the one in the request. It is not possible to
         //update individual endpoints since no endpoint-id is used.
         //Thus, the client should sent the whole endpoints array every time (i.e.) first get then put
-        console.debug("Updating Endpoints ... ");
 
         loadedAASDescriptor.endpoints = record.descriptor.endpoints as EndpointEntity[]
         loadedAASDescriptor.asset = record.asset;
@@ -154,7 +153,6 @@ class Registry implements iRegistry {
         let savedAasDescriptor = await aasDescriptorRepository.save(loadedAASDescriptor);
 
         //TODO: maybe do this with a .save as above?
-        console.debug("Updating Descriptor ... ");
 
         /* alternative to updating
         let aasDescriptor = await this.client
@@ -168,17 +166,17 @@ class Registry implements iRegistry {
           .execute();
           */
 
-        console.log("AASDescriptor updated in Db " + JSON.stringify(savedAasDescriptor));
+         logger.debug("AASDescriptor updated in Db " + JSON.stringify(savedAasDescriptor));
 
         return record
       }
       else {
-        console.log("No AASDescriptor with this Id in DB " + record.identification.id)
+        logger.debug("No AASDescriptor with this Id in DB " + record.identification.id)
         throw new HTTP422Error("Resource not found in Database");
       }
 
     } catch (error) {
-      console.log("Error caught " + error)
+      logger.debug("Error caught " + error)
       throw error;
 
     }
@@ -202,13 +200,13 @@ class Registry implements iRegistry {
       //   .where("id = :id", { id: aasId })
       //   .execute();
 
-      console.log("AASDescriptor deleted in Db " + JSON.stringify(aasDescriptor));
+      logger.debug("AASDescriptor deleted in Db " + JSON.stringify(aasDescriptor));
 
 
       return aasDescriptor;
 
     } catch (error) {
-      console.log("Error caught " + error)
+      logger.error("Error caught " + error)
       throw error;
 
     }
@@ -229,7 +227,7 @@ class Registry implements iRegistry {
       semProtocol.id = record.identification.id;
       semProtocol.idType = record.identification.idType;
       let savedProtocol = await semProtocolRepository.save(semProtocol);
-      console.log("SemanticProtocol Saved in Db ", savedProtocol);
+      logger.debug("SemanticProtocol Saved in Db ", savedProtocol);
 
       //2. create Roles associated with this semanticProtocol
       // have seperate handlers for each entity and report errors e.g. when assetid present
@@ -242,7 +240,7 @@ class Registry implements iRegistry {
           rE.id = rE.name.concat('-').concat(rE.semProtocol.id); //combination should be unique
 
           await rolesRepository.save({ id: rE.id, name: rE.name, semProtocol: rE.semProtocol });
-          console.log("Role Saved in Db ", rE);
+          logger.debug("Role Saved in Db ", rE);
 
 
           //TODO: for the case of upsert find out how to avoid the contraint errors for the relation
@@ -250,7 +248,7 @@ class Registry implements iRegistry {
           //3. for each role assign a the role to a AASDescriptor, docu see here, https://github.com/typeorm/typeorm/blob/master/docs/relational-query-builder.md
           //we need only the ids from the AAS IIdentifier
           var aasIds = role.aasDescriptorIds.map(identification => identification.id);
-          console.log("AAS Ids ", JSON.stringify(aasIds));
+          logger.debug("AAS Ids ", JSON.stringify(aasIds));
 
           await Promise.all(
             aasIds.map(async id => {
@@ -266,7 +264,7 @@ class Registry implements iRegistry {
       return record;
 
     } catch (error) {
-      console.log("Error caught " + error)
+      logger.error("Error caught " + error)
       throw error;
     }
   }
@@ -282,7 +280,7 @@ class Registry implements iRegistry {
       .where("id = :id", { id: semanticProtocolId })
       .execute();
 
-    console.log("SemanticProtocol deleted in Db " + JSON.stringify(aasDescriptor));
+      logger.debug("SemanticProtocol deleted in Db " + JSON.stringify(aasDescriptor));
 
     return aasDescriptor;
   }
@@ -305,7 +303,7 @@ class Registry implements iRegistry {
       }) as AASDescriptorEntity;
 
       if (resultAasDescriptor) {
-        console.debug("asset id " + JSON.stringify(resultAasDescriptor));
+        logger.debug("asset id " + JSON.stringify(resultAasDescriptor));
         let resultAsset = await aasAssetRepository.findOne({ id: resultAasDescriptor.asset.id }) as AssetEntity
         let aasDescrIdentifier = new Identifier(resultAasDescriptor.id, resultAasDescriptor.idType as TIdType);
         let descr = new GenericDescriptor(resultAasDescriptor.endpoints, resultAasDescriptor.certificate_x509_i40, resultAasDescriptor.signature);
@@ -322,7 +320,7 @@ class Registry implements iRegistry {
 
 
     } catch (error) {
-      console.log("Error caught " + error)
+      logger.error("Error caught " + error)
       throw error;
     }
 
@@ -334,9 +332,6 @@ class Registry implements iRegistry {
     roleName: string
   ): Promise<Array<IAASDescriptor>> {
 
-    console.log("Try getting roleIds");
-
-
     //Find the roles associated with the {protocolid, rolename}
     let roleIds = await this.client
       .createQueryBuilder()
@@ -346,7 +341,7 @@ class Registry implements iRegistry {
       .andWhere("role.semProtocol = :semProtocol", { semProtocol: sProtocol })
       .getMany();
 
-    console.log("Roles found in Db " + JSON.stringify(roleIds));
+      logger.debug("Roles found in Db " + JSON.stringify(roleIds));
 
     // Find the AASDescriptors for the given roles
     const aasDescriptorEntities = await this.client
@@ -357,7 +352,7 @@ class Registry implements iRegistry {
 
     //we need only the ids from the AAS IIdentifier
     var aasIds = aasDescriptorEntities.map(identification => identification.id);
-    console.log("AASDescriptorIds for the given roles " + JSON.stringify(aasIds));
+    logger.debug("AASDescriptorIds for the given roles " + JSON.stringify(aasIds));
 
     //get the AASDescriptorResponses (with Endpoints and Assets) to return
     //TODO: there should be maybe a more efficient way to do this (inner joins)
@@ -397,7 +392,7 @@ class Registry implements iRegistry {
         .getMany();
 
 
-      console.log("Descriptors loaded  " + JSON.stringify(aasDescriptorEntities))
+        logger.debug("Descriptors loaded  " + JSON.stringify(aasDescriptorEntities))
 
       // Find the AASDescriptors for the given roles
 
@@ -409,14 +404,14 @@ class Registry implements iRegistry {
         } as IRole
       });
       let protocolIdentifier = new Identifier(resultSemanticProtocol.id, resultSemanticProtocol.idType as TIdType);
-      console.log("Roles  " + JSON.stringify(rolesArr))
+      logger.debug("Roles  " + JSON.stringify(rolesArr))
 
       var response = new SemanticProtocolResponse(protocolIdentifier, rolesArr);
 
       return response;
 
     } catch (error) {
-      console.log("Error caught " + error)
+      logger.error("Error caught " + error)
       throw error;
 
     }

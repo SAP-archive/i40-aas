@@ -19,7 +19,7 @@ const PORT = 4400;
 const server = http.createServer(router);
 
 server.listen(PORT, () =>
-  console.log(`A Server is running http://localhost:${PORT}...`)
+logger.info(`A Server is running http://localhost:${PORT}...`)
 );
 
 export { router as app };
