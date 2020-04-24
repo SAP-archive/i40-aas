@@ -609,12 +609,6 @@ describe('Tests with a simple data model', function () {
   });
 
 
-
-
-
-
-
-
 /*
   it('returns a 500 error if a connection to the db could not be established', async function() {
     this.timeout(10000) // all tests in this suite get 10 seconds before timeout

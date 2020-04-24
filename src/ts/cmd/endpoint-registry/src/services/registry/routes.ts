@@ -4,6 +4,7 @@ import { IAASDescriptor } from './daos/interfaces/IAASDescriptor';
 import * as logger from 'winston';
 import { HTTP422Error } from '../../utils/httpErrors';
 import { validateAASDescriptorRequest } from '../../middleware/checks';
+import { ISemanticProtocol } from './daos/interfaces/ISemanticProtocol';
 
 
 var registryApi = new RegistryApi();
@@ -142,7 +143,8 @@ export default [
         res.end(JSON.stringify(e));
       }
     }
-  }, {
+  },
+  {
     path: '/semanticProtocols',
     method: 'put',
     handler: async (req: Request, res: Response, next: NextFunction) => {
@@ -151,8 +153,25 @@ export default [
         await registryApi.createSemanticProtocol(req.body);
         console.log('Sent back response of /semanticprotocol PUT request');
         res.json(req.body);
-      } catch (e) {
-        res.end(e.message);
+      } catch (err) {
+        logger.error(err);
+        next(err);
+      }
+
+    }
+  },
+  {
+    path: '/semanticProtocols',
+    method: 'get',
+    handler: async (req: Request, res: Response, next: NextFunction) => {
+      console.log('/semanticprotocol GET request received');
+      try {
+       let response: ISemanticProtocol[] = await registryApi.readAllSemanticProtocols();
+        console.log('Sent back response of /semanticprotocol PUT request');
+        res.json(response);
+      } catch (err) {
+        logger.error(err);
+        next(err);
       }
 
     }

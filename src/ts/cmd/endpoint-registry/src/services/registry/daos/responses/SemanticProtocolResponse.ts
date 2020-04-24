@@ -1,4 +1,4 @@
-import { ISemanticProtocol } from "../postgres/ISemanticProtocol";
+import { ISemanticProtocol } from "../interfaces/ISemanticProtocol";
 import { IRole } from "../interfaces/IRole";
 import { IIdentifier } from "i40-aas-objects";
 

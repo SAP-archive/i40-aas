@@ -1,6 +1,6 @@
 import {
   ISemanticProtocol,
-} from '../postgres/ISemanticProtocol';
+} from './ISemanticProtocol';
 import { DeleteResult } from 'typeorm';
 import { IAASDescriptor } from './IAASDescriptor';
 import { IEndpoint } from './IEndpoint';
@@ -15,6 +15,7 @@ interface iRegistry {
   readSemanticProtocolById(semanticProtocolId: string): Promise<ISemanticProtocol>;
   updateSemanticProtocolById(semanticProtocolId: string): Promise<ISemanticProtocol>;
   listAllEndpoints(): Promise<Array<IEndpoint>>;
+  listAllSemanticProtocols(): Promise<Array<ISemanticProtocol>>;
   createSemanticProtocol(req: ISemanticProtocol): void;
   readAASDescriptorsBySemanticProtocolAndRole(
     sProtocol: string,

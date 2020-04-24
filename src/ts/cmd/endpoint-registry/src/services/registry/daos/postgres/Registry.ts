@@ -8,7 +8,7 @@ import { Identifier } from '../responses/Identifier';
 import { TIdType } from 'i40-aas-objects/src/types/IdTypeEnum';
 import { GenericDescriptor } from '../responses/GenericDescriptor';
 import { IAASDescriptor } from '../interfaces/IAASDescriptor';
-import { ISemanticProtocol } from './ISemanticProtocol';
+import { ISemanticProtocol } from '../interfaces/ISemanticProtocol';
 import { SemanticProtocolEntity } from '../entities/SemanticProtocolEntity';
 import { RoleEntity } from '../entities/RoleEntity';
 import { IEndpoint } from '../interfaces/IEndpoint';
@@ -19,18 +19,6 @@ import { logger } from '../../../../utils/log';
 
 class Registry implements iRegistry {
 
-
-
-
-  updateSemanticProtocolById(semanticProtocolId: string): Promise<ISemanticProtocol> {
-   logger.error("Tried to insert an already registered endpoint in Database")
-    throw new Error("Method not implemented.");
-  }
-
-
-  listAllEndpoints(): Promise<IEndpoint[]> {
-    throw new Error("Method not implemented.");
-  }
   constructor(private readonly client: Connection) {
   }
 
@@ -228,7 +216,7 @@ class Registry implements iRegistry {
   }
 
   async createSemanticProtocol(
-    record: import('./ISemanticProtocol').ISemanticProtocol
+    record: import('../interfaces/ISemanticProtocol').ISemanticProtocol
   ): Promise<ISemanticProtocol> {
 
     try {
@@ -240,7 +228,6 @@ class Registry implements iRegistry {
       let semProtocol = new SemanticProtocolEntity();
       semProtocol.id = record.identification.id;
       semProtocol.idType = record.identification.idType;
-
       let savedProtocol = await semProtocolRepository.save(semProtocol);
       console.log("SemanticProtocol Saved in Db ", savedProtocol);
 
@@ -416,9 +403,7 @@ class Registry implements iRegistry {
 
       //get the IRole Array for returning, contruct from the RoleEntity
       let rolesArr: IRole[] = resultSemanticProtocol.roles.map((roleEntity) => {
-
         return {
-
           name: roleEntity.name,
           aasDescriptorIds: aasDescriptorEntities
         } as IRole
@@ -437,9 +422,31 @@ class Registry implements iRegistry {
     }
 
   }
-  async listAll(): Promise<Array<IEndpoint>> {
+  async listAllSemanticProtocols(): Promise<ISemanticProtocol[]> {
 
-    return []
+    let semProtocolRepository = this.client.getRepository(SemanticProtocolEntity);
+    let allProtocolsFound = await semProtocolRepository.find()
+    //get only the ids of the protocols
+    let ids = allProtocolsFound.map(identification => identification.id);
+
+
+    var semanticProtocolsArray = await Promise.all(
+      ids.map(async id => {
+        return await this.readSemanticProtocolById(id)
+      }));
+
+      return semanticProtocolsArray;
+  }
+
+
+  updateSemanticProtocolById(semanticProtocolId: string): Promise<ISemanticProtocol> {
+   logger.error("Tried to insert an already registered endpoint in Database")
+    throw new Error("Method not implemented.");
+  }
+
+
+  listAllEndpoints(): Promise<IEndpoint[]> {
+    throw new Error("Method not implemented.");
   }
 }
 

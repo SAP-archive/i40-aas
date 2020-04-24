@@ -46,7 +46,7 @@ export class AASDescriptorEntity {
 
 //TODO: check here is this approach makes more sense https://www.youtube.com/watch?v=8kZ7W-bI5qQ
 
-  @ManyToMany(type => RoleEntity, { onUpdate: 'CASCADE', onDelete: 'CASCADE' })
+  @ManyToMany(type => RoleEntity, { cascade:true})
   @JoinTable()
   roles!: RoleEntity[];
 }

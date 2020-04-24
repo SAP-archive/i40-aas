@@ -1,5 +1,5 @@
 import { IIdentifier } from 'i40-aas-objects';
-import { IRole } from '../interfaces/IRole';
+import { IRole } from './IRole';
 
 
 

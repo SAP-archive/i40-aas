@@ -3,7 +3,7 @@ import { iRegistry } from './daos/interfaces/IRegistry';
 import { DeleteResult } from 'typeorm';
 import { IAASDescriptor } from './daos/interfaces/IAASDescriptor';
 import { IEndpoint } from './daos/interfaces/IEndpoint';
-import { ISemanticProtocol } from './daos/postgres/ISemanticProtocol';
+import { ISemanticProtocol } from './daos/interfaces/ISemanticProtocol';
 
 class RegistryApi {
 
@@ -57,6 +57,17 @@ class RegistryApi {
 
     var result = await registryDao.readSemanticProtocolById(
         sProtocol
+      );
+      console.log(JSON.stringify(result, null, 3));
+      return result;
+
+  }
+  async readAllSemanticProtocols(
+  ): Promise<Array<ISemanticProtocol>> {
+
+    var registryDao: iRegistry = await RegistryFactory.getRegistry();
+
+    var result = await registryDao.listAllSemanticProtocols(
       );
       console.log(JSON.stringify(result, null, 3));
       return result;
