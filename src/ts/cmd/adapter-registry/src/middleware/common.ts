@@ -6,9 +6,6 @@ import * as basicAuth from 'express-basic-auth';
 
 const logger = require('aas-logger/lib/log');
 
-const dotenv = require('dotenv');
-dotenv.config();
-
 let CORE_REGISTRIES_ADAPTERS_USER: string | undefined =
   process.env.CORE_REGISTRIES_ADAPTERS_USER;
 let CORE_REGISTRIES_ADAPTERS_PASSWORD: string | undefined =
