@@ -21,7 +21,9 @@ class Registry implements iRegistry {
 
   constructor(private readonly client: Connection) {
   }
-
+  /*
+  PUT /admin/AASDescriptor/:aasId
+  */
   async upsertAASDescriptor(record: IAASDescriptor): Promise<IAASDescriptor | undefined> {
 
     try {
@@ -29,8 +31,6 @@ class Registry implements iRegistry {
       let aasDescriptorRepository = this.client.getRepository(AASDescriptorEntity);
       let endpointsRepository = this.client.getRepository(EndpointEntity);
       let assetssRepository = this.client.getRepository(AssetEntity);
-
-
 
       //create Asset associated with this AAS
       // have seperate handlers for each entity and report errors e.g. when assetid present
@@ -71,7 +71,10 @@ class Registry implements iRegistry {
   }
 
 
-
+  /**
+   * Register a AASDescriptor in the db after a PUT call
+   * @param record The request body
+   */
   async createAASDescriptor(record: IAASDescriptor): Promise<IAASDescriptor | undefined> {
 
     try {
@@ -130,21 +133,38 @@ class Registry implements iRegistry {
     }
 
   }
-
+  /**
+   * Update a AASDescriptor Entry after a PATCH call
+   * @param record
+   */
   async updateAasDescriptorByAasId(record: IAASDescriptor): Promise<IAASDescriptor> {
 
     try {
-      //we need the current
+      //find the current entry
       let aasDescriptorRepository = this.client.getRepository(AASDescriptorEntity);
+      let endpointsRepository = this.client.getRepository(EndpointEntity);
 
       //try to find the AASDescriptor in the DB
       var loadedAASDescriptor = await aasDescriptorRepository.findOne({ id: record.identification.id });
       if (loadedAASDescriptor) {
 
-        //The Endpoints array is replaced with the one in the request. It is not possible to
-        //update individual endpoints since no endpoint-id is used.
-        //Thus, the client should sent the whole endpoints array every time (i.e.) first get then put
+        /*NOTE: The Endpoints array is replaced with the one in the request. It is not possible to
+        update individual endpoints since no endpoint-id is used.
+        Thus, the client should sent the whole endpoints array every time (i.e.) first get then put
+        if no delete is done previous Endpoint record will be deleted and replaced
+        with .save() the previous stays in DB */
+        record.descriptor.endpoints.map(async endpoint => {
+          let deleteResult = await this.client
+            .createQueryBuilder()
+            .delete()
+            .from(EndpointEntity)
+            .where("aasdescriptor = :aasdescriptor", { aasdescriptor: record.identification.id })
+            .execute();
 
+          logger.debug("Endpoint delete result: " + deleteResult)
+        })
+
+        //after deleting existing endpoints, replace them with the new
         loadedAASDescriptor.endpoints = record.descriptor.endpoints as EndpointEntity[]
         loadedAASDescriptor.asset = record.asset;
         loadedAASDescriptor.certificate_x509_i40 = record.descriptor.certificate_x509_i40
@@ -152,21 +172,17 @@ class Registry implements iRegistry {
         //Create if not exists, update if it does
         let savedAasDescriptor = await aasDescriptorRepository.save(loadedAASDescriptor);
 
-        //TODO: maybe do this with a .save as above?
+        //TODO: maybe alternative with QueryBuilder
+        // let updateResult = await this.client
+        // .createQueryBuilder()
+        // .update(AASDescriptorEntity)
+        // .set({
+        //   endpoints: record.descriptor.endpoints
+        // })
+        // .where("id = :id", { id: record.identification.id })
+        // .execute();
 
-        /* alternative to updating
-        let aasDescriptor = await this.client
-          .createQueryBuilder()
-          .update(AASDescriptorEntity)
-          .set({
-            certificate_x509_i40: record.descriptor.certificate_x509_i40,
-            signature: record.descriptor.signature
-          })
-          .where("id = :id", { id: record.identification.id })
-          .execute();
-          */
-
-         logger.debug("AASDescriptor updated in Db " + JSON.stringify(savedAasDescriptor));
+        logger.debug("AASDescriptor updated in Db " + JSON.stringify(savedAasDescriptor));
 
         return record
       }
@@ -187,11 +203,11 @@ class Registry implements iRegistry {
     try {
 
       let aasDescriptorRepository = this.client.getRepository(AASDescriptorEntity);
-      var aasDescriptor= await (await aasDescriptorRepository.delete(aasId))
-      logger.debug("Affected rows: "+aasDescriptor.affected?.valueOf())
+      var aasDescriptor = await (await aasDescriptorRepository.delete(aasId))
+      logger.debug("Affected rows: " + aasDescriptor.affected?.valueOf())
 
-      if(aasDescriptor.affected?.valueOf() == 0){
-       throw new HTTP422Error("No Resource with this aasId found in Database: "+aasId)
+      if (aasDescriptor.affected?.valueOf() == 0) {
+        throw new HTTP422Error("No Resource with this aasId found in Database: " + aasId)
       }
       // let aasDescriptor = await this.client
       //   .createQueryBuilder()
@@ -280,7 +296,7 @@ class Registry implements iRegistry {
       .where("id = :id", { id: semanticProtocolId })
       .execute();
 
-      logger.debug("SemanticProtocol deleted in Db " + JSON.stringify(aasDescriptor));
+    logger.debug("SemanticProtocol deleted in Db " + JSON.stringify(aasDescriptor));
 
     return aasDescriptor;
   }
@@ -341,7 +357,7 @@ class Registry implements iRegistry {
       .andWhere("role.semProtocol = :semProtocol", { semProtocol: sProtocol })
       .getMany();
 
-      logger.debug("Roles found in Db " + JSON.stringify(roleIds));
+    logger.debug("Roles found in Db " + JSON.stringify(roleIds));
 
     // Find the AASDescriptors for the given roles
     const aasDescriptorEntities = await this.client
@@ -392,7 +408,7 @@ class Registry implements iRegistry {
         .getMany();
 
 
-        logger.debug("Descriptors loaded  " + JSON.stringify(aasDescriptorEntities))
+      logger.debug("Descriptors loaded  " + JSON.stringify(aasDescriptorEntities))
 
       // Find the AASDescriptors for the given roles
 
@@ -430,12 +446,12 @@ class Registry implements iRegistry {
         return await this.readSemanticProtocolById(id)
       }));
 
-      return semanticProtocolsArray;
+    return semanticProtocolsArray;
   }
 
 
   updateSemanticProtocolById(semanticProtocolId: string): Promise<ISemanticProtocol> {
-   logger.error("Tried to insert an already registered endpoint in Database")
+    logger.error("Tried to insert an already registered endpoint in Database")
     throw new Error("Method not implemented.");
   }
 

@@ -324,6 +324,8 @@ describe('Tests with a simple data model', function () {
     }
   );
 
+
+
   it('is able to register the same descriptor again after deleting it '+
   ' (meaning that related entities were correctly deleted', async function () {
     var uniqueTestId = 'simpleDataTest' + getRandomInteger();
@@ -436,13 +438,13 @@ describe('Tests with a simple data model', function () {
               .get('/AASDescriptors/aasId' + uniqueTestId)
               .auth(user, password)
               .then((res: any) => {
-                console.debug("Endpoint is "+res.body.descriptor.endpoints[0].address)
+                console.debug("Endpoint is "+res.body.descriptor.endpoints[1].address)
                 chai.expect(res.status).to.eql(200);
                 chai
                   .expect(res.body.asset.id)
                   .to.eql('new-Asset-ID' + uniqueTestId);
                 chai
-                  .expect(res.body.descriptor.endpoints[1].address)
+                  .expect(res.body.descriptor.endpoints[0].address)
                   .to.eql('http://def.com-'+uniqueTestId);
                 chai
                   .expect(res.body.descriptor.certificate_x509_i40)
@@ -517,6 +519,53 @@ describe('Tests with a simple data model', function () {
       });
   });
 
+  it('should remove previously related Entities such as Endpoints and Asset when a AASDescriptor gets updated',
+  async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
+
+    await requester
+    //send the first Request
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(
+        replaceAddressAndTypeInFirstEndpoint(
+          makeGoodAASDescriptor(uniqueTestId),
+          'http://abc.com-'+uniqueTestId,
+          'http'
+        )
+      )
+      // Update the AASDescriptor with a new Endpoint
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200);
+        var newUniqueTestId = 'simpleDataTest' + getRandomInteger();
+        await requester
+          .patch('/AASDescriptors/aasId'+uniqueTestId)
+          .auth(user, password)
+          .send(
+            replaceAddressAndTypeInFirstEndpoint(
+              makeGoodAASDescriptor(uniqueTestId),
+              'http://abc.com-'+newUniqueTestId,
+              'http'              )
+          )
+
+          //the previous endpoint should have been deleted (and replaced with the new one)
+          let endpointsRepository = getConnection().getRepository(EndpointEntity);
+          // search for the original Endpoint (from the first PUT)
+          let endpointsFound = endpointsRepository.find({
+            address: 'http://abc.com-'+uniqueTestId,
+            type: 'http'
+          })
+
+          //this Endpoint should have been removed
+          chai.expect((await endpointsFound).length).to.eql(0)
+
+      })
+      .then(() => {
+        requester.close();
+      });
+  }
+);
 
 // test PUT /admin/
   it('can update endpoint addresses', async function () {

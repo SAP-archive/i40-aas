@@ -22,7 +22,8 @@ export class EndpointEntity {
     target!: string;
 
     //AASDescriptor : many Endpoints
-    @ManyToOne(type => AASDescriptorEntity, aasdescriptor => aasdescriptor.endpoints, { onDelete: 'CASCADE'})
+    @ManyToOne(type => AASDescriptorEntity, aasdescriptor => aasdescriptor.endpoints, { onUpdate: 'CASCADE', onDelete: 'CASCADE'})
+    @JoinTable()
     aasdescriptor!: AASDescriptorEntity;
 
 
