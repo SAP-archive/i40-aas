@@ -15,7 +15,6 @@ data:
   CORE_INGRESS_HTTP_HOST: "{{ .Release.Name }}-https-endpoint-ingress"
   CORE_INGRESS_GRPC_HOST: "{{ .Release.Name }}-grpc-endpoint-ingress"
   APPLICATION_ADAPTERS_MONGODB_HOST: "{{ .Release.Name }}-storage-adapter-mongodb"
-  SKILLS_ONBOARDING_DATABASE_HOST: "{{ .Release.Name }}-onboardingskillmongodb-primary-0.{{ .Release.Name }}-onboardingskillmongodb-headless.{{ .Release.Namespace }}.svc.cluster.local"
-# .test-onboardingskillmongodb-headless.default.svc.cluster.local
-# test-mongodb.test.svc.cluster.local
+  SKILLS_ONBOARDING_DATABASE_HOST: "{{ .Release.Name }}-onboardingskillmongodb"
+# -primary-0.{{ .Release.Name }}-onboardingskillmongodb-headless.{{ .Release.Namespace }}.svc.cluster.local
 ---

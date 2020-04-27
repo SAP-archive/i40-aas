@@ -26,7 +26,7 @@ endpointregistrypostgres:
   postgresqlUsername: aas-user
   # postgresqlPassword can be left empty. 
   # In that case, a random 10 character alphanumeric string is generated. 
-  postgresqlPassword: ""
+  postgresqlPassword: fjlkosd78f
   service: 
     port: 5432
   persistence:
@@ -37,7 +37,6 @@ onboardingskillmongodb:
   mongodbDatabase: mongodb
   mongodbUsername: mongouser
   mongodbPassword: mongopassword
-  mongodbDisableSystemLog: true
   service:
     port: 27017
   persistence:
@@ -48,6 +47,8 @@ onboardingskillmongodb:
     replicas:
       secondary: 0
       arbiter: 0
+  readinessProbe:
+    enabled: false
 
 # Optional
 certificates:
@@ -163,7 +164,7 @@ ingress:
   host: ""
 
 image:
-  repository: sapi40
+  repository: i40aas.azurecr.io #sapi40
   release: latest 
   pullPolicy: IfNotPresent
 
