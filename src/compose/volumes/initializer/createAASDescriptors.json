@@ -1,0 +1,26 @@
+  {
+    "identification": {
+        "id": "www.sampleOperator/aas",
+        "idType": "IRI"
+    },
+    "descriptor": {
+      "endpoints": [
+        {
+            "address": "i40-aas-grpc-endpoint-ingress:8384",
+            "type": "grpc",
+            "target": "cloud"
+        },
+        {
+            "address": "http://admin:admin@i40-aas-https-endpoint-ingress:2000/interaction",
+            "type": "http",
+            "target": "cloud"
+        }
+    ],
+      "certificate_x509_i40": "sample_crt",
+    "signature": "sample_sig"
+    },
+    "asset": {
+        "id": "Sample-Asset-Id",
+        "idType": "IRI"
+    }
+  }

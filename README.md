@@ -9,18 +9,18 @@
 ## Contents
 
 - [i40-aas](#i40-aas)
-  - [Contents](#Contents)
-  - [Main Features](#Main-Features)
-  - [Prerequisites](#Prerequisites)
-  - [Instructions](#Instructions)
-    - [Getting Started](#Getting-Started)
-    - [Cleanup](#Cleanup)
-  - [Configuration](#Configuration)
-  - [Known Issues](#Known-Issues)
-  - [Get Support](#Get-Support)
-  - [Contributing](#Contributing)
-  - [Upcoming Changes](#Upcoming-Changes)
-  - [License](#License)
+  - [Contents](#contents)
+  - [Main Features](#main-features)
+  - [Prerequisites](#prerequisites)
+  - [Instructions](#instructions)
+    - [Getting Started](#getting-started)
+    - [Cleanup](#cleanup)
+  - [Configuration](#configuration)
+  - [Known Issues](#known-issues)
+  - [Get Support](#get-support)
+  - [Contributing](#contributing)
+  - [Upcoming Changes](#upcoming-changes)
+  - [License](#license)
 
 ## Main Features
 

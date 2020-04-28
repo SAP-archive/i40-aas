@@ -1,3 +1,17 @@
 {
-  "semanticProtocol": "i40:registry-semanticProtocol/onboarding"
+  "identification": {
+    "id": "i40:registry-semanticProtocol/onboarding",
+    "idType": "Custom"
+  },
+  "roles": [
+    {
+      "name": "operator",
+      "aasDescriptorIds": [
+        {
+          "id": "www.sampleOperator/aas",
+          "idType": "IRI"
+        }
+      ]
+    }
+  ]
 }
