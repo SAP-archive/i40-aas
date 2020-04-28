@@ -264,6 +264,7 @@ services:
     environment:
       - POSTGRES_USER=${CORE_REGISTRIES_ENDPOINTS_DATABASE_SUPER_USER}
       - POSTGRES_PASSWORD=${CORE_REGISTRIES_ENDPOINTS_DATABASE_SUPER_PASSWORD}
+      - POSTGRES_DB=${CORE_REGISTRIES_ENDPOINTS_DATABASE_NAME}
   ##########################################
   rabbitmq:
     image: rabbitmq:3-management

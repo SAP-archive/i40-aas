@@ -10,10 +10,10 @@
     },
     "sender": {
       "identification": {
-      "id":  "http://www.operator.com/aas",
+      "id":  "www.sampleOperator/aas",
       "idType": "URI"
     }
-      ,"role":{"name":"Operator" }
+      ,"role":{"name":"operator" }
     },
     "conversationId": "{{$randomInt}}"
   },

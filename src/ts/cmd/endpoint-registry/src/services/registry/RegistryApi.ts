@@ -1,176 +1,134 @@
 import { RegistryFactory } from './daos/postgres/RegistryFactory';
-import { IIdentifier } from 'i40-aas-objects';
-import { RegistryError } from '../../utils/RegistryError';
-import {
-  RegistryResultSet,
-  IRegistryResultSet
-} from './daos/interfaces/IRegistryResultSet';
 import { iRegistry } from './daos/interfaces/IRegistry';
-import {
-  IRegisterAas,
-  ICreateRole,
-  ICreateSemanticProtocol,
-  IAssignRoles,
-  ICreateAsset
-} from './daos/interfaces/IApiRequests';
-import { TIdType } from 'i40-aas-objects/dist/src/types/IdTypeEnum';
+import { DeleteResult } from 'typeorm';
+import { IAASDescriptor } from './daos/interfaces/IAASDescriptor';
+import { IEndpoint } from './daos/interfaces/IEndpoint';
+import { ISemanticProtocol } from './daos/interfaces/ISemanticProtocol';
+const logger = require('aas-logger/lib/log');
 
 class RegistryApi {
-  async readRecordByIdentifier(
-    identifier: IIdentifier
-  ): Promise<Array<RegistryResultSet>> {
+
+  async readAASDescriptorByAASId(
+    aasId: string
+  ): Promise<IAASDescriptor | undefined> {
     //TODO: dependency injection is better
     var registryDao: iRegistry = await RegistryFactory.getRegistry();
-
-    try {
-      if (!identifier.id) {
-        throw new RegistryError('Missing parameter id', 422);
-      }
-      var result = await registryDao.readRecordByAasId(identifier);
-      console.log(result);
+      var result = await registryDao.readAASDescriptorByAasId(aasId);
+      logger.info(result);
       return result;
-    } catch (e) {
-      throw e;
-    } finally {
-      registryDao.release();
-    }
   }
-
-  async deleteRecordByIdentifier(identifier: IIdentifier): Promise<number> {
+  async updateAASDescriptorByAASId(
+    req: IAASDescriptor
+  ): Promise<IAASDescriptor | undefined> {
     var registryDao: iRegistry = await RegistryFactory.getRegistry();
-    try {
-      if (!identifier.id) {
-        throw new RegistryError('Missing parameter id', 422);
-      }
-      var result = await registryDao.deleteAasByAasId(identifier);
-      console.log('Deleted rows: ' + result);
+      var result = await registryDao.updateAasDescriptorByAasId(req);
+      logger.info(result);
       return result;
-    } catch (e) {
-      throw e;
-    } finally {
-      registryDao.release();
-    }
+  }
+  async deleteAASDescriptorByAASId(
+    aasId: string
+  ): Promise<DeleteResult|undefined> {
+    var registryDao: iRegistry = await RegistryFactory.getRegistry();
+      var result = await registryDao.deleteAasDescriptorByAasId(aasId);
+      logger.info(result);
+      return result;
   }
 
-  async readRecordBySemanticProtocolAndRole(
+
+  async readAASBySemanticProtocolAndRole(
     sProtocol: string,
     role: string
   ): Promise<any> {
-    console.log(sProtocol);
-    console.log(role);
+
     var registryDao: iRegistry = await RegistryFactory.getRegistry();
-    try {
-      var result = await registryDao.readEndpointBySemanticProtocolAndRole(
+
+    var result = await registryDao.readAASDescriptorsBySemanticProtocolAndRole(
         sProtocol,
         role
       );
-      console.log(JSON.stringify(result, null, 3));
+      logger.debug(JSON.stringify(result, null, 3));
+      return result;
+
+  }
+  async readSemanticProtocolBySemanticProtocolId(
+    sProtocol: string,
+  ): Promise<any> {
+
+    var registryDao: iRegistry = await RegistryFactory.getRegistry();
+
+    var result = await registryDao.readSemanticProtocolById(
+        sProtocol
+      );
+      logger.info(JSON.stringify(result, null, 3));
+      return result;
+
+  }
+  async readAllSemanticProtocols(
+  ): Promise<Array<ISemanticProtocol>> {
+
+    var registryDao: iRegistry = await RegistryFactory.getRegistry();
+
+    var result = await registryDao.listAllSemanticProtocols(
+      );
+      logger.info(JSON.stringify(result, null, 3));
+      return result;
+
+  }
+
+  async registerOrReplace(req: IAASDescriptor) {
+    var registryDao: iRegistry = await RegistryFactory.getRegistry();
+    try {
+      var result = await registryDao.upsertAASDescriptor(req);
+      logger.log(result);
       return result;
     } catch (e) {
       throw e;
-    } finally {
-      registryDao.release();
+    }
+  }
+  async register(req: IAASDescriptor) {
+    var registryDao: iRegistry = await RegistryFactory.getRegistry();
+    try {
+      var result = await registryDao.createAASDescriptor(req);
+      logger.info(result);
+      return result;
+    } catch (e) {
+      throw e;
     }
   }
 
-  async register(req: IRegisterAas) {
-    var registryDao: iRegistry = await RegistryFactory.getRegistry();
-    try {
-      var result = await registryDao.registerAas(req);
-      console.log(result);
-      return result;
-    } catch (e) {
-      throw e;
-    } finally {
-      registryDao.release();
-    }
-  }
-  async createRole(req: ICreateRole) {
-    var registryDao: iRegistry = await RegistryFactory.getRegistry();
-    try {
-      var result = await registryDao.createRole(req);
-      console.log(result);
-      return result;
-    } catch (e) {
-      throw e;
-    } finally {
-      registryDao.release();
-    }
-  }
 
-  async createAsset(req: ICreateAsset) {
-    var registryDao: iRegistry = await RegistryFactory.getRegistry();
-    try {
-      var result = await registryDao.createAsset(req);
-      console.log(result);
-      return result;
-    } catch (e) {
-      throw e;
-    } finally {
-      registryDao.release();
-    }
-  }
-  async assignRolesToAAS(req: IAssignRoles) {
-    var registryDao: iRegistry = await RegistryFactory.getRegistry();
-    try {
-      var result = await registryDao.assignRoles(req);
-      console.log(result);
-      return result;
-    } catch (e) {
-      throw e;
-    } finally {
-      registryDao.release();
-    }
-  }
-  async createSemanticProtocol(req: ICreateSemanticProtocol) {
+  async createSemanticProtocol(req: ISemanticProtocol) {
     var registryDao: iRegistry = await RegistryFactory.getRegistry();
     try {
       var result = await registryDao.createSemanticProtocol(req);
-      console.log(result);
+      logger.info(result);
       return result;
     } catch (e) {
       throw e;
-    } finally {
-      registryDao.release();
+    }
+  }
+  async deleteSemanticProtocol(req: string) {
+    var registryDao: iRegistry = await RegistryFactory.getRegistry();
+    try {
+      var result = await registryDao.deleteSemanticProtocolById(req);
+      logger.info(result);
+      return result;
+    } catch (e) {
+      throw e;
     }
   }
 
-  async getEndpointsByReceiverId(
-    receiverId: string,
-    receiverIdType: TIdType
-  ): Promise<Array<IRegistryResultSet>> {
-    return this.readRecordByIdentifier({
-      id: receiverId,
-      idType: receiverIdType
-    });
-  }
 
-  //TODO: why is this extra level of indirection needed?
-  //getEndpointsByReceiverRolejust forwards the call
-  async getEndpointsByReceiverRole(
-    receiverRole: string,
-    semanticProtocol: string
-  ): Promise<Array<IRegistryResultSet>> {
-    if (!semanticProtocol) {
-      throw new RegistryError('Missing parameter semanticProtocol', 422);
-    }
-    return this.readRecordBySemanticProtocolAndRole(
-      semanticProtocol,
-      receiverRole
-    );
-  }
-
-  async getAllEndpointsList(): Promise<Array<IRegistryResultSet>> {
+  async getAllEndpointsList(): Promise<Array<IEndpoint>> {
     var registryDao: iRegistry = await RegistryFactory.getRegistry();
     try {
       var result = await registryDao.listAllEndpoints();
-      console.log(result);
+      logger.info(result);
       return result;
     } catch (e) {
-      console.log(e);
+      logger.error();
+      (e);
       throw e;
-    } finally {
-      registryDao.release();
     }
   }
 }
