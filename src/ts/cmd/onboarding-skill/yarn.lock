@@ -296,18 +296,13 @@
   resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-3.4.9.tgz#fcf01997bbc9f7c09ae5f91383af076d466594e1"
   integrity sha512-XDwyIlt/47l2kWLTzw/mtrpLdB+GPSskR2n/PIcPn+VYhVO77rGhRncIR5GPU0KRzXuqkDO+J5qqrG0Y8P6jzQ==
 
-"AMQP-Client@file:../../pkg/AMQP-Client":
-  version "1.0.4"
-  dependencies:
-    aas-logger "file:../../../../../../../../Library/Caches/Yarn/v4/npm-lient-1.0.4-d7d0113a-de81-449e-8dc1-2a4244232f91-1587990501537/node_modules/aas-logger"
-    amqplib "^0.5.3"
-    mqtt "^3.0.0"
+"AMQP-Client@link:../../pkg/AMQP-Client":
+  version "0.0.0"
+  uid ""
 
-"aas-logger@file:../../pkg/aas-logger":
-  version "1.0.4"
-  dependencies:
-    moment "^2.24.0"
-    winston "^3.2.1"
+"aas-logger@link:../../pkg/aas-logger":
+  version "0.0.0"
+  uid ""
 
 aggregate-error@^3.0.0:
   version "3.0.1"

@@ -231,18 +231,13 @@
     "@types/cookiejar" "*"
     "@types/node" "*"
 
-"AMQP-Client@file:../../pkg/AMQP-Client":
-  version "1.0.4"
-  dependencies:
-    aas-logger "file:../../../../../../../../Library/Caches/Yarn/v4/npm-lient-1.0.4-f32c8479-ce9f-4610-ac69-8c5e4936a3b0-1588057482787/node_modules/aas-logger"
-    amqplib "^0.5.3"
-    mqtt "^3.0.0"
+"AMQP-Client@link:../../pkg/AMQP-Client":
+  version "0.0.0"
+  uid ""
 
-"aas-logger@file:../../pkg/aas-logger":
-  version "1.0.4"
-  dependencies:
-    moment "^2.24.0"
-    winston "^3.2.1"
+"aas-logger@link:../../pkg/aas-logger":
+  version "0.0.0"
+  uid ""
 
 accepts@~1.3.5, accepts@~1.3.7:
   version "1.3.7"

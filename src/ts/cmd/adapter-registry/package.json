@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "compression": "^1.7.4",
-    "aas-logger": "file:../../pkg/aas-logger",
+    "aas-logger": "link:../../pkg/aas-logger",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-basic-auth": "^1.2.0",

@@ -200,18 +200,13 @@
     "@types/express" "*"
     "@types/serve-static" "*"
 
-"AMQP-Client@file:../../pkg/AMQP-Client":
-  version "1.0.4"
-  dependencies:
-    aas-logger "file:../../../../../../../../Library/Caches/Yarn/v4/npm-lient-1.0.4-31e1face-aa0d-4259-8410-5ebc4620ab32-1587991001731/node_modules/aas-logger"
-    amqplib "^0.5.3"
-    mqtt "^3.0.0"
+"AMQP-Client@link:../../pkg/AMQP-Client":
+  version "0.0.0"
+  uid ""
 
-"aas-logger@file:../../pkg/aas-logger":
-  version "1.0.4"
-  dependencies:
-    moment "^2.24.0"
-    winston "^3.2.1"
+"aas-logger@link:../../pkg/aas-logger":
+  version "0.0.0"
+  uid ""
 
 accepts@~1.3.5, accepts@~1.3.7:
   version "1.3.7"

@@ -40,8 +40,8 @@
   "author": "",
   "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
-    "AMQP-Client": "file:../../pkg/AMQP-Client",
-    "aas-logger": "file:../../pkg/aas-logger",
+    "AMQP-Client": "link:../../pkg/AMQP-Client",
+    "aas-logger": "link:../../pkg/aas-logger",
     "axios": "^0.19.0",
     "i40-aas-objects": "0.2.6",
     "lodash": "^4.17.15",

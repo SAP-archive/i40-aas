@@ -14,7 +14,7 @@
   "author": "Orthodoxos Kipouridis, Kasim Rehman",
   "license": "MIT",
   "dependencies": {
-    "aas-logger": "file:../aas-logger",
+    "aas-logger": "link:../aas-logger",
     "amqplib": "^0.5.3",
     "mqtt": "^3.0.0"
   },
