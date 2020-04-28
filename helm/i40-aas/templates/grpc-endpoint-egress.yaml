@@ -48,9 +48,11 @@ spec:
         - secretRef:
             name: {{ .Release.Name }}-core-egress
         volumeMounts:
+        {{- if .Values.certificates }}
         - name: certs
           mountPath: "/certs"
           readOnly: true
+        {{- end }}
         resources:
           {{- toYaml .Values.resources | nindent 10 }}
 #        livenessProbe:
@@ -60,8 +62,10 @@ spec:
 #          initialDelaySeconds: 600
 #          periodSeconds: 60
       volumes:
+      {{- if .Values.certificates }}
       - name: certs
         secret:
           secretName: {{ .Values.certificates.secretName }}
           optional: true
+      {{- end }}
 ---
