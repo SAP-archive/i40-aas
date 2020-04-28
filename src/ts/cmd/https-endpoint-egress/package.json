@@ -3,10 +3,6 @@
   "version": "1.0.0",
   "description": "This component listens to messages published to the broker from skills and posts them to their respective receivers.",
   "main": "src/index.js",
-  "engines": {
-    "node": "12.4.0",
-    "npm": "6.10.1"
-  },
   "scripts": {
     "dev": "tsc-watch --onSuccess \"node ./dist/server.js\"",
     "test": "mocha -r ts-node/register test/unit/**/*.spec.ts",
