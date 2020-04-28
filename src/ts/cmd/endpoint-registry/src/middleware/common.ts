@@ -1,8 +1,11 @@
-import { Router } from "express";
-import cors from "cors";
-import parser from "body-parser";
-import compression from "compression";
-import * as basicAuth from "express-basic-auth";
+import { Router } from 'express';
+import cors from 'cors';
+import parser from 'body-parser';
+import compression from 'compression';
+import * as basicAuth from 'express-basic-auth';
+
+//const dotenv = require('dotenv');
+//dotenv.config();
 
 export const handleCors = (router: Router) =>
   router.use(cors({ credentials: true, origin: true }));
@@ -17,13 +20,19 @@ export const handleCompression = (router: Router) => {
 };
 
 let user: any = {};
-if (process.env.CORE_REGISTRIES_ENDPOINTS_USER && process.env.CORE_REGISTRIES_ENDPOINTS_PASSWORD) {
-  user[process.env.CORE_REGISTRIES_ENDPOINTS_USER] = process.env.CORE_REGISTRIES_ENDPOINTS_PASSWORD;
+if (
+  process.env.CORE_REGISTRIES_ENDPOINTS_USER &&
+  process.env.CORE_REGISTRIES_ENDPOINTS_PASSWORD
+) {
+  user[process.env.CORE_REGISTRIES_ENDPOINTS_USER] =
+    process.env.CORE_REGISTRIES_ENDPOINTS_PASSWORD;
+} else {
+  console.log('No user defined!');
 }
 export const handleBasicAuth = (router: Router) =>
   router.use(
     basicAuth.default({
       users: user,
-      challenge: true
+      challenge: true,
     })
   );

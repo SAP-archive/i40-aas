@@ -39,6 +39,7 @@
   "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
     "amqplib": "^0.5.5",
+    "aas-logger": "file:../../pkg/aas-logger",
     "axios": "^0.19.0",
     "chai-asserttype-extra": "^1.2.0",
     "class-validator": "^0.9.1",
@@ -51,9 +52,9 @@
     "i40-aas-objects": "0.2.6",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
+    "sinon": "^7.5.0",
     "swagger-ui-express": "^4.0.6",
-    "winston": "^3.2.1",
-    "sinon": "^7.5.0"
+    "winston": "^3.2.1"
   },
   "devDependencies": {
     "@hapi/boom": "^7.4.11",

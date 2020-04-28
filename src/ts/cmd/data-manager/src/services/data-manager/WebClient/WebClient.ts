@@ -1,5 +1,6 @@
-import * as logger from 'winston';
 import Axios, { AxiosError, AxiosResponse, AxiosRequestConfig } from 'axios';
+
+const logger = require('aas-logger/lib/log');
 
 class WebClient {
   constructor() {}
@@ -17,7 +18,7 @@ class WebClient {
     if (user && pass) {
       config.auth = {
         username: user,
-        password: pass
+        password: pass,
       };
     }
     return config;
@@ -31,10 +32,7 @@ class WebClient {
   ): Promise<AxiosResponse<T>> {
     logger.debug('Get request from Registry' + url);
     logger.debug('paraams ', params);
-    logger.debug(
-      'Config ' +
-        JSON.stringify(this.getURLRequestConfig(params))
-    );
+    logger.debug('Config ' + JSON.stringify(this.getURLRequestConfig(params)));
 
     const response = await Axios.get<T>(
       url,
@@ -72,8 +70,8 @@ class WebClient {
     const response = await Axios.post<T>(url, body, {
       auth: {
         username: username as string,
-        password: password as string
-      }
+        password: password as string,
+      },
     });
     logger.debug('Adapter response ' + response.statusText);
     return response as AxiosResponse<T>;

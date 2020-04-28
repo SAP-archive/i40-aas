@@ -1,10 +1,8 @@
-import { IAdapterRegistry } from "./interfaces/IAdapterRegistry";
-import {
-  Adapter,
-  IStorageAdapter
-} from "./interfaces/IRegistryResultSet";
-import { IIdentifier } from "i40-aas-objects";
-import * as logger from "winston";
+import { IAdapterRegistry } from './interfaces/IAdapterRegistry';
+import { Adapter, IStorageAdapter } from './interfaces/IRegistryResultSet';
+import { IIdentifier } from 'i40-aas-objects';
+
+const logger = require('aas-logger/lib/log');
 
 /**
  * This class implements the IAdapterRegistry to store the registry entries in
@@ -60,7 +58,7 @@ class AdapterRegistryLocal implements IAdapterRegistry {
     throw new Error('Method not implemented.');
   }
   deleteAdapterByAdapterID(aasId: IIdentifier): Promise<void> {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
   async getAdapterBySubmodelId(submodelId: string): Promise<IStorageAdapter> {
     try {
@@ -72,11 +70,10 @@ class AdapterRegistryLocal implements IAdapterRegistry {
 
       let values: Adapter[] = await this.storage.values();
 
-      values.forEach(Adapter => {
+      values.forEach((Adapter) => {
         if (Adapter.submodelid === submodelId) {
           adapter = Adapter;
           //TODO: check for singularity. Submodel is an 1..1 to Adapter
-
         }
       });
 
@@ -102,7 +99,7 @@ class AdapterRegistryLocal implements IAdapterRegistry {
       //the requirement that submodelid could be empty means that it cannot be used as key
 
       let values: Adapter[] = await this.storage.values();
-      values.forEach(Adapter => {
+      values.forEach((Adapter) => {
         if (Adapter.submodelsemanticid === submodelSemanticId) {
           adapter = Adapter;
           //TODO: check for singularity. Submodel is an 1..1 to Adapter

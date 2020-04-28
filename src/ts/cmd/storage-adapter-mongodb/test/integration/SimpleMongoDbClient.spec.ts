@@ -1,8 +1,9 @@
 import { fail } from 'assert';
-import { logger } from '../../src/log';
+
 import { SimpleMongoDbClient } from '../../src/services/mongodb-client/operations/SimpleMongoDbClient';
 import { ISubmodelRecord } from '../../src/services/mongodb-client/model/ISubmodelRecord';
 
+const logger = require('aas-logger/lib/log');
 var chai = require('chai');
 var chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
@@ -26,18 +27,31 @@ function checkEnvVar(variableName: string): string {
   }
 }
 
-describe('SimpleMongoDbClient', function() {
+describe('SimpleMongoDbClient', function () {
   const uuidv1 = require('uuid/v1');
   let mongoDbClient: SimpleMongoDbClient;
-  let collectionName: string = "tests" + uuidv1();
-  let APPLICATION_ADAPTERS_MONGODB_DATABASE_NAME = checkEnvVar("APPLICATION_ADAPTERS_MONGODB_DATABASE_NAME");
-  let APPLICATION_ADAPTERS_MONGODB_DATABASE_HOST = checkEnvVar("APPLICATION_ADAPTERS_MONGODB_DATABASE_HOST");
-  let APPLICATION_ADAPTERS_MONGODB_DATABASE_PORT = checkEnvVar("APPLICATION_ADAPTERS_MONGODB_DATABASE_PORT");
-  let APPLICATION_ADAPTERS_MONGODB_DATABASE_USER = checkEnvVar("APPLICATION_ADAPTERS_MONGODB_DATABASE_USER");
-  let APPLICATION_ADAPTERS_MONGODB_DATABASE_PASSWORD = checkEnvVar("APPLICATION_ADAPTERS_MONGODB_DATABASE_PASSWORD");
+  let collectionName: string = 'tests' + uuidv1();
+  let APPLICATION_ADAPTERS_MONGODB_DATABASE_NAME = checkEnvVar(
+    'APPLICATION_ADAPTERS_MONGODB_DATABASE_NAME'
+  );
+  let APPLICATION_ADAPTERS_MONGODB_DATABASE_HOST = checkEnvVar(
+    'APPLICATION_ADAPTERS_MONGODB_DATABASE_HOST'
+  );
+  let APPLICATION_ADAPTERS_MONGODB_DATABASE_PORT = checkEnvVar(
+    'APPLICATION_ADAPTERS_MONGODB_DATABASE_PORT'
+  );
+  let APPLICATION_ADAPTERS_MONGODB_DATABASE_USER = checkEnvVar(
+    'APPLICATION_ADAPTERS_MONGODB_DATABASE_USER'
+  );
+  let APPLICATION_ADAPTERS_MONGODB_DATABASE_PASSWORD = checkEnvVar(
+    'APPLICATION_ADAPTERS_MONGODB_DATABASE_PASSWORD'
+  );
 
-  if (APPLICATION_ADAPTERS_MONGODB_DATABASE_USER && APPLICATION_ADAPTERS_MONGODB_DATABASE_PASSWORD) {
-    logger.info("Using authentication");
+  if (
+    APPLICATION_ADAPTERS_MONGODB_DATABASE_USER &&
+    APPLICATION_ADAPTERS_MONGODB_DATABASE_PASSWORD
+  ) {
+    logger.info('Using authentication');
   }
 
   before(async () => {
@@ -63,12 +77,12 @@ describe('SimpleMongoDbClient', function() {
 
   afterEach(async () => {});
 
-  it('stores and reads', async function() {
+  it('stores and reads', async function () {
     await mongoDbClient.connect();
     let submodelRecord: ISubmodelRecord = {
       _id: 'ASDS-KLKD-POPF-TDGF',
       serializedSubmodel: 'submodel',
-      version: 0
+      version: 0,
     };
     await mongoDbClient.update(
       { _id: submodelRecord._id },
@@ -76,7 +90,7 @@ describe('SimpleMongoDbClient', function() {
       true
     );
     let result: ISubmodelRecord | null = await mongoDbClient.getOneByKey({
-      _id: submodelRecord._id
+      _id: submodelRecord._id,
     });
     if (!result) {
       fail('Error');
@@ -86,13 +100,13 @@ describe('SimpleMongoDbClient', function() {
       submodelRecord.serializedSubmodel
     );
   });
-  it('provides optimistic locking', async function() {
+  it('provides optimistic locking', async function () {
     const uuidv1 = require('uuid/v1');
     const uuid: string = uuidv1();
 
     let stateRecord: any = {
       _id: uuid,
-      serializedState: 'WaitingForOnboardingRequestOLTest'
+      serializedState: 'WaitingForOnboardingRequestOLTest',
     };
     await mongoDbClient.update(
       { _id: stateRecord._id, version: 0 },
@@ -100,7 +114,7 @@ describe('SimpleMongoDbClient', function() {
       true
     );
     let result: ISubmodelRecord | null = await mongoDbClient.getOneByKey({
-      _id: stateRecord._id
+      _id: stateRecord._id,
     });
     if (result) logger.info('Version in DB:' + result.version);
     await mongoDbClient.update(
@@ -109,7 +123,7 @@ describe('SimpleMongoDbClient', function() {
       true
     );
     result = await mongoDbClient.getOneByKey({
-      _id: stateRecord._id
+      _id: stateRecord._id,
     });
     if (result) logger.info('Version in DB:' + result.version);
     const promiseToFail = mongoDbClient.update(
