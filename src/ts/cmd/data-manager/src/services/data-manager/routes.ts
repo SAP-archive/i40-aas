@@ -2,13 +2,13 @@ import { Request, Response, NextFunction } from 'express';
 import { Submodel as submodel } from 'i40-aas-objects';
 import {
   checkReqBodyEmpty,
-  validateSubmodelsRequest
+  validateSubmodelsRequest,
 } from '../../middleware/checks';
-import * as logger from 'winston';
 
 import { RoutingController } from './RoutingController';
 import { HTTP400Error } from '../../utils/httpErrors';
-import { IStorageAdapter } from './interfaces/IStorageAdapter';
+
+const logger = require('aas-logger/lib/log');
 
 export default [
   {
@@ -34,11 +34,13 @@ export default [
           //TODO: check if we need to send back the response of the adapter
           res.status(200).send(submodelsArray);
         } catch (err) {
-          logger.error(' Could not process the forwarding of submodel(s) ' + err);
+          logger.error(
+            ' Could not process the forwarding of submodel(s) ' + err
+          );
           next(new Error(err));
         }
-      }
-    ]
+      },
+    ],
   },
   {
     path: '/submodels',
@@ -52,13 +54,13 @@ export default [
         if (req.query.submodelid || req.query.semanticId) {
           let result = await RoutingController.getSubmodels({
             submodelid: req.query.submodelid,
-            submodelsemanticid: req.query.semanticId
+            submodelsemanticid: req.query.semanticId,
           });
           res.status(200).end(JSON.stringify(result.data));
         } else {
           next(new HTTP400Error('Missing query parameter'));
         }
-      }
-    ]
-  }
+      },
+    ],
+  },
 ];

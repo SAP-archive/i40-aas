@@ -57,3 +57,13 @@ build-%:
 push-%:
 	BUILD_TAG=$(BUILD_TAG) docker push $(REGISTRY)/i40-aas-$*:$(BUILD_TAG)
 	BUILD_TAG=$(BUILD_TAG) docker push $(REGISTRY)/i40-aas-$*:latest
+
+## up a specific service
+.PHONY: up-%
+up-%:
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d i40-aas-$*
+
+## down a specific service
+.PHONY: down-%
+down-%:
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml rm -f -s -v i40-aas-$*

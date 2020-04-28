@@ -1,5 +1,5 @@
 import { interpret, State, Interpreter, EventObject } from 'xstate';
-import * as logger from 'winston';
+
 import { IDatabaseClient } from './persistenceinterface/IDatabaseClient';
 import { IStateRecord } from './persistenceinterface/IStateRecord';
 import { MySkillStateMachineSpecification } from '../services/onboarding/MySkillStateMachineSpecification';
@@ -8,6 +8,8 @@ import { InteractionMessage } from 'i40-aas-objects';
 import { ISkillContext } from './statemachineinterface/ISkillContext';
 import { MessageDispatcherDeferredWrapper } from './MessageDispatcherDeferredWrapper';
 import { IInitializer } from './statemachineinterface/IInitializer';
+
+const logger = require('aas-logger/lib/log');
 
 //Try to keep this generic. Do not mention roles or message types. Do not perform actions that
 //should be modelled in the state machine. This class should remain relatively constant. It
@@ -36,7 +38,7 @@ class Skill {
   ): Promise<IStateRecord | null> {
     await this.dbClient.connect();
     let stateRecord: IStateRecord | null = await this.dbClient.getOneByKey({
-      _id: conversationId
+      _id: conversationId,
     });
     return stateRecord;
   }
@@ -127,7 +129,7 @@ class Skill {
 
       //TODO: move out for better readability
       //this needs to be set for each and every event
-      onboardingService.onTransition(async state => {
+      onboardingService.onTransition(async (state) => {
         logger.debug('Transitioned to ' + JSON.stringify(state.value));
         if (!state.changed) return;
         //TODO: database will be written to if the state was loaded
@@ -138,11 +140,11 @@ class Skill {
           const result = await this.dbClient.update(
             {
               _id: conversationId,
-              version: versionCounter++
+              version: versionCounter++,
             }, //find by
             {
               //update these
-              serializedState: JSON.stringify(stateClone)
+              serializedState: JSON.stringify(stateClone),
             },
             true //increment version
           );
@@ -153,7 +155,7 @@ class Skill {
           logger.error(
             'The database cannot be written to. More specific:' + error.message
           );
-          logger.error(error.stack);
+
           //only respond to external trigger (once)
           if (state.event.type === event)
             this.initializer.getPlainAasMessageDispatcher().replyError(message);
@@ -163,7 +165,7 @@ class Skill {
 
       onboardingService.send(event);
     } catch (error) {
-      logger.error('The transition could not take place:' + error);
+      logger.error('The transition could not take place. ' + error.message);
       if (!context.message) {
         logger.error(
           'Asset repository skill cannot is missing in its context the message to reply to with an error!'

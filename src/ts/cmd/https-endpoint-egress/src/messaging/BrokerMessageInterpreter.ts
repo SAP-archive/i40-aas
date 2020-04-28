@@ -1,10 +1,10 @@
-import { IMessageReceiver } from "./interfaces/IMessageReceiver";
+import { IMessageReceiver } from './interfaces/IMessageReceiver';
 import { AmqpClient, Subscription } from 'AMQP-Client/lib/AmqpClient';
-import { IResolverMessage } from "./interfaces/IResolverMessage";
-import { AASConnector } from "./AASConnector";
-import { WebClient } from "../WebClient/WebClient";
-import { logger } from "./../utils/log";
+import { IResolverMessage } from './interfaces/IResolverMessage';
+import { AASConnector } from './AASConnector';
+import { WebClient } from '../WebClient/WebClient';
 
+const logger = require('aas-logger/lib/log');
 /*
 Class that receives the the Interaction Messages received from the broker.
 The messages after validation are sent to the RegistryConnector that makes a request to the client

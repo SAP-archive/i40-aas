@@ -6,6 +6,24 @@ WORKDIR /cmd/endpoint-registry
 COPY cmd/endpoint-registry/package.json /cmd/endpoint-registry
 COPY cmd/endpoint-registry/package-lock.json /cmd/endpoint-registry
 
+
+## aas-logger ##
+COPY pkg/aas-logger/package.json /pkg/aas-logger/
+COPY pkg/aas-logger/package-lock.json /pkg/aas-logger/
+RUN cd /pkg/aas-logger \
+    && npm install --production\
+    && mkdir /aas-logger-production-dependencies/ \
+    && cp -R node_modules /aas-logger-production-dependencies/ \
+    && npm install
+
+
+COPY pkg/aas-logger/ /pkg/aas-logger/
+
+RUN cd /pkg/aas-logger \
+    && npm run clean \
+    && npm run build
+
+
 ## install & backup production dependencies
 RUN npm install --production \
     && mkdir /production-dependencies/ \
@@ -22,23 +40,22 @@ RUN npm run clean \
 ###################################
 FROM node:lts-alpine as prod
 
-RUN apk update && apk upgrade \
-    && apk add --no-cache bash postgresql postgresql-contrib netcat-openbsd
-
 RUN adduser -D aasuser
 
 WORKDIR /cmd/endpoint-registry
+
+
+## aas-logger ##
+COPY --from=builder /pkg/aas-logger/lib /pkg/aas-logger/lib
+COPY --from=builder /aas-logger-production-dependencies/node_modules /pkg/aas-logger/node_modules
+COPY pkg/aas-logger/package.json /pkg/aas-logger/
 
 ## copy build output from previous stage
 COPY --from=builder /cmd/endpoint-registry/dist /cmd/endpoint-registry/dist
 COPY --from=builder /production-dependencies/node_modules /cmd/endpoint-registry/node_modules
 COPY cmd/endpoint-registry/package.json /cmd/endpoint-registry
 
-COPY cmd/endpoint-registry/start.sh /cmd/endpoint-registry
-COPY cmd/endpoint-registry/prepareDB.sh /cmd/endpoint-registry
-COPY cmd/endpoint-registry/sql/* /cmd/endpoint-registry/sql/
-
 USER aasuser
 EXPOSE 4400
 
-ENTRYPOINT [ "./start.sh" ]
+ENTRYPOINT [ "npm", "start" ]

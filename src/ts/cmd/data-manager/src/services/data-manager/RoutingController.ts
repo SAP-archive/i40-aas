@@ -1,10 +1,12 @@
 import { ISubmodelRouter } from './interfaces/ISubmodelRouter';
 import { AdapterRegistryConnector } from './RegistryConnector';
 import { AdapterConnector } from './AdapterConnector';
-import { logger } from '../../utils/log';
+
 import { AxiosResponse } from 'axios';
 import { IStorageAdapter } from './interfaces/IStorageAdapter';
 import { Submodel } from 'i40-aas-objects';
+
+const logger = require('aas-logger/lib/log');
 
 module RoutingController {
   var adapterConn: AdapterConnector;
@@ -13,7 +15,7 @@ module RoutingController {
   export async function routeSubmodel(
     submodelsArray: Submodel[]
   ): Promise<AxiosResponse[]> {
-    var submodels = submodelsArray.map(async submodel => {
+    var submodels = submodelsArray.map(async (submodel) => {
       //get the storage adapter responsible for this model from adapter-registry
       //try first with submodelId === interactionElements.identification.id as parameter
       if (adapterConn && registryConn) {
@@ -22,7 +24,7 @@ module RoutingController {
             submodelid: submodel.identification.id,
             submodelsemanticid: submodel.semanticId
               ? submodel.semanticId.keys[0].value
-              : undefined
+              : undefined,
           }
         );
         logger.debug('Adapter ' + JSON.stringify(adapter));

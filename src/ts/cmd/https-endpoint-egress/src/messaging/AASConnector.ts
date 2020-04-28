@@ -1,7 +1,7 @@
-import * as logger from "winston";
-import { WebClient } from "../WebClient/WebClient";
-import { AxiosResponse } from "axios";
-import { IInteractionMessage, IFrame } from "i40-aas-objects";
+import { WebClient } from '../WebClient/WebClient';
+import { AxiosResponse } from 'axios';
+
+const logger = require('aas-logger/lib/log');
 
 class AASConnector {
   private webClient: WebClient;
@@ -11,10 +11,7 @@ class AASConnector {
   }
 
   //Send a request to a dummy AAS service (e.g. an operator in case of an onboarding process)
-  async sendInteractionReplyToAAS(
-    receiverURL: string,
-    message: string
-  ) {
+  async sendInteractionReplyToAAS(receiverURL: string, message: string) {
     let response: AxiosResponse = await this.webClient.postRequest(
       receiverURL,
       message,
@@ -24,4 +21,4 @@ class AASConnector {
   }
 }
 
-export{AASConnector}
+export { AASConnector };

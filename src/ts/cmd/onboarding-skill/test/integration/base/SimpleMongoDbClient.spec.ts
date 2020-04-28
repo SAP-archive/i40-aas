@@ -1,11 +1,12 @@
 import { fail } from 'assert';
-import { logger } from '../../../src/log';
+
 import { SimpleMongoDbClient } from '../../../src/base/persistence/SimpleMongoDbClient';
 import { IStateRecord } from '../../../src/base/persistenceinterface/IStateRecord';
 var chai = require('chai');
 var chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 
+const logger = require('aas-logger/lib/log');
 // Then either:
 var expect = chai.expect;
 // or:
@@ -25,7 +26,7 @@ function checkEnvVar(variableName: string): string {
   }
 }
 
-describe('SimpleMongoDbClient', function() {
+describe('SimpleMongoDbClient', function () {
   const uuidv1 = require('uuid/v1');
   let mongoDbClient: SimpleMongoDbClient;
   let collectionName: string = 'tests' + uuidv1();
@@ -66,11 +67,11 @@ describe('SimpleMongoDbClient', function() {
 
   afterEach(async () => {});
 
-  it('stores and reads', async function() {
+  it('stores and reads', async function () {
     await mongoDbClient.connect();
     let stateRecord: any = {
       _id: 'ASDS-KLKD-POPF-TDGF',
-      serializedState: 'WaitingForOnboardingRequest'
+      serializedState: 'WaitingForOnboardingRequest',
     };
     await mongoDbClient.update(
       { _id: stateRecord._id },
@@ -78,7 +79,7 @@ describe('SimpleMongoDbClient', function() {
       true
     );
     let result: IStateRecord | null = await mongoDbClient.getOneByKey({
-      _id: stateRecord._id
+      _id: stateRecord._id,
     });
     if (!result) {
       fail('Error');
@@ -86,13 +87,13 @@ describe('SimpleMongoDbClient', function() {
     }
     expect(result.serializedState).to.be.equal(stateRecord.serializedState);
   });
-  it('provides optimistic locking', async function() {
+  it('provides optimistic locking', async function () {
     const uuidv1 = require('uuid/v1');
     const uuid: string = uuidv1();
 
     let stateRecord: any = {
       _id: uuid,
-      serializedState: 'WaitingForOnboardingRequestOLTest'
+      serializedState: 'WaitingForOnboardingRequestOLTest',
     };
     await mongoDbClient.update(
       { _id: stateRecord._id, version: 0 },
@@ -100,7 +101,7 @@ describe('SimpleMongoDbClient', function() {
       true
     );
     let result: IStateRecord | null = await mongoDbClient.getOneByKey({
-      _id: stateRecord._id
+      _id: stateRecord._id,
     });
     if (result) logger.info('Version in DB:' + result.version);
     await mongoDbClient.update(
@@ -109,7 +110,7 @@ describe('SimpleMongoDbClient', function() {
       true
     );
     result = await mongoDbClient.getOneByKey({
-      _id: stateRecord._id
+      _id: stateRecord._id,
     });
     if (result) logger.info('Version in DB:' + result.version);
     const promiseToFail = mongoDbClient.update(

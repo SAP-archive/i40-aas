@@ -24,6 +24,7 @@
   "dependencies": {
     "@hapi/boom": "^7.4.2",
     "AMQP-Client": "file:../../pkg/AMQP-Client",
+    "aas-logger": "file:../../pkg/aas-logger",
     "axios": "^0.19.0",
     "class-validator": "^0.9.1",
     "compression": "^1.7.4",
@@ -34,8 +35,7 @@
     "i40-aas-objects": "0.2.6",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
-    "swagger-ui-express": "^4.0.6",
-    "winston": "^3.2.1"
+    "swagger-ui-express": "^4.0.6"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",

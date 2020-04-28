@@ -1,31 +1,26 @@
-import { IIdentifier } from 'i40-aas-objects';
-import { RegistryResultSet, IRegistryResultSet } from './IRegistryResultSet';
 import {
-  IRegisterAas,
-  ICreateSemanticProtocol,
-  ICreateRole,
-  IAssignRoles,
-  ICreateAsset
-} from './IApiRequests';
-import { ICreateRoleResultSet } from './IRegistryRolesSet';
+  ISemanticProtocol,
+} from './ISemanticProtocol';
+import { DeleteResult } from 'typeorm';
+import { IAASDescriptor } from './IAASDescriptor';
+import { IEndpoint } from './IEndpoint';
 
 interface iRegistry {
-  readRecordByAasId(aasId: IIdentifier): Promise<Array<RegistryResultSet>>;
-  registerAas(req: IRegisterAas): Promise<RegistryResultSet>;
-  updateAas(req: IRegisterAas): Promise<RegistryResultSet>;
-  deleteAasByAasId(aasId: IIdentifier): Promise<number>;
-  listAasByAssetId(assetId: IIdentifier): Promise<Array<RegistryResultSet>>;
-  listAas(): Promise<Array<RegistryResultSet>>;
-  listAllEndpoints(): Promise<Array<RegistryResultSet>>;
-  release(): void;
-  createSemanticProtocol(req: ICreateSemanticProtocol): void;
-  assignRoles(req: IAssignRoles): void;
-  createRole(req: ICreateRole): Promise<ICreateRoleResultSet>;
-  readEndpointBySemanticProtocolAndRole(
+  readAASDescriptorByAasId(aasId: string): Promise<IAASDescriptor>;
+  createAASDescriptor(req: IAASDescriptor): Promise<IAASDescriptor | undefined>;
+  upsertAASDescriptor(req: IAASDescriptor): Promise<IAASDescriptor | undefined>;
+  updateAasDescriptorByAasId(req: IAASDescriptor): Promise<IAASDescriptor | undefined>;
+  deleteAasDescriptorByAasId(aasId: string): Promise<DeleteResult|undefined>;
+  deleteSemanticProtocolById(semanticProtocolId: string): Promise<DeleteResult|undefined>;
+  readSemanticProtocolById(semanticProtocolId: string): Promise<ISemanticProtocol>;
+  updateSemanticProtocolById(semanticProtocolId: string): Promise<ISemanticProtocol>;
+  listAllEndpoints(): Promise<Array<IEndpoint>>;
+  listAllSemanticProtocols(): Promise<Array<ISemanticProtocol>>;
+  createSemanticProtocol(req: ISemanticProtocol): void;
+  readAASDescriptorsBySemanticProtocolAndRole(
     sProtocol: string,
     role: string
-  ): Promise<any>;
-  createAsset(req: ICreateAsset): Promise<ICreateAsset>;
+  ): Promise<Array<IAASDescriptor>| undefined>;
 }
 
 export { iRegistry };
