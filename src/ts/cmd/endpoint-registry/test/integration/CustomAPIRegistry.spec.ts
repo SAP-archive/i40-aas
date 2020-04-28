@@ -181,7 +181,7 @@ describe('Tests with a simple data model', function () {
       });
   });
 });
-  it('saves a SemanticProtocol in the the database', async function () {
+  it('correctly saves a SemanticProtocol in the the database', async function () {
     var uniqueTestId = 'simpleDataTest' + getRandomInteger();
     var requester = chai.request(app).keepOpen();
 
@@ -205,9 +205,9 @@ describe('Tests with a simple data model', function () {
           .auth(user, password)
           .then((res: any) => {
             chai.expect(res.status).to.eql(200);
-
+            console.log("body is " + JSON.stringify(res.body) )
             //check if role registered correctly
-            chai.expect(res.body.roles[0]).to.eql("roleA_" + uniqueTestId)
+            chai.expect((res.body as ISemanticProtocol).roles[0].name).to.eql("roleA_" + uniqueTestId)
 
           });
       })
@@ -216,6 +216,49 @@ describe('Tests with a simple data model', function () {
       });
   });
 });
+
+
+//test GET /SemanticProtocols/:SemanticProtocolId'
+
+it('retrieves a SemanticProtocol from the the database using the SemanticProtocolId', async function () {
+  var uniqueTestId = 'sampleGetSemProtId-' + getRandomInteger();
+  var requester = chai.request(app).keepOpen();
+
+  //first register an AAS
+  await requester
+    .put('/AASDescriptors')
+    .auth(user, password)
+    .send(makeGoodAASDescriptor(uniqueTestId))
+    .then(async (res: any) => {
+      chai.expect(res.status).to.eql(200);
+
+//then register a SemanticProtocol
+  await requester
+    .put('/SemanticProtocols')
+    .auth(user, password)
+    .send(makeGoodSemanticProtocol(uniqueTestId))
+    .then(async (res: any) => {
+      chai.expect(res.status).to.eql(200);
+//finally try retrieving the semantic protocol from the database
+      await requester
+        .get('/SemanticProtocols/' + 'SemanticProtocolId' + uniqueTestId)
+        .auth(user, password)
+        .then((res: any) => {
+          chai.expect(res.status).to.eql(200);
+          console.log("body is " + JSON.stringify(res.body) )
+          //check if role registered correctly
+          chai.expect((res.body as ISemanticProtocol).roles[0].name).to.eql("roleA_" + uniqueTestId)
+
+        });
+    })
+    .then(() => {
+      requester.close();
+    });
+});
+});
+
+
+
 
   it('returns a 401 error if bad authentication details are provided', async function () {
     var uniqueTestId = 'simpleDataTest' + getRandomInteger();

@@ -468,7 +468,6 @@ class Registry implements iRegistry {
     try {
       //get an Entityrepository for the AASDescriptor and the Asset
       let semProtocolRepository = this.client.getRepository(SemanticProtocolEntity);
-      let rolesRepository = this.client.getRepository(RoleEntity);
 
       //Load the AASDescriptor object from the DB as well as the related Objects (Endpoints, Asset)
       let resultSemanticProtocol = await semProtocolRepository.findOne({
@@ -477,8 +476,8 @@ class Registry implements iRegistry {
         relations: ["roles"]
       }) as SemanticProtocolEntity;
 
-      let protocolIdentifier = new Identifier(resultSemanticProtocol.id, resultSemanticProtocol.idType as TIdType);
 
+      let protocolIdentifier = new Identifier(resultSemanticProtocol.id, resultSemanticProtocol.idType as TIdType);
       //get the IRole Array for returning, contruct from the RoleEntity
       let rolesArr: IRole[] = resultSemanticProtocol.roles.map((roleEntity) => {
         return {
@@ -517,7 +516,6 @@ class Registry implements iRegistry {
       ids.map(async id => {
         return await this.readSemanticProtocolById(id)
       }));
-
     return semanticProtocolsArray;
   }
 

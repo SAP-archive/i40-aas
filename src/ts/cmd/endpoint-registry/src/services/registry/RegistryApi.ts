@@ -70,16 +70,16 @@ class RegistryApi {
 
     var result = await registryDao.listAllSemanticProtocols(
       );
-      logger.info(JSON.stringify(result, null, 3));
+      logger.debug(JSON.stringify(result, null, 3));
       return result;
 
   }
 
-  async registerOrReplace(req: IAASDescriptor) {
+  async registerOrReplaceAASDescriptor(req: IAASDescriptor) {
     var registryDao: iRegistry = await RegistryFactory.getRegistry();
     try {
       var result = await registryDao.upsertAASDescriptor(req);
-      logger.log(result);
+      logger.debug(result);
       return result;
     } catch (e) {
       throw e;
@@ -89,7 +89,7 @@ class RegistryApi {
     var registryDao: iRegistry = await RegistryFactory.getRegistry();
     try {
       var result = await registryDao.createAASDescriptor(req);
-      logger.info(result);
+      logger.debug(result);
       return result;
     } catch (e) {
       throw e;
@@ -101,7 +101,7 @@ class RegistryApi {
     var registryDao: iRegistry = await RegistryFactory.getRegistry();
     try {
       var result = await registryDao.createSemanticProtocol(req);
-      logger.info(result);
+      logger.debug(result);
       return result;
     } catch (e) {
       throw e;
@@ -111,7 +111,7 @@ class RegistryApi {
     var registryDao: iRegistry = await RegistryFactory.getRegistry();
     try {
       var result = await registryDao.deleteSemanticProtocolById(req);
-      logger.info(result);
+      logger.debug(result);
       return result;
     } catch (e) {
       throw e;
@@ -123,12 +123,11 @@ class RegistryApi {
     var registryDao: iRegistry = await RegistryFactory.getRegistry();
     try {
       var result = await registryDao.listAllEndpoints();
-      logger.info(result);
+      logger.debug(result);
       return result;
     } catch (e) {
-      logger.error();
-      (e);
-      throw e;
+      logger.error(e);
+            throw e;
     }
   }
 }

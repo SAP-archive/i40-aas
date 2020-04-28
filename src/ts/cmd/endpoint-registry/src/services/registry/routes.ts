@@ -28,7 +28,7 @@ export default [
       var registerAASRequest: IAASDescriptor = req.body;
 
       try {
-        await registryApi.registerOrReplace(registerAASRequest);
+        await registryApi.registerOrReplaceAASDescriptor(registerAASRequest);
         res.status(200).send(req.body);
         logger.debug(
           'Now sending back response of /administrationshells PUT request'
