@@ -47,12 +47,12 @@ spec:
           servicePort: {{ .Values.applicationAdapters.mongoDb.port }}
         path: /storage-adapter-mongodb/(.*)
       - backend:
-	  serviceName: {{ .Release.Name }}-rabbitmq
-	  servicePort: {{ .Values.rabbitmq.service.managerPort }}
-	path: /rabbitmq/(.*)
-      - backend:
-	  serviceName: {{ .Release.Name }}-onboardingskillmongodb
-	  servicePort: {{ .Values.onboardingskillmongodb.service.port }}
-	path: /mongodb/(.*)
+          serviceName: {{ .Release.Name }}-rabbitmq
+          servicePort: {{ .Values.rabbitmq.service.managerPort }}
+        path: /rabbitmq/(.*)
+      - backend: 
+          serviceName: {{ .Release.Name }}-onboardingskillmongodb
+          servicePort: {{ .Values.onboardingskillmongodb.service.port }}
+        path: /mongodb/(.*)
 
 

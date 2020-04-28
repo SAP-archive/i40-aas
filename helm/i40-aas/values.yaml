@@ -10,13 +10,13 @@ rabbitmq:
   service:
     port: 5672
     managerPort: 15672
-    extraPorts:
+    extraPorts: 
       - name: mqtt
-	port: 1883
-	targetPort: mqtt
-    extraContainerPorts:
+        port: 1883
+        targetPort: mqtt
+    extraContainerPorts: 
       - name: mqtt
-	containerPort: 1883
+        containerPort: 1883
   persistence:
     storageClass: default
     size: 1Gi
@@ -24,10 +24,10 @@ rabbitmq:
 endpointregistrypostgres:
   postgresqlDatabase: AAS_REGISTRY
   postgresqlUsername: aas-user
-  # postgresqlPassword can be left empty.
-  # In that case, a random 10 character alphanumeric string is generated.
+  # postgresqlPassword can be left empty. 
+  # In that case, a random 10 character alphanumeric string is generated. 
   postgresqlPassword: fjlkosd78f
-  service:
+  service: 
     port: 5432
   persistence:
     storageClass: default
@@ -41,7 +41,7 @@ onboardingskillmongodb:
     port: 27017
   persistence:
     storageClass: default
-    size: 1Gi
+    size: 1Gi 
   replicaSet:
     enabled: true
     replicas:

@@ -35,13 +35,13 @@ spec:
         {{- include "i40-aas.selectorLabels" . | nindent 8 }}
     spec:
       securityContext:
-	runAsNonRoot: true
+        runAsNonRoot: true
       containers:
         - name: https-endpoint-egress
           image: "{{ .Values.image.repository }}/i40-aas-https-endpoint-egress:{{ .Values.image.release }}"
-	  securityContext:
-	    runAsUser: 1001
-	    readOnlyRootFilesystem: true
+          securityContext:
+            runAsUser: 1001
+            readOnlyRootFilesystem: true
           ports:
             - name: endpoint
               containerPort: 3000
@@ -56,7 +56,7 @@ spec:
                   name: {{ .Release.Name }}-host-collection
                   key: CORE_BROKER_HOST
             - name: CORE_BROKER_PORT
-	      value: {{ .Values.rabbitmq.service.port | quote }}
+              value: {{ .Values.rabbitmq.service.port | quote }}
             - name: CORE_EGRESS_EXCHANGE
               value: {{ .Values.core.egress.exchange | quote }}
             - name: CORE_EGRESS_HTTP_QUEUE
