@@ -59,7 +59,7 @@ class RegistryApi {
     var result = await registryDao.readSemanticProtocolById(
         sProtocol
       );
-      logger.info(JSON.stringify(result, null, 3));
+      logger.debug(JSON.stringify(result, null, 3));
       return result;
 
   }

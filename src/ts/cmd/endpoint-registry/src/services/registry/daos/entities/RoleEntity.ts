@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, Column, PrimaryGeneratedColumn, ManyToOne,JoinTable,Unique, ManyToMany } from "typeorm";
+import { Entity, PrimaryColumn, Column, PrimaryGeneratedColumn, ManyToOne, JoinTable, Unique, ManyToMany } from "typeorm";
 import { SemanticProtocolEntity } from "./SemanticProtocolEntity";
 import { AASDescriptorEntity } from "./AASDescriptorEntity";
 
@@ -8,21 +8,19 @@ import { AASDescriptorEntity } from "./AASDescriptorEntity";
 @Unique("singleRoleNameForProtocol", ["name", "semProtocol"])
 
 export class RoleEntity {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id!: string;
 
-    @Column()
-    name!: string;
+  @Column()
+  name!: string;
 
-    @ManyToMany(type => AASDescriptorEntity, aasDescriptor => aasDescriptor.roles, {
-      eager: true
-  } )
+  @ManyToMany(type => AASDescriptorEntity, aasDescriptor => aasDescriptor.roles, {onUpdate:'CASCADE', onDelete: 'CASCADE', eager:true})
+  aasDescriptorIds!: AASDescriptorEntity[];
+
+
+  @ManyToOne(type => SemanticProtocolEntity, semanticProtocol => semanticProtocol.roles, { onUpdate:'CASCADE',onDelete: 'CASCADE' })
   @JoinTable()
-    aasDescriptors!: AASDescriptorEntity[];
-
-
-    @ManyToOne(type => SemanticProtocolEntity, semanticProtocol => semanticProtocol.roles,{onDelete: 'CASCADE'})
-    @JoinTable()
-    semProtocol!: SemanticProtocolEntity;
+  semProtocol!: SemanticProtocolEntity;
 
 }
+

@@ -146,6 +146,41 @@ describe('Tests with a simple data model', function () {
   });
 
 
+  it('returns a 422 Error when trying to register a SemanticProtocol that already exists in the the database',
+  async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
+
+    //first register an AAS
+    await requester
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(makeGoodAASDescriptor(uniqueTestId))
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200);
+
+//then register a semanticprotocol
+    await requester
+      .put('/SemanticProtocols')
+      .auth(user, password)
+      .send(makeGoodSemanticProtocol(uniqueTestId))
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200);
+
+        //a second request with the same id should fail
+        await requester
+        .put('/SemanticProtocols')
+        .auth(user, password)
+        .send(makeGoodSemanticProtocol(uniqueTestId))
+        .then(async (res: any) => {
+          chai.expect(res.status).to.eql(422);
+        });
+      })
+      .then(() => {
+        requester.close();
+      });
+  });
+});
   it('saves a SemanticProtocol in the the database', async function () {
     var uniqueTestId = 'simpleDataTest' + getRandomInteger();
     var requester = chai.request(app).keepOpen();
@@ -170,6 +205,10 @@ describe('Tests with a simple data model', function () {
           .auth(user, password)
           .then((res: any) => {
             chai.expect(res.status).to.eql(200);
+
+            //check if role registered correctly
+            chai.expect(res.body.roles[0]).to.eql("roleA_" + uniqueTestId)
+
           });
       })
       .then(() => {
@@ -192,7 +231,7 @@ describe('Tests with a simple data model', function () {
       });
   });
 
-
+// Test GET /semanticprotocols
   it('retrieves a list of all SemanticProtocols', async function () {
     var uniqueTestId = 'simpleDataTest' + getRandomInteger();
     var uniqueTestId2 = 'simpleDataTest' + getRandomInteger();

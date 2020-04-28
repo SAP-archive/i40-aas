@@ -1,7 +1,7 @@
-import { IAASDescriptor } from '../../src/services/registry/daos/interfaces/IAASDescriptor';
-import { IEndpoint } from '../../src/services/registry/daos/interfaces/IEndpoint';
+import { IAASDescriptor } from '../src/services/registry/daos/interfaces/IAASDescriptor';
+import { IEndpoint } from '../src/services/registry/daos/interfaces/IEndpoint';
 import {getConnection, AdvancedConsoleLogger } from 'typeorm';
-import { EndpointEntity } from '../../src/services/registry/daos/entities/EndpointEntity'
+import { EndpointEntity } from '../src/services/registry/daos/entities/EndpointEntity'
 
 const chai = require('chai');
 const chaiHttp = require('chai-http');
