@@ -145,6 +145,22 @@ export default [
     }
   },
   {
+    path: '/admin/semanticProtocols',
+    method: 'put',
+    handler: async (req: Request, res: Response, next: NextFunction) => {
+      console.log('/semanticprotocol PUT request received');
+      try {
+        await registryApi.createSemanticProtocol(req.body);
+        console.log('Sent back response of /semanticprotocol PUT request');
+        res.json(req.body);
+      } catch (err) {
+        logger.error(err);
+        next(err);
+      }
+
+    }
+  },
+  {
     path: '/semanticProtocols',
     method: 'put',
     handler: async (req: Request, res: Response, next: NextFunction) => {

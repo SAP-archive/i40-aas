@@ -1,7 +1,7 @@
-import { IAASDescriptor } from '../src/services/registry/daos/interfaces/IAASDescriptor';
-import { IEndpoint } from '../src/services/registry/daos/interfaces/IEndpoint';
+import { IAASDescriptor } from '../../src/services/registry/daos/interfaces/IAASDescriptor';
+import { IEndpoint } from '../../src/services/registry/daos/interfaces/IEndpoint';
 import {getConnection, AdvancedConsoleLogger } from 'typeorm';
-import { EndpointEntity } from '../src/services/registry/daos/entities/EndpointEntity'
+import { EndpointEntity } from '../../src/services/registry/daos/entities/EndpointEntity'
 
 const chai = require('chai');
 const chaiHttp = require('chai-http');
@@ -77,6 +77,28 @@ function replaceAddressAndTypeInFirstEndpoint(
 ) {
   descriptor.descriptor.endpoints[0].address = addressReplacement;
   descriptor.descriptor.endpoints[0].type = typeReplacement;
+  return descriptor;
+}
+function replaceAddressAndTypeInSecondEndpoint(
+  descriptor: IAASDescriptor,
+  addressReplacement: string,
+  typeReplacement: string
+) {
+  descriptor.descriptor.endpoints[1].address = addressReplacement;
+  descriptor.descriptor.endpoints[1].type = typeReplacement;
+  return descriptor;
+}
+function removeOneEndpointAndReplaceOther(
+  descriptor: IAASDescriptor,
+  addressReplacement: string,
+  typeReplacement: string
+) {
+  descriptor.descriptor.endpoints[0].address = addressReplacement;
+  descriptor.descriptor.endpoints[0].type = typeReplacement;
+  //remove all other endpoints
+  descriptor.descriptor.endpoints.length>1?
+  descriptor.descriptor.endpoints.length=1:descriptor.descriptor.endpoints.length
+
   return descriptor;
 }
 function replaceAddressTypeInFirstEndpointAndCertificateAndAsset(
@@ -443,9 +465,9 @@ describe('Tests with a simple data model', function () {
                 chai
                   .expect(res.body.asset.id)
                   .to.eql('new-Asset-ID' + uniqueTestId);
-                chai
-                  .expect(res.body.descriptor.endpoints[0].address)
-                  .to.eql('http://def.com-'+uniqueTestId);
+                  chai.expect(
+                    _.some(res.body.descriptor.endpoints, {
+                      address: 'http://def.com-'+uniqueTestId })).to.be.true;
                 chai
                   .expect(res.body.descriptor.certificate_x509_i40)
                   .to.eql("new-Certificate");
@@ -519,6 +541,60 @@ describe('Tests with a simple data model', function () {
       });
   });
 
+  it('should remove previously related Endpoints' +
+     ' when updated with a AASDescriptor that has a lesser number of Endpoints',
+  async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
+
+    await requester
+    //send the first Request
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(
+        replaceAddressAndTypeInSecondEndpoint(
+          makeGoodAASDescriptor(uniqueTestId),
+          'http://xyz.com-'+uniqueTestId,
+          'http'
+        )
+      )
+      // Update the AASDescriptor removing all but 1 Endpoints
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200);
+        var newUniqueTestId = 'simpleDataTest' + getRandomInteger();
+        await requester
+          .patch('/AASDescriptors/aasId'+uniqueTestId)
+          .auth(user, password)
+          .send(
+            removeOneEndpointAndReplaceOther(
+              makeGoodAASDescriptor(uniqueTestId),
+              'http://abc.com-'+newUniqueTestId,
+              'http'              )
+          )
+
+          //the second endpoint should have been deleted
+          let endpointsRepository = getConnection().getRepository(EndpointEntity);
+          // search for the original Endpoint (from the first PUT)
+          let secondEndpointFound = endpointsRepository.find({
+            address: 'http://xyz.com-'+uniqueTestId,
+            type: 'http'
+          })
+
+          let firstEndpointsFound = endpointsRepository.find({
+            address: 'http://abc.com-'+newUniqueTestId,
+            type: 'http'
+          })
+
+          //this Endpoint should have been removed
+          chai.expect((await secondEndpointFound).length).to.eql(0)
+          chai.expect((await firstEndpointsFound).length).to.eql(1)
+
+      })
+      .then(() => {
+        requester.close();
+      });
+  }
+);
   it('should remove previously related Entities such as Endpoints and Asset when a AASDescriptor gets updated',
   async function () {
     var uniqueTestId = 'simpleDataTest' + getRandomInteger();

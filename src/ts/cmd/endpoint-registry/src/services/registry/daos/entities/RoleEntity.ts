@@ -5,7 +5,7 @@ import { AASDescriptorEntity } from "./AASDescriptorEntity";
 
 @Entity()
 
-@Unique("singleRoleNameForProtocol", ["name", "semProtocol"])
+@Unique("uniqueRoleNameForProtocol", ["name", "semProtocol"])
 
 export class RoleEntity {
   @PrimaryGeneratedColumn()

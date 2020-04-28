@@ -166,7 +166,6 @@ class Registry implements iRegistry {
         Thus, the client should sent the whole endpoints array every time (i.e.) first get then put
         if no delete is done previous Endpoint record will be deleted and replaced
         with .save() the previous stays in DB */
-        record.descriptor.endpoints.map(async endpoint => {
           let deleteResult = await this.client
             .createQueryBuilder()
             .delete()
@@ -175,7 +174,7 @@ class Registry implements iRegistry {
             .execute();
 
           logger.debug("Endpoint delete result: " + deleteResult)
-        })
+
 
         //after deleting existing endpoints, replace them with the new
         loadedAASDescriptor.endpoints = record.descriptor.endpoints as EndpointEntity[]
@@ -268,36 +267,6 @@ class Registry implements iRegistry {
         let savedProtocol = await semProtocolRepository.save(semProtocol);
         logger.debug("SemanticProtocol Saved in Db ", savedProtocol);
 
-        //2. create Roles associated with this semanticProtocol
-        // have seperate handlers for each entity and report errors e.g. when assetid present
-
-        // await Promise.all(
-        //   record.roles.map(async role => {
-        //     let rE = new RoleEntity();
-        //     rE.semProtocol = semProtocol; //many to one relation
-        //     rE.name = role.name;
-        //     rE.id = rE.name.concat('-').concat(rE.semProtocol.id); //combination should be unique
-
-        //     await rolesRepository.save({ id: rE.id, name: rE.name, semProtocol: rE.semProtocol });
-        //     logger.debug("Role Saved in Db ", rE);
-        //     //TODO: for the case of upsert find out how to avoid the contraint errors for the relation
-
-        //     //3. for each role assign a the role to a AASDescriptor, docu see here, https://github.com/typeorm/typeorm/blob/master/docs/relational-query-builder.md
-        //     //we need only the ids from the AAS IIdentifier
-        //     var aasIds = role.aasDescriptorIds.map(identification => identification.id);
-        //     logger.debug("AAS Ids ", JSON.stringify(aasIds));
-
-        //     await Promise.all(
-        //       aasIds.map(async id => {
-        //         await this.client
-        //           .createQueryBuilder()
-        //           .relation(AASDescriptorEntity, "roles")
-        //           .of(id)
-        //           .add(rE.id);
-        //       }));
-        //   })
-        // );
-
         return record;
       }
       else {
@@ -317,48 +286,33 @@ class Registry implements iRegistry {
     try {
       //get an Entityrepository for the AASDescriptor and the Asset
       let semProtocolRepository = this.client.getRepository(SemanticProtocolEntity);
-      let rolesRepository = this.client.getRepository(RoleEntity);
 
-      //1. create a semantic protocol and save it to the DB
-      let semProtocol = new SemanticProtocolEntity();
-      semProtocol.id = record.identification.id;
-      semProtocol.idType = record.identification.idType;
-      let savedProtocol = await semProtocolRepository.save(semProtocol);
-      logger.debug("SemanticProtocol Saved in Db ", savedProtocol);
-
-      //2. create Roles associated with this semanticProtocol
-      // have seperate handlers for each entity and report errors e.g. when assetid present
-
-      await Promise.all(
-        record.roles.map(async role => {
-          let rE = new RoleEntity();
-          rE.semProtocol = semProtocol; //many to one relation
-          rE.name = role.name;
-          rE.id = rE.name.concat('-').concat(rE.semProtocol.id); //combination should be unique
-
-          await rolesRepository.save({ id: rE.id, name: rE.name, semProtocol: rE.semProtocol });
-          logger.debug("Role Saved in Db ", rE);
+        let semProtocol = new SemanticProtocolEntity();
+        semProtocol.id = record.identification.id;
+        semProtocol.idType = record.identification.idType;
+        let savedProtocol = await semProtocolRepository.save(semProtocol);
 
 
-          //TODO: for the case of upsert find out how to avoid the contraint errors for the relation
+      // if no delete is done previous roles record will be deleted and replaced
+      // with .save() the previous stays in DB */
+        let deleteResult = await this.client
+          .createQueryBuilder()
+          .delete()
+          .from(RoleEntity)
+          .where("semProtocol = :semProtocol", { semProtocol: record.identification.id })
+          .execute();
+          logger.debug("Role delete result: " + deleteResult)
 
-          //3. for each role assign a the role to a AASDescriptor, docu see here, https://github.com/typeorm/typeorm/blob/master/docs/relational-query-builder.md
-          //we need only the ids from the AAS IIdentifier
-          var aasIds = role.aasDescriptorIds.map(identification => identification.id);
-          logger.debug("AAS Ids ", JSON.stringify(aasIds));
+      //  semProtocol.roles = semProtocol.roles.filter(role => {
+        //  role.id !== role.id})
+      //await  this.client.manager.save(semProtocol)
 
-          await Promise.all(
-            aasIds.map(async id => {
-              await this.client
-                .createQueryBuilder()
-                .relation(AASDescriptorEntity, "roles")
-                .of(id)
-                .add(rE.id);
-            }));
-        })
-      );
+        
+        semProtocol.roles = record.roles as RoleEntity[];
 
-      return record;
+        logger.debug("SemanticProtocol Saved in Db ", savedProtocol);
+
+        return record;
 
     } catch (error) {
       logger.error("Error caught " + error)
@@ -413,9 +367,6 @@ class Registry implements iRegistry {
       else {
         throw new HTTP404Error("No AASDescriptor found with aasId: " + aasId);
       }
-
-
-
     } catch (error) {
       logger.error("Error caught " + error)
       throw error;
@@ -475,6 +426,7 @@ class Registry implements iRegistry {
           { id: semanticProtocolId },],
         relations: ["roles"]
       }) as SemanticProtocolEntity;
+      //if not found throw error
       if(resultSemanticProtocol){
 
       let protocolIdentifier = new Identifier(resultSemanticProtocol.id, resultSemanticProtocol.idType as TIdType);
