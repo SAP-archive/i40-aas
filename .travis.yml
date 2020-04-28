@@ -289,8 +289,7 @@ jobs:
         - helm version
       deploy:
         - provider: script
-          script: helm upgrade master helm/i40-aas --atomic --reuse-values -n aas-master --set image.release=$BUILD_TAG && \
-                  helm upgrade oi4 helm/i40-aas --atomic --reuse-values -n aas-oi4 --set image.release=$BUILD_TAG
+          script: helm upgrade master helm/i40-aas --atomic --reuse-values -n aas-master --set image.release=$BUILD_TAG && helm upgrade oi4 helm/i40-aas --atomic --reuse-values -n aas-oi4 --set image.release=$BUILD_TAG
           on:
             branch: master
         - provider: script
