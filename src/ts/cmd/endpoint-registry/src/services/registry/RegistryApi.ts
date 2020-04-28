@@ -70,7 +70,7 @@ class RegistryApi {
 
     var result = await registryDao.listAllSemanticProtocols(
       );
-      logger.debug(JSON.stringify(result, null, 3));
+   //   logger.debug(JSON.stringify(result, null, 3));
       return result;
 
   }

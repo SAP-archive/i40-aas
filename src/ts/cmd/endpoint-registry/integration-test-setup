@@ -1,5 +1,5 @@
 export CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST=localhost
-export CORE_REGISTRIES_ENDPOINTS_DATABASE_PORT=5432
+export CORE_REGISTRIES_ENDPOINTS_DATABASE_PORT=5433
 export CORE_REGISTRIES_ENDPOINTS_DATABASE_NAME=postgres
 export CORE_REGISTRIES_ENDPOINTS_DATABASE_USER=postgres
 export CORE_REGISTRIES_ENDPOINTS_DATABASE_PASSWORD=postgres
@@ -9,5 +9,5 @@ export LOGGING_LOGLEVEL=DEBUG
 
 
 
-docker run --rm --name test-postgres -e POSTGRES_PASSWORD=postgres -d -p 5432:5432 postgres
+docker run --rm --name test-postgres -e POSTGRES_PASSWORD=postgres -d -p 5433:5432 postgres
 docker run -p 80:80     -e 'PGADMIN_DEFAULT_EMAIL=user@domain.com'     -e 'PGADMIN_DEFAULT_PASSWORD=SuperSecret'     -d dpage/pgadmin4

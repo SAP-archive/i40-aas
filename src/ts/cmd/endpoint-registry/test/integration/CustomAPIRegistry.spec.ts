@@ -2,6 +2,7 @@ import { IAASDescriptor } from '../../src/services/registry/daos/interfaces/IAAS
 import { IEndpoint } from '../../src/services/registry/daos/interfaces/IEndpoint';
 import { getConnection, AdvancedConsoleLogger } from 'typeorm';
 import { ISemanticProtocol } from '../../src/services/registry/daos/interfaces/ISemanticProtocol'
+import { SemanticProtocolEntity } from '../../src/services/registry/daos/entities/SemanticProtocolEntity';
 
 const chai = require('chai');
 const chaiHttp = require('chai-http');
@@ -201,13 +202,17 @@ describe('Tests with a simple data model', function () {
       .then(async (res: any) => {
         chai.expect(res.status).to.eql(200);
         await requester
-          .get('/SemanticProtocols/' + 'SemanticProtocolId' + uniqueTestId)
+          .get('/SemanticProtocols/semanticProtocolId' + uniqueTestId)
           .auth(user, password)
-          .then((res: any) => {
+          .then(async (res: any) => {
             chai.expect(res.status).to.eql(200);
-            console.log("body is " + JSON.stringify(res.body) )
             //check if role registered correctly
-            chai.expect((res.body as ISemanticProtocol).roles[0].name).to.eql("roleA_" + uniqueTestId)
+
+            let retrievedEntry = await getConnection().getRepository(SemanticProtocolEntity).findOne({id:'semanticProtocolId' + uniqueTestId})
+            //console.log("found "+JSON.stringify(retrievedEntry));
+            chai.expect(
+              _.some(retrievedEntry?.roles, {
+                name: "roleA_" + uniqueTestId })).to.be.true;
 
           });
       })
@@ -218,9 +223,27 @@ describe('Tests with a simple data model', function () {
 });
 
 
+
+
+  it('returns a 401 error if bad authentication details are provided', async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
+
+    await chai
+      .request(app)
+      .put('/SemanticProtocols')
+      .auth(user, 'blah')
+      .send(makeGoodSemanticProtocol(uniqueTestId))
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(401);
+      });
+  });
+
+
 //test GET /SemanticProtocols/:SemanticProtocolId'
 
-it('retrieves a SemanticProtocol from the the database using the SemanticProtocolId', async function () {
+it('retrieves a SemanticProtocol from the the database using ' +
+   'the SemanticProtocolId', async function () {
   var uniqueTestId = 'sampleGetSemProtId-' + getRandomInteger();
   var requester = chai.request(app).keepOpen();
 
@@ -241,13 +264,15 @@ it('retrieves a SemanticProtocol from the the database using the SemanticProtoco
       chai.expect(res.status).to.eql(200);
 //finally try retrieving the semantic protocol from the database
       await requester
-        .get('/SemanticProtocols/' + 'SemanticProtocolId' + uniqueTestId)
+        .get('/SemanticProtocols/semanticProtocolId' + uniqueTestId)
         .auth(user, password)
-        .then((res: any) => {
-          chai.expect(res.status).to.eql(200);
-          console.log("body is " + JSON.stringify(res.body) )
+        .then((response: any) => {
+          chai.expect(response.status).to.eql(200);
+          console.log("body is " + JSON.stringify(response.body.roles) )
           //check if role registered correctly
-          chai.expect((res.body as ISemanticProtocol).roles[0].name).to.eql("roleA_" + uniqueTestId)
+          chai.expect(
+            _.some(res.body.roles, {
+              name: "roleA_" + uniqueTestId })).to.be.true;
 
         });
     })
@@ -258,21 +283,40 @@ it('retrieves a SemanticProtocol from the the database using the SemanticProtoco
 });
 
 
+it('returns a 422 Error when trying to retrieve a SemanticProtocol ' +
+   'with wrong SemanticProtocolId', async function () {
+  var uniqueTestId = 'sampleGetSemProtId' + getRandomInteger();
+  var requester = chai.request(app).keepOpen();
 
+  //first register an AAS
+  await requester
+    .put('/AASDescriptors')
+    .auth(user, password)
+    .send(makeGoodAASDescriptor(uniqueTestId))
+    .then(async (res: any) => {
+      chai.expect(res.status).to.eql(200);
 
-  it('returns a 401 error if bad authentication details are provided', async function () {
-    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
-    var requester = chai.request(app).keepOpen();
+//then register a SemanticProtocol
+  await requester
+    .put('/SemanticProtocols')
+    .auth(user, password)
+    .send(makeGoodSemanticProtocol(uniqueTestId))
+    .then(async (res: any) => {
+      chai.expect(res.status).to.eql(200);
+//finally try retrieving the semantic protocol from the database
+      await requester
+        .get('/SemanticProtocols/semanticProtocolId' +"-foobar")
+        .auth(user, password)
+        .then((res: any) => {
+          chai.expect(res.status).to.eql(422);
+        });
+    })
+    .then(() => {
+      requester.close();
+    });
+});
+});
 
-    await chai
-      .request(app)
-      .put('/SemanticProtocols')
-      .auth(user, 'blah')
-      .send(makeGoodSemanticProtocol(uniqueTestId))
-      .then(async (res: any) => {
-        chai.expect(res.status).to.eql(401);
-      });
-  });
 
 // Test GET /semanticprotocols
   it('retrieves a list of all SemanticProtocols', async function () {
@@ -288,7 +332,7 @@ it('retrieves a SemanticProtocol from the the database using the SemanticProtoco
       .then(async (res: any) => {
         chai.expect(res.status).to.eql(200);
 
-            //first register an AAS
+            //register a second AAS
     await requester
     .put('/AASDescriptors')
     .auth(user, password)
@@ -305,12 +349,7 @@ it('retrieves a SemanticProtocol from the the database using the SemanticProtoco
       .then(async (res: any) => {
         chai.expect(res.status).to.eql(200);
         //register first procotol
-        await requester
-          .put('/SemanticProtocols')
-          .auth(user, password)
-          .send(makeGoodSemanticProtocol(uniqueTestId2))
-          .then(async (res: any) => {
-            chai.expect(res.status).to.eql(200);
+
             await requester
               .get('/SemanticProtocols/')
               .auth(user, password)
@@ -325,7 +364,7 @@ it('retrieves a SemanticProtocol from the the database using the SemanticProtoco
       });
       });
     });
-    });
+
 
 /*
     //  GET /Semanticprotocols

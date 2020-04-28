@@ -227,8 +227,9 @@ export default [
         var response = await registryApi.readSemanticProtocolBySemanticProtocolId(req.params.semanticProtocolId)
        // console.log('Sent back response of /semanticprotocol GET request');
         res.json(response);
-      } catch (e) {
-        res.end(e.message);
+      } catch (err) {
+        logger.error(err);
+        next(err);
       }
 
     }

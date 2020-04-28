@@ -475,7 +475,7 @@ class Registry implements iRegistry {
           { id: semanticProtocolId },],
         relations: ["roles"]
       }) as SemanticProtocolEntity;
-
+      if(resultSemanticProtocol){
 
       let protocolIdentifier = new Identifier(resultSemanticProtocol.id, resultSemanticProtocol.idType as TIdType);
       //get the IRole Array for returning, contruct from the RoleEntity
@@ -497,7 +497,13 @@ class Registry implements iRegistry {
       //   .createQueryBuilder("aasDescriptor")
       //   .innerJoinAndSelect("aasDescriptor.roles", "role")
       //   .getMany();
-    } catch (error) {
+    }
+else{
+  logger.error("No Entry with this semanticProtocolId found in DB: "+semanticProtocolId)
+  throw new HTTP422Error("No Entry with this semanticProtocolId found in Database")
+}
+  }
+    catch (error) {
       logger.error("Error caught " + error)
       throw error;
 
