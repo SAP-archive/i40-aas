@@ -4,53 +4,53 @@ WORKDIR /cmd/https-endpoint-ingress/
 
 ## copy package.json first and install dependencies to leverage caching
 COPY cmd/https-endpoint-ingress/package.json /cmd/https-endpoint-ingress/
-COPY cmd/https-endpoint-ingress/package-lock.json /cmd/https-endpoint-ingress/
+COPY cmd/https-endpoint-ingress/yarn.lock /cmd/https-endpoint-ingress/
 ## copy the local AMQPClient dependency, transpile it and install it
 
 ## aas-logger ##
 COPY pkg/aas-logger/package.json /pkg/aas-logger/
-COPY pkg/aas-logger/package-lock.json /pkg/aas-logger/
+COPY pkg/aas-logger/yarn.lock /pkg/aas-logger/
 RUN cd /pkg/aas-logger \
-    && npm install --production\
+    && yarn install --production\
     && mkdir /aas-logger-production-dependencies/ \
     && cp -R node_modules /aas-logger-production-dependencies/ \
-    && npm install 
+    && yarn install 
 
 
 COPY pkg/aas-logger/ /pkg/aas-logger/
 
 RUN cd /pkg/aas-logger \
-    && npm run clean \
-    && npm run build
+    && yarn run clean \
+    && yarn run build
 
 ## AMQP-Client ##
 COPY pkg/AMQP-Client/package.json /pkg/AMQP-Client/
-COPY pkg/AMQP-Client/package-lock.json /pkg/AMQP-Client/
+COPY pkg/AMQP-Client/yarn.lock /pkg/AMQP-Client/
 RUN cd /pkg/AMQP-Client \
-    && npm install --production\
+    && yarn install --production\
     && mkdir /AMQP-Client-production-dependencies/ \
     && cp -R node_modules /AMQP-Client-production-dependencies/ \
-    && npm install 
+    && yarn install 
 
 COPY pkg/AMQP-Client/ /pkg/AMQP-Client/
 
 RUN cd /pkg/AMQP-Client \
-    && npm run clean \
-    && npm run build
+    && yarn run clean \
+    && yarn run build
 
 
 RUN cd /cmd/https-endpoint-ingress \
-    && npm install --production \
+    && yarn install --production \
     && mkdir /production-dependencies/ \
     && cp -R node_modules /production-dependencies/
 
 ## install dependencies
-RUN npm install
+RUN yarn install
 
 ## add & transpile sourcecode
 COPY cmd/https-endpoint-ingress/ /cmd/https-endpoint-ingress/
-RUN npm run clean \
-    && npm run build
+RUN yarn run clean \
+    && yarn run build
 
 ###################################
 FROM node:lts-alpine as prod
@@ -77,4 +77,4 @@ COPY cmd/https-endpoint-ingress/package.json /cmd/https-endpoint-ingress/
 USER aasuser
 EXPOSE 2000
 
-ENTRYPOINT [ "npm", "start" ]
+ENTRYPOINT [ "yarn", "start" ]
