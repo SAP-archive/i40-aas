@@ -21,7 +21,7 @@ interface iRegistry {
   readAASDescriptorsBySemanticProtocolAndRole(
     sProtocol: string,
     role: string
-  ): Promise<Array<IAASDescriptor>| undefined>;
+  ): Promise<Array<IAASDescriptor>>;
 }
 
 export { iRegistry };

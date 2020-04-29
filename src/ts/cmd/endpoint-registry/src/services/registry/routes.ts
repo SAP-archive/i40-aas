@@ -219,14 +219,15 @@ export default [
     path: '/semanticProtocols/:semanticProtocolId/role/:roleName/AASDescriptors',
     method: 'get',
     handler: async (req: Request, res: Response, next: NextFunction) => {
-      console.log('GET AASDescriptor by semanticprotocol and role name request received');
+      logger.debug('GET AASDescriptor by semanticprotocol and role name request received');
       try {
-        console.log('Path parameters received:' + JSON.stringify(req.params));
+        logger.debug('Path parameters received:' + JSON.stringify(req.params));
         var response = await registryApi.readAASBySemanticProtocolAndRole(req.params.semanticProtocolId, req.params.roleName)
        // console.log('Sent back response of /semanticprotocol GET request');
         res.json(response);
-      } catch (e) {
-        res.end(e.message);
+      } catch (err) {
+        logger.error(err);
+        next(err);
       }
 
     }

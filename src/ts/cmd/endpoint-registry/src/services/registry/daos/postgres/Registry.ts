@@ -372,45 +372,6 @@ class Registry implements iRegistry {
 
   }
 
-  async readAASDescriptorsBySemanticProtocolAndRole(
-    sProtocol: string,
-    roleName: string
-  ): Promise<Array<IAASDescriptor>> {
-
-    //Find the roles associated with the {protocolid, rolename}
-    let roleIds = await this.client
-      .createQueryBuilder()
-      .select("role")
-      .from(RoleEntity, "role")
-      .where("role.name = :name", { name: roleName })
-      .andWhere("role.semProtocol = :semProtocol", { semProtocol: sProtocol })
-      .getMany();
-
-    logger.debug("Roles found in Db " + JSON.stringify(roleIds));
-
-    // Find the AASDescriptors for the given roles
-    const aasDescriptorEntities = await this.client
-      .getRepository(AASDescriptorEntity)
-      .createQueryBuilder("aasDescriptor")
-      .innerJoinAndSelect("aasDescriptor.roles", "role")
-      .getMany();
-
-    //we need only the ids from the AAS IIdentifier
-    var aasIds = aasDescriptorEntities.map(identification => identification.id);
-    logger.debug("AASDescriptorIds for the given roles " + JSON.stringify(aasIds));
-
-    //get the AASDescriptorResponses (with Endpoints and Assets) to return
-    //TODO: there should be maybe a more efficient way to do this (inner joins)
-
-    var AASDescriptors = await Promise.all(
-      aasIds.map(async id => {
-        return await this.readAASDescriptorByAasId(id)
-      }));
-
-    logger.debug("AASDescriptorResponses for the given roles " + JSON.stringify(AASDescriptors));
-
-    return AASDescriptors;
-  }
 
   async readSemanticProtocolById(semanticProtocolId: string): Promise<ISemanticProtocol> {
     try {
@@ -514,6 +475,91 @@ class Registry implements iRegistry {
     }
   }
 
+  async readAASDescriptorsBySemanticProtocolAndRole(
+    semanticProtocolId: string,
+    roleName: string
+  ): Promise<Array<IAASDescriptor>> {
+
+try{
+        //get an Entityrepository for the AASDescriptor and the Asset
+        let aasDescriptorRepository = this.client.getRepository(AASDescriptorEntity);
+        let rolesRepo = this.client.getRepository(RoleEntity);
+
+        let loadedRole = await rolesRepo.findOne({
+          where: [
+            { semProtocol: semanticProtocolId },{ name: roleName }],
+          relations: ["aasDescriptorIds"]
+        })
+        if(!loadedRole) throw new HTTP422Error(`No Role found for the protocol ${semanticProtocolId} with
+        name ${roleName}`)
+
+        //we need to return a list of AASDescriptor Objects
+        //find the aasIds associated with the role
+        let aasIds = loadedRole.aasDescriptorIds.map(identifier => identifier.id)
+        //load the AASDescriptorEntities from the Database
+        let AASDescriptorEntitiesArray = await aasDescriptorRepository.find({id: In(aasIds)});
+
+        //For each entity we need to construct a IAASDescriptor Object
+        if (AASDescriptorEntitiesArray) {
+
+         var AASDescriptorArr = AASDescriptorEntitiesArray.map(  (aasDescrEntity) => {
+            let aasDescrIdentifier = new Identifier(aasDescrEntity.id, aasDescrEntity.idType as TIdType);
+            let descr = new GenericDescriptor(aasDescrEntity.endpoints, aasDescrEntity.certificate_x509_i40, aasDescrEntity.signature);
+            let assetIdentifier = new Identifier(aasDescrEntity.asset.id, aasDescrEntity.asset.idType as TIdType);
+            let response = new AASDescriptorResponse(aasDescrIdentifier, assetIdentifier, descr);
+            return response as IAASDescriptor
+        });
+        return  AASDescriptorArr;
+      }
+        else {
+          throw new HTTP404Error("No AASDescriptors found for the role " + roleName);
+        }
+
+
+
+}
+catch(error){
+  throw error;
+}
+
+
+/*
+    //Find the roles associated with the {protocolid, rolename}
+    let roleIds = await this.client
+      .createQueryBuilder()
+      .select("role")
+      .from(RoleEntity, "role")
+      .where("role.name = :name", { name: roleName })
+      .andWhere("role.semProtocol = :semProtocol", { semProtocol: sProtocol })
+      .getMany();
+
+   // logger.debug("Roles found in Db " + JSON.stringify(roleIds));
+
+    // Find the AASDescriptors for the given roles
+    const aasDescriptorEntities = await this.client
+      .getRepository(AASDescriptorEntity)
+      .createQueryBuilder("aasDescriptor")
+      .innerJoinAndSelect("aasDescriptor.roles", "role")
+      .getMany();
+
+    //we need only the ids from the AAS IIdentifier
+    var aasIds = aasDescriptorEntities.map(identification => identification.id);
+   // logger.debug("AASDescriptorIds for the given roles " + JSON.stringify(aasIds));
+
+    //get the AASDescriptorResponses (with Endpoints and Assets) to return
+    //TODO: there should be maybe a more efficient way to do this (inner joins)
+
+    var AASDescriptors = await Promise.all(
+      aasIds.map(async id => {
+        return await this.readAASDescriptorByAasId(id)
+      }));
+
+    logger.debug("AASDescriptorResponses for the given roles " + JSON.stringify(AASDescriptors));
+
+    return AASDescriptors;
+
+    */
+  }
   listAllEndpoints(): Promise<IEndpoint[]> {
     throw new Error("Method not implemented.");
   }

@@ -25,7 +25,7 @@ export class AASDescriptorEntity {
   @Column()
   idType!: string;
 
-  @OneToOne(type => AssetEntity, {cascade:true})
+  @OneToOne(type => AssetEntity, {cascade:true, eager:true})
   @JoinColumn()
   asset!: AssetEntity;
 
@@ -43,8 +43,6 @@ export class AASDescriptorEntity {
   @OneToMany(type => EndpointEntity, endpoint => endpoint.aasdescriptor, {cascade:true, eager:true})
   @JoinTable()
   endpoints!: EndpointEntity[];
-
-//TODO: check here is this approach makes more sense https://www.youtube.com/watch?v=8kZ7W-bI5qQ
 
   @ManyToMany(type => RoleEntity, role=> role.aasDescriptorIds, { cascade:true})
   @JoinTable()

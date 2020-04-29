@@ -371,53 +371,7 @@ describe('Tests with a simple data model', function () {
       });
   });
 
-  // Test GET all /semanticprotocols, Note: this can take over 2000ms and cause timeout
-  //in case too many entries are found in DB
-  it('retrieves a list of all SemanticProtocols', async function () {
-    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
-    var uniqueTestId2 = 'simpleDataTest' + getRandomInteger();
-    var requester = chai.request(app).keepOpen();
 
-    //first register an AAS
-    await requester
-      .put('/AASDescriptors')
-      .auth(user, password)
-      .send(makeGoodAASDescriptor(uniqueTestId))
-      .then(async (res: any) => {
-        chai.expect(res.status).to.eql(200);
-
-        //register a second AAS
-        await requester
-          .put('/AASDescriptors')
-          .auth(user, password)
-          .send(makeGoodAASDescriptor(uniqueTestId2))
-          .then(async (res: any) => {
-            chai.expect(res.status).to.eql(200);
-
-
-            //register first procotol
-            await requester
-              .put('/SemanticProtocols')
-              .auth(user, password)
-              .send(makeGoodSemanticProtocol(uniqueTestId))
-              .then(async (res: any) => {
-                chai.expect(res.status).to.eql(200);
-                //register first procotol
-
-                await requester
-                  .get('/SemanticProtocols/')
-                  .auth(user, password)
-                  .then((res: any) => {
-                    chai.expect(res.status).to.eql(200);
-                    //chai.expect(res.bod)
-                  });
-              })
-              .then(() => {
-                requester.close();
-              });
-          });
-      });
-  });
 
   it('is able to register the same semanticProtocol again after deleting it ' +
     ' (meaning that related entities were correctly deleted', async function () {
@@ -515,306 +469,281 @@ describe('Tests with a simple data model', function () {
           .then(async (res: any) => {
             chai.expect(res.status).to.eql(200);
 
-       //try to update a semantic protocol with  a new role
-          await requester
-          .patch('/SemanticProtocols/semanticProtocolId' + uniqueTestId)
-          .auth(user, password)
-          .send(replaceRoleNameInFirstRole(makeGoodSemanticProtocol (uniqueTestId),'newRoleA'+ uniqueTestId))
-          .then(async (res: any) => {
-            chai.expect(res.status).to.eql(200);
-//load the roles for this semanticprotocol
-            let rolesForProtFound: RoleEntity[] = await getConnection().manager
+            //try to update a semantic protocol with  a new role
+            await requester
+              .patch('/SemanticProtocols/semanticProtocolId' + uniqueTestId)
+              .auth(user, password)
+              .send(replaceRoleNameInFirstRole(makeGoodSemanticProtocol(uniqueTestId), 'newRoleA' + uniqueTestId))
+              .then(async (res: any) => {
+                chai.expect(res.status).to.eql(200);
+                //load the roles for this semanticprotocol
+                let rolesForProtFound: RoleEntity[] = await getConnection().manager
                   .createQueryBuilder()
                   .select()
                   .from(RoleEntity, "role")
                   .where("role.semProtocol = :semProtocol", { semProtocol: 'semanticProtocolId' + uniqueTestId })
                   .execute();
                 //the number of roles should remain the same after the patch
-                  chai.expect(rolesForProtFound.length).to.eql(2);
-                  console.log("rolesfound "+ JSON.stringify(rolesForProtFound))
-                  chai.expect(
-                    _.some(rolesForProtFound, { name: "newRoleA" + uniqueTestId
-                    })).to.be.true;
+                chai.expect(rolesForProtFound.length).to.eql(makeGoodSemanticProtocol(uniqueTestId).roles.length);
+                console.log("rolesfound " + JSON.stringify(rolesForProtFound))
+                chai.expect(
+                  _.some(rolesForProtFound, {
+                    name: "newRoleA" + uniqueTestId
+                  })).to.be.true;
 
-          })
+              })
           })
           .then(() => {
             requester.close();
           });
       });
   });
-  /*
-        it('returns a 422 Error if the identification.id in the AASDescriptor is different from the aasId in the path parameter', async function () {
-          var uniqueTestId = 'simpleDataTest' + getRandomInteger();
-          var requester = chai.request(app).keepOpen();
 
-          await requester
-            .put('/AASDescriptors')
-            .auth(user, password)
-            .send(
-              makeGoodSemanticProtocol(uniqueTestId)
-            )
-            .then(async (res: any) => {
-              chai.expect(res.status).to.eql(200);
-              await requester
-                //the aasId as path parameter is different from the one in req body
-                .patch('/AASDescriptors/aasId' + uniqueTestId)
-                .auth(user, password)
-                .send(
-                  replaceAddressAndTypeInFirstEndpoint(
-                    makeGoodSemanticProtocol('foobar' + uniqueTestId),
-                    'http://abc.com/' + uniqueTestId,
-                    'http'
-                  )
-                )
-                .then(async (res: any) => {
-                  chai.expect(res.status).to.eql(422);
-                });
-            })
-            .then(() => {
-              requester.close();
-            });
-        });
-        it('returns a 422 Error if the AASDescriptor to be updated (with the aasId) is not found in DB', async function () {
-          var uniqueTestId = 'simpleDataTest' + getRandomInteger();
-          var requester = chai.request(app).keepOpen();
-
-          await requester
-            .put('/AASDescriptors')
-            .auth(user, password)
-            .send(
-              makeGoodSemanticProtocol(uniqueTestId)
-            )
-            .then(async (res: any) => {
-              chai.expect(res.status).to.eql(200);
-              await requester
-                .patch('/AASDescriptors/aasId' + 'foobar' + uniqueTestId)
-                .auth(user, password)
-                .send(
-                  replaceAddressAndTypeInFirstEndpoint(
-                    makeGoodSemanticProtocol('foobar' + uniqueTestId),
-                    'http://abc.com/' + uniqueTestId,
-                    'http'
-                  )
-                )
-                .then(async (res: any) => {
-                  chai.expect(res.status).to.eql(422);
-                });
-            })
-            .then(() => {
-              requester.close();
-            });
-        });
-
-
-        // test PUT /admin/
-        it('can update endpoint addresses', async function () {
-          var uniqueTestId = 'simpleDataTest' + getRandomInteger();
-          var requester = chai.request(app).keepOpen();
-
-          await requester
-            .put('/admin/AASDescriptors')
-            .auth(user, password)
-            .send(
-              makeGoodSemanticProtocol(uniqueTestId)
-            )
-            .then(async (res: any) => {
-              chai.expect(res.status).to.eql(200);
-              await requester
-                .put('/admin/AASDescriptors')
-                .auth(user, password)
-                .send(
-                  replaceAddressAndTypeInFirstEndpoint(
-                    makeGoodSemanticProtocol(uniqueTestId),
-                    'http://abc.com/' + uniqueTestId,
-                    'http'
-                  )
-                )
-                .then(async (res: any) => {
-                  chai.expect(res.status).to.eql(200);
-                  await requester
-                    .get('/AASDescriptors/aasId' + uniqueTestId)
-                    .auth(user, password)
-                    .then((res: any) => {
-                      chai.expect(res.status).to.eql(200);
-                      chai.expect(
-                        _.some(res.body.descriptor.endpoints, {
-                          address: 'http://abc.com/' + uniqueTestId,
-                        })
-                      ).to.be.true;
-
-                      chai.expect(res.body.descriptor.endpoints.length).to.eql(2);
-                    });
-                });
-            })
-            .then(() => {
-              requester.close();
-            });
-        });
-
-
-        it('can delete an endpoint address', async function () {
-          var uniqueTestId = 'simpleDataTest' + getRandomInteger();
-          var requester = chai.request(app).keepOpen();
-          //register an AASDescriptor with 2 Endpoints
-          await requester
-            .put('/AASDescriptors')
-            .auth(user, password)
-            .send(
-              makeGoodSemanticProtocol(uniqueTestId)
-            )
-            //patch the recource and remove one endpoint
-            .then(async (res: any) => {
-              chai.expect(res.status).to.eql(200);
-              //originally there were 2 endpoints
-              chai.expect(res.body.descriptor.endpoints.length).to.eql(2);
-
-              await requester
-                .patch('/AASDescriptors/aasId' + uniqueTestId)
-                .auth(user, password)
-                .send(
-                  replaceEndpoints(makeGoodSemanticProtocol(uniqueTestId), [
-                    makeGoodSemanticProtocol(uniqueTestId).descriptor.endpoints[0],
-                  ])
-                )
-                .then(async (res: any) => {
-                  chai.expect(res.status).to.eql(200);
-                  await requester
-                    .get('/AASDescriptors/aasId' + uniqueTestId)
-                    .auth(user, password)
-                    .then((res: any) => {
-                      chai.expect(res.status).to.eql(200);
-                      chai
-                        .expect(res.body.descriptor.endpoints[0].address)
-                        .to.eql('abc.def/' + uniqueTestId);
-
-                      chai.expect(res.body.descriptor.endpoints.length).to.eql(1);
-                    });
-                });
-            })
-            .then(() => {
-              requester.close();
-            });
-        });
-
-
-        //TEST PUT SemanticProtocol
-
-        it("registers a semanticprotocol in the the database', async function () {
+  it('returns a 422 Error if the identification.id in the SemanticPrototolc is different ' +
+    'from the SemanticPrototolc in the path parameter', async function () {
       var uniqueTestId = 'simpleDataTest' + getRandomInteger();
-        var requester = chai.request(app).keepOpen();
+      var differentUniqueTestId = 'simpleDataTest' + getRandomInteger();
+      var requester = chai.request(app).keepOpen();
 
+      await requester
+        //the aasId as path parameter is different from the one in req body
+        .patch('/SemanticProtocols/semanticProtocolId' + uniqueTestId)
+        .auth(user, password)
+        .send(
+          makeGoodSemanticProtocol(differentUniqueTestId)
+        )
+        .then(async (res: any) => {
+          chai.expect(res.status).to.eql(422);
+        })
+    .then(() => {
+      requester.close();
+
+    });
+  });
+
+
+  it('returns a 422 Error if the SemanticProtocol to be updated (with the aasId) is not found in DB', async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
+
+    await requester
+    //the semanticprotocol with this id was not registered beforehand in the db
+    .patch('/SemanticProtocols/semanticProtocolId' + uniqueTestId)
+    .auth(user, password)
+    .send(
+      makeGoodSemanticProtocol(uniqueTestId)
+    )
+    .then(async (res: any) => {
+      chai.expect(res.status).to.eql(422);
+    })
+.then(() => {
+  requester.close();
+
+});
+  });
+  /*
+  // Test GET all /semanticprotocols, Note: this can take over 2000ms and cause timeout
+  //in case too many entries are found in DB
+  it('retrieves a list of all SemanticProtocols', async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var uniqueTestId2 = 'simpleDataTest' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
+
+    //first register an AAS
+    await requester
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(makeGoodAASDescriptor(uniqueTestId))
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200);
+
+        //register a second AAS
         await requester
-          .put('/semanticprotocol')
+          .put('/AASDescriptors')
+          .auth(user, password)
+          .send(makeGoodAASDescriptor(uniqueTestId2))
+          .then(async (res: any) => {
+            chai.expect(res.status).to.eql(200);
+
+
+            //register first procotol
+            await requester
+              .put('/SemanticProtocols')
+              .auth(user, password)
+              .send(makeGoodSemanticProtocol(uniqueTestId))
+              .then(async (res: any) => {
+                chai.expect(res.status).to.eql(200);
+                //register first procotol
+
+                await requester
+                  .get('/SemanticProtocols/')
+                  .auth(user, password)
+                  .then((res: any) => {
+                    chai.expect(res.status).to.eql(200);
+                    //chai.expect(res.bod)
+                  });
+              })
+              .then(() => {
+                requester.close();
+              });
+          });
+      });
+  });
+
+
+
+//TODO: to be done
+  it('can delete a role through patching  the semanticprotocol', async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
+
+    await requester
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(makeGoodAASDescriptor(uniqueTestId))
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200);
+
+        //then register a SemanticProtocol
+        await requester
+          .put('/SemanticProtocols')
           .auth(user, password)
           .send(makeGoodSemanticProtocol(uniqueTestId))
           .then(async (res: any) => {
             chai.expect(res.status).to.eql(200);
+
+            //try to update a semantic protocol with  a new role
             await requester
-              .get('/AASDescriptors/' + 'aasId' + uniqueTestId)
+              .patch('/SemanticProtocols/semanticProtocolId' + uniqueTestId)
               .auth(user, password)
-              .then((res: any) => {
+              .send(replaceRoleNameInFirstRole(makeGoodSemanticProtocol(uniqueTestId), 'newRoleA' + uniqueTestId))
+              .then(async (res: any) => {
                 chai.expect(res.status).to.eql(200);
-              });
+                //load the roles for this semanticprotocol
+                let rolesForProtFound: RoleEntity[] = await getConnection().manager
+                  .createQueryBuilder()
+                  .select()
+                  .from(RoleEntity, "role")
+                  .where("role.semProtocol = :semProtocol", { semProtocol: 'semanticProtocolId' + uniqueTestId })
+                  .execute();
+                //the number of roles should remain the same after the patch
+                chai.expect(rolesForProtFound.length).to.eql(makeGoodSemanticProtocol(uniqueTestId).roles.length);
+                console.log("rolesfound " + JSON.stringify(rolesForProtFound))
+                chai.expect(
+                  _.some(rolesForProtFound, {
+                    name: "newRoleA" + uniqueTestId
+                  })).to.be.true;
+
+              })
           })
           .then(() => {
             requester.close();
           });
       });
+  });
 
 
+  // test PUT /admin/
+  it('can update endpoint addresses', async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
 
-
-
-      /*
-        it('returns a 500 error if a connection to the db could not be established', async function() {
-          this.timeout(10000) // all tests in this suite get 10 seconds before timeout
-          var uniqueTestId = 'simpleDataTest' + getRandomInteger();
-          var host = process.env.CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST;
-          process.env.CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST = 'blah';
-          await chai
-            .request(app)
-            .put('/AASDescriptors')
-            .auth(user, password)
-            .send(makeGoodAASDescriptor(uniqueTestId))
-            .then(async (res: any) => {
-              chai.expect(res.status).to.eql(500);
-            })
-            .finally(
-              () => (process.env.CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST = host)
-            );
-        });
-
-
-
-
-        it('returns a 400 error if the uri is an empty string in the provided json object', async function () {
-          var uniqueTestId = 'simpleDataTest' + getRandomInteger();
-          var requester = chai.request(app).keepOpen();
-
-          await chai
-            .request(app)
-            .put('/AASDescriptors')
-            .auth(user, password)
-            .send(
-              replaceAddressInFirstEndpoint(makeGoodAASDescriptor(uniqueTestId), '')
+    await requester
+      .put('/admin/AASDescriptors')
+      .auth(user, password)
+      .send(
+        makeGoodSemanticProtocol(uniqueTestId)
+      )
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200);
+        await requester
+          .put('/admin/AASDescriptors')
+          .auth(user, password)
+          .send(
+            replaceAddressAndTypeInFirstEndpoint(
+              makeGoodSemanticProtocol(uniqueTestId),
+              'http://abc.com/' + uniqueTestId,
+              'http'
             )
-            .then(async (res: any) => {
-              chai.expect(res.status).to.eql(400);
-            });
-        });
+          )
+          .then(async (res: any) => {
+            chai.expect(res.status).to.eql(200);
+            await requester
+              .get('/AASDescriptors/aasId' + uniqueTestId)
+              .auth(user, password)
+              .then((res: any) => {
+                chai.expect(res.status).to.eql(200);
+                chai.expect(
+                  _.some(res.body.descriptor.endpoints, {
+                    address: 'http://abc.com/' + uniqueTestId,
+                  })
+                ).to.be.true;
 
-        it('returns a 400 error if a bad target is provided', async function () {
-          var uniqueTestId = 'simpleDataTest' + Math.random();
-          var requester = chai.request(app).keepOpen();
-
-          await chai
-            .request(app)
-            .put('/AASDescriptors')
-            .auth(user, password)
-            .send(
-              replaceTargetInFirstEndpoint(
-                makeGoodAASDescriptor(uniqueTestId),
-                'blah'
-              )
-            )
-            .then(async (res: any) => {
-              chai.expect(res.status).to.eql(400);
-            });
-        });
-
-        it('returns a 400 error if the uri is missing in the provided json object', async function () {
-          var uniqueTestId = 'simpleDataTest' + getRandomInteger();
-          var requester = chai.request(app).keepOpen();
-
-          await chai
-            .request(app)
-            .put('/AASDescriptors')
-            .auth(user, password)
-            .send(removeAddressInFirstEndpoint(makeGoodAASDescriptor(uniqueTestId)))
-            .then(async (res: any) => {
-              chai.expect(res.status).to.eql(400);
-            });
-        });
-
-        it('returns a 400 error if a uri is badly formatted in the provided json object', async function () {
-          var uniqueTestId = 'simpleDataTest' + getRandomInteger();
-
-          await chai
-            .request(app)
-            .put('/AASDescriptors')
-            .auth(user, password)
-            .send(
-              replaceAddressInFirstEndpoint(
-                makeGoodAASDescriptor(uniqueTestId),
-                '%%d//d'
-              )
-            )
-            .then(async (res: any) => {
-              chai.expect(res.status).to.eql(400);
-            });
-        });
-
+                chai.expect(res.body.descriptor.endpoints.length).to.eql(2);
+              });
+          });
+      })
+      .then(() => {
+        requester.close();
+      });
+  });
 
         */
+
+
+  //test GET   /semanticProtocols/{sematicProtocolId}/role/{roleName}/AASDescriptors:
+
+
+  it('retrieves all AASDescriptors by semanticProtocol and role', async function () {
+      var firstTestId = 'randId-' + getRandomInteger();
+      var secondTestId = 'randId' + getRandomInteger();
+      var requester = chai.request(app).keepOpen();
+
+      //first register an AAS
+      var aasRequest = makeGoodAASDescriptor(firstTestId)
+
+      await requester
+        .put('/AASDescriptors')
+        .auth(user, password)
+        .send(aasRequest)
+        .then(async (res: any) => {
+          chai.expect(res.status).to.eql(200);
+          //register second AAS
+          await requester
+          .put('/AASDescriptors')
+          .auth(user, password)
+          .send(makeGoodAASDescriptor(secondTestId))
+          .then(async (res: any) => {
+
+            //the SemanticProtocol to be registered
+          var semProtocolRequest = makeGoodSemanticProtocol(firstTestId)
+          //then register a SemanticProtocol
+          await requester
+            .put('/SemanticProtocols')
+            .auth(user, password)
+            .send(semProtocolRequest)
+            .then(async (res: any) => {
+              chai.expect(res.status).to.eql(200);
+              //finally try retrieving the list of AASs based on the semanticprotocol and rolename
+              await requester
+                .get('/SemanticProtocols/semanticProtocolId' + firstTestId+ '/role/'+semProtocolRequest.roles[0]+'/AASDescriptors')
+                .auth(user, password)
+                .then((response: any) => {
+                  chai.expect(response.status).to.eql(200);
+                //  console.log("body is " + JSON.stringify(response.body))
+                  //check if role registered correctly
+                  chai.expect(
+                    _.some(response.body, {
+                      identification: aasRequest.identification
+                    })).to.be.true;
+
+                });
+            })
+            .then(() => {
+              requester.close();
+            });
+        });
+    });
+  });
+
 });
