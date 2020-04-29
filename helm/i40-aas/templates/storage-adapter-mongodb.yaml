@@ -34,9 +34,14 @@ spec:
         service: storage-adapter-mongodb
         {{- include "i40-aas.selectorLabels" . | nindent 8 }}
     spec:
+      securityContext:
+        runAsNonRoot: true
       containers:
         - name: storage-adapter-mongodb
           image: "{{ .Values.image.repository }}/i40-aas-storage-adapter-mongodb:{{ .Values.image.release }}"
+          securityContext:
+            runAsUser: 1001
+            readOnlyRootFilesystem: true
           ports:
           - name: endpoint
             containerPort: {{ .Values.applicationAdapters.mongoDb.port }}
@@ -51,19 +56,16 @@ spec:
                 name: {{ .Release.Name }}-host-collection
                 key: SKILLS_ONBOARDING_DATABASE_HOST
           - name: APPLICATION_ADAPTERS_MONGODB_DATABASE_PORT
-            value: {{ .Values.skills.onboarding.database.port | quote }}
+            value: "{{ .Values.onboardingskillmongodb.service.port }}/?authSource={{ .Values.onboardingskillmongodb.mongodbDatabase }}"
           - name: APPLICATION_ADAPTERS_MONGODB_DATABASE_USER
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Release.Name }}-skills-onboarding-database
-                key: SKILLS_ONBOARDING_DATABASE_USER
+            value: {{ .Values.onboardingskillmongodb.mongodbUsername | quote }}
           - name: APPLICATION_ADAPTERS_MONGODB_DATABASE_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: {{ .Release.Name }}-skills-onboarding-database
-                key: SKILLS_ONBOARDING_DATABASE_PASSWORD
+                name: {{ .Release.Name }}-onboardingskillmongodb
+                key: mongodb-password
           - name: APPLICATION_ADAPTERS_MONGODB_DATABASE_NAME
-            value: {{ .Values.skills.onboarding.database.name | quote }}
+            value: {{ .Values.onboardingskillmongodb.mongodbDatabase | quote }}
           - name: APPLICATION_ADAPTERS_MONGODB_SUBMODELS_COLLECTION
             value: {{ .Values.applicationAdapters.mongoDb.submodelsCollection | quote }}
           resources:
