@@ -34,9 +34,14 @@ spec:
         service: data-manager
         {{- include "i40-aas.selectorLabels" . | nindent 8 }}
     spec:
+      securityContext:
+        runAsNonRoot: true
       containers:
       - name: data-manager
         image: "{{ .Values.image.repository }}/i40-aas-data-manager:{{ .Values.image.release }}"
+        securityContext:
+          runAsUser: 1001
+          readOnlyRootFilesystem: true
         ports: 
         - name: endpoint
           containerPort: {{ .Values.core.dataManager.port }}
