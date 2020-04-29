@@ -256,7 +256,7 @@ jobs:
       language: node_js
       node_js: lts/*
       install:
-        - yarn install -g newman
+        - yarn global add newman
         - make
         - docker-compose -f docker-compose.yml up -d --force-recreate
         - sleep 60
