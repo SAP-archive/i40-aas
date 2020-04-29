@@ -134,7 +134,7 @@ class Registry implements iRegistry {
         return record;
       }
       else {
-        logger.error("Resource alredy registered in Database")
+        logger.info("Resource alredy registered in Database")
         throw new HTTP422Error("Resource alredy registered in Database");
       }
     } catch (error) {
@@ -197,7 +197,7 @@ class Registry implements iRegistry {
         return record
       }
       else {
-        logger.debug("No AASDescriptor with this Id in DB " + record.identification.id)
+        logger.info("No AASDescriptor with this Id in DB " + record.identification.id)
         throw new HTTP422Error("Resource not found in Database");
       }
 
@@ -268,7 +268,7 @@ class Registry implements iRegistry {
         return record;
       }
       else {
-        logger.error("SemanticProtocol with this ID already in Database: " + record.identification.id);
+        logger.info("SemanticProtocol with this ID already in Database: " + record.identification.id);
         throw new HTTP422Error("SemanticProtocol with this ID already in Database: " + record.identification.id)
       }
 
@@ -449,7 +449,7 @@ class Registry implements iRegistry {
         //   .getMany();
       }
       else {
-        logger.error("No Entry with this semanticProtocolId found in DB: " + semanticProtocolId)
+        logger.info("No Entry with this semanticProtocolId found in DB: " + semanticProtocolId)
         throw new HTTP422Error("No Entry with this semanticProtocolId found in Database")
       }
     }
