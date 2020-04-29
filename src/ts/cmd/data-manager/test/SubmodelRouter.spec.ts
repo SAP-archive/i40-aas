@@ -7,16 +7,8 @@ import { Submodel } from 'i40-aas-objects';
 import { IStorageAdapter } from '../src/services/data-manager/interfaces/IStorageAdapter';
 import { fail } from 'assert';
 import Axios from 'axios';
-import ChaiPluginAssertType = require('chai-asserttype-extra');
 import { expect } from 'chai';
 const logger = require('aas-logger/lib/log');
-const chai = ChaiPluginAssertType.install();
-
-const dotenv = require('dotenv');
-dotenv.config();
-
-var CORE_DATA_MANAGER_USER = process.env.CORE_DATA_MANAGER_USER;
-var DATA_MANAGER_PASS = process.env.DATA_MANAGER_PASS;
 
 const app = require('../src/server').app;
 

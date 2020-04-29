@@ -3,9 +3,6 @@ import { WebClient } from './WebClient/WebClient';
 
 const logger = require('aas-logger/lib/log');
 
-const dotenv = require('dotenv');
-dotenv.config();
-
 class AdapterRegistryConnector {
   private webClient: WebClient;
   private registryGETAdaptersURL: URL;
