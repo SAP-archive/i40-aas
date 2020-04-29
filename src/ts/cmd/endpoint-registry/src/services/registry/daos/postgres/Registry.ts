@@ -213,7 +213,7 @@ class Registry implements iRegistry {
     try {
 
       let aasDescriptorRepository = this.client.getRepository(AASDescriptorEntity);
-      var aasDescriptor = await (await aasDescriptorRepository.delete(aasId))
+      var aasDescriptor =  await aasDescriptorRepository.delete(aasId)
       logger.debug("Affected rows: " + aasDescriptor.affected?.valueOf())
 
       if (aasDescriptor.affected?.valueOf() == 0) {
@@ -303,7 +303,6 @@ class Registry implements iRegistry {
       //  throw new HTTP422Error("No Resource with this aasId found in Database: " + aasId)
      // }
 
-
       semProtocol.roles = record.roles as RoleEntity[];
 
       logger.debug("SemanticProtocol Saved in Db ", savedProtocol);
@@ -319,16 +318,23 @@ class Registry implements iRegistry {
   async deleteSemanticProtocolById(semanticProtocolId: string): Promise<DeleteResult> {
     //NOTE: the endpoints will be on delete
 
-    let aasDescriptor = await this.client
-      .createQueryBuilder()
-      .delete()
-      .from(SemanticProtocolEntity)
-      .where("id = :id", { id: semanticProtocolId })
-      .execute();
+    try{
 
-    logger.debug("SemanticProtocol deleted in Db " + JSON.stringify(aasDescriptor));
 
-    return aasDescriptor;
+      let semanticProtocolRepo = this.client.getRepository(SemanticProtocolEntity);
+      var deleteResult =  await semanticProtocolRepo.delete(semanticProtocolId)
+      logger.debug("Affected rows: " + deleteResult.affected?.valueOf())
+
+      if (deleteResult.affected?.valueOf() == 0) {
+        throw new HTTP422Error("No Resource with this SemanticProtocolId found in Database: " + semanticProtocolId)
+      }
+
+    return deleteResult;
+    }catch (error) {
+      logger.error("Error caught " + error)
+      throw error;
+
+    }
   }
 
   async readAASDescriptorByAasId(

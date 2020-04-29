@@ -110,7 +110,6 @@ export default [
     }
     ]},
   {
-    //TODO: Add validation that aasId==req.body.identification.id
     path: '/AASDescriptors/:aasId',
     method: 'delete',
     handler: async (req: Request, res: Response, next: NextFunction) => {
@@ -209,10 +208,9 @@ export default [
         } else
           throw new HTTP422Error(
             'Mandatory path parameters: sematicProtocolId is not found in request'          );
-      } catch (e) {
-        console.log(e);
-        res.statusCode = e.r_statusCode || 500;
-        res.end(JSON.stringify(e));
+      } catch (err) {
+        logger.error(err);
+        next(err);
       }
 
     }
