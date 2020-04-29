@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { RegistryApi } from './RegistryApi';
 import { IAASDescriptor } from './daos/interfaces/IAASDescriptor';
 import { HTTP422Error } from '../../utils/httpErrors';
-import { validateAASDescriptorRequest } from '../../middleware/checks';
+import { validateAASDescriptorRequest, validateSemanticProtocolRequest } from '../../middleware/checks';
 import { ISemanticProtocol } from './daos/interfaces/ISemanticProtocol';
 const logger = require('aas-logger/lib/log');
 
@@ -247,5 +247,24 @@ export default [
       }
 
     }
-  }
+  },
+  {
+    path: '/semanticProtocols/:semanticProtocolId',
+    method: 'patch',
+    handler:[validateSemanticProtocolRequest,
+      async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        console.log('Path parameters received:' + JSON.stringify(req.params));
+        if (req.params.semanticProtocolId && req.params.semanticProtocolId === req.body.identification.id ) {
+          res.json( await registryApi.updateSemanticProtocolById( req.body));
+        } else
+          throw new HTTP422Error(
+            'Mandatory path parameters: semanticProtocolId is not found in request or does not match with body'
+          );
+      } catch (err) {
+        logger.error(err);
+        next(err);
+      }
+    }
+    ]}
 ];

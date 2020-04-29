@@ -25,6 +25,14 @@ class RegistryApi {
       logger.debug(result);
       return result;
   }
+  async updateSemanticProtocolById(
+    req: ISemanticProtocol
+  ): Promise<ISemanticProtocol> {
+    var registryDao: iRegistry = await RegistryFactory.getRegistry();
+      var result = await registryDao.updateSemanticProtocolById(req);
+      logger.debug(result);
+      return result;
+  }
   async deleteAASDescriptorByAASId(
     aasId: string
   ): Promise<DeleteResult> {

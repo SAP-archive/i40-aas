@@ -13,7 +13,7 @@ interface iRegistry {
   deleteAasDescriptorByAasId(aasId: string): Promise<DeleteResult>;
   deleteSemanticProtocolById(semanticProtocolId: string): Promise<DeleteResult>;
   readSemanticProtocolById(semanticProtocolId: string): Promise<ISemanticProtocol>;
-  updateSemanticProtocolById(semanticProtocolId: string): Promise<ISemanticProtocol>;
+  updateSemanticProtocolById(semanticProtocol: ISemanticProtocol): Promise<ISemanticProtocol>;
   listAllEndpoints(): Promise<Array<IEndpoint>>;
   listAllSemanticProtocols(): Promise<Array<ISemanticProtocol>>;
   createSemanticProtocol(req: ISemanticProtocol): Promise<ISemanticProtocol>;

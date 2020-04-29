@@ -213,7 +213,7 @@ class Registry implements iRegistry {
     try {
 
       let aasDescriptorRepository = this.client.getRepository(AASDescriptorEntity);
-      var aasDescriptor =  await aasDescriptorRepository.delete(aasId)
+      var aasDescriptor = await aasDescriptorRepository.delete(aasId)
       logger.debug("Affected rows: " + aasDescriptor.affected?.valueOf())
 
       if (aasDescriptor.affected?.valueOf() == 0) {
@@ -288,7 +288,6 @@ class Registry implements iRegistry {
       let semProtocol = new SemanticProtocolEntity();
       semProtocol.id = record.identification.id;
       semProtocol.idType = record.identification.idType;
-      let savedProtocol = await semProtocolRepository.save(semProtocol);
 
       // if no delete is done previous roles record will be deleted and replaced
       // with .save() the previous stays in DB */
@@ -299,11 +298,9 @@ class Registry implements iRegistry {
         .where("semProtocol = :semProtocol", { semProtocol: record.identification.id })
         .execute();
       logger.debug("Role delete result: " + deleteResult)
-      //if (deleteResult.affected?.valueOf() == 0) {
-      //  throw new HTTP422Error("No Resource with this aasId found in Database: " + aasId)
-     // }
 
       semProtocol.roles = record.roles as RoleEntity[];
+      let savedProtocol = await semProtocolRepository.save(semProtocol);
 
       logger.debug("SemanticProtocol Saved in Db ", savedProtocol);
 
@@ -318,19 +315,19 @@ class Registry implements iRegistry {
   async deleteSemanticProtocolById(semanticProtocolId: string): Promise<DeleteResult> {
     //NOTE: the endpoints will be on delete
 
-    try{
+    try {
 
 
       let semanticProtocolRepo = this.client.getRepository(SemanticProtocolEntity);
-      var deleteResult =  await semanticProtocolRepo.delete(semanticProtocolId)
+      var deleteResult = await semanticProtocolRepo.delete(semanticProtocolId)
       logger.debug("Affected rows: " + deleteResult.affected?.valueOf())
 
       if (deleteResult.affected?.valueOf() == 0) {
         throw new HTTP422Error("No Resource with this SemanticProtocolId found in Database: " + semanticProtocolId)
       }
 
-    return deleteResult;
-    }catch (error) {
+      return deleteResult;
+    } catch (error) {
       logger.error("Error caught " + error)
       throw error;
 
@@ -478,9 +475,43 @@ class Registry implements iRegistry {
     return semanticProtocolsArray;
   }
 
-  updateSemanticProtocolById(semanticProtocolId: string): Promise<ISemanticProtocol> {
-    logger.error("Tried to insert an already registered endpoint in Database")
-    throw new Error("Method not implemented.");
+  async updateSemanticProtocolById(record: ISemanticProtocol): Promise<ISemanticProtocol> {
+    try {
+      //get an Entityrepository for the AASDescriptor and the Asset
+      let semProtocolRepository = this.client.getRepository(SemanticProtocolEntity);
+      //Load the AASDescriptor object from the DB as well as the related Objects (Endpoints, Asset)
+      let loadedSemanticProtocol = await semProtocolRepository.findOne({ id: record.identification.id });
+
+      if (loadedSemanticProtocol) {
+
+        let semProtocol = new SemanticProtocolEntity();
+        semProtocol.id = record.identification.id;
+        semProtocol.idType = record.identification.idType;
+
+        // if no delete is done previous roles record will be deleted and replaced
+        // with .save() the previous stays in DB */
+        let deleteResult = await this.client
+          .createQueryBuilder()
+          .delete()
+          .from(RoleEntity)
+          .where("semProtocol = :semProtocol", { semProtocol: record.identification.id })
+          .execute();
+        logger.debug("Role delete result: " + deleteResult)
+
+        semProtocol.roles = record.roles as RoleEntity[];
+        let savedProtocol = await semProtocolRepository.save(semProtocol);
+
+        logger.debug("SemanticProtocol Saved in Db ", savedProtocol);
+        return record;
+      }
+      else {
+        logger.info("No Entry with this semanticProtocolId found in DB: " + record.identification.id)
+        throw new HTTP422Error("No Entry with this semanticProtocolId found in Database")
+      }
+    } catch (error) {
+      logger.error("Error caught " + error)
+      throw error;
+    }
   }
 
   listAllEndpoints(): Promise<IEndpoint[]> {
