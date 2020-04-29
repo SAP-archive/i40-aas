@@ -24,7 +24,7 @@ class Registry implements iRegistry {
   /*
   PUT /admin/AASDescriptor/:aasId
   */
-  async upsertAASDescriptor(record: IAASDescriptor): Promise<IAASDescriptor | undefined> {
+  async upsertAASDescriptor(record: IAASDescriptor): Promise<IAASDescriptor> {
 
     try {
 
@@ -40,7 +40,6 @@ class Registry implements iRegistry {
 
       let savedAsset = await assetssRepository.save(asset);
       logger.debug("Asset Saved in Db ", asset);
-
 
       //finally create the AASDescriptor in DB
       let aasDescriptor = new AASDescriptorEntity();
@@ -78,17 +77,16 @@ class Registry implements iRegistry {
       return record;
     } catch (error) {
       logger.error(error)
-      return undefined
+      throw error
     }
 
   }
-
 
   /**
    * Register a AASDescriptor in the db after a PUT call
    * @param record The request body
    */
-  async createAASDescriptor(record: IAASDescriptor): Promise<IAASDescriptor | undefined> {
+  async createAASDescriptor(record: IAASDescriptor): Promise<IAASDescriptor> {
 
     try {
 
@@ -166,14 +164,14 @@ class Registry implements iRegistry {
         Thus, the client should sent the whole endpoints array every time (i.e.) first get then put
         if no delete is done previous Endpoint record will be deleted and replaced
         with .save() the previous stays in DB */
-          let deleteResult = await this.client
-            .createQueryBuilder()
-            .delete()
-            .from(EndpointEntity)
-            .where("aasdescriptor = :aasdescriptor", { aasdescriptor: record.identification.id })
-            .execute();
+        let deleteResult = await this.client
+          .createQueryBuilder()
+          .delete()
+          .from(EndpointEntity)
+          .where("aasdescriptor = :aasdescriptor", { aasdescriptor: record.identification.id })
+          .execute();
 
-          logger.debug("Endpoint delete result: " + deleteResult)
+        logger.debug("Endpoint delete result: " + deleteResult)
 
 
         //after deleting existing endpoints, replace them with the new
@@ -210,7 +208,7 @@ class Registry implements iRegistry {
     }
 
   }
-  async deleteAasDescriptorByAasId(aasId: string): Promise<DeleteResult | undefined> {
+  async deleteAasDescriptorByAasId(aasId: string): Promise<DeleteResult> {
 
     try {
 
@@ -287,39 +285,36 @@ class Registry implements iRegistry {
       //get an Entityrepository for the AASDescriptor and the Asset
       let semProtocolRepository = this.client.getRepository(SemanticProtocolEntity);
 
-        let semProtocol = new SemanticProtocolEntity();
-        semProtocol.id = record.identification.id;
-        semProtocol.idType = record.identification.idType;
-        let savedProtocol = await semProtocolRepository.save(semProtocol);
-
+      let semProtocol = new SemanticProtocolEntity();
+      semProtocol.id = record.identification.id;
+      semProtocol.idType = record.identification.idType;
+      let savedProtocol = await semProtocolRepository.save(semProtocol);
 
       // if no delete is done previous roles record will be deleted and replaced
       // with .save() the previous stays in DB */
-        let deleteResult = await this.client
-          .createQueryBuilder()
-          .delete()
-          .from(RoleEntity)
-          .where("semProtocol = :semProtocol", { semProtocol: record.identification.id })
-          .execute();
-          logger.debug("Role delete result: " + deleteResult)
+      let deleteResult = await this.client
+        .createQueryBuilder()
+        .delete()
+        .from(RoleEntity)
+        .where("semProtocol = :semProtocol", { semProtocol: record.identification.id })
+        .execute();
+      logger.debug("Role delete result: " + deleteResult)
+      //if (deleteResult.affected?.valueOf() == 0) {
+      //  throw new HTTP422Error("No Resource with this aasId found in Database: " + aasId)
+     // }
 
-      //  semProtocol.roles = semProtocol.roles.filter(role => {
-        //  role.id !== role.id})
-      //await  this.client.manager.save(semProtocol)
 
-        
-        semProtocol.roles = record.roles as RoleEntity[];
+      semProtocol.roles = record.roles as RoleEntity[];
 
-        logger.debug("SemanticProtocol Saved in Db ", savedProtocol);
+      logger.debug("SemanticProtocol Saved in Db ", savedProtocol);
 
-        return record;
+      return record;
 
     } catch (error) {
       logger.error("Error caught " + error)
       throw error;
     }
   }
-
 
   async deleteSemanticProtocolById(semanticProtocolId: string): Promise<DeleteResult> {
     //NOTE: the endpoints will be on delete
@@ -374,7 +369,6 @@ class Registry implements iRegistry {
 
   }
 
-
   async readAASDescriptorsBySemanticProtocolAndRole(
     sProtocol: string,
     roleName: string
@@ -427,34 +421,35 @@ class Registry implements iRegistry {
         relations: ["roles"]
       }) as SemanticProtocolEntity;
       //if not found throw error
-      if(resultSemanticProtocol){
+      if (resultSemanticProtocol) {
 
-      let protocolIdentifier = new Identifier(resultSemanticProtocol.id, resultSemanticProtocol.idType as TIdType);
-      //get the IRole Array for returning, contruct from the RoleEntity
-      let rolesArr: IRole[] = resultSemanticProtocol.roles.map((roleEntity) => {
-        return {
-          name: roleEntity.name,
-          // Get only the ids from the aasdescriptors to be returned
-          aasDescriptorIds: roleEntity.aasDescriptorIds.map(aasDescriptor => {
-            return new Identifier(aasDescriptor.id, aasDescriptor.idType as TIdType)
-          })} as IRole
-      });
+        let protocolIdentifier = new Identifier(resultSemanticProtocol.id, resultSemanticProtocol.idType as TIdType);
+        //get the IRole Array for returning, contruct from the RoleEntity
+        let rolesArr: IRole[] = resultSemanticProtocol.roles.map((roleEntity) => {
+          return {
+            name: roleEntity.name,
+            // Get only the ids from the aasdescriptors to be returned
+            aasDescriptorIds: roleEntity.aasDescriptorIds.map(aasDescriptor => {
+              return new Identifier(aasDescriptor.id, aasDescriptor.idType as TIdType)
+            })
+          } as IRole
+        });
 
-      var response = new SemanticProtocolResponse(protocolIdentifier, rolesArr);
-      return response;
-      // Find the AASDescriptors for the given roles
-      //TODO: this needs to be revised
-      // const aasDescriptorEntities: AASDescriptorEntity[] = await this.client
-      //   .getRepository(AASDescriptorEntity)
-      //   .createQueryBuilder("aasDescriptor")
-      //   .innerJoinAndSelect("aasDescriptor.roles", "role")
-      //   .getMany();
+        var response = new SemanticProtocolResponse(protocolIdentifier, rolesArr);
+        return response;
+        // Find the AASDescriptors for the given roles
+        //TODO: this needs to be revised
+        // const aasDescriptorEntities: AASDescriptorEntity[] = await this.client
+        //   .getRepository(AASDescriptorEntity)
+        //   .createQueryBuilder("aasDescriptor")
+        //   .innerJoinAndSelect("aasDescriptor.roles", "role")
+        //   .getMany();
+      }
+      else {
+        logger.error("No Entry with this semanticProtocolId found in DB: " + semanticProtocolId)
+        throw new HTTP422Error("No Entry with this semanticProtocolId found in Database")
+      }
     }
-else{
-  logger.error("No Entry with this semanticProtocolId found in DB: "+semanticProtocolId)
-  throw new HTTP422Error("No Entry with this semanticProtocolId found in Database")
-}
-  }
     catch (error) {
       logger.error("Error caught " + error)
       throw error;
@@ -477,12 +472,10 @@ else{
     return semanticProtocolsArray;
   }
 
-
   updateSemanticProtocolById(semanticProtocolId: string): Promise<ISemanticProtocol> {
     logger.error("Tried to insert an already registered endpoint in Database")
     throw new Error("Method not implemented.");
   }
-
 
   listAllEndpoints(): Promise<IEndpoint[]> {
     throw new Error("Method not implemented.");

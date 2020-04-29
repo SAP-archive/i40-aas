@@ -10,27 +10,27 @@ class RegistryApi {
 
   async readAASDescriptorByAASId(
     aasId: string
-  ): Promise<IAASDescriptor | undefined> {
+  ): Promise<IAASDescriptor> {
     //TODO: dependency injection is better
     var registryDao: iRegistry = await RegistryFactory.getRegistry();
       var result = await registryDao.readAASDescriptorByAasId(aasId);
-      logger.info(result);
+      logger.debug(result);
       return result;
   }
   async updateAASDescriptorByAASId(
     req: IAASDescriptor
-  ): Promise<IAASDescriptor | undefined> {
+  ): Promise<IAASDescriptor> {
     var registryDao: iRegistry = await RegistryFactory.getRegistry();
       var result = await registryDao.updateAasDescriptorByAasId(req);
-      logger.info(result);
+      logger.debug(result);
       return result;
   }
   async deleteAASDescriptorByAASId(
     aasId: string
-  ): Promise<DeleteResult|undefined> {
+  ): Promise<DeleteResult> {
     var registryDao: iRegistry = await RegistryFactory.getRegistry();
       var result = await registryDao.deleteAasDescriptorByAasId(aasId);
-      logger.info(result);
+      logger.debug(result);
       return result;
   }
 
@@ -52,7 +52,7 @@ class RegistryApi {
   }
   async readSemanticProtocolBySemanticProtocolId(
     sProtocol: string,
-  ): Promise<any> {
+  ): Promise<ISemanticProtocol> {
 
     var registryDao: iRegistry = await RegistryFactory.getRegistry();
 
@@ -101,6 +101,16 @@ class RegistryApi {
     var registryDao: iRegistry = await RegistryFactory.getRegistry();
     try {
       var result = await registryDao.createSemanticProtocol(req);
+      logger.debug(result);
+      return result;
+    } catch (e) {
+      throw e;
+    }
+  }
+  async createOrUpdateSemanticProtocol(req: ISemanticProtocol) {
+    var registryDao: iRegistry = await RegistryFactory.getRegistry();
+    try {
+      var result = await registryDao.upsertSemanticProtocol(req);
       logger.debug(result);
       return result;
     } catch (e) {

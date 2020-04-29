@@ -138,7 +138,7 @@ export default [
       try {
         res.json(await registryApi.getAllEndpointsList());
       } catch (e) {
-        console.log(e);
+        logger.error(e);
         res.statusCode = e.r_statusCode || 500;
         res.end(JSON.stringify(e));
       }
@@ -148,10 +148,10 @@ export default [
     path: '/admin/semanticProtocols',
     method: 'put',
     handler: async (req: Request, res: Response, next: NextFunction) => {
-      console.log('/semanticprotocol PUT request received');
+      logger.debug('/semanticprotocol PUT request received');
       try {
-        await registryApi.createSemanticProtocol(req.body);
-        console.log('Sent back response of /semanticprotocol PUT request');
+        await registryApi.createOrUpdateSemanticProtocol(req.body);
+        logger.debug('Sent back response of /semanticprotocol PUT request');
         res.json(req.body);
       } catch (err) {
         logger.error(err);

@@ -7,16 +7,17 @@ import { IEndpoint } from './IEndpoint';
 
 interface iRegistry {
   readAASDescriptorByAasId(aasId: string): Promise<IAASDescriptor>;
-  createAASDescriptor(req: IAASDescriptor): Promise<IAASDescriptor | undefined>;
-  upsertAASDescriptor(req: IAASDescriptor): Promise<IAASDescriptor | undefined>;
-  updateAasDescriptorByAasId(req: IAASDescriptor): Promise<IAASDescriptor | undefined>;
-  deleteAasDescriptorByAasId(aasId: string): Promise<DeleteResult|undefined>;
-  deleteSemanticProtocolById(semanticProtocolId: string): Promise<DeleteResult|undefined>;
+  createAASDescriptor(req: IAASDescriptor): Promise<IAASDescriptor>;
+  upsertAASDescriptor(req: IAASDescriptor): Promise<IAASDescriptor>;
+  updateAasDescriptorByAasId(req: IAASDescriptor): Promise<IAASDescriptor>;
+  deleteAasDescriptorByAasId(aasId: string): Promise<DeleteResult>;
+  deleteSemanticProtocolById(semanticProtocolId: string): Promise<DeleteResult>;
   readSemanticProtocolById(semanticProtocolId: string): Promise<ISemanticProtocol>;
   updateSemanticProtocolById(semanticProtocolId: string): Promise<ISemanticProtocol>;
   listAllEndpoints(): Promise<Array<IEndpoint>>;
   listAllSemanticProtocols(): Promise<Array<ISemanticProtocol>>;
-  createSemanticProtocol(req: ISemanticProtocol): void;
+  createSemanticProtocol(req: ISemanticProtocol): Promise<ISemanticProtocol>;
+  upsertSemanticProtocol(req: ISemanticProtocol): Promise<ISemanticProtocol>;
   readAASDescriptorsBySemanticProtocolAndRole(
     sProtocol: string,
     role: string
