@@ -1,10 +1,7 @@
-import { RegistryFactory } from "./RegistryFactory";
-import { IStorageAdapter } from "./interfaces/IRegistryResultSet";
-import { IAdapterRegistry } from "./interfaces/IAdapterRegistry";
-import { ICreateAdapter } from "./interfaces/IAPIRequests";
-
-const dotenv = require('dotenv');
-dotenv.config();
+import { RegistryFactory } from './RegistryFactory';
+import { IStorageAdapter } from './interfaces/IRegistryResultSet';
+import { IAdapterRegistry } from './interfaces/IAdapterRegistry';
+import { ICreateAdapter } from './interfaces/IAPIRequests';
 
 /**
  * Register a storage adapter with its submodel assignment
@@ -15,7 +12,7 @@ async function createAdapters(
   var registryDao: IAdapterRegistry = await RegistryFactory.getRegistryLocal();
 
   //use map() to async call all the adapters
-  var adaptersArray = req.map(async val => {
+  var adaptersArray = req.map(async (val) => {
     return await registryDao.createAdapter(val);
   });
 
@@ -65,5 +62,5 @@ export {
   getAdapterBysubmodelSemanticId,
   createAdapters,
   clearAllEntries,
-  listAllAdapters
+  listAllAdapters,
 };

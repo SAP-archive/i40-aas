@@ -1,5 +1,3 @@
-const { Pool } = require('pg');
-const genericPool = require('generic-pool');
 import { Registry } from './AdapterRegistryLocal';
 
 const logger = require('aas-logger/lib/log');
