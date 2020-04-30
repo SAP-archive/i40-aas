@@ -239,10 +239,11 @@ export default [
       logger.debug('Add AASDescriptors to role request received');
       try {
         logger.debug('Path parameters received:' + JSON.stringify(req.params));
-
+        if(req.params.semanticProtocolId || req.params.roleName){
         var response = await registryApi.updatedAASIDsToRole(req.params.semanticProtocolId, req.params.roleName, req.body)
        // console.log('Sent back response of /semanticprotocol GET request');
-        res.json(response);
+        res.json(response);}
+        else{ throw new HTTP422Error("One or more path parameter is missing fron request")}
       } catch (err) {
         logger.error(err);
         next(err);
@@ -250,6 +251,27 @@ export default [
 
     }
   },
+  {
+    path: '/semanticProtocols/:semanticProtocolId/role/:roleName/AASDescriptors/:aasId',
+    method: 'delete',
+    handler: async (req: Request, res: Response, next: NextFunction) => {
+      logger.debug('Add AASDescriptors to role request received');
+      try {
+        logger.debug('Path parameters received:' + JSON.stringify(req.params));
+        if(req.params.semanticProtocolId || req.params.roleName || req.params.aasId){
+
+        var response = await registryApi.deleteAASIdFromRole(req.params.semanticProtocolId, req.params.roleName, req.params.aasId)
+       // console.log('Sent back response of /semanticprotocol GET request');
+        res.json(response);}
+        else{ throw new HTTP422Error("One or more path parameter is missing fron request")}
+      } catch (err) {
+        logger.error(err);
+        next(err);
+      }
+
+    }
+  },
+
   {
     path: '/semanticProtocols/:semanticProtocolId',
     method: 'get',

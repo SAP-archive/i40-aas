@@ -29,6 +29,10 @@ interface iRegistry {
     role: string,
     aasIds: IIdentifier[]
   ): Promise<IRole>;
+  deleteAASIdFromRole(
+    sProtocol: string,
+    role: string,
+    aasId: string): Promise<IRole>;
 }
 
 export { iRegistry };

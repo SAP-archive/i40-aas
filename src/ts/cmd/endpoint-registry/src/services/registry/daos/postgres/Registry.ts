@@ -21,9 +21,6 @@ const logger = require('aas-logger/lib/log');
 class Registry implements iRegistry {
 
 
-
-
-
   constructor(private readonly client: Connection) {
   }
   /*
@@ -527,7 +524,6 @@ class Registry implements iRegistry {
   }
 
   async updateAASDescriptorsToRole(sProtocol: string, roleName: string, aasIds: IIdentifier[]): Promise<IRole> {
-
     try {
       //find the role
       let loadedRole = await getConnection().getRepository(RoleEntity).findOne({
@@ -561,14 +557,42 @@ class Registry implements iRegistry {
       else {
         throw new HTTP422Error("No Role found for this protocol and role name")
       }
-
     }
     catch (error) {
       throw error;
     }
-
-
   }
+  async deleteAASIdFromRole(sProtocol: string, roleName: string, aasIdToRemove: string): Promise<IRole> {
+    try {
+      //find the role
+      logger.debug("AAS ID to remove "+aasIdToRemove)
+      let loadedRole = await getConnection().getRepository(RoleEntity).findOne({
+        where: [
+          { semProtocol: sProtocol }, { name: roleName }],
+        relations: ["aasDescriptorIds"]
+      })
+      if (loadedRole) {
+       // logger.debug("Role found " + JSON.stringify(loadedRole))
+
+       // logger.debug("Old role AASs "+ JSON.stringify(loadedRole.aasDescriptorIds))
+
+        loadedRole.aasDescriptorIds = loadedRole.aasDescriptorIds.filter(function (aasDescriptor)  {
+         return  aasDescriptor.id !== aasIdToRemove})
+
+        // logger.debug("Updated aasIds  "+ JSON.stringify(loadedRole.aasDescriptorIds))
+
+        //save the updated role
+        await this.client.getRepository(RoleEntity).save(loadedRole);
+
+        return loadedRole as IRole
+      }
+      else {
+        throw new HTTP422Error("No Role found for this protocol and role name")
+      }
+    }
+    catch (error) {
+      throw error;
+    }  }
 
 
 

@@ -8,6 +8,11 @@ import { IIdentifier } from 'i40-aas-objects';
 const logger = require('aas-logger/lib/log');
 
 class RegistryApi {
+  async deleteAASIdFromRole(semanticProtocolId: string, roleName: string, aasId: string) {
+    var registryDao: iRegistry = await RegistryFactory.getRegistry();
+    var result = await registryDao.deleteAASIdFromRole(semanticProtocolId, roleName, aasId);
+    logger.debug(result);
+    return result;  }
 
 
   async updatedAASIDsToRole(semanticProtocolId: string, roleName: string, aasIdsArray: Array<IIdentifier>) {
