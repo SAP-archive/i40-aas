@@ -19,7 +19,6 @@ env:
     - SVC=storage-adapter-mongodb
     - SVC=grpc-endpoint-ingress
     - SVC=grpc-endpoint-egress
-    - SVC=initializer
     - SVC=endpoint-resolver
     - SVC=echo-skill
 
