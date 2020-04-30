@@ -4,9 +4,18 @@ import { DeleteResult } from 'typeorm';
 import { IAASDescriptor } from './daos/interfaces/IAASDescriptor';
 import { IEndpoint } from './daos/interfaces/IEndpoint';
 import { ISemanticProtocol } from './daos/interfaces/ISemanticProtocol';
+import { IIdentifier } from 'i40-aas-objects';
 const logger = require('aas-logger/lib/log');
 
 class RegistryApi {
+
+
+  async updatedAASIDsToRole(semanticProtocolId: string, roleName: string, aasIdsArray: Array<IIdentifier>) {
+    var registryDao: iRegistry = await RegistryFactory.getRegistry();
+    var result = await registryDao.updateAASDescriptorsToRole(semanticProtocolId, roleName, aasIdsArray);
+    logger.debug(result);
+    return result;
+  }
 
   async readAASDescriptorByAASId(
     aasId: string

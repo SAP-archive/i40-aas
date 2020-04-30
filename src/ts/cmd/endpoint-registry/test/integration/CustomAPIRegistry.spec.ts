@@ -4,7 +4,10 @@ import { getConnection, AdvancedConsoleLogger } from 'typeorm';
 import { ISemanticProtocol } from '../../src/services/registry/daos/interfaces/ISemanticProtocol'
 import { SemanticProtocolEntity } from '../../src/services/registry/daos/entities/SemanticProtocolEntity';
 import { RoleEntity } from '../../src/services/registry/daos/entities/RoleEntity';
-
+import { IIdentifier } from 'i40-aas-objects';
+import { TIdType } from 'i40-aas-objects/dist/src/types/IdTypeEnum';
+import { IRole } from '../../src/services/registry/daos/interfaces/IRole';
+import { Identifier } from '../../src/services/registry/daos/responses/Identifier';
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const app = require('../../src/server').app;
@@ -75,58 +78,30 @@ function replaceRoleNameInFirstRole(
   protocol.roles[0].name = replacement;
   return protocol;
 }
-
-function replaceEndpoints(
-  descriptor: IAASDescriptor,
-  endpoints: Array<IEndpoint>
+function makeAASIdentifierRequestWithExtraAASId(
+  role: IRole,
+  extraAAS: IIdentifier
 ) {
-  descriptor.descriptor.endpoints = endpoints;
-  return descriptor;
+  //add an extra AAS Identifier to the array
+  role.aasDescriptorIds.push(extraAAS)
+  return role.aasDescriptorIds
+
 }
-
-
-function replaceTargetInFirstEndpoint(
-  descriptor: IAASDescriptor,
-  replacement: string
+function makeAASIdentifierRequesRemovingAnAASIdentifier(
+  role: IRole,
+  obsoleteAAS: IIdentifier
 ) {
-  descriptor.descriptor.endpoints[0].target = replacement;
-  return descriptor;
+  //remove an the given AAS Identifier to the array
+  const index = role.aasDescriptorIds.indexOf(obsoleteAAS, 0);
+  if (index > -1) {
+    role.aasDescriptorIds.splice(index, 1);
+  }
+  return role.aasDescriptorIds;
 }
 
 
 
-function removeAddressInFirstEndpoint(descriptor: IAASDescriptor) {
-  (<unknown>descriptor.descriptor.endpoints[0].address) = undefined;
-  return descriptor;
-}
 
-function replaceAasId(descriptor: IAASDescriptor, replacement: string) {
-  descriptor.identification.id = replacement;
-  return descriptor;
-}
-
-function replaceAddressAndTypeInFirstEndpoint(
-  descriptor: IAASDescriptor,
-  addressReplacement: string,
-  typeReplacement: string
-) {
-  descriptor.descriptor.endpoints[0].address = addressReplacement;
-  descriptor.descriptor.endpoints[0].type = typeReplacement;
-  return descriptor;
-}
-function replaceAddressTypeInFirstEndpointAndCertificateAndAsset(
-  originalAASDescriptor: IAASDescriptor,
-  addressReplacement: string,
-  typeReplacement: string,
-  certificateReplacement: string,
-  assetReplacementId: string
-) {
-  originalAASDescriptor.descriptor.endpoints[0].address = addressReplacement;
-  originalAASDescriptor.descriptor.endpoints[0].type = typeReplacement;
-  originalAASDescriptor.descriptor.certificate_x509_i40 = certificateReplacement
-  originalAASDescriptor.asset.id = assetReplacementId;
-  return originalAASDescriptor;
-}
 
 function checkEnvVar(variableName: string) {
   let retVal = process.env[variableName];
@@ -515,11 +490,11 @@ describe('Tests with a simple data model', function () {
         .then(async (res: any) => {
           chai.expect(res.status).to.eql(422);
         })
-    .then(() => {
-      requester.close();
+        .then(() => {
+          requester.close();
 
+        });
     });
-  });
 
 
   it('returns a 422 Error if the SemanticProtocol to be updated (with the aasId) is not found in DB', async function () {
@@ -527,19 +502,19 @@ describe('Tests with a simple data model', function () {
     var requester = chai.request(app).keepOpen();
 
     await requester
-    //the semanticprotocol with this id was not registered beforehand in the db
-    .patch('/SemanticProtocols/semanticProtocolId' + uniqueTestId)
-    .auth(user, password)
-    .send(
-      makeGoodSemanticProtocol(uniqueTestId)
-    )
-    .then(async (res: any) => {
-      chai.expect(res.status).to.eql(422);
-    })
-.then(() => {
-  requester.close();
+      //the semanticprotocol with this id was not registered beforehand in the db
+      .patch('/SemanticProtocols/semanticProtocolId' + uniqueTestId)
+      .auth(user, password)
+      .send(
+        makeGoodSemanticProtocol(uniqueTestId)
+      )
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(422);
+      })
+      .then(() => {
+        requester.close();
 
-});
+      });
   });
   /*
   // Test GET all /semanticprotocols, Note: this can take over 2000ms and cause timeout
@@ -695,55 +670,114 @@ describe('Tests with a simple data model', function () {
 
 
   it('retrieves all AASDescriptors by semanticProtocol and role', async function () {
-      var firstTestId = 'randId-' + getRandomInteger();
-      var secondTestId = 'randId' + getRandomInteger();
-      var requester = chai.request(app).keepOpen();
+    var firstTestId = 'randId-' + getRandomInteger();
+    var secondTestId = 'randId' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
 
-      //first register an AAS
-      var aasRequest = makeGoodAASDescriptor(firstTestId)
+    //first register an AAS
+    var aasRequest = makeGoodAASDescriptor(firstTestId)
 
-      await requester
-        .put('/AASDescriptors')
-        .auth(user, password)
-        .send(aasRequest)
-        .then(async (res: any) => {
-          chai.expect(res.status).to.eql(200);
-          //register second AAS
-          await requester
+    await requester
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(aasRequest)
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200);
+        //register second AAS
+        await requester
           .put('/AASDescriptors')
           .auth(user, password)
           .send(makeGoodAASDescriptor(secondTestId))
           .then(async (res: any) => {
 
             //the SemanticProtocol to be registered
-          var semProtocolRequest = makeGoodSemanticProtocol(firstTestId)
-          //then register a SemanticProtocol
-          await requester
-            .put('/SemanticProtocols')
-            .auth(user, password)
-            .send(semProtocolRequest)
-            .then(async (res: any) => {
-              chai.expect(res.status).to.eql(200);
-              //finally try retrieving the list of AASs based on the semanticprotocol and rolename
-              await requester
-                .get('/SemanticProtocols/semanticProtocolId' + firstTestId+ '/role/'+semProtocolRequest.roles[0]+'/AASDescriptors')
-                .auth(user, password)
-                .then((response: any) => {
-                  chai.expect(response.status).to.eql(200);
-                //  console.log("body is " + JSON.stringify(response.body))
-                  //check if role registered correctly
-                  chai.expect(
-                    _.some(response.body, {
-                      identification: aasRequest.identification
-                    })).to.be.true;
+            var semProtocolRequest = makeGoodSemanticProtocol(firstTestId)
+            //then register a SemanticProtocol
+            await requester
+              .put('/SemanticProtocols')
+              .auth(user, password)
+              .send(semProtocolRequest)
+              .then(async (res: any) => {
+                chai.expect(res.status).to.eql(200);
+                //finally try retrieving the list of AASs based on the semanticprotocol and rolename
+                await requester
+                  .get('/SemanticProtocols/semanticProtocolId' + firstTestId + '/role/' + semProtocolRequest.roles[0] + '/AASDescriptors')
+                  .auth(user, password)
+                  .then((response: any) => {
+                    chai.expect(response.status).to.eql(200);
+                    //  console.log("body is " + JSON.stringify(response.body))
+                    //check if role registered correctly
+                    chai.expect(
+                      _.some(response.body, {
+                        identification: aasRequest.identification
+                      })).to.be.true;
 
-                });
-            })
-            .then(() => {
-              requester.close();
-            });
+                  });
+              })
+              .then(() => {
+                requester.close();
+              });
+          });
+      });
+  });
+  it('adds a AASDescriptor Identifier to a role', async function () {
+    var uniqueTestId = 'randId-' + getRandomInteger();
+    var newUniqueTestId = 'extra-' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
+
+    //first register an AAS
+    var aasRequest = makeGoodAASDescriptor(uniqueTestId)
+    var extraAASRequest = makeGoodAASDescriptor(newUniqueTestId)
+
+    await requester
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(aasRequest)
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200);
+//register a second AAS (that will be assigned lated to the role with the patch)
+        await requester
+        .put('/AASDescriptors')
+        .auth(user, password)
+        .send(extraAASRequest)
+        .then(async (res: any) => {
+          chai.expect(res.status).to.eql(200);
+        //the SemanticProtocol to be registered
+        var semProtocolRequest = makeGoodSemanticProtocol(uniqueTestId)
+        //then register a SemanticProtocol
+        await requester
+          .put('/SemanticProtocols')
+          .auth(user, password)
+          .send(semProtocolRequest)
+          .then(async (res: any) => {
+            chai.expect(res.status).to.eql(200);
+            //finally try updating a specific role by adding an extra AAS Identifier the request should contain all the AAS ids
+            await requester
+              .patch('/SemanticProtocols/semanticProtocolId' + uniqueTestId + '/role/' + semProtocolRequest.roles[0].name + '/AASDescriptors')
+              .auth(user, password)
+              .send(makeAASIdentifierRequestWithExtraAASId(semProtocolRequest.roles[0], extraAASRequest.identification))
+              .then(async (response: any) => {
+                chai.expect(response.status).to.eql(200);
+                //  console.log("body is " + JSON.stringify(response.body))
+                //check if AAS was assigned correctly to the role
+                let loadedRole = await getConnection().getRepository(RoleEntity).findOne({
+                  where: [
+                    { semProtocol: 'semanticProtocolId' + uniqueTestId }, { name: semProtocolRequest.roles[0].name }],
+                  relations: ["aasDescriptorIds"]
+                })
+                console.log("AAS IDs "+ JSON.stringify(loadedRole?.aasDescriptorIds))
+//check if the new AAS was assigned to the role
+                chai.expect(
+                  _.some(loadedRole?.aasDescriptorIds, {
+                    id: extraAASRequest.identification.id
+                  })).to.be.true;
+              });
+          })
+          .then(() => {
+            requester.close();
+          });
         });
-    });
+      });
   });
 
 });

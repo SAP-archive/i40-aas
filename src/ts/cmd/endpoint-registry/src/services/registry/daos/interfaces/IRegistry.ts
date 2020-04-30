@@ -4,6 +4,8 @@ import {
 import { DeleteResult } from 'typeorm';
 import { IAASDescriptor } from './IAASDescriptor';
 import { IEndpoint } from './IEndpoint';
+import { IIdentifier } from 'i40-aas-objects';
+import { IRole } from './IRole';
 
 interface iRegistry {
   readAASDescriptorByAasId(aasId: string): Promise<IAASDescriptor>;
@@ -22,6 +24,11 @@ interface iRegistry {
     sProtocol: string,
     role: string
   ): Promise<Array<IAASDescriptor>>;
+  updateAASDescriptorsToRole(
+    sProtocol: string,
+    role: string,
+    aasIds: IIdentifier[]
+  ): Promise<IRole>;
 }
 
 export { iRegistry };
