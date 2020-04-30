@@ -505,9 +505,15 @@
 									],
 									"variable": [
 										{
+<<<<<<< HEAD
+											"description": "i40:registry-semanticProtocol/onboarding",
+											"key": "semanticProtocolId",
+											"value": "i40:registry-semanticProtocol%2Fonboarding"
+=======
 											"key": "semanticProtocolId",
 											"value": "i40:registry-semanticProtocol%2Fonboarding",
 											"description": "i40:registry-semanticProtocol/onboarding"
+>>>>>>> canary
 										}
 									]
 								}
