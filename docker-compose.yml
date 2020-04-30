@@ -140,35 +140,6 @@ services:
       - CORE_REGISTRIES_ADAPTERS_USER=${CORE_REGISTRIES_ADAPTERS_USER}
       - CORE_REGISTRIES_ADAPTERS_PASSWORD=${CORE_REGISTRIES_ADAPTERS_PASSWORD}
   ##########################################
-  i40-aas-initializer:
-    image: sapi40/i40-aas-initializer
-    volumes:
-      - ./src/compose/volumes/initializer/:/initializer
-    environment:
-      ## logging
-      - LOGGING_LOGLEVEL=${LOGGING_LOGLEVEL}
-      - LOGGING_LOGOUTPUT=${LOGGING_LOGOUTPUT}
-      ## services addresses
-      - CORE_BROKER_HOST=rabbitmq
-      - CORE_BROKER_PORT=${CORE_BROKER_PORT}
-      - CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST=endpoint-registry-postgres
-      - CORE_REGISTRIES_ENDPOINTS_DATABASE_PORT=${CORE_REGISTRIES_ENDPOINTS_DATABASE_PORT}
-      - CORE_REGISTRIES_ENDPOINTS_HOST=i40-aas-endpoint-registry
-      - CORE_REGISTRIES_ENDPOINTS_PORT=${CORE_REGISTRIES_ENDPOINTS_PORT}
-      - CORE_DATA_MANAGER_HOST=i40-aas-data-manager
-      - CORE_DATA_MANAGER_PORT=${CORE_DATA_MANAGER_PORT}
-      - APPLICATION_ADAPTERS_MONGODB_HOST=mongodb
-      - APPLICATION_ADAPTERS_MONGODB_PORT=${APPLICATION_ADAPTERS_MONGODB_PORT}
-      - CORE_REGISTRIES_ADAPTERS_HOST=i40-aas-adapter-registry
-      - CORE_REGISTRIES_ADAPTERS_PORT=${CORE_REGISTRIES_ADAPTERS_PORT}
-      - CORE_INGRESS_HTTP_HOST=i40-aas-https-endpoint-ingress
-      - CORE_INGRESS_HTTP_PORT=${CORE_INGRESS_HTTP_PORT}
-      - CORE_INGRESS_GRPC_HOST=i40-aas-grpc-endpoint-ingress
-      - CORE_INGRESS_GRPC_PORT=${CORE_INGRESS_GRPC_PORT}
-      ## TODO: add endpoint-resolver, http-endpoint-egress and grpc-endpoint-egress
-      ## once healthchecks are added
-      # - =${}
-  ##########################################
 
 
 
@@ -277,4 +248,35 @@ services:
     environment:
       - RABBITMQ_DEFAULT_USER=${CORE_BROKER_ADMIN_USER}
       - RABBITMQ_DEFAULT_PASS=${CORE_BROKER_ADMIN_PASSWORD}
+  ##########################################
+  i40-aas-initializer:
+    image: postman/newman:alpine
+    entrypoint: /initializer/main.sh 
+    volumes:
+      - ./docs/postman/:/etc/newman
+      - ./src/compose/volumes/initializer/:/initializer
+    environment:
+      ## logging
+      - LOGGING_LOGLEVEL=${LOGGING_LOGLEVEL}
+      - LOGGING_LOGOUTPUT=${LOGGING_LOGOUTPUT}
+      ## services addresses
+      - CORE_BROKER_HOST=rabbitmq
+      - CORE_BROKER_PORT=${CORE_BROKER_PORT}
+      - CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST=endpoint-registry-postgres
+      - CORE_REGISTRIES_ENDPOINTS_DATABASE_PORT=${CORE_REGISTRIES_ENDPOINTS_DATABASE_PORT}
+      - CORE_REGISTRIES_ENDPOINTS_HOST=i40-aas-endpoint-registry
+      - CORE_REGISTRIES_ENDPOINTS_PORT=${CORE_REGISTRIES_ENDPOINTS_PORT}
+      - CORE_DATA_MANAGER_HOST=i40-aas-data-manager
+      - CORE_DATA_MANAGER_PORT=${CORE_DATA_MANAGER_PORT}
+      - APPLICATION_ADAPTERS_MONGODB_HOST=mongodb
+      - APPLICATION_ADAPTERS_MONGODB_PORT=${APPLICATION_ADAPTERS_MONGODB_PORT}
+      - CORE_REGISTRIES_ADAPTERS_HOST=i40-aas-adapter-registry
+      - CORE_REGISTRIES_ADAPTERS_PORT=${CORE_REGISTRIES_ADAPTERS_PORT}
+      - CORE_INGRESS_HTTP_HOST=i40-aas-https-endpoint-ingress
+      - CORE_INGRESS_HTTP_PORT=${CORE_INGRESS_HTTP_PORT}
+      - CORE_INGRESS_GRPC_HOST=i40-aas-grpc-endpoint-ingress
+      - CORE_INGRESS_GRPC_PORT=${CORE_INGRESS_GRPC_PORT}
+      ## TODO: add endpoint-resolver, http-endpoint-egress and grpc-endpoint-egress
+      ## once healthchecks are added
+      # - =${}
   ##########################################
