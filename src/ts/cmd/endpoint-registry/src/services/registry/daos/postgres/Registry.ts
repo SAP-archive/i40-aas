@@ -495,9 +495,16 @@ class Registry implements iRegistry {
       if (!loadedRole) throw new HTTP422Error(`No Role found for the protocol ${semanticProtocolId} with
         name ${roleName}`)
 
+
+      if(loadedRole.aasDescriptorIds.length === 0){
+        logger.info(" No AASIDs for this role found ");
+        return [];
+      }
+
       //we need to return a list of AASDescriptor Objects
       //find the aasIds associated with the role
       let aasIds = loadedRole.aasDescriptorIds.map(identifier => identifier.id)
+
       //load the AASDescriptorEntities from the Database
       let AASDescriptorEntitiesArray = await aasDescriptorRepository.find({ id: In(aasIds) });
 
