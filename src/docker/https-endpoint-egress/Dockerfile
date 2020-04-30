@@ -79,4 +79,4 @@ COPY cmd/https-endpoint-egress/package.json /cmd/https-endpoint-egress/
 USER aasuser
 EXPOSE 3000
 
-ENTRYPOINT [ "yarn", "start" ]
+ENTRYPOINT [ "npm", "start" ]
