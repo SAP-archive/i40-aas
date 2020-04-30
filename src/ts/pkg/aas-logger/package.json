@@ -7,6 +7,11 @@
     "clean": "rm -rf ./lib/* "
   },
   "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SAP/i40-aas.git"
+  },
+  "license": "MIT",
   "dependencies": {
     "moment": "^2.24.0",
     "winston": "^3.2.1"

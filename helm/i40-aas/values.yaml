@@ -2,66 +2,22 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-# Optional
-certificates:
-  # Kubernetes Secret resource in which TLS certificates are stored on the cluster.
-  secretName: certificates
-
-# Optional
-initializer:
-  # Kubernetes Configmap resource in which the scipts for initializing are stored.
-  # Script names have to match the keys in the configmap!
-  configMapName: initializer-scripts
-
-build:
-  ## Tagging
-  ## `make` overrides this by setting the shell variable TAG
-  ## to the current commit hash. Values in shell take precedence
-  tag=latest
-
-logging:
-  # LOG_LEVEL regulates the verbosity of application logs,
-  # acceptepted values are
-  #   - INFO
-  #   - DEBUG
-  logLevel: DEBUG
-
-  # LOG_FORMAT specifies whether the logs are formatted for
-  # console or log collector (json) consumption
-  # acceptepted values are
-  #   - CONSOLE
-  #   - JSON
-  logOutput: CONSOLE
-
 core:
-  broker:
-    port:
-      amqp: 5672
-      mqtt: 1883
-      ui: 15672
-
-    admin:
-      ## overwrites the default user (ref.: https://hub.docker.com/_/rabbitmq)
-      ## that can be used to access the management console
-      ##
-      ## Put an empty string "" to generate a random value (20 character, alpha-numeric)
-      user: admin
-      password: admin
-
   endpointResolver:
     ctag: endpoint-resolver
 
   ingress:
-    exchange: ingress
-    user: guest
-    password: guest
+    exchange: egress
+    ## If empty, user/password take rabbitmq admin credentials as default.
+    user: ""
+    password: ""
 
     grpc:
       port: 8384
 
     http:
       port: 2000
-      ## Put an empty string "" to generate a random value (20 character, alpha-numeric)
+      ## Leave empty "" to generate a random 20 character alphanumeric string.
       user: admin
       password: admin
 
@@ -69,8 +25,9 @@ core:
     exchange: egress
     routingKey: egress.generic
     
-    user: guest
-    password: guest
+    ## If empty "", user/password take rabbitmq admin credentials as default.
+    user: ""
+    password: ""
 
     grpc:
       ctag: grpc
@@ -83,7 +40,7 @@ core:
   dataManager:
     port: 4000
     submodelsRoute: /submodels
-    # Put an empty string "" to generate a random value (20 character, alpha-numeric)
+    ## Leave empty "" to generate a random 20 character alphanumeric string.
     user: admin
     password: admin
 
@@ -91,35 +48,16 @@ core:
     adapters:
       port: 4500
       urlSuffix: /adapters
-      # Put an empty string "" to generate a random value (20 character, alpha-numeric)
+      ## Leave empty "" to generate a random 20 character alphanumeric string.
       user: admin
       password: admin
 
     endpoints:
       port: 4400
       urlSuffix: /assetadministrationshells
-      # Put an empty string "" to generate a random value (20 character, alpha-numeric)
+      ## Leave empty "" to generate a random 20 character alphanumeric string.
       user: admin
       password: admin
-
-      database:
-        name: AAS_REGISTRY
-        port: 5432
-        # Put an empty string "" to generate a random value (20 character, alpha-numeric)
-        user: postgres
-        password: postgres
-
-        super:
-          ## superuser credentials required within postgres image
-          ## Put an empty string "" to generate a random value (20 character, alpha-numeric)
-          user: postgres
-          password: postgres
-
-        pgAdmin:
-          port: 8080
-          # Put an empty string "" to generate a random value (20 character, alpha-numeric)
-          user: test@test.com
-          password: admin
 
 applicationAdapters:
   mongoDb:
@@ -135,23 +73,84 @@ skills:
     role: CentralAssetRepository
     uri: sap.com/aas/skills/onboarding/CentralAssetRepository
 
-    database:
-      name: mongodb
-      port: 27017
-      # Put an empty string "" to generate a random value (20 character, alpha-numeric)
-      user: mongouser
-      password: mongopassword
-  
-  echo:
-    port: 1880
+rabbitmq:
+  rabbitmq:
+    username: guest
+    ## password can be left empty. 
+    ## In that case, a random 10 character alphanumeric string is generated. 
+    password: guest
+    extraPlugins: rabbitmq_mqtt
+  service:
+    port: 5672
+    managerPort: 15672
+    extraPorts: 
+      - name: mqtt
+        port: 1883
+        targetPort: mqtt
+    extraContainerPorts: 
+      - name: mqtt
+        containerPort: 1883
+  persistence:
+    storageClass: default
+    size: 1Gi
 
-replicaCount: 1
+endpointregistrypostgres:
+  postgresqlDatabase: AAS_REGISTRY
+  postgresqlUsername: aas-user
+  ## postgresqlPassword can be left empty. 
+  ## In that case, a random 10 character alphanumeric string is generated. 
+  postgresqlPassword: postgres
+  service: 
+    port: 5432
+  persistence:
+    storageClass: default
+    size: 1Gi
+
+onboardingskillmongodb:
+  mongodbDatabase: mongodb
+  ## mongodbUsername is mandatory if mongodbDatabase is set
+  mongodbUsername: mongouser
+  ## mongodbPassword can be left empty. 
+  ## In that case, a random 10 character alphanumeric string is generated. 
+  mongodbPassword: mongopassword
+  service:
+    port: 27017
+  persistence:
+    storageClass: default
+    size: 1Gi 
+  replicaSet:
+    enabled: true
+    replicas:
+      secondary: 0
+      arbiter: 0
+  readinessProbe:
+    enabled: false
+
+logging:
+  ## LOG_LEVEL regulates the verbosity of application logs,
+  ## acceptepted values are
+  ##   - INFO
+  ##   - DEBUG
+  logLevel: DEBUG
+
+  ## LOG_FORMAT specifies whether the logs are formatted for
+  ## console or log collector (json) consumption
+  ## acceptepted values are
+  ##   - CONSOLE
+  ##   - JSON
+  logOutput: JSON
+
+certificates: {}
+  ## Kubernetes Secret containing TLS certificates for authentication.
+  ## secretName: certificates
 
 ingress:
   certManager: {}
-#    clusterIssuer: ""
-#    acmeChallengeType: ""
+##    clusterIssuer: ""
+##    acmeChallengeType: ""
   host: ""
+
+replicaCount: 1
 
 image:
   repository: sapi40
@@ -165,17 +164,17 @@ fullnameOverride: ""
 storageClassName: default
 
 resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # Vice versa, if you want to disable setting resources, comment the following lines
-  # and uncomment the curly braces after 'resources'.
-  # The following values are our recommendations,
-  # according to the consumption of resources as we have observed it.
-  # limits:
-  #   cpu: 40m
-  #   memory: 350Mi
-  # requests:
-  #   cpu: 25m
-  #   memory: 270Mi
+  ## We usually recommend not to specify default resources and to leave this as a conscious
+  ## choice for the user. This also increases chances charts run on environments with little
+  ## resources, such as Minikube. If you do want to specify resources, uncomment the following
+  ## lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  ## Vice versa, if you want to disable setting resources, comment the following lines
+  ## and uncomment the curly braces after 'resources'.
+  ## The following values are our recommendations,
+  ## according to the consumption of resources as we have observed it.
+  ## limits:
+  ##   cpu: 40m
+  ##   memory: 350Mi
+  ## requests:
+  ##   cpu: 25m
+  ##   memory: 270Mi
