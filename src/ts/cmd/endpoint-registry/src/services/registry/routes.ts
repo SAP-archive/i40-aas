@@ -306,6 +306,23 @@ export default [
         logger.error(err);
         next(err);
       }
+
     }
-    ]}
+    ]},
+  {
+    path: '/semanticProtocols/:semanticProtocolId',
+    method: 'get',
+    handler: async (req: Request, res: Response, next: NextFunction) => {
+      console.log('GET SemanticProtocol by semanticprotocol request received');
+      try {
+        console.log('Path parameters received:' + JSON.stringify(req.params));
+        var response = await registryApi.readSemanticProtocolBySemanticProtocolId(req.params.semanticProtocolId)
+       // console.log('Sent back response of /semanticprotocol GET request');
+        res.json(response);
+      } catch (e) {
+        res.end(e.message);
+      }
+
+    }
+    }
 ];

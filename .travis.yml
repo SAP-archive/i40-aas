@@ -30,18 +30,18 @@ before_install:
 
 install:
   - if [ $TRAVIS_BRANCH = master ]; then
-      REGISTRY="sapi40";
-      echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin;
+    REGISTRY="sapi40";
+    echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin;
     else
-      openssl aes-256-cbc -K $encrypted_260941c77da3_key -iv $encrypted_260941c77da3_iv -in azure-service-principal.txt.enc -out azure-service-principal.txt -d;
-      cat azure-service-principal.txt | docker login $AZURE_CONTAINER_REGISTRY -u $service_principal_id --password-stdin;
+    openssl aes-256-cbc -K $encrypted_260941c77da3_key -iv $encrypted_260941c77da3_iv -in azure-service-principal.txt.enc -out azure-service-principal.txt -d;
+    cat azure-service-principal.txt | docker login $AZURE_CONTAINER_REGISTRY -u $service_principal_id --password-stdin;
     fi
   - if [[ -n $TRAVIS_PULL_REQUEST_BRANCH ]]; then
-      BUILD_TAG=$TRAVIS_PULL_REQUEST_BRANCH;
+    BUILD_TAG=$TRAVIS_PULL_REQUEST_BRANCH;
     fi
   - make build-$SVC
   - if [ $TRAVIS_EVENT_TYPE = push ]; then
-      make push-$SVC;
+    make push-$SVC;
     fi
 
 stages:
@@ -60,15 +60,15 @@ jobs:
       node_js: lts/*
       install:
         - cd src/ts/pkg/AMQP-Client
-        - npm install
+        - yarn install
         - cd ./node_modules/aas-logger
-        - npm install
-        - npm run build
+        - yarn install
+        - yarn run build
         - cd ../../
         - source ./test/integration-test-setup
         - sleep 30
       script:
-        - npm run test
+        - yarn run test
 
     - stage: lib-test
       name: Go AMQP-Client pkg
@@ -107,20 +107,20 @@ jobs:
       env: SVC=onboarding-skill
       install:
         - cd src/ts/cmd/${SVC}
-        - npm install
+        - yarn install
         - cd ./node_modules/AMQP-Client
-        - npm install
-        - npm run build
+        - yarn install
+        - yarn run build
         - cd ../../
         - cd ./node_modules/aas-logger
-        - npm install
-        - npm run build
+        - yarn install
+        - yarn run build
         - cd ../../
         - source ./integration-test-setup
         - sleep 30
       script:
-        - npm run test
-        - npm run test-with-integration
+        - yarn run test
+        - yarn run test-with-integration
 
     - stage: unit-test
       language: node_js
@@ -128,14 +128,14 @@ jobs:
       env: SVC=data-manager
       install:
         - cd src/ts/cmd/${SVC}
-        - npm install
+        - yarn install
         - cd ./node_modules/aas-logger
-        - npm install
-        - npm run build
+        - yarn install
+        - yarn run build
         - cd ../../
         - source ./test/integration-test-setup
       script:
-        - npm test
+        - yarn test
 
     - stage: unit-test
       language: node_js
@@ -143,14 +143,14 @@ jobs:
       env: SVC=adapter-registry
       install:
         - cd src/ts/cmd/${SVC}
-        - npm install
+        - yarn install
         - cd ./node_modules/aas-logger
-        - npm install
-        - npm run build
+        - yarn install
+        - yarn run build
         - cd ../../
         - source ./test/integration-test-setup
       script:
-        - npm test
+        - yarn test
 
     - stage: unit-test
       language: node_js
@@ -158,16 +158,23 @@ jobs:
       env: SVC=endpoint-registry
       install:
         - cd src/ts/cmd/${SVC}
+<<<<<<< HEAD
         - npm install
         - cd ./node_modules/aas-logger
         - npm install
         - npm run build
+=======
+        - yarn install
+        - cd ./node_modules/aas-logger
+        - yarn install
+        - yarn run build
+>>>>>>> canary
         - cd ../../
         - source ./integration-test-setup
         - sleep 30
       script:
-        - npm run test
-        - npm run test-with-integration
+        - yarn run test
+        - yarn run test-with-integration
 
     - stage: unit-test
       language: node_js
@@ -175,19 +182,19 @@ jobs:
       env: SVC=https-endpoint-egress
       install:
         - cd src/ts/cmd/${SVC}
-        - npm install
+        - yarn install
         - cd ./node_modules/AMQP-Client
-        - npm install
-        - npm run build
+        - yarn install
+        - yarn run build
         - cd ../../
         - cd ./node_modules/aas-logger
-        - npm install
-        - npm run build
+        - yarn install
+        - yarn run build
         - cd ../../
         - source ./test/integration-test-setup
         - sleep 30
       script:
-        - npm test
+        - yarn test
 
     - stage: unit-test
       language: node_js
@@ -195,19 +202,19 @@ jobs:
       env: SVC=https-endpoint-ingress
       install:
         - cd src/ts/cmd/${SVC}
-        - npm install
+        - yarn install
         - cd ./node_modules/AMQP-Client
-        - npm install
-        - npm run build
+        - yarn install
+        - yarn run build
         - cd ../../
         - cd ./node_modules/aas-logger
-        - npm install
-        - npm run build
+        - yarn install
+        - yarn run build
         - cd ../../
         - source ./test/integration-test-setup
         - sleep 30
       script:
-        - npm run itest
+        - yarn run itest
 
     - stage: unit-test
       language: node_js
@@ -215,15 +222,15 @@ jobs:
       env: SVC=storage-adapter-mongodb
       install:
         - cd src/ts/cmd/${SVC}
-        - npm install
+        - yarn install
         - cd ./node_modules/aas-logger
-        - npm install
-        - npm run build
+        - yarn install
+        - yarn run build
         - cd ../../
         - source ./integration-test-setup
         - sleep 30
       script:
-        - npm run test-with-integration
+        - yarn run test-with-integration
 
     - stage: unit-test
       language: go
@@ -256,7 +263,7 @@ jobs:
       language: node_js
       node_js: lts/*
       install:
-        - npm install -g newman
+        - yarn global add newman
         - make
         - docker-compose -f docker-compose.yml up -d --force-recreate
         - sleep 60
@@ -265,15 +272,15 @@ jobs:
 
     - stage: deploy
       before_install:
-        - openssl aes-256-cbc -K $encrypted_260941c77da3_key -iv $encrypted_260941c77da3_iv -in azure-service-principal.txt.enc -out azure-service-principal.txt -d        
+        - openssl aes-256-cbc -K $encrypted_260941c77da3_key -iv $encrypted_260941c77da3_iv -in azure-service-principal.txt.enc -out azure-service-principal.txt -d
         - sudo apt-get update
         - sudo apt-get install ca-certificates curl apt-transport-https lsb-release gnupg
         - curl -sL https://packages.microsoft.com/keys/microsoft.asc |
-            gpg --dearmor |
-            sudo tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null
+          gpg --dearmor |
+          sudo tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null
         - AZ_REPO=$(lsb_release -cs)
         - echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" |
-            sudo tee /etc/apt/sources.list.d/azure-cli.list
+          sudo tee /etc/apt/sources.list.d/azure-cli.list
         - sudo apt-get update && sudo apt-get install azure-cli
         - curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.15.10/bin/linux/amd64/kubectl
         - chmod +x ./kubectl
@@ -289,8 +296,7 @@ jobs:
         - helm version
       deploy:
         - provider: script
-          script: helm upgrade master helm/i40-aas --atomic --reuse-values -n aas-master --set image.release=$BUILD_TAG && \
-                  helm upgrade oi4 helm/i40-aas --atomic --reuse-values -n aas-oi4 --set image.release=$BUILD_TAG
+          script: helm upgrade master helm/i40-aas --atomic --reuse-values -n aas-master --set image.release=$BUILD_TAG && helm upgrade oi4 helm/i40-aas --atomic --reuse-values -n aas-oi4 --set image.release=$BUILD_TAG
           on:
             branch: master
         - provider: script

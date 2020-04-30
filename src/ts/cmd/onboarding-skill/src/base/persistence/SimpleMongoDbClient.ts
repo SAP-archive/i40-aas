@@ -16,7 +16,8 @@ class SimpleMongoDbClient implements IDatabaseClient {
     private host: string,
     private port: string,
     private userName?: string,
-    private password?: string
+    private password?: string,
+    private authSource?: string
   ) {
     if (userName && password) {
       logger.info('Using authenticated access to db');
@@ -29,6 +30,12 @@ class SimpleMongoDbClient implements IDatabaseClient {
         this.host +
         ':' +
         this.port;
+      if (authSource && authSource.length > 0) {
+        logger.debug('Authentication DB:' + authSource);
+        this.uri += '/?authSource=' + authSource;
+      } else {
+        logger.debug('Using default authentication DB');
+      }
     } else {
       this.uri = 'mongodb://' + this.host + ':' + this.port;
     }

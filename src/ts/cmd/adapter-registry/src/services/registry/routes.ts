@@ -49,8 +49,8 @@ export default [
     handler: [
       async (req: Request, res: Response, next: NextFunction) => {
         try {
-          var submodelid = req.query.submodelid;
-          var submodelsemanticid = req.query.submodelsemanticid;
+          var submodelid = req.query.submodelid as string;
+          var submodelsemanticid = req.query.submodelsemanticid as string;
           if (!submodelid && !submodelsemanticid) {
             res.json(await listAllAdapters());
           } else {
