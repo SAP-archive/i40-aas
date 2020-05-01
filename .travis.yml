@@ -158,17 +158,10 @@ jobs:
       env: SVC=endpoint-registry
       install:
         - cd src/ts/cmd/${SVC}
-<<<<<<< HEAD
-        - npm install
-        - cd ./node_modules/aas-logger
-        - npm install
-        - npm run build
-=======
         - yarn install
         - cd ./node_modules/aas-logger
         - yarn install
         - yarn run build
->>>>>>> canary
         - cd ../../
         - source ./integration-test-setup
         - sleep 30
