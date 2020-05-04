@@ -7,38 +7,38 @@ WORKDIR /cmd/storage-adapter-mongodb/
 
 ## copy package.json first and install dependencies to leverage caching
 COPY cmd/storage-adapter-mongodb/package.json /cmd/storage-adapter-mongodb
-COPY cmd/storage-adapter-mongodb/package-lock.json /cmd/storage-adapter-mongodb
+COPY cmd/storage-adapter-mongodb/yarn.lock /cmd/storage-adapter-mongodb
 
 
 ## aas-logger ##
 COPY pkg/aas-logger/package.json /pkg/aas-logger/
-COPY pkg/aas-logger/package-lock.json /pkg/aas-logger/
+COPY pkg/aas-logger/yarn.lock /pkg/aas-logger/
 RUN cd /pkg/aas-logger \
-    && npm install --production\
+    && yarn install --production\
     && mkdir /aas-logger-production-dependencies/ \
     && cp -R node_modules /aas-logger-production-dependencies/ \
-    && npm install 
+    && yarn install 
 
 
 COPY pkg/aas-logger/ /pkg/aas-logger/
 
 RUN cd /pkg/aas-logger \
-    && npm run clean \
-    && npm run build
+    && yarn run clean \
+    && yarn run build
 
 ## install & backup production dependencies
 RUN cd /cmd/storage-adapter-mongodb \
-    && npm install --production \
+    && yarn install --production \
     && mkdir /production-dependencies/ \
     && cp -R node_modules /production-dependencies/
 
 ## install dependencies
-RUN npm install
+RUN yarn install
 
 ## add & transpile sourcecode
 COPY cmd/storage-adapter-mongodb/ /cmd/storage-adapter-mongodb
-RUN npm run clean \
-    && npm run build
+RUN yarn run clean \
+    && yarn run build
 
 ###################################
 FROM node:lts-alpine as prod

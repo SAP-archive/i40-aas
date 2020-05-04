@@ -1,5 +1,3 @@
-import request from 'request-promise';
-
 import { AmqpClient } from 'AMQP-Client/lib/AmqpClient';
 
 const logger = require('aas-logger/lib/log');

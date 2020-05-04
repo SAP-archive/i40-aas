@@ -5,7 +5,6 @@ import { IAASDescriptor } from "../services/registry/daos/interfaces/IAASDescrip
 import { IEndpoint } from "../services/registry/daos/interfaces/IEndpoint";
 import { ISemanticProtocol } from "../services/registry/daos/interfaces/ISemanticProtocol";
 import { IRole } from "../services/registry/daos/interfaces/IRole";
-import { IIdentifier } from "i40-aas-objects";
 
 export const checkReqBodyEmpty = (
   req: Request,

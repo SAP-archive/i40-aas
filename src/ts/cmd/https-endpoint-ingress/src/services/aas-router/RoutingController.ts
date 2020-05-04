@@ -1,4 +1,4 @@
-import { publishMessageToBrokerTopic } from './InteractionHandler';
+import { publishMessageToBrokerTopic } from './InteractionHandler'
 import { AmqpClient } from 'AMQP-Client/lib/AmqpClient';
 
 const logger = require('aas-logger/lib/log');

@@ -4,7 +4,25 @@ WORKDIR /cmd/endpoint-registry
 
 ## copy package.json first and install dependencies to leverage caching
 COPY cmd/endpoint-registry/package.json /cmd/endpoint-registry
-COPY cmd/endpoint-registry/package-lock.json /cmd/endpoint-registry
+COPY cmd/endpoint-registry/yarn.lock /cmd/endpoint-registry
+
+
+## aas-logger ##
+COPY pkg/aas-logger/package.json /pkg/aas-logger/
+COPY pkg/aas-logger/yarn.lock /pkg/aas-logger/
+RUN cd /pkg/aas-logger \
+    && yarn install --production\
+    && mkdir /aas-logger-production-dependencies/ \
+    && cp -R node_modules /aas-logger-production-dependencies/ \
+    && yarn install
+
+
+COPY pkg/aas-logger/ /pkg/aas-logger/
+
+RUN cd /pkg/aas-logger \
+    && yarn run clean \
+    && yarn run build
+
 
 
 ## aas-logger ##
@@ -25,17 +43,17 @@ RUN cd /pkg/aas-logger \
 
 
 ## install & backup production dependencies
-RUN npm install --production \
+RUN yarn install --production \
     && mkdir /production-dependencies/ \
     && cp -R node_modules /production-dependencies/
 
 ## install dependencies
-RUN npm install
+RUN yarn install
 
 ## add & transpile sourcecode
 COPY cmd/endpoint-registry/ /cmd/endpoint-registry
-RUN npm run clean \
-    && npm run build
+RUN yarn run clean \
+    && yarn run build
 
 ###################################
 FROM node:lts-alpine as prod
