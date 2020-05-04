@@ -24,24 +24,6 @@ RUN cd /pkg/aas-logger \
     && yarn run build
 
 
-
-## aas-logger ##
-COPY pkg/aas-logger/package.json /pkg/aas-logger/
-COPY pkg/aas-logger/package-lock.json /pkg/aas-logger/
-RUN cd /pkg/aas-logger \
-    && npm install --production\
-    && mkdir /aas-logger-production-dependencies/ \
-    && cp -R node_modules /aas-logger-production-dependencies/ \
-    && npm install
-
-
-COPY pkg/aas-logger/ /pkg/aas-logger/
-
-RUN cd /pkg/aas-logger \
-    && npm run clean \
-    && npm run build
-
-
 ## install & backup production dependencies
 RUN yarn install --production \
     && mkdir /production-dependencies/ \
