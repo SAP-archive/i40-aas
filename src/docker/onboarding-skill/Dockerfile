@@ -79,4 +79,4 @@ COPY cmd/onboarding-skill/package.json /cmd/onboarding-skill/
 USER aasuser
 EXPOSE 3000
 
-ENTRYPOINT [ "yarn", "start" ]
+ENTRYPOINT [ "npm", "start" ]

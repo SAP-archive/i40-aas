@@ -77,4 +77,4 @@ COPY cmd/https-endpoint-ingress/package.json /cmd/https-endpoint-ingress/
 USER aasuser
 EXPOSE 2000
 
-ENTRYPOINT [ "yarn", "start" ]
+ENTRYPOINT [ "npm", "start" ]

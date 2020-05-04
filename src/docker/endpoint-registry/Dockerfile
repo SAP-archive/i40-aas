@@ -58,4 +58,4 @@ COPY cmd/endpoint-registry/package.json /cmd/endpoint-registry
 USER aasuser
 EXPOSE 4400
 
-ENTRYPOINT [ "yarn", "start" ]
+ENTRYPOINT [ "npm", "start" ]

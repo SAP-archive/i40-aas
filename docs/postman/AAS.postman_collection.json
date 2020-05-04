@@ -320,7 +320,7 @@
 					"name": "SemanticProtocols",
 					"item": [
 						{
-							"name": "Create semanticProtocolos",
+							"name": "Create semanticProtocols",
 							"request": {
 								"auth": {
 									"type": "basic",

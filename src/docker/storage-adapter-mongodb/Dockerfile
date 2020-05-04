@@ -60,4 +60,4 @@ COPY cmd/storage-adapter-mongodb/package.json /cmd/storage-adapter-mongodb
 USER aasuser
 EXPOSE 3000
 
-ENTRYPOINT [ "yarn", "start" ]
+ENTRYPOINT [ "npm", "start" ]

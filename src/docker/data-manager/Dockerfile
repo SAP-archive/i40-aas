@@ -56,4 +56,4 @@ COPY cmd/data-manager/package.json /cmd/data-manager
 USER aasuser
 EXPOSE 4000
 
-ENTRYPOINT [ "yarn", "start" ]
+ENTRYPOINT [ "npm", "start" ]
