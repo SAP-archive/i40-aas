@@ -3,6 +3,8 @@ import { HTTP400Error, HTTP422Error, HTTP404Error } from "../utils/httpErrors";
 const logger = require('aas-logger/lib/log');
 import { IAASDescriptor } from "../services/registry/daos/interfaces/IAASDescriptor";
 import { IEndpoint } from "../services/registry/daos/interfaces/IEndpoint";
+import { ISemanticProtocol } from "../services/registry/daos/interfaces/ISemanticProtocol";
+import { IRole } from "../services/registry/daos/interfaces/IRole";
 
 export const checkReqBodyEmpty = (
   req: Request,
@@ -36,6 +38,36 @@ export const validateAASDescriptorRequest = (
         let endpoints: IEndpoint[] = AASDescriptor.descriptor.endpoints;
         let assetId:string = AASDescriptor.asset.id;
     if(!aasId || !endpoints || !assetId) {
+        logger.error("Missing element(s) in request ");
+        throw new HTTP422Error("Missing required fields in Request: idShort");
+
+      }
+
+//all clear move to next
+next();
+}
+else {
+  throw new HTTP422Error("Client Error on submodels request")
+}
+}
+/**
+ * Validation function to check that the SemanticProtocol request contains valid
+ *  elements
+ * @param req
+ * @param next
+ */
+export const validateSemanticProtocolRequest = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  let semProtocol: ISemanticProtocol| undefined = req.body;
+  if (semProtocol) {
+
+      //based on this id the routing towards the storage adapter takes place
+        let protocolId:string = semProtocol.identification.id;
+        let roles: IRole[] = semProtocol.roles;
+        if(!protocolId || !roles ) {
         logger.error("Missing element(s) in request ");
         throw new HTTP422Error("Missing required fields in Request: idShort");
 

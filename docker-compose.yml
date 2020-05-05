@@ -251,7 +251,7 @@ services:
   ##########################################
   i40-aas-initializer:
     image: postman/newman:alpine
-    entrypoint: /initializer/main.sh 
+    entrypoint: /initializer/main.sh
     volumes:
       - ./docs/postman/:/etc/newman
       - ./src/compose/volumes/initializer/:/initializer
