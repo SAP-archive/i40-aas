@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "bbcfe37e-94c6-4aab-b639-45f526901b56",
+		"_postman_id": "c93e5ddb-4150-4e4e-99fd-cd0ecc01d12c",
 		"name": "AAS-Service",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -39,7 +39,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "  {\n    \"identification\": {\n        \"id\": \"www.sampleOperator/aas\",\n        \"idType\": \"IRI\"\n    },\n    \"descriptor\": {\n    \"endpoints\": [\n        {\n            \"address\": \"i40-aas-grpc-endpoint-ingress:8384\",\n            \"type\": \"grpc\",\n            \"target\": \"cloud\"\n        },\n        {\n          \"address\":  \"http://admin:admin@i40-aas-https-endpoint-ingress:2000/interaction\" ,\n          \"type\": \"http\",\n          \"target\": \"cloud\"\n      }\n    ],\n      \"certificate_x509_i40\": \"sample_crt\",\n    \"signature\": \"sample_sig\"\n    },\n    \"asset\": {\n        \"id\": \"Sample-Asset-Id\",\n        \"idType\": \"IRI\"\n    }\n  }\n",
+									"raw": "  {\n    \"identification\": {\n        \"id\": \"www.sampleOperator/aas\",\n        \"idType\": \"IRI\"\n    },\n    \"descriptor\": {\n    \"endpoints\": [\n        {\n            \"address\": \"{{grpc-endpoint-ingress-host}}:{{grpc-endpoint-ingress-port}}\",\n            \"type\": \"grpc\",\n            \"target\": \"cloud\"\n        },\n        {\n          \"address\":  \"http://{{endpoint_ingress_user}}:{{endpoint_ingress_pwd}}@{{https-endpoint-ingress-host}}:{{https-endpoint-ingress-port}}/interaction\" ,\n          \"type\": \"http\",\n          \"target\": \"cloud\"\n      }\n    ],\n      \"certificate_x509_i40\": \"sample_crt\",\n    \"signature\": \"sample_sig\"\n    },\n    \"asset\": {\n        \"id\": \"Sample-Asset-Id\",\n        \"idType\": \"IRI\"\n    }\n  }\n",
 									"options": {
 										"raw": {}
 									}
@@ -96,7 +96,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "  {\n    \"identification\": {\n        \"id\": \"www.sampleOperator/aas\",\n        \"idType\": \"IRI\"\n    },\n    \"descriptor\": {\n    \"endpoints\": [\n    \t        {\n            \"address\": \"i40-aas-grpc-endpoint-ingress:8384\",\n            \"type\": \"grpc\",\n            \"target\": \"cloud\"\n        },\n        {\n          \"address\":  \"http://admin:admin@i40-aas-https-endpoint-ingress:2000/interaction\" ,\n          \"type\": \"http\",\n          \"target\": \"cloud\"\n      }\n    ],\n      \"certificate_x509_i40\": \"sample_crt\",\n    \"signature\": \"sample_sig\"\n    },\n    \"asset\": {\n        \"id\": \"Sample-Asset-Id\",\n        \"idType\": \"IRI\"\n    }\n  }\n",
+									"raw": "  {\n    \"identification\": {\n        \"id\": \"www.sampleOperator/aas\",\n        \"idType\": \"IRI\"\n    },\n    \"descriptor\": {\n    \"endpoints\": [\n        {\n            \"address\": \"{{grpc-endpoint-ingress-host}}:{{grpc-endpoint-ingress-port}}\",\n            \"type\": \"grpc\",\n            \"target\": \"cloud\"\n        },\n        {\n          \"address\":  \"http://{{endpoint_ingress_user}}:{{endpoint_ingress_pwd}}@{{https-endpoint-ingress-host}}:{{https-endpoint-ingress-port}}/interaction\" ,\n          \"type\": \"http\",\n          \"target\": \"cloud\"\n      }\n    ],\n      \"certificate_x509_i40\": \"sample_crt\",\n    \"signature\": \"sample_sig\"\n    },\n    \"asset\": {\n        \"id\": \"Sample-Asset-Id\",\n        \"idType\": \"IRI\"\n    }\n  }",
 									"options": {
 										"raw": {}
 									}
@@ -154,7 +154,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"identification\": {\n        \"id\": \"www.sampleOperator/aas\",\n        \"idType\": \"IRI\"\n    },\n    \"descriptor\": {\n        \"endpoints\": [\n      {\n            \"address\": \"i40-aas-grpc-endpoint-ingress:8384--\",\n            \"type\": \"grpc\",\n            \"target\": \"cloud\"\n        },\n        {\n          \"address\":  \"http://admin:admin@i40-aas-https-endpoint-ingress:2000/interaction\" ,\n          \"type\": \"http\",\n          \"target\": \"cloud\"\n      }\n        ],\n        \"certificate_x509_i40\": \"sample_crt_new\",\n        \"signature\": \"sample_sig\"\n    },\n    \"asset\": {\n        \"id\": \"Sample-Asset-Id--\",\n        \"idType\": \"IRI\"\n    }\n}",
+									"raw": "  {\n    \"identification\": {\n        \"id\": \"www.sampleOperator/aas\",\n        \"idType\": \"IRI\"\n    },\n    \"descriptor\": {\n    \"endpoints\": [\n        {\n            \"address\": \"{{grpc-endpoint-ingress-host}}:{{grpc-endpoint-ingress-port}}\",\n            \"type\": \"grpc\",\n            \"target\": \"cloud\"\n        },\n        {\n          \"address\":  \"http://{{endpoint_ingress_user}}:{{endpoint_ingress_pwd}}@{{https-endpoint-ingress-host}}:{{https-endpoint-ingress-port}}/interaction\" ,\n          \"type\": \"http\",\n          \"target\": \"cloud\"\n      }\n    ],\n      \"certificate_x509_i40\": \"sample_crt\",\n    \"signature\": \"sample_sig\"\n    },\n    \"asset\": {\n        \"id\": \"Sample-Asset-Id--\",\n        \"idType\": \"IRI\"\n    }\n  }",
 									"options": {
 										"raw": {}
 									}
@@ -182,9 +182,7 @@
 									],
 									"variable": [
 										{
-											"id": "bc4864c9-af2e-4918-90a5-b7318c1a40d8",
 											"key": "aasId",
-											"type": "string",
 											"value": "www.sampleOperator%2Faas"
 										}
 									]
@@ -248,9 +246,7 @@
 									],
 									"variable": [
 										{
-											"id": "8986ce1c-ae26-4685-baeb-38cbceed41ff",
 											"key": "aasId",
-											"type": "string",
 											"value": "www.sampleOperator%2Faas"
 										}
 									]
@@ -317,9 +313,7 @@
 									],
 									"variable": [
 										{
-											"id": "801fb2e2-a06d-4a86-b745-b884bcf1e764",
 											"key": "aasId",
-											"type": "string",
 											"value": "www.sampleOperator%2Faas"
 										}
 									]
@@ -571,9 +565,9 @@
 									],
 									"variable": [
 										{
-											"description": "i40:registry-semanticProtocol/onboarding",
 											"key": "semanticProtocolId",
-											"value": "i40:registry-semanticProtocol%2Fonboarding"
+											"value": "i40:registry-semanticProtocol%2Fonboarding",
+											"description": "i40:registry-semanticProtocol/onboarding"
 										},
 										{
 											"key": "roleName",
@@ -641,9 +635,9 @@
 									],
 									"variable": [
 										{
-											"description": "i40:registry-semanticProtocol/onboarding",
 											"key": "semanticProtocolId",
-											"value": "i40:registry-semanticProtocol%2Fonboarding"
+											"value": "i40:registry-semanticProtocol%2Fonboarding",
+											"description": "i40:registry-semanticProtocol/onboarding"
 										},
 										{
 											"key": "roleName",
@@ -879,7 +873,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "[\n  {\n    \"adapterid\": \"storage-adapter-mongodb\",\n    \"url\": \"http://i40-aas-storage-adapter-mongodb:3100/submodels\",\n    \"name\": \"mongo-adapter\",\n    \"submodelid\": \"sap.com/aas/submodels/part-100-device-information-model/sampleSM\",\n    \"submodelsemanticid\": \"opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/sampleSM\"\n  }\n]",
+							"raw": "[\n  {\n    \"adapterid\": \"storage-adapter-mongodb\",\n    \"url\": \"http://{{storage-adapter-mongodb-host}}:{{storage-adapter-mongodb-port}}/submodels\",\n    \"name\": \"mongo-adapter\",\n    \"submodelid\": \"sap.com/aas/submodels/part-100-device-information-model/sampleSM\",\n    \"submodelsemanticid\": \"opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/sampleSM\"\n  }\n]",
 							"options": {
 								"raw": {}
 							}
@@ -1093,6 +1087,106 @@
 			"protocolProfileBehavior": {}
 		},
 		{
+			"name": "Integration Test with Mock Adapter",
+			"item": [
+				{
+					"name": "Check that mock adapter is empty",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "27627ba8-14c5-4e5f-af86-406285d975d6",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "k!ndHeat60",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{i40-aas-storage-adapter-mongodb}}/submodels",
+							"host": [
+								"{{i40-aas-storage-adapter-mongodb}}"
+							],
+							"path": [
+								"submodels"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check that mock adapter is populated",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "27627ba8-14c5-4e5f-af86-406285d975d6",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "k!ndHeat60",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{i40-aas-storage-adapter-mongodb}}/submodels",
+							"host": [
+								"{{i40-aas-storage-adapter-mongodb}}"
+							],
+							"path": [
+								"submodels"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
 			"name": "Send Interaction Message to https-endpoint",
 			"request": {
 				"auth": {
@@ -1157,7 +1251,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "6be0eb23-b70f-4d68-8750-a9af7759345e",
+				"id": "fd67415a-0bd6-45b9-84e2-10892744c377",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -1167,7 +1261,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "98193d88-0e57-49cd-9eba-bbe710048245",
+				"id": "3bf66a0d-b52b-4284-9d96-d60797d7c978",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -1177,39 +1271,81 @@
 	],
 	"variable": [
 		{
-			"id": "66ee2f13-7aea-4f19-8455-827f92af9605",
+			"id": "152fd8f5-2f66-4001-8b3d-33c301e8ee4b",
 			"key": "endpoint_ingress_user",
 			"value": "admin",
 			"type": "string"
 		},
 		{
-			"id": "951a314c-9c0a-42a3-b91a-8fc1247ecc16",
+			"id": "b76e04dd-3968-4ca3-a1bc-d2427be17afb",
 			"key": "endpoint_ingress_pwd",
 			"value": "admin",
 			"type": "string"
 		},
 		{
-			"id": "60e1fc46-7892-4425-8e43-bc3e29e51884",
+			"id": "7e2b18a8-d867-4a73-9e31-3ef5fca2c856",
 			"key": "i40-aas-http-endpoint-ingress",
 			"value": "http://localhost:2000",
 			"type": "string"
 		},
 		{
-			"id": "f3293e63-3b0d-4f48-9ded-d6fec994d04c",
+			"id": "36750c8b-0b70-49f8-ac54-e6228091e941",
 			"key": "i40-aas-endpoint-registry",
 			"value": "http://localhost:4400",
 			"type": "string"
 		},
 		{
-			"id": "ff8ffc42-ddcb-4617-9f3a-f2021d4e7631",
+			"id": "d5d6ea36-ec37-428e-a5a0-ac89111db856",
 			"key": "i40-aas-data-manager",
 			"value": "http://localhost:4000",
 			"type": "string"
 		},
 		{
-			"id": "f1ec236d-25d3-472e-aa41-993e9f8da768",
+			"id": "e402a2c9-88c3-4a33-b844-75821d380c3c",
 			"key": "i40-aas-adapter-registry",
 			"value": "http://localhost:4500",
+			"type": "string"
+		},
+		{
+			"id": "d3c222a6-42f1-4b07-8474-e108b4d18079",
+			"key": "i40-aas-storage-adapter-mongodb",
+			"value": "http://localhost:3100",
+			"type": "string"
+		},
+		{
+			"id": "dbe7861c-cc11-4cd3-a076-4eb182e54462",
+			"key": "https-endpoint-ingress-host",
+			"value": "i40-aas-http-endpoint-ingress",
+			"type": "string"
+		},
+		{
+			"id": "9ef3fba4-a553-46e7-b29e-145397a0a357",
+			"key": "grpc-endpoint-ingress-host",
+			"value": "i40-aas-grpc-endpoint-ingress",
+			"type": "string"
+		},
+		{
+			"id": "1adc853a-a06d-4233-8e50-f46fc25c8160",
+			"key": "https-endpoint-ingress-port",
+			"value": "2000",
+			"type": "string"
+		},
+		{
+			"id": "24b1afca-c825-4288-a7bb-6c494265c85b",
+			"key": "grpc-endpoint-ingress-port",
+			"value": "8384",
+			"type": "string"
+		},
+		{
+			"id": "c23442b0-0dcb-4a30-b6a0-b56d41459707",
+			"key": "storage-adapter-mongodb-host",
+			"value": "i40-aas-storage-adapter-mongodb",
+			"type": "string"
+		},
+		{
+			"id": "31c64e6e-83d1-4e59-b64f-21409569fb14",
+			"key": "storage-adapter-mongodb-port",
+			"value": "3100",
 			"type": "string"
 		}
 	],
