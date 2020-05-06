@@ -1087,104 +1087,51 @@
 			"protocolProfileBehavior": {}
 		},
 		{
-			"name": "Integration Test with Mock Adapter",
-			"item": [
+			"name": "Check that mock adapter is empty",
+			"event": [
 				{
-					"name": "Check that mock adapter is empty",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "27627ba8-14c5-4e5f-af86-406285d975d6",
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "password",
-									"value": "k!ndHeat60",
-									"type": "string"
-								},
-								{
-									"key": "username",
-									"value": "admin",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{i40-aas-storage-adapter-mongodb}}/submodels",
-							"host": [
-								"{{i40-aas-storage-adapter-mongodb}}"
-							],
-							"path": [
-								"submodels"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Check that mock adapter is populated",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "27627ba8-14c5-4e5f-af86-406285d975d6",
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "password",
-									"value": "k!ndHeat60",
-									"type": "string"
-								},
-								{
-									"key": "username",
-									"value": "admin",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{i40-aas-storage-adapter-mongodb}}/submodels",
-							"host": [
-								"{{i40-aas-storage-adapter-mongodb}}"
-							],
-							"path": [
-								"submodels"
-							]
-						}
-					},
-					"response": []
+					"listen": "test",
+					"script": {
+						"id": "27627ba8-14c5-4e5f-af86-406285d975d6",
+						"exec": [
+							"pm.test(\"Status code is 200 and Body is empty\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.have.body(\"[]\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
 				}
 			],
-			"protocolProfileBehavior": {}
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "k!ndHeat60",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{i40-aas-storage-adapter-mongodb}}/submodels",
+					"host": [
+						"{{i40-aas-storage-adapter-mongodb}}"
+					],
+					"path": [
+						"submodels"
+					]
+				}
+			},
+			"response": []
 		},
 		{
 			"name": "Send Interaction Message to https-endpoint",
@@ -1230,6 +1177,53 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Check that mock adapter is populated",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "27627ba8-14c5-4e5f-af86-406285d975d6",
+						"exec": [
+							"pm.test(\"Status code is 200 and body has submodelElements\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.expect(pm.response.text()).to.include(\"submodelElements\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "k!ndHeat60",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{i40-aas-storage-adapter-mongodb}}/submodels",
+					"host": [
+						"{{i40-aas-storage-adapter-mongodb}}"
+					],
+					"path": [
+						"submodels"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"auth": {
@@ -1271,79 +1265,79 @@
 	],
 	"variable": [
 		{
-			"id": "152fd8f5-2f66-4001-8b3d-33c301e8ee4b",
+			"id": "161114b6-af4a-4d72-a9ac-a024ca573333",
 			"key": "endpoint_ingress_user",
 			"value": "admin",
 			"type": "string"
 		},
 		{
-			"id": "b76e04dd-3968-4ca3-a1bc-d2427be17afb",
+			"id": "6e0f78e2-a16c-4de0-a204-800564d097cb",
 			"key": "endpoint_ingress_pwd",
 			"value": "admin",
 			"type": "string"
 		},
 		{
-			"id": "7e2b18a8-d867-4a73-9e31-3ef5fca2c856",
+			"id": "46c39b2e-ac45-4168-a114-f67de0df9e67",
 			"key": "i40-aas-http-endpoint-ingress",
 			"value": "http://localhost:2000",
 			"type": "string"
 		},
 		{
-			"id": "36750c8b-0b70-49f8-ac54-e6228091e941",
+			"id": "24c84915-dbaf-4982-bb17-8ae52fe9a323",
 			"key": "i40-aas-endpoint-registry",
 			"value": "http://localhost:4400",
 			"type": "string"
 		},
 		{
-			"id": "d5d6ea36-ec37-428e-a5a0-ac89111db856",
+			"id": "2f05729f-ae88-4447-9b50-d8d7d78472fa",
 			"key": "i40-aas-data-manager",
 			"value": "http://localhost:4000",
 			"type": "string"
 		},
 		{
-			"id": "e402a2c9-88c3-4a33-b844-75821d380c3c",
+			"id": "4d5b534c-0705-433a-9118-0adc014a382b",
 			"key": "i40-aas-adapter-registry",
 			"value": "http://localhost:4500",
 			"type": "string"
 		},
 		{
-			"id": "d3c222a6-42f1-4b07-8474-e108b4d18079",
+			"id": "6c38dfed-5c34-4894-992a-43e4904b63d7",
 			"key": "i40-aas-storage-adapter-mongodb",
 			"value": "http://localhost:3100",
 			"type": "string"
 		},
 		{
-			"id": "dbe7861c-cc11-4cd3-a076-4eb182e54462",
+			"id": "3fe4ee6c-2b0c-47d1-982d-8e2a81af8fd3",
 			"key": "https-endpoint-ingress-host",
 			"value": "i40-aas-http-endpoint-ingress",
 			"type": "string"
 		},
 		{
-			"id": "9ef3fba4-a553-46e7-b29e-145397a0a357",
+			"id": "8e5cfc1f-b0d9-4ba5-a81a-b110322edc26",
 			"key": "grpc-endpoint-ingress-host",
 			"value": "i40-aas-grpc-endpoint-ingress",
 			"type": "string"
 		},
 		{
-			"id": "1adc853a-a06d-4233-8e50-f46fc25c8160",
+			"id": "8efecdf1-4d69-4081-afb9-981abaa43dc0",
 			"key": "https-endpoint-ingress-port",
 			"value": "2000",
 			"type": "string"
 		},
 		{
-			"id": "24b1afca-c825-4288-a7bb-6c494265c85b",
+			"id": "e0a3bd7d-4a7d-46e1-91d4-fbb82743f866",
 			"key": "grpc-endpoint-ingress-port",
 			"value": "8384",
 			"type": "string"
 		},
 		{
-			"id": "c23442b0-0dcb-4a30-b6a0-b56d41459707",
+			"id": "54b5aecf-a2f6-402c-80c5-111803be4895",
 			"key": "storage-adapter-mongodb-host",
 			"value": "i40-aas-storage-adapter-mongodb",
 			"type": "string"
 		},
 		{
-			"id": "31c64e6e-83d1-4e59-b64f-21409569fb14",
+			"id": "25cc6507-b55a-4d13-94b1-b4f2d0d55720",
 			"key": "storage-adapter-mongodb-port",
 			"value": "3100",
 			"type": "string"
