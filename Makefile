@@ -48,15 +48,15 @@ dev:
 ## build and tag a single service image
 .PHONY: build-%
 build-%:
-	BUILD_TAG=$(BUILD_TAG) docker-compose -f docker-compose.dev.yml build i40-aas-$*
-	BUILD_TAG=$(BUILD_TAG) docker tag sapi40/i40-aas-$*:$(BUILD_TAG) $(REGISTRY)/i40-aas-$*:latest
-	BUILD_TAG=$(BUILD_TAG) docker tag sapi40/i40-aas-$*:$(BUILD_TAG) $(REGISTRY)/i40-aas-$*:$(BUILD_TAG)
+	BUILD_TAG=$(BUILD_TAG) docker-compose -f docker-compose.dev.yml build $*
+	BUILD_TAG=$(BUILD_TAG) docker tag sapi40/$*:$(BUILD_TAG) $(REGISTRY)/$*:latest
+	BUILD_TAG=$(BUILD_TAG) docker tag sapi40/$*:$(BUILD_TAG) $(REGISTRY)/$*:$(BUILD_TAG)
 
 ## push a single service image
 .PHONY: push-%
 push-%:
-	BUILD_TAG=$(BUILD_TAG) docker push $(REGISTRY)/i40-aas-$*:$(BUILD_TAG)
-	BUILD_TAG=$(BUILD_TAG) docker push $(REGISTRY)/i40-aas-$*:latest
+	BUILD_TAG=$(BUILD_TAG) docker push $(REGISTRY)/$*:$(BUILD_TAG)
+	BUILD_TAG=$(BUILD_TAG) docker push $(REGISTRY)/$*:latest
 
 ## up a specific service
 .PHONY: up-%

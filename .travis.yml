@@ -38,9 +38,9 @@ install:
   - if [[ -n $TRAVIS_PULL_REQUEST_BRANCH ]]; then
     BUILD_TAG=$TRAVIS_PULL_REQUEST_BRANCH;
     fi
-  - make build-$SVC
+  - make build-i40-aas-$SVC
   - if [ $TRAVIS_EVENT_TYPE = push ]; then
-    make push-$SVC;
+    make push-i40-aas-$SVC;
     fi
 
 stages:
