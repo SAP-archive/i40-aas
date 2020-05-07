@@ -65,7 +65,7 @@ class Registry implements iRegistry {
           .where("aasdescriptor = :aasdescriptor", { aasdescriptor: record.identification.id })
           .execute();
 
-        logger.debug("Endpoint delete result: " + deleteResult)
+        logger.debug("Endpoint delete result: " + JSON.stringify(deleteResult))
       })
 
       aasDescriptor.endpoints = record.descriptor.endpoints as EndpointEntity[]
@@ -299,7 +299,7 @@ class Registry implements iRegistry {
         .from(RoleEntity)
         .where("semProtocol = :semProtocol", { semProtocol: record.identification.id })
         .execute();
-      logger.debug("Role delete result: " + deleteResult)
+      logger.debug("Role delete result: " + JSON.stringify(deleteResult))
 
       semProtocol.roles = record.roles as RoleEntity[];
       let savedProtocol = await semProtocolRepository.save(semProtocol);
