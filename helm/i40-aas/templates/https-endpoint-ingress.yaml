@@ -67,7 +67,7 @@ spec:
             - secretRef:
                 name: {{ .Release.Name }}-core-ingress-http
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.resources.ts | nindent 12 }}
           livenessProbe:
             httpGet:
               path: /health

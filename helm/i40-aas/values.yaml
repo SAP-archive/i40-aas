@@ -172,9 +172,17 @@ resources: {}
   ## and uncomment the curly braces after 'resources'.
   ## The following values are our recommendations,
   ## according to the consumption of resources as we have observed it.
-  ## limits:
-  ##   cpu: 40m
-  ##   memory: 350Mi
-  ## requests:
-  ##   cpu: 25m
-  ##   memory: 270Mi
+  ##go:
+  ##  limits:
+  ##    cpu: 40m
+  ##    memory: 5Mi
+  ##  requests:
+  ##    cpu: 25m
+  ##    memory: 10Mi
+  ##ts:
+  ##  limits:
+  ##    cpu: 40m
+  ##    memory: 50Mi
+  ##  requests:
+  ##    cpu: 25m
+  ##    memory: 80Mi

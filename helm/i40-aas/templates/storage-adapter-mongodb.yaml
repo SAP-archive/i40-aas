@@ -69,5 +69,5 @@ spec:
           - name: APPLICATION_ADAPTERS_MONGODB_SUBMODELS_COLLECTION
             value: {{ .Values.applicationAdapters.mongoDb.submodelsCollection | quote }}
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.resources.ts | nindent 12 }}
 ---

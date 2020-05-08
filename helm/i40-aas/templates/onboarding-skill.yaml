@@ -112,5 +112,5 @@ spec:
             - secretRef:
                 name: {{ .Release.Name }}-core-data-manager
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.resources.ts | nindent 12 }}
 ---

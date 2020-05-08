@@ -71,7 +71,7 @@ spec:
           readOnly: true
         {{- end }}
         resources:
-          {{- toYaml .Values.resources | nindent 10 }}
+          {{- toYaml .Values.resources.go | nindent 10 }}
 #        livenessProbe:
 #          httpGet:
 #            path: /health

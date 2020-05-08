@@ -67,5 +67,5 @@ spec:
             - secretRef:
                 name: {{ .Release.Name }}-core-egress
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.resources.ts | nindent 12 }}
 ---
