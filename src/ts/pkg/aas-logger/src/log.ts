@@ -1,4 +1,4 @@
-const { createLogger, format, transports } = require('winston');
+const { addColors, createLogger, format, transports } = require('winston');
 const moment = require('moment');
 const path = require('path');
 const PROJECT_ROOT = path.join(
@@ -9,21 +9,45 @@ const { combine, timestamp, label, printf } = format;
 
 const myFormat = (color?: boolean) =>
   format.combine(
-    format((info: any) => {
-      info.level = info.level.toUpperCase();
-      return info;
+    format((log: any) => {
+      switch (log.level) {
+        case "debug":
+          log.level = "DBG"
+          break;
+        case "info":
+          log.level = "INF"
+          break;
+        case "warn":
+          log.level = "WRN"
+          break;
+        case "error":
+          log.level = "ERR"
+          break;
+        default:
+          log.level = log.level
+          break;
+      }
+      return log;
     })(),
     color ? format.colorize() : format.uncolorize(),
-    format((info: any) => {
-      info.timestamp = moment().format('YYYY-MM-DDTHH:mm:ss');
-      return info;
+    format((log: any) => {
+      log.timestamp = moment().utc().format()
+      return log;
     })(),
 
-    format.printf((info: any) => {
-      const { timestamp, level, message, ...args } = info;
-      return `${timestamp} ${level} ${info.message} `;
+    format.printf((log: any) => {
+      const { timestamp, level, message, ...args } = log;
+      return `${timestamp} ${level} \u001b[1m${log.callee}\u001b[0m > ${log.message} `;
     })
   );
+
+// https://github.com/Marak/colors.js/blob/master/lib/styles.js
+addColors({
+  error: 'red',
+  debug: 'blue',
+  warn: 'yellow',
+  info: 'green'
+});
 
 const logger = createLogger({
   format: myFormat(),
@@ -47,10 +71,10 @@ function formatLogArguments(args: any) {
 
   if (stackInfo) {
     // get file path relative to project root
-    var calleeStr = ' ' + stackInfo.relativePath + ':' + stackInfo.line + ' > ';
+    var calleeStr = stackInfo.relativePath + ':' + stackInfo.line;
 
     if (typeof args[0] === 'string') {
-      args[0] = calleeStr + ' ' + args[0];
+      args[1] = { "callee": calleeStr }
     } else {
       args.unshift(calleeStr);
     }

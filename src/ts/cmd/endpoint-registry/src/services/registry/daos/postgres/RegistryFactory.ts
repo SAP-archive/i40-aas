@@ -42,7 +42,7 @@ class RegistryFactory {
       var password = process.env.CORE_REGISTRIES_ENDPOINTS_DATABASE_PASSWORD;
       var database = process.env.CORE_REGISTRIES_ENDPOINTS_DATABASE_NAME;
 
-      console.log('getting orm pg connection to ' + host);
+      logger.debug('getting orm pg connection to ' + host);
 
       var dbConn = new DatabaseConnection(
         host,
