@@ -70,7 +70,7 @@ spec:
         - secretRef:
             name: {{ .Release.Name }}-core-registries-endpoints
         resources:
-          {{- toYaml .Values.resources.go | nindent 10 }}
+          {{- toYaml .Values.resources.ts | nindent 10 }}
         livenessProbe:
           httpGet:
             path: /health
