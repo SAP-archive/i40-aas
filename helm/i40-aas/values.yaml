@@ -7,10 +7,11 @@ core:
     ctag: endpoint-resolver
 
   ingress:
-    exchange: egress
-    ## If empty, user/password take rabbitmq admin credentials as default.
-    user: ""
-    password: ""
+    broker:
+      exchange: egress
+      ## If empty, user/password take rabbitmq admin credentials as default.
+      user: ""
+      password: ""
 
     grpc:
       port: 8384
@@ -22,12 +23,12 @@ core:
       password: admin
 
   egress:
-    exchange: egress
-    routingKey: egress.generic
-    
-    ## If empty "", user/password take rabbitmq admin credentials as default.
-    user: ""
-    password: ""
+    broker:
+      exchange: egress
+      routingKey: egress.generic
+      ## If empty "", user/password take rabbitmq admin credentials as default.
+      user: ""
+      password: ""
 
     grpc:
       ctag: grpc

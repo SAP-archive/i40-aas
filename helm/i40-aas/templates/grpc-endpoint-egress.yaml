@@ -39,7 +39,7 @@ spec:
         - name: CORE_BROKER_PORT
           value: {{ .Values.rabbitmq.service.port | quote }}
         - name: CORE_EGRESS_EXCHANGE
-          value: {{ .Values.core.egress.exchange | quote }}
+          value: {{ .Values.core.egress.broker.exchange | quote }}
         - name: CORE_EGRESS_GRPC_QUEUE
           value: {{ .Values.core.egress.grpc.queue | quote }}
         - name: CORE_EGRESS_GRPC_CTAG

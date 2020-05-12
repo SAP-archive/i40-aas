@@ -74,11 +74,11 @@ spec:
             - name: CORE_BROKER_PORT
               value: {{ .Values.rabbitmq.service.port | quote }}
             - name: CORE_EGRESS_EXCHANGE
-              value: {{ .Values.core.egress.exchange | quote }}
+              value: {{ .Values.core.egress.broker.exchange | quote }}
             - name: CORE_EGRESS_ROUTINGKEY
-              value: {{ .Values.core.egress.routingKey | quote }}
+              value: {{ .Values.core.egress.broker.routingKey | quote }}
             - name: CORE_INGRESS_EXCHANGE
-              value: {{ .Values.core.ingress.exchange | quote }}
+              value: {{ .Values.core.ingress.broker.exchange | quote }}
             - name: CORE_ENDPOINT_RESOLVER_QUEUE
               value: {{ .Values.core.endpointResolver.queue | quote }}
             - name: SKILLS_ONBOARDING_REQUEST_APPROVAL
