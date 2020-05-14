@@ -19,7 +19,13 @@ chai.use(chaiHttp);
 function getRandomInteger() {
   return Math.floor(Math.random() * 100000);
 }
-
+function replaceRoleNameInFirstRole(
+  protocol: ISemanticProtocol,
+  replacement: string
+) {
+  protocol.roles[0].name = replacement;
+  return protocol;
+}
 function makeGoodSemanticProtocol(idTag: string) {
   return <ISemanticProtocol>{
     identification: {
@@ -34,6 +40,21 @@ function makeGoodSemanticProtocol(idTag: string) {
             id: "aasId" + idTag,
             idType: "Custom"
           }
+        ]
+      }
+    ]
+  };
+}
+function makeSemanticProtocolWithDifferentAAS(idTag: string) {
+  return <ISemanticProtocol>{
+    identification: {
+      id: 'semanticProtocolId' + idTag,
+      idType: 'IRI',
+    },
+    roles: [
+      {
+        name: "roleA_" + idTag,
+        aasDescriptorIds: [
         ]
       }
     ]
@@ -125,7 +146,6 @@ describe('Tests with a simple data model', function () {
     checkEnvVar('CORE_REGISTRIES_ENDPOINTS_PASSWORD');
   });
 
-  /*
 
   // TEST PUT /semanticProtocols
   it('returns a 422 Error when trying to register a SemanticProtocol that already exists in the the database',
@@ -666,7 +686,6 @@ describe('Tests with a simple data model', function () {
 
   //test GET   /semanticProtocols/{sematicProtocolId}/role/{roleName}/AASDescriptors:
 
-
   it('retrieves all AASDescriptors by semanticProtocol and role', async function () {
     var firstTestId = 'randId-' + getRandomInteger();
     var secondTestId = 'randId' + getRandomInteger();
@@ -734,6 +753,88 @@ describe('Tests with a simple data model', function () {
                 requester.close();
               });
           });
+      });
+  });
+
+
+
+  it("should throw a 422 if role does not exist when trying to retrieve"+
+  " all AASDescriptors by semanticProtocol and role", async function () {
+    var randTestId = 'randId-' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
+
+    //first register an AAS
+    var aasRequest_1 = makeGoodAASDescriptor(randTestId)
+
+    await requester
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(aasRequest_1)
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200);
+
+            //the SemanticProtocol to be registered
+            var semProtocolRequest = makeGoodSemanticProtocol(randTestId)
+            //then register a SemanticProtocol
+            await requester
+              .put('/SemanticProtocols')
+              .auth(user, password)
+              .send(semProtocolRequest)
+              .then(async (res: any) => {
+                chai.expect(res.status).to.eql(200);
+                //finally try retrieving the list of AASs based on the semanticprotocol and rolename
+                //read the AASDescriptor for the first role
+                await requester
+                  .get('/SemanticProtocols/semanticProtocolId' + randTestId + '/role/' + "fooBarRole" + '/AASDescriptors')
+                  .auth(user, password)
+                  .then((response: any) => {
+                    chai.expect(response.status).to.eql(422);
+                  });
+              })
+              .then(() => {
+                requester.close();
+              });
+      });
+  });
+  it("should return an empty array if no AASDescriptor exists for the given role when trying to retrieve"+
+  " all AASDescriptors by semanticProtocol and role", async function () {
+    var randTestId = 'randId-' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
+
+    //first register an AAS
+    var aasRequest_1 = makeGoodAASDescriptor(randTestId)
+
+    await requester
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(aasRequest_1)
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200);
+
+            //the SemanticProtocol to be registered
+            var semProtocolRequest = makeSemanticProtocolWithDifferentAAS(randTestId)
+            //then register a SemanticProtocol
+            await requester
+              .put('/SemanticProtocols')
+              .auth(user, password)
+              .send(semProtocolRequest)
+              .then(async (res: any) => {
+                chai.expect(res.status).to.eql(200);
+                //finally try retrieving the list of AASs based on the semanticprotocol and rolename
+                //read the AASDescriptor for the first role
+                await requester
+                  .get('/SemanticProtocols/semanticProtocolId' + randTestId + '/role/' + semProtocolRequest.roles[0].name + '/AASDescriptors')
+                  .auth(user, password)
+                  .then((response: any) => {
+                    chai.expect(response.status).to.eql(200);
+
+                    chai.expect(
+                      response.body).to.be.eql([]);
+                  });
+              })
+              .then(() => {
+                requester.close();
+              });
       });
   });
 

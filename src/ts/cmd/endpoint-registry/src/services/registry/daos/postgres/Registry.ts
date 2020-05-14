@@ -492,8 +492,8 @@ class Registry implements iRegistry {
           { semProtocol: semanticProtocolId, name: roleName }],
         relations: ["aasDescriptorIds"]
       })
-      //TODO: need a test for this
-      if (!loadedRole) { throw new HTTP422Error(`No Role found for the protocol ${semanticProtocolId} with
+      if (!loadedRole) {
+        throw new HTTP422Error(`No Role found for the protocol ${semanticProtocolId} with
         name ${roleName}`)  }
 
 //TODO: need a test for this
