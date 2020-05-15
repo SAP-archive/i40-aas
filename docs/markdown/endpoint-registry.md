@@ -313,7 +313,7 @@ Body:
 }
 ```
 **Success Response:**
-The SemanticProtocol was read successfully
+The SemanticProtocol was updated successfully
   * **Code:** 200 <br />
     **Content:**
 ```javascript
@@ -328,7 +328,7 @@ Same as body
 |   sematicProtocolId:string (required)  |  The SemanticProtocol's unique id      |
 
 **Success Response:**
-The SemanticProtocol was read successfully
+The SemanticProtocol was deleted successfully
   * **Code:** 200 <br />
     **Content:**
 ```javascript
@@ -389,7 +389,7 @@ The SemanticProtocol was registered successfully
 
   * **Code:** 401 UNAUTHORIZED <br />
   * **Code:** 422 <br />
-    **Description:** `The passed SemanticProtocol conflicts with already registered Asset Administration Shells`
+    **Description:** `The Role given does not exist in registry`
   * **Code:** 502 <br />
     **Description:** `Bad Gateway`
 

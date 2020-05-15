@@ -483,23 +483,28 @@ class Registry implements iRegistry {
   ): Promise<Array<IAASDescriptor>> {
 
     try {
-      //get an Entityrepository for the AASDescriptor and the Asset
+      //get an Entityrepository for the AASDescriptor and the Roles
       let aasDescriptorRepository = this.client.getRepository(AASDescriptorEntity);
       let rolesRepo = this.client.getRepository(RoleEntity);
 
       let loadedRole = await rolesRepo.findOne({
         where: [
-          { semProtocol: semanticProtocolId }, { name: roleName }],
+          { semProtocol: semanticProtocolId, name: roleName }],
         relations: ["aasDescriptorIds"]
       })
-      if (!loadedRole) throw new HTTP422Error(`No Role found for the protocol ${semanticProtocolId} with
-        name ${roleName}`)
+      if (!loadedRole) {
+        throw new HTTP422Error(`No Role found for the protocol ${semanticProtocolId} with
+        name ${roleName}`)  }
 
-
+//TODO: need a test for this
       if(loadedRole.aasDescriptorIds.length === 0){
         logger.info(" No AASIDs for this role found ");
         return [];
       }
+      loadedRole.aasDescriptorIds.forEach(id => {
+        logger.debug("Found Role "+JSON.stringify(loadedRole?.name) + " with AASId "+ JSON.stringify(id.id))
+
+      });
 
       //we need to return a list of AASDescriptor Objects
       //find the aasIds associated with the role
@@ -535,7 +540,7 @@ class Registry implements iRegistry {
       //find the role
       let loadedRole = await getConnection().getRepository(RoleEntity).findOne({
         where: [
-          { semProtocol: sProtocol }, { name: roleName }],
+          { semProtocol: sProtocol, name: roleName }],
         relations: ["aasDescriptorIds"]
       })
       if (loadedRole) {
@@ -575,7 +580,7 @@ class Registry implements iRegistry {
       logger.debug("AAS ID to remove "+aasIdToRemove)
       let loadedRole = await getConnection().getRepository(RoleEntity).findOne({
         where: [
-          { semProtocol: sProtocol }, { name: roleName }],
+          { semProtocol: sProtocol, name: roleName }],
         relations: ["aasDescriptorIds"]
       })
       if (loadedRole) {
