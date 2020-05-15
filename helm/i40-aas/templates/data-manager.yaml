@@ -69,7 +69,7 @@ spec:
         - secretRef:
             name: {{ .Release.Name }}-core-data-manager
         resources:
-          {{- toYaml .Values.resources | nindent 10 }}
+          {{- toYaml .Values.resources.ts | nindent 10 }}
         livenessProbe:
           httpGet:
             path: /health

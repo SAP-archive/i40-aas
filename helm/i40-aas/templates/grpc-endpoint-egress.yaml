@@ -39,7 +39,7 @@ spec:
         - name: CORE_BROKER_PORT
           value: {{ .Values.rabbitmq.service.port | quote }}
         - name: CORE_EGRESS_EXCHANGE
-          value: {{ .Values.core.egress.exchange | quote }}
+          value: {{ .Values.core.egress.broker.exchange | quote }}
         - name: CORE_EGRESS_GRPC_QUEUE
           value: {{ .Values.core.egress.grpc.queue | quote }}
         - name: CORE_EGRESS_GRPC_CTAG
@@ -54,7 +54,7 @@ spec:
           readOnly: true
         {{- end }}
         resources:
-          {{- toYaml .Values.resources | nindent 10 }}
+          {{- toYaml .Values.resources.go | nindent 10 }}
 #        livenessProbe:
 #          httpGet:
 #            path: /health
