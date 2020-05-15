@@ -176,14 +176,14 @@ resources: {}
   ##go:
   ##  limits:
   ##    cpu: 40m
-  ##    memory: 5Mi
+  ##    memory: 20Mi
   ##  requests:
   ##    cpu: 25m
   ##    memory: 10Mi
   ##ts:
   ##  limits:
   ##    cpu: 40m
-  ##    memory: 50Mi
+  ##    memory: 100Mi
   ##  requests:
   ##    cpu: 25m
-  ##    memory: 80Mi
+  ##    memory: 60Mi
