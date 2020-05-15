@@ -58,7 +58,7 @@ spec:
             - name: CORE_BROKER_PORT
               value: {{ .Values.rabbitmq.service.port | quote }}
             - name: CORE_INGRESS_EXCHANGE
-              value: {{ .Values.core.ingress.exchange | quote }}
+              value: {{ .Values.core.ingress.broker.exchange | quote }}
             - name: CORE_INGRESS_HTTP_PORT
               value: {{ .Values.core.ingress.http.port | quote }}
           envFrom:
@@ -67,7 +67,7 @@ spec:
             - secretRef:
                 name: {{ .Release.Name }}-core-ingress-http
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.resources.ts | nindent 12 }}
           livenessProbe:
             httpGet:
               path: /health

@@ -55,11 +55,11 @@ spec:
         - name: CORE_BROKER_PORT
           value: {{ .Values.rabbitmq.service.port | quote }}
         - name: CORE_EGRESS_EXCHANGE
-          value: {{ .Values.core.egress.exchange | quote }}
+          value: {{ .Values.core.egress.broker.exchange | quote }}
         - name: CORE_ENDPOINT_RESOLVER_CTAG
           value: {{ .Values.core.endpointResolver.ctag | quote }}
         - name: CORE_EGRESS_ROUTINGKEY
-          value: {{ .Values.core.egress.routingKey | quote }}
+          value: {{ .Values.core.egress.broker.routingKey | quote }}
         - name: CORE_REGISTRIES_ENDPOINTS_HOST
           valueFrom:
             configMapKeyRef:
@@ -81,7 +81,7 @@ spec:
           readOnly: true
         {{- end }}
         resources:
-          {{- toYaml .Values.resources | nindent 10 }}
+          {{- toYaml .Values.resources.go | nindent 10 }}
 #        livenessProbe:
 #          httpGet:
 #            path: /health
