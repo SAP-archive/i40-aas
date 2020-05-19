@@ -1,6 +1,7 @@
-import {  publishMessageToBrokerTopic } from "./InteractionHandler";
+import { publishMessageToBrokerTopic } from './InteractionHandler'
 import { AmqpClient } from 'AMQP-Client/lib/AmqpClient';
-import * as logger from "winston";
+
+const logger = require('aas-logger/lib/log');
 
 let brokerClient: AmqpClient;
 

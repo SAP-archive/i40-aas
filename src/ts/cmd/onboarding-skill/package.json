@@ -40,18 +40,15 @@
   "author": "",
   "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
-    "AMQP-Client": "file:../../pkg/AMQP-Client",
+    "AMQP-Client": "link:../../pkg/AMQP-Client",
+    "aas-logger": "link:../../pkg/aas-logger",
     "axios": "^0.19.0",
-    "dotenv": "^8.2.0",
     "i40-aas-objects": "0.2.6",
-    "json-stringify-safe": "^5.0.1",
     "lodash": "^4.17.15",
     "md5": "^2.2.1",
     "mongodb": "^3.3.0-beta2",
-    "mqtt": "^3.0.0",
     "uuid": "^3.3.2",
     "uuidv4": "^6.0.6",
-    "winston": "^3.2.1",
     "xstate": "4.6.7"
   },
   "devDependencies": {
@@ -61,7 +58,6 @@
     "@types/mocha": "^5.2.7",
     "@types/mongodb": "^3.1.30",
     "@types/node": "^12.0.8",
-    "@types/request": "^2.48.1",
     "@types/sinon": "^7.0.13",
     "@types/uuid": "^3.4.5",
     "chai": "^4.2.0",

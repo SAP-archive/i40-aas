@@ -34,9 +34,14 @@ spec:
         service: endpoint-resolver
         {{- include "i40-aas.selectorLabels" . | nindent 8 }}
     spec:
+      securityContext:
+        runAsNonRoot: true
       containers:
       - name: endpoint-resolver
         image: "{{ .Values.image.repository }}/i40-aas-endpoint-resolver:{{ .Values.image.release }}"
+        securityContext:
+          runAsUser: 1001
+          readOnlyRootFilesystem: true
         env:
         - name: LOGGING_LOGLEVEL
           value: {{ .Values.logging.logLevel | quote }}
@@ -48,13 +53,13 @@ spec:
               name: {{ .Release.Name }}-host-collection
               key: CORE_BROKER_HOST
         - name: CORE_BROKER_PORT
-          value: {{ .Values.core.broker.port.amqp | quote }}
+          value: {{ .Values.rabbitmq.service.port | quote }}
         - name: CORE_EGRESS_EXCHANGE
-          value: {{ .Values.core.egress.exchange | quote }}
+          value: {{ .Values.core.egress.broker.exchange | quote }}
         - name: CORE_ENDPOINT_RESOLVER_CTAG
           value: {{ .Values.core.endpointResolver.ctag | quote }}
         - name: CORE_EGRESS_ROUTINGKEY
-          value: {{ .Values.core.egress.routingKey | quote }}
+          value: {{ .Values.core.egress.broker.routingKey | quote }}
         - name: CORE_REGISTRIES_ENDPOINTS_HOST
           valueFrom:
             configMapKeyRef:
@@ -70,11 +75,13 @@ spec:
         - secretRef:
             name: {{ .Release.Name }}-core-registries-endpoints
         volumeMounts:
+        {{- if .Values.certificates }}
         - name: certs
           mountPath: "/certs"
           readOnly: true
+        {{- end }}
         resources:
-          {{- toYaml .Values.resources | nindent 10 }}
+          {{- toYaml .Values.resources.go | nindent 10 }}
 #        livenessProbe:
 #          httpGet:
 #            path: /health
@@ -82,8 +89,10 @@ spec:
 #          initialDelaySeconds: 600
 #          periodSeconds: 60
       volumes:
+      {{- if .Values.certificates }}
       - name: certs
         secret:
           secretName: {{ .Values.certificates.secretName }}
           optional: true
+      {{- end }}
 ---

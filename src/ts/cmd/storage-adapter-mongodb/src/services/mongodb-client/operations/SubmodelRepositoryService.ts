@@ -1,14 +1,16 @@
-import { IDatabaseClient } from "./IDatabaseClient";
-import { Submodel } from "i40-aas-objects/dist/src/identifiables/Submodel";
-import { Property } from "i40-aas-objects";
-import { logger } from "../../../log";
-import boom = require("@hapi/boom");
-import { ISubmodelRecord } from "../model/ISubmodelRecord";
-import { WriteOpResult } from "mongodb";
-let md5 = require("md5");
+import { IDatabaseClient } from './IDatabaseClient';
+import { Submodel } from 'i40-aas-objects/dist/src/identifiables/Submodel';
+import { Property } from 'i40-aas-objects';
+
+import boom = require('@hapi/boom');
+import { ISubmodelRecord } from '../model/ISubmodelRecord';
+import { WriteOpResult } from 'mongodb';
+let md5 = require('md5');
+
+const logger = require('aas-logger/lib/log');
 
 class SubmodelRepositoryService {
-  public static KEY_PROPERTY = "productinstanceuri";
+  public static KEY_PROPERTY = 'productinstanceuri';
   constructor(private dbClient: IDatabaseClient) {}
 
   async delete(id: string) {
@@ -21,7 +23,7 @@ class SubmodelRepositoryService {
   ): Promise<ISubmodelRecord | null> {
     await this.dbClient.connect();
     let stateRecord: ISubmodelRecord | null = await this.dbClient.getOneByKey({
-      _id: id
+      _id: id,
     });
     return stateRecord;
   }
@@ -34,8 +36,8 @@ class SubmodelRepositoryService {
   async getSubmodels(): Promise<Submodel[]> {
     await this.dbClient.connect();
     return (await this.dbClient.getAll())
-      .filter(x => x.serializedSubmodel)
-      .map(x => JSON.parse(x.serializedSubmodel));
+      .filter((x) => x.serializedSubmodel)
+      .map((x) => JSON.parse(x.serializedSubmodel));
   }
 
   async createEquipmentAndSetInitialValues(
@@ -49,14 +51,14 @@ class SubmodelRepositoryService {
     } catch (error) {
       logger.debug(error);
       throw boom.badRequest(
-        "productinstanceuri needs to be defined in the provided submodel",
+        'productinstanceuri needs to be defined in the provided submodel',
         error
       );
     }
 
     if (equipmentDescription == undefined) {
       throw boom.badRequest(
-        "productinstanceuri needs to have a value in the provided submodel"
+        'productinstanceuri needs to have a value in the provided submodel'
       );
     }
 
@@ -67,15 +69,15 @@ class SubmodelRepositoryService {
     const result = await this.dbClient.update(
       {
         _id: md5(equipmentDescription),
-        version: versionCounter++
+        version: versionCounter++,
       }, //find by
       {
         //update these
-        serializedSubmodel: JSON.stringify(submodel)
+        serializedSubmodel: JSON.stringify(submodel),
       },
       true //increment version
     );
-    logger.debug("db updated:" + JSON.stringify(result));
+    logger.debug('db updated:' + JSON.stringify(result));
     return result;
   }
 }

@@ -1,7 +1,8 @@
-import { Request, Response, NextFunction } from "express";
-import { HTTP400Error, HTTP422Error, HTTP404Error } from "../utils/httpErrors";
-import { Submodel } from "i40-aas-objects";
-import { logger } from "../utils/log";
+import { Request, Response, NextFunction } from 'express';
+import { HTTP400Error, HTTP422Error, HTTP404Error } from '../utils/httpErrors';
+import { Submodel } from 'i40-aas-objects';
+
+const logger = require('aas-logger/lib/log');
 
 export const checkReqBodyEmpty = (
   req: Request,
@@ -10,9 +11,8 @@ export const checkReqBodyEmpty = (
 ) => {
   //check if the req body is empty
   if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
-    throw new HTTP400Error("Submodel JSON is empty, check request body!");
-  }
-  else {
+    throw new HTTP400Error('Submodel JSON is empty, check request body!');
+  } else {
     next();
   }
 };
@@ -27,23 +27,20 @@ export const validateSubmodelsRequest = (
   res: Response,
   next: NextFunction
 ) => {
-  let submodelsArray: Submodel[]| undefined = req.body;
+  let submodelsArray: Submodel[] | undefined = req.body;
   if (submodelsArray && submodelsArray.length > 0) {
-    submodelsArray.forEach(submodel => {
+    submodelsArray.forEach((submodel) => {
       //based on this id the routing towards the storage adapter takes place
-        let submodelID:string = submodel.idShort;
-        logger.debug("id " + submodelID);
-    if(!submodelID) {
-        logger.error("Missing id in submodel "+submodel.identification.id);
-        throw new HTTP422Error("Missing required fields in Request: idShort");
-
+      let submodelID: string = submodel.idShort;
+      logger.debug('id ' + submodelID);
+      if (!submodelID) {
+        logger.error('Missing id in submodel ' + submodel.identification.id);
+        throw new HTTP422Error('Missing required fields in Request: idShort');
       }
-
-});
-//all clear move to next
-next();
-}
-else {
-  throw new HTTP404Error("Client Error on submodels request")
-}
-}
+    });
+    //all clear move to next
+    next();
+  } else {
+    throw new HTTP404Error('Client Error on submodels request');
+  }
+};

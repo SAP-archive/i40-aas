@@ -1,6 +1,7 @@
-import mongodb, { MongoClient, Db, WriteOpResult } from "mongodb";
-import { IDatabaseClient } from "./IDatabaseClient";
-import { logger } from "../../../log";
+import mongodb, { MongoClient, Db, WriteOpResult } from 'mongodb';
+import { IDatabaseClient } from './IDatabaseClient';
+
+const logger = require('aas-logger/lib/log');
 
 class SimpleMongoDbClient implements IDatabaseClient {
   private uri: string;
@@ -14,31 +15,32 @@ class SimpleMongoDbClient implements IDatabaseClient {
     private host: string,
     private port: string,
     private userName?: string,
-    private password?: string
+    private password?: string,
+    private authSource?: string
   ) {
-    logger.info("Using database called " + dbName);
+    logger.info('Using database called ' + dbName);
     if (userName && password) {
-      logger.info(
-        "Using authenticated access for user " +
-          userName +
-          " and password " +
-          password.substr(0, 1) +
-          "..."
-      );
+      logger.info('Using authenticated access to db');
       this.uri =
-        "mongodb://" +
+        'mongodb://' +
         this.userName +
-        ":" +
+        ':' +
         this.password +
-        "@" +
+        '@' +
         this.host +
-        ":" +
+        ':' +
         this.port;
+      if (authSource && authSource.length > 0) {
+        logger.debug('Authentication DB:' + authSource);
+        this.uri += '/?authSource=' + authSource;
+      } else {
+        logger.debug('Using default authentication DB');
+      }
     } else {
-      this.uri = "mongodb://" + this.host + ":" + this.port;
+      this.uri = 'mongodb://' + this.host + ':' + this.port;
     }
     let that = this;
-    process.on("SIGINT", function() {
+    process.on('SIGINT', function () {
       that.disconnect();
     });
   }
@@ -46,7 +48,7 @@ class SimpleMongoDbClient implements IDatabaseClient {
   private getDb(): Db {
     if (!this.db) {
       throw new Error(
-        "Attempting to use database without connecting to it first"
+        'Attempting to use database without connecting to it first'
       );
     } else return this.db;
   }
@@ -55,7 +57,7 @@ class SimpleMongoDbClient implements IDatabaseClient {
       if (!this.connected) {
         this.connected = true;
         this.client = await mongodb.MongoClient.connect(this.uri, {
-          useNewUrlParser: true
+          useNewUrlParser: true,
         });
         this.db = this.client.db(this.dbName);
       }
@@ -67,7 +69,7 @@ class SimpleMongoDbClient implements IDatabaseClient {
     let result = await db.collection(this.collectionName).deleteOne(filter);
     if (result.deletedCount === 0) {
       throw new Error(
-        "Items for filter " + JSON.stringify(filter) + "not found in DB"
+        'Items for filter ' + JSON.stringify(filter) + 'not found in DB'
       );
     }
   }
@@ -100,10 +102,7 @@ class SimpleMongoDbClient implements IDatabaseClient {
 
   async getAll(): Promise<any[]> {
     let db = this.getDb();
-    let result = await db
-      .collection(this.collectionName)
-      .find()
-      .toArray();
+    let result = await db.collection(this.collectionName).find().toArray();
     return result;
   }
 

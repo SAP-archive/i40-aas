@@ -34,9 +34,14 @@ spec:
         service: data-manager
         {{- include "i40-aas.selectorLabels" . | nindent 8 }}
     spec:
+      securityContext:
+        runAsNonRoot: true
       containers:
       - name: data-manager
         image: "{{ .Values.image.repository }}/i40-aas-data-manager:{{ .Values.image.release }}"
+        securityContext:
+          runAsUser: 1001
+          readOnlyRootFilesystem: true
         ports: 
         - name: endpoint
           containerPort: {{ .Values.core.dataManager.port }}
@@ -64,7 +69,7 @@ spec:
         - secretRef:
             name: {{ .Release.Name }}-core-data-manager
         resources:
-          {{- toYaml .Values.resources | nindent 10 }}
+          {{- toYaml .Values.resources.ts | nindent 10 }}
         livenessProbe:
           httpGet:
             path: /health

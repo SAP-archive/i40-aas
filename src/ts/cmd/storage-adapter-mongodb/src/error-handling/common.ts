@@ -1,9 +1,10 @@
-import { Router } from "express";
-import express = require("express");
-import boom = require("@hapi/boom");
-import * as logger from "winston";
+import { Router } from 'express';
+import express = require('express');
+import boom = require('@hapi/boom');
 
-let parserErrorHandler: express.ErrorRequestHandler = function(
+const logger = require('aas-logger/lib/log');
+
+let parserErrorHandler: express.ErrorRequestHandler = function (
   err,
   req,
   res,
@@ -20,7 +21,7 @@ export const handleParserErrors = (router: Router) => {
   router.use(parserErrorHandler);
 };
 
-let boomErrorHandler: express.ErrorRequestHandler = function(
+let boomErrorHandler: express.ErrorRequestHandler = function (
   err,
   req,
   res,

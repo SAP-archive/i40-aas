@@ -1,8 +1,9 @@
-import * as logger from "winston";
-import Axios, { AxiosError, AxiosResponse, AxiosRequestConfig } from "axios";
+import Axios, { AxiosError, AxiosResponse, AxiosRequestConfig } from 'axios';
+
+const logger = require('aas-logger/lib/log');
 
 class WebClient {
-  constructor() { }
+  constructor() {}
 
   async postRequest<T>(
     baseUrl: string,
@@ -13,16 +14,16 @@ class WebClient {
   ): Promise<AxiosResponse<T>> {
     let url: string = baseUrl;
 
-   // logger.debug( "[AAS Client] Posting to " + url + " Message: "+ bo);
-    logger.debug( "[AAS Client] Posting to AAS " + url );
+    // logger.debug( "[AAS Client] Posting to " + url + " Message: "+ bo);
+    logger.debug('[AAS Client] Posting to AAS ' + url);
     //logger.debug(bo);
     var response;
     if (username && password) {
       response = await Axios.post<T>(url, bo, {
         auth: {
           username: username as string,
-          password: password as string
-        }
+          password: password as string,
+        },
       });
     } else {
       response = await Axios.post<T>(url, bo);

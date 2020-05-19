@@ -1,12 +1,11 @@
+import { Request, Response, NextFunction } from 'express';
+import { Submodel } from 'i40-aas-objects';
+import boom = require('@hapi/boom');
+import { IDatabaseClient } from './operations/IDatabaseClient';
+import { SimpleMongoDbClient } from './operations/SimpleMongoDbClient';
+import { SubmodelRepositoryService } from './operations/SubmodelRepositoryService';
 
-import { Request, Response, NextFunction } from "express";
-import { Submodel } from "i40-aas-objects";
-import boom = require("@hapi/boom");
-import { logger } from "../../log";
-import { IDatabaseClient } from "./operations/IDatabaseClient";
-import { SimpleMongoDbClient } from "./operations/SimpleMongoDbClient";
-import { SubmodelRepositoryService } from "./operations/SubmodelRepositoryService";
-
+const logger = require('aas-logger/lib/log');
 
 function checkEnvVar(variableName: string): string {
   let retVal: string | undefined = process.env[variableName];
@@ -23,11 +22,23 @@ function checkEnvVar(variableName: string): string {
 let COLLECTION_IN_DATABASE = checkEnvVar(
   'APPLICATION_ADAPTERS_MONGODB_SUBMODELS_COLLECTION'
 );
-let APPLICATION_ADAPTERS_MONGODB_DATABASE_NAME = checkEnvVar('APPLICATION_ADAPTERS_MONGODB_DATABASE_NAME');
-let APPLICATION_ADAPTERS_MONGODB_DATABASE_HOST = checkEnvVar('APPLICATION_ADAPTERS_MONGODB_DATABASE_HOST');
-let APPLICATION_ADAPTERS_MONGODB_DATABASE_PORT = checkEnvVar('APPLICATION_ADAPTERS_MONGODB_DATABASE_PORT');
-let APPLICATION_ADAPTERS_MONGODB_DATABASE_USER = checkEnvVar('APPLICATION_ADAPTERS_MONGODB_DATABASE_USER');
-let APPLICATION_ADAPTERS_MONGODB_DATABASE_PASSWORD = checkEnvVar('APPLICATION_ADAPTERS_MONGODB_DATABASE_PASSWORD');
+let APPLICATION_ADAPTERS_MONGODB_DATABASE_NAME = checkEnvVar(
+  'APPLICATION_ADAPTERS_MONGODB_DATABASE_NAME'
+);
+let APPLICATION_ADAPTERS_MONGODB_DATABASE_HOST = checkEnvVar(
+  'APPLICATION_ADAPTERS_MONGODB_DATABASE_HOST'
+);
+let APPLICATION_ADAPTERS_MONGODB_DATABASE_PORT = checkEnvVar(
+  'APPLICATION_ADAPTERS_MONGODB_DATABASE_PORT'
+);
+let APPLICATION_ADAPTERS_MONGODB_DATABASE_USER = checkEnvVar(
+  'APPLICATION_ADAPTERS_MONGODB_DATABASE_USER'
+);
+let APPLICATION_ADAPTERS_MONGODB_DATABASE_PASSWORD = checkEnvVar(
+  'APPLICATION_ADAPTERS_MONGODB_DATABASE_PASSWORD'
+);
+let APPLICATION_ADAPTERS_MONGODB_AUTHENTICATION_DATABASE =
+  process.env['APPLICATION_ADAPTERS_MONGODB_AUTHENTICATION_DATABASE'];
 
 let dbClient: IDatabaseClient = new SimpleMongoDbClient(
   COLLECTION_IN_DATABASE,
@@ -35,7 +46,8 @@ let dbClient: IDatabaseClient = new SimpleMongoDbClient(
   APPLICATION_ADAPTERS_MONGODB_DATABASE_HOST,
   APPLICATION_ADAPTERS_MONGODB_DATABASE_PORT,
   APPLICATION_ADAPTERS_MONGODB_DATABASE_USER,
-  APPLICATION_ADAPTERS_MONGODB_DATABASE_PASSWORD
+  APPLICATION_ADAPTERS_MONGODB_DATABASE_PASSWORD,
+  APPLICATION_ADAPTERS_MONGODB_AUTHENTICATION_DATABASE
 );
 let repositoryService = new SubmodelRepositoryService(dbClient);
 
@@ -56,7 +68,7 @@ export default [
           next(e);
         }
       }
-    }
+    },
   },
   {
     path: '/submodels',
@@ -73,7 +85,7 @@ export default [
           next(e);
         }
       }
-    }
+    },
   },
   {
     path: '/submodels/:submodelId',
@@ -90,6 +102,6 @@ export default [
           next(e);
         }
       }
-    }
-  }
+    },
+  },
 ];

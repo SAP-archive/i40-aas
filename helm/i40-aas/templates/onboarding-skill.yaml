@@ -34,9 +34,14 @@ spec:
         service: onboarding-skill
         {{- include "i40-aas.selectorLabels" . | nindent 8 }}
     spec:
+      securityContext:
+        runAsNonRoot: true
       containers:
         - name: onboarding-skill
           image: "{{ .Values.image.repository }}/i40-aas-onboarding-skill:{{ .Values.image.release }}"
+          securityContext:
+            runAsUser: 1001
+            readOnlyRootFilesystem: true
           ports:
             - name: endpoint
               containerPort: 3000
@@ -51,22 +56,29 @@ spec:
                   name: {{ .Release.Name }}-host-collection
                   key: SKILLS_ONBOARDING_DATABASE_HOST
             - name: SKILLS_ONBOARDING_DATABASE_PORT
-              value: {{ .Values.skills.onboarding.database.port | quote }}
+              value: "{{ .Values.onboardingskillmongodb.service.port }}/?authSource={{ .Values.onboardingskillmongodb.mongodbDatabase }}"
             - name: SKILLS_ONBOARDING_DATABASE_NAME
-              value: {{ .Values.skills.onboarding.database.name | quote }}
+              value: {{ .Values.onboardingskillmongodb.mongodbDatabase | quote }}
+            - name: SKILLS_ONBOARDING_DATABASE_USER
+              value: {{ .Values.onboardingskillmongodb.mongodbUsername | quote }}
+            - name: SKILLS_ONBOARDING_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-onboardingskillmongodb
+                  key: mongodb-password
             - name: CORE_BROKER_HOST
               valueFrom:
                 configMapKeyRef:
                   name: {{ .Release.Name }}-host-collection
                   key: CORE_BROKER_HOST
             - name: CORE_BROKER_PORT
-              value: {{ .Values.core.broker.port.amqp | quote }}
+              value: {{ .Values.rabbitmq.service.port | quote }}
             - name: CORE_EGRESS_EXCHANGE
-              value: {{ .Values.core.egress.exchange | quote }}
+              value: {{ .Values.core.egress.broker.exchange | quote }}
             - name: CORE_EGRESS_ROUTINGKEY
-              value: {{ .Values.core.egress.routingKey | quote }}
+              value: {{ .Values.core.egress.broker.routingKey | quote }}
             - name: CORE_INGRESS_EXCHANGE
-              value: {{ .Values.core.ingress.exchange | quote }}
+              value: {{ .Values.core.ingress.broker.exchange | quote }}
             - name: CORE_ENDPOINT_RESOLVER_QUEUE
               value: {{ .Values.core.endpointResolver.queue | quote }}
             - name: SKILLS_ONBOARDING_REQUEST_APPROVAL
@@ -94,13 +106,11 @@ spec:
               value: {{ .Values.core.dataManager.submodelsRoute | quote }}
           envFrom:
             - secretRef:
-                name: {{ .Release.Name }}-skills-onboarding-database
-            - secretRef:
                 name: {{ .Release.Name }}-core-egress
             - secretRef:
                 name: {{ .Release.Name }}-core-ingress
             - secretRef:
                 name: {{ .Release.Name }}-core-data-manager
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.resources.ts | nindent 12 }}
 ---

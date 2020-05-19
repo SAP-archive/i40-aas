@@ -34,9 +34,14 @@ spec:
         service: https-endpoint-egress
         {{- include "i40-aas.selectorLabels" . | nindent 8 }}
     spec:
+      securityContext:
+        runAsNonRoot: true
       containers:
         - name: https-endpoint-egress
           image: "{{ .Values.image.repository }}/i40-aas-https-endpoint-egress:{{ .Values.image.release }}"
+          securityContext:
+            runAsUser: 1001
+            readOnlyRootFilesystem: true
           ports:
             - name: endpoint
               containerPort: 3000
@@ -51,9 +56,9 @@ spec:
                   name: {{ .Release.Name }}-host-collection
                   key: CORE_BROKER_HOST
             - name: CORE_BROKER_PORT
-              value: {{ .Values.core.broker.port.amqp | quote }}
+              value: {{ .Values.rabbitmq.service.port | quote }}
             - name: CORE_EGRESS_EXCHANGE
-              value: {{ .Values.core.egress.exchange | quote }}
+              value: {{ .Values.core.egress.broker.exchange | quote }}
             - name: CORE_EGRESS_HTTP_QUEUE
               value: {{ .Values.core.egress.http.queue | quote }}
             - name: CORE_EGRESS_HTTP_CTAG
@@ -62,5 +67,5 @@ spec:
             - secretRef:
                 name: {{ .Release.Name }}-core-egress
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.resources.ts | nindent 12 }}
 ---

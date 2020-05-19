@@ -1,197 +1,396 @@
 # endpoint-registry
 
-## Create a SemanticProtocol
 
-POST /semanticprotocol
 
-```javascript
-{
-  "semanticProtocol":"<id of the semantic protocol>"
-}
-```
-
-## Create an asset
-
-POST /asset
+## PUT /AASDescriptors
+### Registers a new Asset Administration Shell
 
 ```javascript
 {
-  "assetId":
-  {
-    "id":"<Asset ID>",
-    "idType":"<Asset ID Type>"
+  "identification": {
+    "id": "string",
+    "idType": "Custom"
+  },
+  "asset": {
+    "id": "string",
+    "idType": "Custom"
+  },
+  "descriptor": {
+    "endpoints": [
+      {
+        "address": "string",
+        "type": "string"
+      }
+    ],
+    "certificate_x509_i40": "string",
+    "signature": "string"
   }
 }
 ```
+**Success Response:**
+The Asset Administration Shell was registered successfully
+  * **Code:** 201 <br />
+    **Content:** `Same as Request Body`
 
-## Create roles
+**Error Response:**
 
-POST /roles
+  * **Code:** 401 UNAUTHORIZED <br />
+  * **Code:** 422 <br />
+    **Description:** `The passed Asset Administration Shell conflicts with already registered Asset Administration Shells`
+  * **Code:** 502 <br />
+    **Description:** `Bad Gateway`
 
-```javascript
-[
-  {
-    roleId: '<id of the role>',
-    semanticProtocol: 'id of the semantic protocol'
-  }
-];
-```
 
-## Create asset administration shell, asset and endpoints for the asset administration shell
+## PATCH /AASDescriptors/{aasId}
+### Renews a specific Asset Administration Shell's registration
 
-POST /assetadministrationshells
 
-```javascript
-[
-  {
-    aasId: {
-      id: '<id of the asset administration shell>',
-      idType: 'URI|CUSTOM|IRDI'
-    },
-    endpoints: [
-      {
-        url: '<url of the endpoint>',
-        protocolVersion: '<version of the protocol>',
-        protocol: '<name of the protocol>',
-        target: '<cloud|edge>'
-      }
-    ],
-    assetId: {
-      id: '<id of the asset>',
-      idType: 'URI|CUSTOM|IRDI'
-    }
-  }
-];
-```
+|   parameter         |      Description                 |
+|   :-------:         | :-------------------:            |
+|   aasId:string (required)  |  The Asset Administration Shell's unique id      |
 
-## Create role assignments
-
-```javascript
-[
-  {
-    aasId: {
-      id: '<ID of the AAS>',
-      idType: 'URI|CUSTOM|IRDI'
-    },
-    roleId: '<id of the role>'
-  }
-];
-```
-
-## Read
-
-## listAllEndpoints
-
-GET /listallendpoints
-
-response </br>
-NOTE: returns an array of endpoints registered for each aasId
-
-```javascript
-[
-  {
-    aasId: {
-      id: "<ID of the AAS>",
-      idType: "URI,CUSTOM,IRDI"
-    },
-    endpoints: [
-      {
-        url: "https://myaas.com",
-        protocolVersion: "1.0",
-        protocol: "https"
-        target: "edge"
-      },
-      {
-        url: "192.168.75.12",
-        protocolVersion: "",
-        protocol: "TCP",
-        target: "cloud"
-      }
-    ],
-    assetId: {
-      id: "<ID of the Asset>",
-      idType: "<URI|CUSTOM|IRDI>"
-    }
-  }
-];
-```
-
-GET /assetadministrationshells
-
-There are two different queries possible with each two parameters:
-
-|    parameter     |                   Description                   |
-| :--------------: | :---------------------------------------------: |
-|   receiverRole   | role of receving party within semantic protocol |
-| semanticProtocol |           id of the semanticProtocol            |
-
-|   parameter    |                  Description                  |
-| :------------: | :-------------------------------------------: |
-|   receiverId   | id of receving party within semantic protocol |
-| receiverIdType |            type of id (e.g. "IRI")            |
-
-response </br>
-NOTE: if there are multiple aas registerd to an role then there is more then one object in the result list. </br>
-If receiver.identification.id is in the receiver object, only the endpoints for this receiver is part of the response.
-
-```javascript
-[
-  {
-    aasId: {
-      id: '<ID of the AAS>',
-      idType: 'URI,CUSTOM,IRDI'
-    },
-    endpoints: [
-      {
-        url: 'https://myaas.com',
-        protocolVersion: '1.0',
-        protocol: 'https',
-        target: 'edge'
-      },
-      {
-        url: '192.168.75.12',
-        protocolVersion: '',
-        protocol: 'TCP',
-        target: 'cloud'
-      }
-    ],
-    assetId: {
-      id: '<ID of the Asset>',
-      idType: 'URI,CUSTOM,IRDI'
-    }
-  }
-];
-```
-
-error
+**Request Body**
 
 ```javascript
 {
-  r_statusCode:<error code>
+  "identification": {
+    "id": "string",
+    "idType": "Custom"
+  },
+  "asset": {
+    "id": "string",
+    "idType": "Custom"
+  },
+  "descriptor": {
+    "endpoints": [
+      {
+        "address": "string",
+        "type": "string"
+      }
+    ],
+    "certificate_x509_i40": "string",
+    "signature": "string"
+  }
 }
 ```
 
-Create Database
 
-1. create Database
-2. create assets table
-3. create asset_administration_shells table
-4. create endpoints table
+**Success Response:**
+The Asset Administration Shell was updated successfully
+  * **Code:** 200 <br />
+    **Content:**
+```javascript
+{
+  "identification": {
+    "id": "string",
+    "idType": "Custom"
+  },
+  "asset": {
+    "id": "string",
+    "idType": "Custom"
+  },
+  "descriptor": {
+    "endpoints": [
+      {
+        "address": "string",
+        "type": "string"
+      }
+    ],
+    "certificate_x509_i40": "string",
+    "signature": "string"
+  }
+}
+```
 
-## Developer's notes
+**Error Response:**
 
-### Tests
+  * **Code:** 401 UNAUTHORIZED <br />
+  * **Code:** 400 <br />
+    **Description:** `Bad Request`
+  * **Code:** 404 <br />
+    **Description:** `No Asset Administration Shell with passed id found`
+  * **Code:** 502 <br />
+    **Description:** `Bad Gateway`
 
-#### Unit Tests
 
-- Run unit tests using `npm run test`
-- Run unit tests with coverage with `npm run coverage`
 
-#### Including integration tests
+## GET /AASDescriptors/{aasId}
+### Retrieves one defined, registered Asset Administration Shells within a defined system (e.g. site, area, production line, station)
 
-Test setup can be done with `source ./integration-test-setup`.
+|   parameter         |      Description                 |
+|   :-------:         | :-------------------:            |
+|   aasId:string (required)  |  The Asset Administration Shell's unique id      |
 
-- To run integration tests as well as unit tests: `npm run test-with-integration`
-- To run coverage with integration tests: `npm run coverage-with-integration`
 
-Test cleanup: `./integration-test-teardown`
+
+**Success Response:**
+The Asset Administration Shell was read successfully
+  * **Code:** 200 <br />
+    **Content:**
+```javascript
+{
+  "identification": {
+    "id": "string",
+    "idType": "Custom"
+  },
+  "asset": {
+    "id": "string",
+    "idType": "Custom"
+  },
+  "descriptor": {
+    "endpoints": [
+      {
+        "address": "string",
+        "type": "string"
+      }
+    ],
+    "certificate_x509_i40": "string",
+    "signature": "string"
+  }
+}
+```
+
+**Error Response:**
+
+  * **Code:** 401 UNAUTHORIZED <br />
+  * **Code:** 400 <br />
+    **Description:** `Bad Request`
+  * **Code:** 502 <br />
+    **Description:** `Bad Gateway`
+
+## DELETE /AASDescriptors/{aasId}
+### Unregisters a specific Asset Administration Shell
+
+
+|   parameter         |      Description                 |
+|   :-------:         | :-------------------:            |
+|   aasId:string (required)  |  The Asset Administration Shell's unique id      |
+
+
+
+**Success Response:**
+The Asset Administration Shell was unregistered successfully  * **Code:** 202 <br />
+    **Content:**
+```javascript
+{
+  "identification": {
+    "id": "string",
+    "idType": "Custom"
+  },
+  "asset": {
+    "id": "string",
+    "idType": "Custom"
+  },
+  "descriptor": {
+    "endpoints": [
+      {
+        "address": "string",
+        "type": "string"
+      }
+    ],
+    "certificate_x509_i40": "string",
+    "signature": "string"
+  }
+}
+```
+
+**Error Response:**
+
+  * **Code:** 401 UNAUTHORIZED <br />
+  * **Code:** 400 <br />
+    **Description:** `Bad Request`
+  * **Code:** 404 <br />
+    **Description:** `No Asset Administration Shell with passed id found`
+  * **Code:** 502 <br />
+    **Description:** `Bad Gateway`
+
+
+
+## PUT /semanticProtocols
+### Create a new semanticProtocol
+Body:
+```javascript
+{
+  "identification": {
+    "id": "string",
+    "idType": "Custom"
+  },
+  "roles": [
+    {
+      "name": "string",
+      "aasDescriptorIds": [
+        {
+          "id": "string",
+          "idType": "Custom"
+        }
+      ]
+    }
+  ]
+}
+```
+**Success Response:**
+The SemanticProtocol was registered successfully
+  * **Code:** 201 <br />
+    **Content:** `Same as Request Body`
+
+**Error Response:**
+
+  * **Code:** 401 UNAUTHORIZED <br />
+  * **Code:** 422 <br />
+    **Description:** `The passed SemanticProtocol conflicts with already registered Asset Administration Shells`
+  * **Code:** 502 <br />
+    **Description:** `Bad Gateway`
+
+
+## GET /semanticProtocols/{sematicProtocolId}
+### Retrieves one defined, registered SemanticProtocol
+
+|   parameter         |      Description                 |
+|   :-------:         | :-------------------:            |
+|   sematicProtocolId:string (required)  |  The SemanticProtocol's unique id      |
+
+
+
+**Success Response:**
+The SemanticProtocol was read successfully
+  * **Code:** 200 <br />
+    **Content:**
+```javascript
+{
+  "identification": {
+    "id": "string",
+    "idType": "Custom"
+  },
+  "roles": [
+    {
+      "name": "string",
+      "aasDescriptorIds": [
+        {
+          "id": "string",
+          "idType": "Custom"
+        }
+      ]
+    }
+  ]
+}
+```
+
+**Error Response:**
+
+  * **Code:** 401 UNAUTHORIZED <br />
+  * **Code:** 400 <br />
+    **Description:** `Bad Request`
+  * **Code:** 502 <br />
+    **Description:** `Bad Gateway`
+
+
+
+## PATCH /semanticProtocols/{sematicProtocolId}
+### Updates one defined, registered SemanticProtocol
+
+|   parameter         |      Description                 |
+|   :-------:         | :-------------------:            |
+|   sematicProtocolId:string (required)  |  The SemanticProtocol's unique id      |
+
+Body:
+```javascript
+{
+  "identification": {
+    "id": "string",
+    "idType": "Custom"
+  },
+  "roles": [
+    {
+      "name": "string",
+      "aasDescriptorIds": [
+        {
+          "id": "string",
+          "idType": "Custom"
+        }
+      ]
+    }
+  ]
+}
+```
+**Success Response:**
+The SemanticProtocol was updated successfully
+  * **Code:** 200 <br />
+    **Content:**
+```javascript
+Same as body
+```
+
+## DELETE /semanticProtocols/{sematicProtocolId}
+### Deletes one defined, registered SemanticProtocol
+
+|   parameter         |      Description                 |
+|   :-------:         | :-------------------:            |
+|   sematicProtocolId:string (required)  |  The SemanticProtocol's unique id      |
+
+**Success Response:**
+The SemanticProtocol was deleted successfully
+  * **Code:** 200 <br />
+    **Content:**
+```javascript
+{
+  "identification": {
+    "id": "string",
+    "idType": "Custom"
+  },
+  "roles": [
+    {
+      "name": "string",
+      "aasDescriptorIds": [
+        {
+          "id": "string",
+          "idType": "Custom"
+        }
+      ]
+    }
+  ]
+}
+```
+
+
+
+## GET /semanticProtocols/{sematicProtocolId}/role/{roleName}/AASDescriptors
+### Retrieve all AASDescriptors by semanticProtocol and role
+
+**Success Response:**
+The SemanticProtocol was registered successfully
+  * **Code:** 201 <br />
+    **Content:**
+```javascript
+[
+  {
+    "identification": {
+      "id": "string",
+      "idType": "Custom"
+    },
+    "asset": {
+      "id": "string",
+      "idType": "Custom"
+    },
+    "descriptor": {
+      "endpoints": [
+        {
+          "address": "string",
+          "type": "string"
+        }
+      ],
+      "certificate_x509_i40": "string",
+      "signature": "string"
+    }
+  }
+]
+```
+
+**Error Response:**
+
+  * **Code:** 401 UNAUTHORIZED <br />
+  * **Code:** 422 <br />
+    **Description:** `The Role given does not exist in registry`
+  * **Code:** 502 <br />
+    **Description:** `Bad Gateway`
+
+

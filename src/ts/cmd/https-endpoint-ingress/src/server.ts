@@ -1,22 +1,23 @@
-import express from "express";
-import { applyMiddleware, applyRoutes } from "./utils";
-import middleware from "./middleware";
-import errorHandlers from "./middleware/errorHandlers";
+import express from 'express';
+import { applyMiddleware, applyRoutes } from './utils';
+import middleware from './middleware';
+import errorHandlers from './middleware/errorHandlers';
 import { AmqpClient } from 'AMQP-Client/lib/AmqpClient';
 
 import { initiateBroker } from './services/aas-router/RoutingController';
 
 //init logger
-import { logger } from './utils/log';
+
 import healthRoute from './services/health/routes';
 import routes from './services';
 import { uuid } from 'uuidv4';
 
+const logger = require('aas-logger/lib/log');
 
 let CORE_BROKER_HOST = checkEnvVar('CORE_BROKER_HOST');
 let CORE_BROKER_PORT = checkEnvVar('CORE_BROKER_PORT');
 var CORE_INGRESS_EXCHANGE = checkEnvVar('CORE_INGRESS_EXCHANGE');
-var CORE_INGRESS_USER =checkEnvVar('CORE_INGRESS_USER');
+var CORE_INGRESS_USER = checkEnvVar('CORE_INGRESS_USER');
 var CORE_INGRESS_PASSWORD = checkEnvVar('CORE_INGRESS_PASSWORD');
 
 const PORT = checkEnvVar('CORE_INGRESS_HTTP_PORT');
@@ -49,30 +50,24 @@ applyRoutes(routes, router);
 //error handling
 applyMiddleware(errorHandlers, router);
 
+let brokerClient = new AmqpClient(
+  CORE_BROKER_HOST,
+  CORE_BROKER_PORT,
+  CORE_INGRESS_EXCHANGE,
+  CORE_INGRESS_USER,
+  CORE_INGRESS_PASSWORD,
+  BROKER_QUEUE
+);
 
-  let brokerClient = new AmqpClient(
-    CORE_BROKER_HOST,
-    CORE_BROKER_PORT,
-    CORE_INGRESS_EXCHANGE,
-    CORE_INGRESS_USER,
-    CORE_INGRESS_PASSWORD,
-    BROKER_QUEUE
-  );
-
-  initiateBroker(brokerClient);
+initiateBroker(brokerClient);
 
 /**
  * start the broker client and connect
  *  */
 
-
-
 router.listen(PORT, () => {
-  logger.info(
-    `A Server is running http://localhost:${PORT}...`
-  );
+  logger.info(`A Server is running http://localhost:${PORT}...`);
 });
-
 
 function checkEnvVar(variableName: string): string {
   let retVal: string | undefined = process.env[variableName];
@@ -85,7 +80,5 @@ function checkEnvVar(variableName: string): string {
     );
   }
 }
-
-
 
 export { router as app };

@@ -4,6 +4,6 @@
 FROM nodered/node-red
 
 COPY echo-skill/ ./
-RUN npm install
+RUN yarn install
 
 COPY echo-skill/lib ./node_modules/node-red-contrib-amqp/lib

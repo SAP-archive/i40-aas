@@ -1,27 +1,21 @@
 import { Request, Response, NextFunction } from 'express';
-import { Frame } from 'i40-aas-objects';
+
 import {
   clearAllEntries,
   getAdapterBysubmodelSemanticId,
   getAdapterBySubmodelId,
   createAdapters,
-  listAllAdapters
+  listAllAdapters,
 } from './registry-api';
-import { IdTypeEnum } from 'i40-aas-objects';
-import * as logger from 'winston';
-import {
-  HTTP404Error,
-  HTTP401Error,
-  HTTP422Error
-} from '../../utils/httpErrors';
-import { create } from 'domain';
 import { ICreateAdapter } from './interfaces/IAPIRequests';
 import {
   checkReqBodyEmpty,
-  validateCreateAdaptersRequest
+  validateCreateAdaptersRequest,
 } from '../../middleware/checks';
-import { runInNewContext } from 'vm';
+
 import { Adapter } from './interfaces/IRegistryResultSet';
+
+const logger = require('aas-logger/lib/log');
 
 export default [
   {
@@ -45,8 +39,8 @@ export default [
           logger.error(' Error while registering adapter ' + e);
           next(new Error(' Server Error '));
         }
-      }
-    ]
+      },
+    ],
   },
 
   {
@@ -55,8 +49,8 @@ export default [
     handler: [
       async (req: Request, res: Response, next: NextFunction) => {
         try {
-          var submodelid = req.query.submodelid;
-          var submodelsemanticid = req.query.submodelsemanticid;
+          var submodelid = req.query.submodelid as string;
+          var submodelsemanticid = req.query.submodelsemanticid as string;
           if (!submodelid && !submodelsemanticid) {
             res.json(await listAllAdapters());
           } else {
@@ -82,16 +76,16 @@ export default [
             }
           }
         } catch (e) {
-          console.log(e);
+          logger.log(e);
           next(Error(' Internal Server Error'));
         }
-      }
-    ]
+      },
+    ],
   },
 
   {
-    path: "/listall",
-    method: "get",
+    path: '/listall',
+    method: 'get',
     handler: [
       async (req: Request, res: Response) => {
         var adaptersList: Adapter[];
@@ -105,18 +99,13 @@ export default [
 
           res.end(e.message);
         }
-
-
-      }
-    ]
+      },
+    ],
   },
 
-
-
-
   {
-    path: "/deleteall",
-    method: "delete",
+    path: '/deleteall',
+    method: 'delete',
     handler: [
       async (req: Request, res: Response) => {
         logger.info(' Clear all registry entries ');
@@ -130,7 +119,7 @@ export default [
         }
 
         res.json('Registry Cleared');
-      }
-    ]
-  }
+      },
+    ],
+  },
 ];

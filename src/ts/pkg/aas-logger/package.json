@@ -1,0 +1,25 @@
+{
+  "name": "aas-logger",
+  "version": "1.0.4",
+  "description": "A logger based on winston that allows ouptutting line numbers",
+  "scripts": {
+    "build": "tsc --build tsconfig.json",
+    "clean": "rm -rf ./lib/* "
+  },
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SAP/i40-aas.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "moment": "^2.24.0",
+    "winston": "^3.2.1"
+  },
+  "devDependencies": {
+    "ts-node": "^8.3.0",
+    "tsc-watch": "^2.2.1",
+    "@types/node": "^13.13.2",
+    "typescript": "^3.8.3"
+  }
+}

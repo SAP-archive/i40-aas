@@ -1,498 +1,828 @@
-require('dotenv').config({ path: 'test/env.list' });
+import { IAASDescriptor } from '../../src/services/registry/daos/interfaces/IAASDescriptor';
+import { IEndpoint } from '../../src/services/registry/daos/interfaces/IEndpoint';
+import {getConnection, AdvancedConsoleLogger } from 'typeorm';
+import { EndpointEntity } from '../../src/services/registry/daos/entities/EndpointEntity'
 
-import { expect } from 'chai';
+const chai = require('chai');
+const chaiHttp = require('chai-http');
+const app = require('../../src/server').app;
+var _ = require('lodash');
 
-import { RegistryApi } from '../../src/services/registry/RegistryApi';
-import {
-  IRegisterAas,
-  ICreateAsset,
-  ICreateSemanticProtocol,
-  IAssignRoles
-} from '../../src/services/registry/daos/interfaces/IApiRequests';
-import { IEndpointRecord } from '../../src/services/registry/daos/interfaces/IQueryResults';
-import { fail } from 'assert';
-import e = require('express');
-import { RegistryFactory } from '../../src/services/registry/daos/postgres/RegistryFactory';
+chai.should();
+chai.use(chaiHttp);
 
-const { Pool } = require('pg');
-const _ = require('lodash');
-const pool = RegistryFactory.getPool();
-
-function execShellCommand(cmd: any) {
-  const exec = require('child_process').exec;
-  return new Promise((resolve, reject) => {
-    exec(cmd, (error: any, stdout: any, stderr: any) => {
-      if (error) {
-        console.warn(error);
-      } else {
-        console.log('command executed correctly');
-      }
-      resolve(stdout ? stdout : stderr);
-    });
-  });
+function getRandomInteger() {
+  return Math.floor(Math.random() * 100000);
 }
 
-function makeDummyAAS(tag: string) {
-  return <IRegisterAas>{
-    aasId: {
-      id: 'aasId' + tag,
-      idType: 'IRI'
+function makeGoodAASDescriptor(idTag: string) {
+  return <IAASDescriptor>{
+    identification: {
+      id: 'aasId' + idTag,
+      idType: 'IRI',
     },
-    endpoints: [
-      { url: 'url' + tag, protocol: 'protocol' + tag, target: 'cloud' }
-    ],
-    assetId: {
-      id: 'assetId' + tag,
-      idType: 'IRI'
-    }
-  };
-}
-
-function makeDummyAsset(tag: string): ICreateAsset {
-  return {
-    assetId: {
-      id: 'assetId' + tag,
-      idType: 'IRI'
-    }
-  };
-}
-
-function makeDummySemanticProtocol(tag: string): ICreateSemanticProtocol {
-  return {
-    semanticProtocol: 'semanticProtocol' + tag
-  };
-}
-
-function makeDummyRoleAssignment(tag: string): IAssignRoles {
-  return {
-    aasId: {
-      id: 'aasId' + tag,
-      idType: 'IRI'
+    asset: {
+      id: 'assetId' + idTag,
+      idType: 'IRI',
     },
-    roleId: 'roleId' + tag
+    descriptor: {
+      endpoints: [
+        { address: 'abc.def/' + idTag, type: 'type', target: 'cloud' },
+        { address: 'efg.hij/' + idTag, type: 'type', target: 'edge' },
+      ],
+      certificate_x509_i40: 'certificate',
+      signature: 'signature',
+    },
   };
 }
 
-async function insertIntoAasRole(aasId: string, roleId: string) {
-  const dbClient = await pool.connect();
-  try {
-    await dbClient.query(
-      ' INSERT INTO public.aas_role( "aasId", "roleId") VALUES ($1, $2);',
-      [aasId, roleId]
-    );
-  } catch (error) {
-    throw e;
-  } finally {
-    dbClient.release();
-  }
-}
-
-async function insertIntoRoles(roleId: string, protocolId: string) {
-  const dbClient = await pool.connect();
-  try {
-    await dbClient.query(
-      'INSERT INTO public.roles( "roleId", "protocolId") VALUES ($1, $2);',
-      [roleId, protocolId]
-    );
-  } catch (error) {
-    console.log(error.message);
-    throw e;
-  } finally {
-    dbClient.release();
-  }
-}
-
-async function insertIntoSemanticProtocols(protocolId: string) {
-  const dbClient = await pool.connect();
-  try {
-    await dbClient.query(
-      'INSERT INTO public.semantic_protocols("protocolId") VALUES ($1);',
-      [protocolId]
-    );
-  } catch (error) {
-    throw e;
-  } finally {
-    dbClient.release();
-  }
-}
-
-async function insertIntoEndpoints(
-  url: string,
-  protocolName: string,
-  protocolVersion: string,
-  aasId: string,
-  target: string
+function replaceEndpoints(
+  descriptor: IAASDescriptor,
+  endpoints: Array<IEndpoint>
 ) {
-  const dbClient = await pool.connect();
-  try {
-    dbClient.query(
-      'INSERT INTO public.endpoints( "URL", protocol_name, protocol_version, "aasId",target) VALUES ($1, $2, $3, $4, $5);',
-      [url, protocolName, protocolVersion, aasId, target]
-    );
-  } catch (error) {
-    throw e;
-  } finally {
-    dbClient.release();
-  }
+  descriptor.descriptor.endpoints = endpoints;
+  return descriptor;
 }
 
-async function insertIntoAssets(assetId: string, idType: string) {
-  const dbClient = await pool.connect();
-  try {
-    await dbClient.query(
-      ' INSERT INTO public.assets( "assetId", "idType") VALUES ($1, $2);',
-      [assetId, idType]
-    );
-  } catch (error) {
-    throw e;
-  } finally {
-    dbClient.release();
-  }
-}
-
-async function insertIntoAssetAdministrationShells(
-  aasId: string,
-  idType: string,
-  assetId: string
+function replaceTargetInFirstEndpoint(
+  descriptor: IAASDescriptor,
+  replacement: string
 ) {
-  const dbClient = await pool.connect();
-  try {
-    await dbClient.query(
-      'INSERT INTO public.asset_administration_shells("aasId", "idType", "assetId") VALUES ($1, $2, $3);',
-      [aasId, idType, assetId]
+  descriptor.descriptor.endpoints[0].target = replacement;
+  return descriptor;
+}
+
+function replaceAddressInFirstEndpoint(
+  descriptor: IAASDescriptor,
+  replacement: string
+) {
+  descriptor.descriptor.endpoints[0].address = replacement;
+  return descriptor;
+}
+
+function removeAddressInFirstEndpoint(descriptor: IAASDescriptor) {
+  (<unknown>descriptor.descriptor.endpoints[0].address) = undefined;
+  return descriptor;
+}
+
+function replaceAasId(descriptor: IAASDescriptor, replacement: string) {
+  descriptor.identification.id = replacement;
+  return descriptor;
+}
+
+function replaceAddressAndTypeInFirstEndpoint(
+  descriptor: IAASDescriptor,
+  addressReplacement: string,
+  typeReplacement: string
+) {
+  descriptor.descriptor.endpoints[0].address = addressReplacement;
+  descriptor.descriptor.endpoints[0].type = typeReplacement;
+  return descriptor;
+}
+function replaceAddressAndTypeInSecondEndpoint(
+  descriptor: IAASDescriptor,
+  addressReplacement: string,
+  typeReplacement: string
+) {
+  descriptor.descriptor.endpoints[1].address = addressReplacement;
+  descriptor.descriptor.endpoints[1].type = typeReplacement;
+  return descriptor;
+}
+function removeOneEndpointAndReplaceOther(
+  descriptor: IAASDescriptor,
+  addressReplacement: string,
+  typeReplacement: string
+) {
+  descriptor.descriptor.endpoints[0].address = addressReplacement;
+  descriptor.descriptor.endpoints[0].type = typeReplacement;
+  //remove all other endpoints
+  descriptor.descriptor.endpoints.length>1?
+  descriptor.descriptor.endpoints.length=1:descriptor.descriptor.endpoints.length
+
+  return descriptor;
+}
+function replaceAddressTypeInFirstEndpointAndCertificateAndAsset(
+  originalAASDescriptor: IAASDescriptor,
+  addressReplacement: string,
+  typeReplacement: string,
+  certificateReplacement: string,
+  assetReplacementId:string
+) {
+  originalAASDescriptor.descriptor.endpoints[0].address = addressReplacement;
+  originalAASDescriptor.descriptor.endpoints[0].type = typeReplacement;
+  originalAASDescriptor.descriptor.certificate_x509_i40 = certificateReplacement
+  originalAASDescriptor.asset.id  = assetReplacementId;
+  return originalAASDescriptor;
+}
+
+function checkEnvVar(variableName: string) {
+  let retVal = process.env[variableName];
+  if (retVal) {
+    return retVal;
+  } else {
+    throw new Error(
+      'A variable that is required by the skill has not been defined in the environment:' +
+        variableName
     );
-  } catch (error) {
-    throw e;
-  } finally {
-    dbClient.release();
   }
 }
 
-//TODO: reinitialize DB after every test
-describe('Tests with a simple data model', function() {
+describe('Tests with a simple data model', function () {
+  var user = process.env.CORE_REGISTRIES_ENDPOINTS_USER;
+  var password = process.env.CORE_REGISTRIES_ENDPOINTS_PASSWORD;
   before(async () => {
-    console.log(await execShellCommand('sh ./prepareDB.sh'));
-    console.log('Using DB: ' + process.env.CORE_REGISTRIES_ENDPOINTS_DATABASE_NAME);
-
-    var uniqueTestId = 'dataForAllTests';
-    await insertIntoSemanticProtocols(uniqueTestId + 'protocolId');
-    await insertIntoRoles(uniqueTestId + 'roleId', uniqueTestId + 'protocolId');
-    await insertIntoAssets(uniqueTestId + 'assetId', uniqueTestId + 'idType');
-    await insertIntoAssetAdministrationShells(
-      uniqueTestId + 'aasId',
-      uniqueTestId + 'idType',
-      uniqueTestId + 'assetId'
-    );
-    await insertIntoAasRole(uniqueTestId + 'aasId', uniqueTestId + 'roleId');
-
-    await insertIntoEndpoints(
-      uniqueTestId + 'url',
-      uniqueTestId + 'protocolName',
-      uniqueTestId + 'protocolVersion',
-      uniqueTestId + 'aasId',
-      'cloud'
-    );
+    checkEnvVar('CORE_REGISTRIES_ENDPOINTS_USER');
+    checkEnvVar('CORE_REGISTRIES_ENDPOINTS_PASSWORD');
   });
 
-  it('gets the list of endpoints using getAllEndpointsList from the DB', async function() {
-    var x = await new RegistryApi().getAllEndpointsList();
-    expect(x)
-      .to.be.an('array')
-      .with.length(1);
-    expect(x[0].endpoints[0]).to.have.property('target', 'cloud');
+
+  it('saves a descriptor in the the database', async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
+
+    await requester
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(makeGoodAASDescriptor(uniqueTestId))
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200);
+        await requester
+          .get('/AASDescriptors/' + 'aasId' + uniqueTestId)
+          .auth(user, password)
+          .then((res: any) => {
+            chai.expect(res.status).to.eql(200);
+          });
+      })
+      .then(() => {
+        requester.close();
+      });
   });
 
-  it('gets the right endpoints when reading by semantic protocol and role', async function() {
-    var uniqueTestId = 'readRecordBySemanticProtocolAndRole';
+  it('returns a 401 error if bad authentication details are provided', async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
 
-    await insertIntoSemanticProtocols(uniqueTestId + 'protocolId');
-    await insertIntoRoles(uniqueTestId + 'roleId', uniqueTestId + 'protocolId');
-    await insertIntoAssets(uniqueTestId + 'assetId', uniqueTestId + 'idType');
-    await insertIntoAssetAdministrationShells(
-      uniqueTestId + 'aasId',
-      uniqueTestId + 'idType',
-      uniqueTestId + 'assetId'
-    );
-    await insertIntoAasRole(uniqueTestId + 'aasId', uniqueTestId + 'roleId');
-
-    await insertIntoEndpoints(
-      uniqueTestId + 'url',
-      uniqueTestId + 'protocolName',
-      uniqueTestId + 'protocolVersion',
-      uniqueTestId + 'aasId',
-      'cloud'
-    );
-    var x = await new RegistryApi().readRecordBySemanticProtocolAndRole(
-      uniqueTestId + 'protocolId',
-      uniqueTestId + 'roleId'
-    );
-    expect(x)
-      .to.be.an('array')
-      .with.length(1);
-    expect(x[0].endpoints[0]).to.have.property(
-      'protocol',
-      uniqueTestId.toLowerCase() + 'protocolname'
-    );
-    expect(x[0].endpoints[0]).to.have.property('target', 'cloud');
+    await chai
+      .request(app)
+      .put('/AASDescriptors')
+      .auth(user, 'blah')
+      .send(makeGoodAASDescriptor(uniqueTestId))
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(401);
+      });
+  });
+//  GET /AASDescriptors
+  it('can handle slashes in the id', async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
+    var AASDescriptorIdWithSlash = replaceAasId(makeGoodAASDescriptor(uniqueTestId), uniqueTestId+'abc/def.dod');
+    await requester
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(AASDescriptorIdWithSlash)
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200);
+        await requester
+          .get('/AASDescriptors/' + encodeURIComponent(AASDescriptorIdWithSlash.identification.id))
+          .auth(user, password)
+          .then((res: any) => {
+            chai.expect(res.status).to.eql(200);
+          });
+      })
+      .then(() => {
+        requester.close();
+      });
   });
 
-  it('gets the right endpoints when reading by receiver aas id and id type', async function() {
-    var uniqueTestId = 'readRecordByAasId';
+  it('returns a 404 error if the AASDescriptor with the given aasId is not found in the database', async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
+    var AASDescriptorRequest = makeGoodAASDescriptor(uniqueTestId);
 
-    await insertIntoAssets(uniqueTestId + 'assetId', uniqueTestId + 'idType');
-    await insertIntoAssetAdministrationShells(
-      uniqueTestId + 'aasId',
-      uniqueTestId + 'idType',
-      uniqueTestId + 'assetId'
-    );
 
-    await insertIntoEndpoints(
-      uniqueTestId + 'url',
-      uniqueTestId + 'protocolName',
-      uniqueTestId + 'protocolVersion',
-      uniqueTestId + 'aasId',
-      'cloud'
-    );
+    await requester
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(AASDescriptorRequest)
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200);
 
-    var x = await new RegistryApi().readRecordByIdentifier({
-      id: uniqueTestId + 'aasId',
-      idType: 'IRI'
-    });
+        await requester
+          .get('/AASDescriptors/' + "foobar")
+          .auth(user, password)
+          .then((res: any) => {
+            chai.expect(res.status).to.eql(404);
+         //   chai.expect((res.body as IAASDescriptor).identification.id).to.equal(uniqueTestId)
+          });
 
-    expect(x)
-      .to.be.an('array')
-      .with.length(1);
-    expect(x[0].aasId).to.have.property('id', uniqueTestId + 'aasId');
-    expect(x[0].endpoints[0]).to.have.property(
-      'protocol',
-      uniqueTestId.toLowerCase() + 'protocolname'
-    );
-    expect(x[0].endpoints[0]).to.have.property('target', 'cloud');
+      })
+      .then(() => {
+        requester.close();
+      });
+  });
+  it('correctly retrieves a AASDescriptor from the DB using aasId', async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
+    var AASDescriptorRequest = makeGoodAASDescriptor(uniqueTestId);
+
+
+    await requester
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(AASDescriptorRequest)
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200);
+
+        await requester
+          .get('/AASDescriptors/' + encodeURIComponent(AASDescriptorRequest.identification.id))
+          .auth(user, password)
+          .then((res: any) => {
+            chai.expect(res.status).to.eql(200);
+         //   chai.expect((res.body as IAASDescriptor).identification.id).to.equal(uniqueTestId)
+          });
+
+      })
+      .then(() => {
+        requester.close();
+      });
   });
 
-  it('creates an asset correctly', async function() {
-    var uniqueTestId = 'createAsset';
-    var createAssetJson: ICreateAsset = makeDummyAsset(uniqueTestId);
-    await new RegistryApi().createAsset(createAssetJson);
-    var s = 'SELECT  * FROM  public.assets WHERE "assetId" = $1;';
-    const dbClient = await pool.connect();
-    try {
-      const resultOfAssetQuery = await dbClient.query(s, [
-        'assetId' + uniqueTestId
-      ]);
-      expect(resultOfAssetQuery.rows.length == 1);
-    } catch (error) {
-      fail('Exception thrown');
-    } finally {
-      dbClient.release();
-    }
-  });
 
-  it('creates a semantic protocol correctly', async function() {
-    var uniqueTestId = 'createSemanticProtocol';
-    var createSemanticProtocolJson: ICreateSemanticProtocol = makeDummySemanticProtocol(
-      uniqueTestId
-    );
-    await new RegistryApi().createSemanticProtocol(createSemanticProtocolJson);
-    var s =
-      'SELECT  * FROM  public.semantic_protocols WHERE "protocolId" = $1;';
-    const dbClient = await pool.connect();
-    try {
-      const resultOfAssetQuery = await dbClient.query(s, [
-        'semanticProtocol' + uniqueTestId
-      ]);
-      expect(resultOfAssetQuery.rows.length == 1);
-    } catch (error) {
-      fail('Exception thrown');
-    } finally {
-      dbClient.release();
-    }
-  });
+// PUT AASDescriptor test
+  it(
+    'returns a 422 error if an endpoint with the given uri and type already' +
+      'exists in the registry and removes all traces of the failed descriptor',
+    async function () {
+      var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+      var requester = chai.request(app).keepOpen();
 
-  it('assigns roles correctly', async function() {
-    var uniqueTestId = 'assignRoles';
-    var roleAssignmentJson: IAssignRoles = makeDummyRoleAssignment(
-      uniqueTestId
-    );
-    await insertIntoSemanticProtocols('protocolId' + uniqueTestId);
-    await insertIntoRoles('roleId' + uniqueTestId, 'protocolId' + uniqueTestId);
-    await insertIntoAssets('assetId' + uniqueTestId, 'IRI');
-    await insertIntoAssetAdministrationShells(
-      'aasId' + uniqueTestId,
-      'idType' + uniqueTestId,
-      'assetId' + uniqueTestId
-    );
-    await new RegistryApi().assignRolesToAAS(roleAssignmentJson);
-
-    const dbClient = await pool.connect();
-    try {
-      const resultOfAssetQuery = await dbClient.query(
-        'SELECT  * FROM  public.aas_role WHERE "aasId" = $1 AND "roleId" = $2;',
-        [roleAssignmentJson.aasId.id, roleAssignmentJson.roleId]
-      );
-      expect(resultOfAssetQuery.rows.length == 1);
-    } catch (error) {
-      fail('Exception thrown:' + error.message);
-    } finally {
-      dbClient.release();
-    }
-  });
-
-  it('registers AASs correctly', async function() {
-    var uniqueTestId = 'registerAas';
-    var registerJson: IRegisterAas = makeDummyAAS(uniqueTestId);
-    await new RegistryApi().register(registerJson);
-    var s = `SELECT  * FROM  public.endpoints`;
-    const dbClient = await pool.connect();
-    try {
-      const resultOfQuery = await dbClient.query(s);
-      const queryResultRows: Array<IEndpointRecord> = resultOfQuery.rows;
-      expect(
-        _.some(
-          queryResultRows,
-          (e: IEndpointRecord) => e.aasId == 'aasId' + uniqueTestId
-        )
-      ).to.be.true;
-      expect(
-        _.some(
-          queryResultRows,
-          (e: IEndpointRecord) => e.protocol_name == 'protocol' + uniqueTestId
-        )
-      ).to.be.true;
-    } catch (error) {
-      fail('Exception thrown');
-    } finally {
-      dbClient.release();
-    }
-  });
-
-  it('removes all traces of an AAS on deleteAasByAasId', async function() {
-    var uniqueTestId = 'deleteAasByAasId';
-    var registerJson: IRegisterAas = makeDummyAAS(uniqueTestId);
-    var registryApi = new RegistryApi();
-    await registryApi.register(registerJson);
-    const dbClient = await pool.connect();
-    try {
-      const resultOfAssetQuery = await dbClient.query(
-        `SELECT  * FROM  public.asset_administration_shells WHERE "aasId"=$1`,
-        [registerJson.aasId.id]
-      );
-
-      expect(resultOfAssetQuery.rows.length == 1).to.be.true;
-
-      await registryApi.deleteRecordByIdentifier(registerJson.aasId);
-
-      const resultOfAssetQueryPostDelete = await dbClient.query(
-        'SELECT  * FROM  public.assets WHERE "assetId" = $1;',
-        [registerJson.assetId.id]
-      );
-      //asset should not be deleted
-      expect(resultOfAssetQueryPostDelete.rows.length == 1).to.be.true;
-      const resultOfAasQueryPostDelete = await dbClient.query(
-        'SELECT  * FROM  public.asset_administration_shells WHERE "aasId" = $1;',
-        [registerJson.aasId.id]
-      );
-      //asset administration shell should  be deleted
-      expect(resultOfAasQueryPostDelete.rows.length == 0).to.be.true;
-
-      const resultOfEndpointsQueryPostDelete = await dbClient.query(
-        'SELECT  * FROM  public.endpoints WHERE "aasId" = $1;',
-        [registerJson.aasId.id]
-      );
-      //endpoints should be deleted
-      expect(resultOfEndpointsQueryPostDelete.rows.length == 0).to.be.true;
-
-      const resultOfRoleAssignmentQueryPostDelete = await dbClient.query(
-        'SELECT  * FROM  public.aas_role WHERE "aasId" = $1;',
-        [registerJson.aasId.id]
-      );
-      //role assignments should be deleted
-      expect(resultOfRoleAssignmentQueryPostDelete.rows.length == 0).to.be.true;
-    } catch (error) {
-      fail('Exception thrown:' + error.message);
-    } finally {
-      dbClient.release();
-    }
-  });
-
-  it('rolls back if there is an error when registering', async function() {
-    var uniqueTestId = 'registerAasWithProblem';
-
-    await insertIntoAssets('assetId' + uniqueTestId + 'x', 'IRI');
-    await insertIntoAssetAdministrationShells(
-      'aasId' + uniqueTestId,
-      'IRI',
-      'assetId' + uniqueTestId + 'x'
-    );
-
-    //there shall be no conflict when writing the asset because the
-    //asset in the database has id 'assetId' + uniqueTestId + 'x'
-    //with 'x' at then end. But writing to asset_administration_shells
-    //should fail because it has PK aasId = 'aasId' + uniqueTestId
-
-    var registerJson: IRegisterAas = makeDummyAAS(uniqueTestId);
-    try {
-      await new RegistryApi().register(registerJson);
-    } catch (error) {
-      const dbClient = await pool.connect();
-      try {
-        const resultOfAssetQuery = await dbClient.query(
-          'SELECT  * FROM  public.assets WHERE "assetId" = $1;',
-          ['assetId' + uniqueTestId + 'x']
-        );
-        expect(resultOfAssetQuery.rows.length == 0);
-
-        var s = `SELECT  * FROM  public.endpoints`;
-        const resultOfEndpointQuery = await dbClient.query(s);
-        const queryResultRows: Array<IEndpointRecord> =
-          resultOfEndpointQuery.rows;
-        //endpoint should not be there
-        expect(
-          _.some(
-            queryResultRows,
-            (e: IEndpointRecord) => e.aasId == 'aasId' + uniqueTestId
+      await requester
+      //send the first Request
+        .put('/AASDescriptors')
+        .auth(user, password)
+        .send(
+          replaceAddressAndTypeInFirstEndpoint(
+            makeGoodAASDescriptor(uniqueTestId),
+            'http://abc.com-'+uniqueTestId,
+            'http'
           )
-        ).to.be.false;
-        return;
-      } catch (error) {
-        fail('Exception thrown in test');
-      } finally {
-        dbClient.release();
-      }
+        )
+        //send a second request with different AASId and descriptor.Certificate but same Endpoint{address,type}
+        .then(async (res: any) => {
+          chai.expect(res.status).to.eql(200);
+          var newUniqueTestId = 'simpleDataTest' + getRandomInteger();
+          await requester
+            .put('/AASDescriptors')
+            .auth(user, password)
+            .send(
+              replaceAddressAndTypeInFirstEndpoint(
+                makeGoodAASDescriptor(newUniqueTestId),
+                'http://abc.com-'+uniqueTestId,
+                'http'              )
+            )
+            //after failing to register, check if traces from the previous, erroneous request was correctly not registered
+            //i.e. the resource id should not be registed and thus return error
+            .then(async (res: any) => {
+              chai.expect(res.status).to.eql(422);
+              await requester
+                .get('/AASDescriptors/aasId' + newUniqueTestId)
+                .auth(user, password)
+                .then((res: any) => {
+                  chai.expect(res.status).to.eql(404);
+                });
+            });
+        })
+        .then(() => {
+          requester.close();
+        });
     }
-    fail('This test should have resulted in a duplicate key exception');
+  );
+
+  it(
+    'registers an AASDescriptor if it contains Endpoints that have the same address ' +
+      'but different type with an already registered Endpoint in DB',
+    async function () {
+      var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+      var requester = chai.request(app).keepOpen();
+
+      await requester
+      //send the first Request
+        .put('/AASDescriptors')
+        .auth(user, password)
+        .send(
+          replaceAddressAndTypeInFirstEndpoint(
+            makeGoodAASDescriptor(uniqueTestId),
+            'http://abc.com-'+uniqueTestId,
+            'http'
+          )
+        )
+        //send a second request with different AASId and descriptor.Certificate but same Endpoint{address,type}
+        .then(async (res: any) => {
+          chai.expect(res.status).to.eql(200);
+          var newUniqueTestId = 'simpleDataTest' + getRandomInteger();
+          await requester
+            .put('/AASDescriptors')
+            .auth(user, password)
+            .send(
+              replaceAddressAndTypeInFirstEndpoint(
+                makeGoodAASDescriptor(newUniqueTestId),
+                'http://abc.com-'+uniqueTestId,
+                'grpc'              )
+            )
+            //the composite primary key is {address, type} so this call should succeed
+            .then(async (res: any) => {
+              chai.expect(res.status).to.eql(200);
+              await requester
+                .get('/AASDescriptors/aasId' + newUniqueTestId)
+                .auth(user, password)
+                .then((res: any) => {
+                  chai.expect(res.status).to.eql(200);
+                });
+            });
+        })
+        .then(() => {
+          requester.close();
+        });
+    }
+  );
+
+
+
+  it('is able to register the same descriptor again after deleting it '+
+  ' (meaning that related entities were correctly deleted', async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
+
+    await requester
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(makeGoodAASDescriptor(uniqueTestId))
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200);
+
+        await requester
+          .delete('/AASDescriptors/aasId' + uniqueTestId)
+          .auth(user, password)
+          .then(async (res: any) => {
+            chai.expect(res.status).to.eql(200);
+            await requester
+              .get('/AASDescriptors/aasId' + uniqueTestId)
+              .auth(user, password)
+              .then(async(res: any) => {
+                chai.expect(res.status).to.eql(404);
+//try to register the deleted resource again
+                await requester
+                .put('/AASDescriptors')
+                .auth(user, password)
+                .send(makeGoodAASDescriptor(uniqueTestId))
+                .then(async (res: any) => {
+                  chai.expect(res.status).to.eql(200);
+                });
+              });
+           });
+      })
+      .then(() => {
+        requester.close();
+      });
+  });
+  it('deletes an existing descriptor by id', async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
+
+    await requester
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(makeGoodAASDescriptor(uniqueTestId))
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200);
+
+        await requester
+          .delete('/AASDescriptors/aasId' + uniqueTestId)
+          .auth(user, password)
+          .then(async (res: any) => {
+            chai.expect(res.status).to.eql(200);
+            await requester
+              .get('/AASDescriptors/aasId' + uniqueTestId)
+              .auth(user, password)
+              .then((res: any) => {
+                chai.expect(res.status).to.eql(404);
+              });
+           });
+      })
+      .then(() => {
+        requester.close();
+      });
   });
 
-  it('should be possible to register a new aas on an existing asset', async function() {
-    var uniqueTestId = 'registerAasWithExistingAsset';
+  it('returns a 422 Error if the AASDescriptor to be deleted cannot be found in Database', async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
 
-    //existing asset
-    await insertIntoAssets('assetId' + uniqueTestId, 'IRI');
+    await requester
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(makeGoodAASDescriptor(uniqueTestId))
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200);
 
-    var registerJson: IRegisterAas = makeDummyAAS(uniqueTestId);
-    await new RegistryApi().register(registerJson);
-    const dbClient = await pool.connect();
-    try {
-      const resultOfQuery = await dbClient.query(
-        `SELECT  * FROM  public.endpoints`
+        await requester
+          .delete('/AASDescriptors/aasId' + uniqueTestId +'-foo')
+          .auth(user, password)
+          .then(async (res: any) => {
+            chai.expect(res.status).to.eql(422);
+           });
+      })
+      .then(() => {
+        requester.close();
+      });
+  });
+// Test /patch route
+  it('patches the descriptor if a descriptor with the given id already exists in the registry', async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
+
+    await requester
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(makeGoodAASDescriptor(uniqueTestId))
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200);
+        //patch the previous AASDescriptor
+        await requester
+          .patch('/AASDescriptors/aasId' + uniqueTestId)
+          .auth(user, password)
+          .send(replaceAddressTypeInFirstEndpointAndCertificateAndAsset(makeGoodAASDescriptor(uniqueTestId),
+          'http://def.com-'+uniqueTestId,"newType","new-Certificate","new-Asset-ID"+ uniqueTestId))
+          .then(async (res: any) => {
+            chai.expect(res.status).to.eql(200);
+            //read the AASDescriptor anc check if it was correctly updated
+            await requester
+              .get('/AASDescriptors/aasId' + uniqueTestId)
+              .auth(user, password)
+              .then((res: any) => {
+                console.debug("Endpoint is "+res.body.descriptor.endpoints[1].address)
+                chai.expect(res.status).to.eql(200);
+                chai
+                  .expect(res.body.asset.id)
+                  .to.eql('new-Asset-ID' + uniqueTestId);
+                  chai.expect(
+                    _.some(res.body.descriptor.endpoints, {
+                      address: 'http://def.com-'+uniqueTestId })).to.be.true;
+                chai
+                  .expect(res.body.descriptor.certificate_x509_i40)
+                  .to.eql("new-Certificate");
+              });
+          });
+      })
+      .then(() => {
+        requester.close();
+      });
+  });
+
+  it('returns a 422 Error if the identification.id in the AASDescriptor is different from the aasId in the path parameter', async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
+
+    await requester
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(
+        makeGoodAASDescriptor(uniqueTestId)
+      )
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200);
+        await requester
+        //the aasId as path parameter is different from the one in req body
+        .patch('/AASDescriptors/aasId' + uniqueTestId )
+        .auth(user, password)
+          .send(
+            replaceAddressAndTypeInFirstEndpoint(
+              makeGoodAASDescriptor('foobar'+ uniqueTestId),
+              'http://abc.com/'+uniqueTestId,
+              'http'
+            )
+          )
+          .then(async (res: any) => {
+            chai.expect(res.status).to.eql(422);
+          });
+      })
+      .then(() => {
+        requester.close();
+      });
+  });
+  it('returns a 422 Error if the AASDescriptor to be updated (with the aasId) is not found in DB', async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
+
+    await requester
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(
+        makeGoodAASDescriptor(uniqueTestId)
+      )
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200);
+        await requester
+        .patch('/AASDescriptors/aasId' + 'foobar'+ uniqueTestId )
+        .auth(user, password)
+          .send(
+            replaceAddressAndTypeInFirstEndpoint(
+              makeGoodAASDescriptor('foobar'+ uniqueTestId),
+              'http://abc.com/'+uniqueTestId,
+              'http'
+            )
+          )
+          .then(async (res: any) => {
+            chai.expect(res.status).to.eql(422);
+          });
+      })
+      .then(() => {
+        requester.close();
+      });
+  });
+
+  it('should remove previously related Endpoints' +
+     ' when updated with a AASDescriptor that has a lesser number of Endpoints',
+  async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
+
+    await requester
+    //send the first Request
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(
+        replaceAddressAndTypeInSecondEndpoint(
+          makeGoodAASDescriptor(uniqueTestId),
+          'http://xyz.com-'+uniqueTestId,
+          'http'
+        )
+      )
+      // Update the AASDescriptor removing all but 1 Endpoints
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200);
+        var newUniqueTestId = 'simpleDataTest' + getRandomInteger();
+        await requester
+          .patch('/AASDescriptors/aasId'+uniqueTestId)
+          .auth(user, password)
+          .send(
+            removeOneEndpointAndReplaceOther(
+              makeGoodAASDescriptor(uniqueTestId),
+              'http://abc.com-'+newUniqueTestId,
+              'http'              )
+          )
+
+          //the second endpoint should have been deleted
+          let endpointsRepository = getConnection().getRepository(EndpointEntity);
+          // search for the original Endpoint (from the first PUT)
+          let secondEndpointFound = endpointsRepository.find({
+            address: 'http://xyz.com-'+uniqueTestId,
+            type: 'http'
+          })
+
+          let firstEndpointsFound = endpointsRepository.find({
+            address: 'http://abc.com-'+newUniqueTestId,
+            type: 'http'
+          })
+
+          //this Endpoint should have been removed
+          chai.expect((await secondEndpointFound).length).to.eql(0)
+          chai.expect((await firstEndpointsFound).length).to.eql(1)
+
+      })
+      .then(() => {
+        requester.close();
+      });
+  }
+);
+  it('should remove previously related Entities such as Endpoints and Asset when a AASDescriptor gets updated',
+  async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
+
+    await requester
+    //send the first Request
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(
+        replaceAddressAndTypeInFirstEndpoint(
+          makeGoodAASDescriptor(uniqueTestId),
+          'http://abc.com-'+uniqueTestId,
+          'http'
+        )
+      )
+      // Update the AASDescriptor with a new Endpoint
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200);
+        var newUniqueTestId = 'simpleDataTest' + getRandomInteger();
+        await requester
+          .patch('/AASDescriptors/aasId'+uniqueTestId)
+          .auth(user, password)
+          .send(
+            replaceAddressAndTypeInFirstEndpoint(
+              makeGoodAASDescriptor(uniqueTestId),
+              'http://abc.com-'+newUniqueTestId,
+              'http'              )
+          )
+
+          //the previous endpoint should have been deleted (and replaced with the new one)
+          let endpointsRepository = getConnection().getRepository(EndpointEntity);
+          // search for the original Endpoint (from the first PUT)
+          let endpointsFound = endpointsRepository.find({
+            address: 'http://abc.com-'+uniqueTestId,
+            type: 'http'
+          })
+
+          //this Endpoint should have been removed
+          chai.expect((await endpointsFound).length).to.eql(0)
+
+      })
+      .then(() => {
+        requester.close();
+      });
+  }
+);
+
+// test PUT /admin/
+  it('can update endpoint addresses', async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
+
+    await requester
+      .put('/admin/AASDescriptors')
+      .auth(user, password)
+      .send(
+        makeGoodAASDescriptor(uniqueTestId)
+      )
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200);
+        await requester
+          .put('/admin/AASDescriptors')
+          .auth(user, password)
+          .send(
+            replaceAddressAndTypeInFirstEndpoint(
+              makeGoodAASDescriptor(uniqueTestId),
+              'http://abc.com/'+uniqueTestId,
+              'http'
+            )
+          )
+          .then(async (res: any) => {
+            chai.expect(res.status).to.eql(200);
+            await requester
+            .get('/AASDescriptors/aasId' + uniqueTestId)
+            .auth(user, password)
+              .then((res: any) => {
+                chai.expect(res.status).to.eql(200);
+                chai.expect(
+                  _.some(res.body.descriptor.endpoints, {
+                    address: 'http://abc.com/'+uniqueTestId,
+                  })
+                ).to.be.true;
+
+                chai.expect(res.body.descriptor.endpoints.length).to.eql(2);
+              });
+          });
+      })
+      .then(() => {
+        requester.close();
+      });
+  });
+
+
+  it('can delete an endpoint address', async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
+//register an AASDescriptor with 2 Endpoints
+    await requester
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(
+        makeGoodAASDescriptor(uniqueTestId)
+      )
+      //patch the recource and remove one endpoint
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200);
+        //originally there were 2 endpoints
+        chai.expect(res.body.descriptor.endpoints.length).to.eql(2);
+
+        await requester
+          .patch('/AASDescriptors/aasId' + uniqueTestId)
+          .auth(user, password)
+          .send(
+            replaceEndpoints(makeGoodAASDescriptor(uniqueTestId), [
+              makeGoodAASDescriptor(uniqueTestId).descriptor.endpoints[0],
+            ])
+          )
+          .then(async (res: any) => {
+            chai.expect(res.status).to.eql(200);
+            await requester
+              .get('/AASDescriptors/aasId' + uniqueTestId)
+              .auth(user, password)
+              .then((res: any) => {
+                chai.expect(res.status).to.eql(200);
+                chai
+                  .expect(res.body.descriptor.endpoints[0].address)
+                  .to.eql('abc.def/' + uniqueTestId);
+
+                chai.expect(res.body.descriptor.endpoints.length).to.eql(1);
+              });
+          });
+      })
+      .then(() => {
+        requester.close();
+      });
+  });
+
+
+/*
+  it('returns a 500 error if a connection to the db could not be established', async function() {
+    this.timeout(10000) // all tests in this suite get 10 seconds before timeout
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var host = process.env.CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST;
+    process.env.CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST = 'blah';
+    await chai
+      .request(app)
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(makeGoodAASDescriptor(uniqueTestId))
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(500);
+      })
+      .finally(
+        () => (process.env.CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST = host)
       );
-      const queryResultRows: Array<IEndpointRecord> = resultOfQuery.rows;
-      expect(
-        _.some(
-          queryResultRows,
-          (e: IEndpointRecord) => e.aasId == 'aasId' + uniqueTestId
-        )
-      ).to.be.true;
-      expect(
-        _.some(
-          queryResultRows,
-          (e: IEndpointRecord) => e.protocol_name == 'protocol' + uniqueTestId
-        )
-      ).to.be.true;
-    } catch (error) {
-      fail('Exception thrown');
-    } finally {
-      dbClient.release();
-    }
   });
+
+
+
+
+  it('returns a 400 error if the uri is an empty string in the provided json object', async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
+
+    await chai
+      .request(app)
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(
+        replaceAddressInFirstEndpoint(makeGoodAASDescriptor(uniqueTestId), '')
+      )
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(400);
+      });
+  });
+
+  it('returns a 400 error if a bad target is provided', async function () {
+    var uniqueTestId = 'simpleDataTest' + Math.random();
+    var requester = chai.request(app).keepOpen();
+
+    await chai
+      .request(app)
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(
+        replaceTargetInFirstEndpoint(
+          makeGoodAASDescriptor(uniqueTestId),
+          'blah'
+        )
+      )
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(400);
+      });
+  });
+
+  it('returns a 400 error if the uri is missing in the provided json object', async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var requester = chai.request(app).keepOpen();
+
+    await chai
+      .request(app)
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(removeAddressInFirstEndpoint(makeGoodAASDescriptor(uniqueTestId)))
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(400);
+      });
+  });
+
+  it('returns a 400 error if a uri is badly formatted in the provided json object', async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+
+    await chai
+      .request(app)
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(
+        replaceAddressInFirstEndpoint(
+          makeGoodAASDescriptor(uniqueTestId),
+          '%%d//d'
+        )
+      )
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(400);
+      });
+  });
+
+
+  */
 });

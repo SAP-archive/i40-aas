@@ -45,12 +45,6 @@ services:
       context: src/go
       dockerfile: ../docker/endpoint-resolver/Dockerfile
   ##########################################
-  i40-aas-initializer:
-    image: sapi40/i40-aas-initializer:${BUILD_TAG}
-    build:
-      context: src/docker/initializer
-      dockerfile: Dockerfile
-  ##########################################
   i40-aas-data-manager:
     image: sapi40/i40-aas-data-manager:${BUILD_TAG}
     build:

@@ -1,12 +1,10 @@
-import { Router } from "express";
-import cors from "cors";
-import parser from "body-parser";
-import compression from "compression";
-import * as basicAuth from "express-basic-auth";
-import { logger } from "../utils/log";
+import { Router } from 'express';
+import cors from 'cors';
+import parser from 'body-parser';
+import compression from 'compression';
+import * as basicAuth from 'express-basic-auth';
 
-const dotenv = require("dotenv");
-dotenv.config();
+const logger = require('aas-logger/lib/log');
 
 let CORE_REGISTRIES_ADAPTERS_USER: string | undefined =
   process.env.CORE_REGISTRIES_ADAPTERS_USER;
@@ -14,10 +12,10 @@ let CORE_REGISTRIES_ADAPTERS_PASSWORD: string | undefined =
   process.env.CORE_REGISTRIES_ADAPTERS_PASSWORD;
 
 if (CORE_REGISTRIES_ADAPTERS_USER === undefined) {
-  logger.error(" [Basic auth] No  username was found in environment");
+  logger.error(' [Basic auth] No  username was found in environment');
 }
 if (CORE_REGISTRIES_ADAPTERS_PASSWORD === undefined) {
-  logger.error(" [Basic auth] No  password was found in environment");
+  logger.error(' [Basic auth] No  password was found in environment');
 }
 
 export const handleCors = (router: Router) =>
@@ -33,15 +31,14 @@ export const handleCompression = (router: Router) => {
 };
 
 let user: any = {};
-if(CORE_REGISTRIES_ADAPTERS_USER && CORE_REGISTRIES_ADAPTERS_PASSWORD){
-  user[CORE_REGISTRIES_ADAPTERS_USER] =
-  CORE_REGISTRIES_ADAPTERS_PASSWORD;
+if (CORE_REGISTRIES_ADAPTERS_USER && CORE_REGISTRIES_ADAPTERS_PASSWORD) {
+  user[CORE_REGISTRIES_ADAPTERS_USER] = CORE_REGISTRIES_ADAPTERS_PASSWORD;
 }
 
 export const handleBasicAuth = (router: Router) =>
   router.use(
     basicAuth.default({
       users: user,
-      challenge: true
+      challenge: true,
     })
   );

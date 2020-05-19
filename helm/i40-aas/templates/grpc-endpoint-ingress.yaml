@@ -34,9 +34,14 @@ spec:
         service: grpc-endpoint-ingress
         {{- include "i40-aas.selectorLabels" . | nindent 8 }}
     spec:
+      securityContext:
+        runAsNonRoot: true
       containers:
       - name: grpc-endpoint-ingress
         image: "{{ .Values.image.repository }}/i40-aas-grpc-endpoint-ingress:{{ .Values.image.release }}"
+        securityContext:
+          runAsUser: 1001
+          readOnlyRootFilesystem: true
         ports:
         - name: endpoint
           containerPort: {{ .Values.core.ingress.grpc.port }}
@@ -51,20 +56,22 @@ spec:
               name: {{ .Release.Name }}-host-collection
               key: CORE_BROKER_HOST
         - name: CORE_BROKER_PORT
-          value: {{ .Values.core.broker.port.amqp | quote }}
+          value: {{ .Values.rabbitmq.service.port | quote }}
         - name: CORE_INGRESS_EXCHANGE
-          value: {{ .Values.core.ingress.exchange | quote }}
+          value: {{ .Values.core.ingress.broker.exchange | quote }}
         - name: CORE_INGRESS_GRPC_PORT
           value: {{ .Values.core.ingress.grpc.port | quote }}
         envFrom:
         - secretRef:
             name: {{ .Release.Name }}-core-ingress
         volumeMounts:
+        {{- if .Values.certificates }}
         - name: certs
           mountPath: "/certs"
           readOnly: true
+        {{- end }}
         resources:
-          {{- toYaml .Values.resources | nindent 10 }}
+          {{- toYaml .Values.resources.go | nindent 10 }}
 #        livenessProbe:
 #          httpGet:
 #            path: /health
@@ -72,8 +79,10 @@ spec:
 #          initialDelaySeconds: 600
 #          periodSeconds: 60
       volumes:
+      {{- if .Values.certificates }}
       - name: certs
         secret:
           secretName: {{ .Values.certificates.secretName }}
           optional: true
+      {{- end }}
 ---

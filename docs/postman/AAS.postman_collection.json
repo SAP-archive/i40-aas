@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "3e8f17cd-53af-47da-b424-44ee82356f12",
+		"_postman_id": "c93e5ddb-4150-4e4e-99fd-cd0ecc01d12c",
 		"name": "AAS-Service",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -9,216 +9,834 @@
 			"name": "Endpoints-Registry-Service",
 			"item": [
 				{
-					"name": "Create semantic protocols",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"semanticProtocol\": \"i40:registry-semanticProtocol/onboarding\"\n  }",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{i40-aas-endpoint-registry}}/semanticprotocol",
-							"host": [
-								"{{i40-aas-endpoint-registry}}"
-							],
-							"path": [
-								"semanticprotocol"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create roles",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "[{\n    \"roleId\": \"CentralAssetRepository\",\n    \"semanticProtocol\": \"i40:registry-semanticProtocol/onboarding\"\n  },\n  {\n    \"roleId\": \"Operator\",\n    \"semanticProtocol\": \"i40:registry-semanticProtocol/onboarding\"\n  }]",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{i40-aas-endpoint-registry}}/roles",
-							"host": [
-								"{{i40-aas-endpoint-registry}}"
-							],
-							"path": [
-								"roles"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create role assignments",
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "password",
-									"value": "admin",
-									"type": "string"
+					"name": "AASDescriptors",
+					"item": [
+						{
+							"name": "Create assetadministrationshells",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{endpoint_ingress_pwd}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{endpoint_ingress_user}}",
+											"type": "string"
+										}
+									]
 								},
-								{
-									"key": "username",
-									"value": "admin",
-									"type": "string"
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "  {\n    \"identification\": {\n        \"id\": \"www.sampleOperator/aas\",\n        \"idType\": \"IRI\"\n    },\n    \"descriptor\": {\n    \"endpoints\": [\n        {\n            \"address\": \"{{grpc-endpoint-ingress-host}}:{{grpc-endpoint-ingress-port}}\",\n            \"type\": \"grpc\",\n            \"target\": \"cloud\"\n        },\n        {\n          \"address\":  \"http://{{endpoint_ingress_user}}:{{endpoint_ingress_pwd}}@{{https-endpoint-ingress-host}}:{{https-endpoint-ingress-port}}/interaction\" ,\n          \"type\": \"http\",\n          \"target\": \"cloud\"\n      }\n    ],\n      \"certificate_x509_i40\": \"sample_crt\",\n    \"signature\": \"sample_sig\"\n    },\n    \"asset\": {\n        \"id\": \"Sample-Asset-Id\",\n        \"idType\": \"IRI\"\n    }\n  }\n",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{i40-aas-endpoint-registry}}/AASDescriptors",
+									"host": [
+										"{{i40-aas-endpoint-registry}}"
+									],
+									"path": [
+										"AASDescriptors"
+									],
+									"query": [
+										{
+											"key": "REGISTRY_ADMIN_USER",
+											"value": "{{user}}",
+											"disabled": true
+										},
+										{
+											"key": "REGISTRY_ADMIN_PASSWORD",
+											"value": "{{pwd}}",
+											"disabled": true
+										}
+									]
 								}
-							]
+							},
+							"response": []
 						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "[{\n    \"aasId\": { \"id\": \"https://www.operator.com/aas\", \"idType\": \"IRI\" },\n    \"roleId\":\"Operator\"\n  },\n  {\n    \"aasId\": { \"id\": \"http://www.CAR.com/aas\", \"idType\": \"IRI\" },\n    \"roleId\":\"CentralAssetRepository\"\n  }]",
-							"options": {
-								"raw": {
-									"language": "json"
+						{
+							"name": "Create or Update assetadministrationshells (not in standard)",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{endpoint_ingress_pwd}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{endpoint_ingress_user}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "  {\n    \"identification\": {\n        \"id\": \"www.sampleOperator/aas\",\n        \"idType\": \"IRI\"\n    },\n    \"descriptor\": {\n    \"endpoints\": [\n        {\n            \"address\": \"{{grpc-endpoint-ingress-host}}:{{grpc-endpoint-ingress-port}}\",\n            \"type\": \"grpc\",\n            \"target\": \"cloud\"\n        },\n        {\n          \"address\":  \"http://{{endpoint_ingress_user}}:{{endpoint_ingress_pwd}}@{{https-endpoint-ingress-host}}:{{https-endpoint-ingress-port}}/interaction\" ,\n          \"type\": \"http\",\n          \"target\": \"cloud\"\n      }\n    ],\n      \"certificate_x509_i40\": \"sample_crt\",\n    \"signature\": \"sample_sig\"\n    },\n    \"asset\": {\n        \"id\": \"Sample-Asset-Id\",\n        \"idType\": \"IRI\"\n    }\n  }",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{i40-aas-endpoint-registry}}/admin/AASDescriptors",
+									"host": [
+										"{{i40-aas-endpoint-registry}}"
+									],
+									"path": [
+										"admin",
+										"AASDescriptors"
+									],
+									"query": [
+										{
+											"key": "REGISTRY_ADMIN_USER",
+											"value": "{{user}}",
+											"disabled": true
+										},
+										{
+											"key": "REGISTRY_ADMIN_PASSWORD",
+											"value": "{{pwd}}",
+											"disabled": true
+										}
+									]
 								}
-							}
+							},
+							"response": []
 						},
-						"url": {
-							"raw": "{{i40-aas-endpoint-registry}}/roleassignment",
-							"host": [
-								"{{i40-aas-endpoint-registry}}"
-							],
-							"path": [
-								"roleassignment"
-							]
+						{
+							"name": "UPDATE assetadministrationshells",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{endpoint_ingress_pwd}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{endpoint_ingress_user}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "  {\n    \"identification\": {\n        \"id\": \"www.sampleOperator/aas\",\n        \"idType\": \"IRI\"\n    },\n    \"descriptor\": {\n    \"endpoints\": [\n        {\n            \"address\": \"{{grpc-endpoint-ingress-host}}:{{grpc-endpoint-ingress-port}}\",\n            \"type\": \"grpc\",\n            \"target\": \"cloud\"\n        },\n        {\n          \"address\":  \"http://{{endpoint_ingress_user}}:{{endpoint_ingress_pwd}}@{{https-endpoint-ingress-host}}:{{https-endpoint-ingress-port}}/interaction\" ,\n          \"type\": \"http\",\n          \"target\": \"cloud\"\n      }\n    ],\n      \"certificate_x509_i40\": \"sample_crt\",\n    \"signature\": \"sample_sig\"\n    },\n    \"asset\": {\n        \"id\": \"Sample-Asset-Id--\",\n        \"idType\": \"IRI\"\n    }\n  }",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{i40-aas-endpoint-registry}}/AASDescriptors/:aasId",
+									"host": [
+										"{{i40-aas-endpoint-registry}}"
+									],
+									"path": [
+										"AASDescriptors",
+										":aasId"
+									],
+									"query": [
+										{
+											"key": "REGISTRY_ADMIN_USER",
+											"value": "{{user}}",
+											"disabled": true
+										},
+										{
+											"key": "REGISTRY_ADMIN_PASSWORD",
+											"value": "{{pwd}}",
+											"disabled": true
+										}
+									],
+									"variable": [
+										{
+											"key": "aasId",
+											"value": "www.sampleOperator%2Faas"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DELETE assetadministrationshells",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{endpoint_ingress_pwd}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{endpoint_ingress_user}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{i40-aas-endpoint-registry}}/AASDescriptors/:aasId",
+									"host": [
+										"{{i40-aas-endpoint-registry}}"
+									],
+									"path": [
+										"AASDescriptors",
+										":aasId"
+									],
+									"query": [
+										{
+											"key": "REGISTRY_ADMIN_USER",
+											"value": "{{user}}",
+											"disabled": true
+										},
+										{
+											"key": "REGISTRY_ADMIN_PASSWORD",
+											"value": "{{pwd}}",
+											"disabled": true
+										}
+									],
+									"variable": [
+										{
+											"key": "aasId",
+											"value": "www.sampleOperator%2Faas"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "READ assetadministrationshells",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{endpoint_ingress_pwd}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{endpoint_ingress_user}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{i40-aas-endpoint-registry}}/AASDescriptors/:aasId",
+									"host": [
+										"{{i40-aas-endpoint-registry}}"
+									],
+									"path": [
+										"AASDescriptors",
+										":aasId"
+									],
+									"query": [
+										{
+											"key": "REGISTRY_ADMIN_USER",
+											"value": "{{user}}",
+											"disabled": true
+										},
+										{
+											"key": "REGISTRY_ADMIN_PASSWORD",
+											"value": "{{pwd}}",
+											"disabled": true
+										}
+									],
+									"variable": [
+										{
+											"key": "aasId",
+											"value": "www.sampleOperator%2Faas"
+										}
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
 				},
 				{
-					"name": "Create assetadministrationshells Copy",
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "password",
-									"value": "{{endpoint_ingress_pwd}}",
-									"type": "string"
+					"name": "SemanticProtocols",
+					"item": [
+						{
+							"name": "Create semanticProtocols",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{endpoint_ingress_pwd}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{endpoint_ingress_user}}",
+											"type": "string"
+										}
+									]
 								},
-								{
-									"key": "username",
-									"value": "{{endpoint_ingress_user}}",
-									"type": "string"
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"identification\": {\n    \"id\": \"i40:registry-semanticProtocol/onboarding\",\n    \"idType\": \"Custom\"\n  },\n  \"roles\": [\n    {\n      \"name\": \"Operator\",\n      \"aasDescriptorIds\": [\n        {\n          \"id\": \"www.sampleOperator/aas\",\n          \"idType\": \"IRI\"\n        }\n      ]\n    }\n  ]\n}"
+								},
+								"url": {
+									"raw": "{{i40-aas-endpoint-registry}}/semanticProtocols",
+									"host": [
+										"{{i40-aas-endpoint-registry}}"
+									],
+									"path": [
+										"semanticProtocols"
+									],
+									"query": [
+										{
+											"key": "REGISTRY_ADMIN_USER",
+											"value": "{{user}}",
+											"disabled": true
+										},
+										{
+											"key": "REGISTRY_ADMIN_PASSWORD",
+											"value": "{{pwd}}",
+											"disabled": true
+										}
+									]
 								}
-							]
+							},
+							"response": []
 						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "\n[\n  {\n    \"aasId\": {\n        \"id\": \"http://www.operator.com/aas\",\n        \"idType\": \"IRI\"\n    },\n    \"endpoints\": [\n        {\n            \"url\": \"i40-aas-grpc-endpoint-ingress:8384\",\n            \"target\": \"cloud\",\n            \"protocol\": \"grpc\",\n            \"protocolVersion\": \"1.1\"\n        },\n        {\n          \"url\": \"http://admin:admin@i40-aas-https-endpoint-ingress:2000/interaction\",\n          \"target\": \"cloud\",\n          \"protocol\": \"http\",\n          \"protocolVersion\": \"1.1\"\n      }\n    ],\n    \"assetId\": {\n        \"id\": \"http://www.operator.com/aas\",\n        \"idType\": \"IRI\"\n    }\n  }\n]\n"
+						{
+							"name": "Create or Update semanticProtocol",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{endpoint_ingress_pwd}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{endpoint_ingress_user}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"identification\": {\n    \"id\": \"i40:registry-semanticProtocol/onboarding\",\n    \"idType\": \"Custom\"\n  },\n  \"roles\": [\n    {\n      \"name\": \"Operator\",\n      \"aasDescriptorIds\": [\n        {\n          \"id\": \"www.sampleOperator/aas\",\n          \"idType\": \"IRI\"\n        }\n      ]\n    }\n  ]\n}"
+								},
+								"url": {
+									"raw": "{{i40-aas-endpoint-registry}}/admin/semanticProtocols",
+									"host": [
+										"{{i40-aas-endpoint-registry}}"
+									],
+									"path": [
+										"admin",
+										"semanticProtocols"
+									],
+									"query": [
+										{
+											"key": "REGISTRY_ADMIN_USER",
+											"value": "{{user}}",
+											"disabled": true
+										},
+										{
+											"key": "REGISTRY_ADMIN_PASSWORD",
+											"value": "{{pwd}}",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
 						},
-						"url": {
-							"raw": "{{i40-aas-endpoint-registry}}/assetadministrationshells",
-							"host": [
-								"{{i40-aas-endpoint-registry}}"
-							],
-							"path": [
-								"assetadministrationshells"
-							],
-							"query": [
-								{
-									"key": "REGISTRY_ADMIN_USER",
-									"value": "{{user}}",
-									"disabled": true
+						{
+							"name": "READ AASDescriptors by semanticprotocol and role",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{endpoint_ingress_pwd}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{endpoint_ingress_user}}",
+											"type": "string"
+										}
+									]
 								},
-								{
-									"key": "REGISTRY_ADMIN_PASSWORD",
-									"value": "{{pwd}}",
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GET Endpoints",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{i40-aas-endpoint-registry}}/assetadministrationshells?receiverRole=Operator&semanticProtocol=i40:registry-semanticProtocol/onboarding",
-							"host": [
-								"{{i40-aas-endpoint-registry}}"
-							],
-							"path": [
-								"assetadministrationshells"
-							],
-							"query": [
-								{
-									"key": "receiverRole",
-									"value": "Operator"
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
 								},
-								{
-									"key": "semanticProtocol",
-									"value": "i40:registry-semanticProtocol/onboarding"
+								"url": {
+									"raw": "{{i40-aas-endpoint-registry}}/semanticProtocols/:semanticProtocolId/role/:roleName/AASDescriptors",
+									"host": [
+										"{{i40-aas-endpoint-registry}}"
+									],
+									"path": [
+										"semanticProtocols",
+										":semanticProtocolId",
+										"role",
+										":roleName",
+										"AASDescriptors"
+									],
+									"query": [
+										{
+											"key": "REGISTRY_ADMIN_USER",
+											"value": "{{user}}",
+											"disabled": true
+										},
+										{
+											"key": "REGISTRY_ADMIN_PASSWORD",
+											"value": "{{pwd}}",
+											"disabled": true
+										}
+									],
+									"variable": [
+										{
+											"key": "semanticProtocolId",
+											"value": "i40:registry-semanticProtocol%2Fonboarding",
+											"description": "i40:registry-semanticProtocol/onboarding"
+										},
+										{
+											"key": "roleName",
+											"value": ""
+										}
+									]
 								}
-							]
+							},
+							"response": []
+						},
+						{
+							"name": "Update a Role of  SemanticProtocol with AASDesciroptor IDs",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{endpoint_ingress_pwd}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{endpoint_ingress_user}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n        {\n          \"id\": \"www.sampleOperator/aas\",\n          \"idType\": \"IRI\"\n        },\n        {\n          \"id\": \"www.new_sample_aas_that_needs_to_be_registerd_beforehand\",\n          \"idType\": \"IRI\"\n        }\n      ]"
+								},
+								"url": {
+									"raw": "{{i40-aas-endpoint-registry}}/semanticProtocols/:semanticProtocolId/role/:roleName/AASDescriptors",
+									"host": [
+										"{{i40-aas-endpoint-registry}}"
+									],
+									"path": [
+										"semanticProtocols",
+										":semanticProtocolId",
+										"role",
+										":roleName",
+										"AASDescriptors"
+									],
+									"query": [
+										{
+											"key": "REGISTRY_ADMIN_USER",
+											"value": "{{user}}",
+											"disabled": true
+										},
+										{
+											"key": "REGISTRY_ADMIN_PASSWORD",
+											"value": "{{pwd}}",
+											"disabled": true
+										}
+									],
+									"variable": [
+										{
+											"key": "semanticProtocolId",
+											"value": "i40:registry-semanticProtocol%2Fonboarding",
+											"description": "i40:registry-semanticProtocol/onboarding"
+										},
+										{
+											"key": "roleName",
+											"value": "Operator"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Remove an AASId from a  Role of  SemanticProtocol",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{endpoint_ingress_pwd}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{endpoint_ingress_user}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{i40-aas-endpoint-registry}}/semanticProtocols/:semanticProtocolId/role/:roleName/AASDescriptors/:aasId",
+									"host": [
+										"{{i40-aas-endpoint-registry}}"
+									],
+									"path": [
+										"semanticProtocols",
+										":semanticProtocolId",
+										"role",
+										":roleName",
+										"AASDescriptors",
+										":aasId"
+									],
+									"query": [
+										{
+											"key": "REGISTRY_ADMIN_USER",
+											"value": "{{user}}",
+											"disabled": true
+										},
+										{
+											"key": "REGISTRY_ADMIN_PASSWORD",
+											"value": "{{pwd}}",
+											"disabled": true
+										}
+									],
+									"variable": [
+										{
+											"key": "semanticProtocolId",
+											"value": "i40:registry-semanticProtocol%2Fonboarding",
+											"description": "i40:registry-semanticProtocol/onboarding"
+										},
+										{
+											"key": "roleName",
+											"value": "Operator"
+										},
+										{
+											"key": "aasId",
+											"value": "www.sampleOperator%2Faas"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "READ Semanticprotocol by semanticprotocolId",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{endpoint_ingress_pwd}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{endpoint_ingress_user}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{i40-aas-endpoint-registry}}/semanticProtocols/:semanticProtocolId",
+									"host": [
+										"{{i40-aas-endpoint-registry}}"
+									],
+									"path": [
+										"semanticProtocols",
+										":semanticProtocolId"
+									],
+									"query": [
+										{
+											"key": "REGISTRY_ADMIN_USER",
+											"value": "{{user}}",
+											"disabled": true
+										},
+										{
+											"key": "REGISTRY_ADMIN_PASSWORD",
+											"value": "{{pwd}}",
+											"disabled": true
+										}
+									],
+									"variable": [
+										{
+											"key": "semanticProtocolId",
+											"value": "i40:registry-semanticProtocol%2Fonboarding"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "READ a list of all SemanticProtocols",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{endpoint_ingress_pwd}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{endpoint_ingress_user}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{i40-aas-endpoint-registry}}/semanticProtocols",
+									"host": [
+										"{{i40-aas-endpoint-registry}}"
+									],
+									"path": [
+										"semanticProtocols"
+									],
+									"query": [
+										{
+											"key": "REGISTRY_ADMIN_USER",
+											"value": "{{user}}",
+											"disabled": true
+										},
+										{
+											"key": "REGISTRY_ADMIN_PASSWORD",
+											"value": "{{pwd}}",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DELETE SemanticProtocol",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{endpoint_ingress_pwd}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{endpoint_ingress_user}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{i40-aas-endpoint-registry}}/semanticProtocols/:semanticProtocolId",
+									"host": [
+										"{{i40-aas-endpoint-registry}}"
+									],
+									"path": [
+										"semanticProtocols",
+										":semanticProtocolId"
+									],
+									"query": [
+										{
+											"key": "REGISTRY_ADMIN_USER",
+											"value": "{{user}}",
+											"disabled": true
+										},
+										{
+											"key": "REGISTRY_ADMIN_PASSWORD",
+											"value": "{{pwd}}",
+											"disabled": true
+										}
+									],
+									"variable": [
+										{
+											"key": "semanticProtocolId",
+											"value": "i40:registry-semanticProtocol%2Fonboarding"
+										}
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
-				},
-				{
-					"name": "GET All Endpoints",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{i40-aas-endpoint-registry}}/listallendpoints",
-							"host": [
-								"{{i40-aas-endpoint-registry}}"
-							],
-							"path": [
-								"listallendpoints"
-							]
-						}
-					},
-					"response": []
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
 				}
 			],
 			"protocolProfileBehavior": {}
@@ -255,7 +873,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "[\n  {\n    \"adapterid\": \"storage-adapter-mongodb\",\n    \"url\": \"http://i40-aas-storage-adapter-mongodb:3100/submodels\",\n    \"name\": \"mongo-adapter\",\n    \"submodelid\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\",\n    \"submodelsemanticid\": \"opcfoundation.org/specifications-unified-architecture/part-100-device-information-model\"\n  }\n]"
+							"raw": "[\n  {\n    \"adapterid\": \"storage-adapter-mongodb\",\n    \"url\": \"http://{{storage-adapter-mongodb-host}}:{{storage-adapter-mongodb-port}}/submodels\",\n    \"name\": \"mongo-adapter\",\n    \"submodelid\": \"sap.com/aas/submodels/part-100-device-information-model/sampleSM\",\n    \"submodelsemanticid\": \"opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/sampleSM\"\n  }\n]",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "{{i40-aas-adapter-registry}}/adapters",
@@ -301,7 +922,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "[\n  {\n    \"adapterid\": \"storage-adapter-mongodb\",\n    \"url\": \"http://i40-aas-storage-adapter-mongodb:3100/submodels\",\n    \"name\": \"mongo-adapter\",\n    \"submodelid\": \"sap.com/aas/submodels/part-100-device-information-model\",\n    \"submodelsemanticid\": \"opcfoundation.org/specifications-unified-architecture/part-100-device-information-model\"\n  }\n]\n"
+							"raw": "[\n  {\n    \"adapterid\": \"storage-adapter-mongodb\",\n    \"url\": \"http://i40-aas-storage-adapter-mongodb:3100/submodels\",\n    \"name\": \"mongo-adapter\",\n    \"submodelid\": \"sap.com/aas/submodels/part-100-device-information-model\",\n    \"submodelsemanticid\": \"opcfoundation.org/specifications-unified-architecture/part-100-device-information-model\"\n  }\n]\n",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "{{i40-aas-adapter-registry}}/adapters",
@@ -314,7 +938,7 @@
 							"query": [
 								{
 									"key": "submodelid",
-									"value": "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22",
+									"value": "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22/mongo",
 									"disabled": true
 								},
 								{
@@ -359,7 +983,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "[\n  {\n    \"adapterid\": \"storage-adapter-mongodb\",\n    \"url\": \"http://i40-aas-storage-adapter-mongodb:3100/submodels\",\n    \"name\": \"mongo-adapter\",\n    \"submodelid\": \"sap.com/aas/submodels/part-100-device-information-model\",\n    \"submodelsemanticid\": \"opcfoundation.org/specifications-unified-architecture/part-100-device-information-model\"\n  }\n]\n"
+							"raw": "[\n  {\n    \"adapterid\": \"storage-adapter-mongodb\",\n    \"url\": \"http://i40-aas-storage-adapter-mongodb:3100/submodels\",\n    \"name\": \"mongo-adapter\",\n    \"submodelid\": \"sap.com/aas/submodels/part-100-device-information-model\",\n    \"submodelsemanticid\": \"opcfoundation.org/specifications-unified-architecture/part-100-device-information-model\"\n  }\n]\n",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "{{i40-aas-adapter-registry}}/listall",
@@ -399,7 +1026,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "[\n    {\n      \"embeddedDataSpecifications\": [],\n      \"semanticId\": {\n        \"keys\": [\n          {\n            \"idType\": \"URI\",\n            \"type\": \"GlobalReference\",\n            \"value\": \"opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/10JF-1234-Jf14-PP22\",\n            \"local\": false\n          }\n        ]\n      },\n      \"kind\": \"Instance\",\n      \"descriptions\": [],\n      \"idShort\": \"opc-ua-devices\",\n      \"identification\": {\n        \"id\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\",\n        \"idType\": \"URI\"\n      },\n      \"modelType\": {\n        \"name\": \"Submodel\"\n      },\n      \"submodelElements\": [\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/deviceHealth\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [\n            {\n              \"language\": \"EN\",\n              \"text\": \"NORMAL_0 ;FAILURE_1 ;CHECK_FUNCTION_2 ;OFF_SPEC_3 ;MAINTENANCE_REQUIRED_4 \"\n            }\n          ],\n          \"idShort\": \"devicehealth\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"NORMAL_0\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"0112/2///61987#ABA565\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"manufacturer\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"foobar\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"manufactureruri\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"foobar.com\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"0112/2///61987#ABA567\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"model\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"NIOT-E-TIJCX-GB-RE\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"0112/2///61987#ABA951\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"serialnumber\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"6534235\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"0112/2///61987#ABA926\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"hardwarerevision\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"1.0\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"0112/2///61987#ABA601\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"softwarerevision\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"1.0\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"devicerevision\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"1.0\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"revisioncounter\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"Integer\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"0112/2///61987#ABA300\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"productcode\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"1321.300\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"kind\": \"Instance\",\n          \"descriptions\": [\n            {\n              \"language\": \"EN\",\n              \"text\": \"OI4 identifier is used\"\n            }\n          ],\n          \"idShort\": \"productinstanceuri\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"foobar.com/bar/\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"devicemanual\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"https://www.foobar.com/de/produkte/testpruduct\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"deviceclass\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"Gateway\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/parameterSet\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"parameterset\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"SubmodelElementCollection\"\n          },\n          \"ordered\": false,\n          \"allowDuplicates\": true,\n          \"value\": [\n            {\n              \"embeddedDataSpecifications\": [],\n              \"semanticId\": {\n                \"keys\": [\n                  {\n                    \"idType\": \"IRDI\",\n                    \"type\": \"GlobalReference\",\n                    \"value\": \"0173-1#02-AAB911#007\",\n                    \"local\": false\n                  }\n                ]\n              },\n              \"kind\": \"Instance\",\n              \"descriptions\": [],\n              \"idShort\": \"versorgungsspannung\",\n              \"parent\": {\n                \"keys\": [\n                  {\n                    \"idType\": \"IdShort\",\n                    \"type\": \"SubmodelElementCollection\",\n                    \"value\": \"parameterset\"\n                  },\n                  {\n                    \"index\": 1,\n                    \"idType\": \"URI\",\n                    \"type\": \"Submodel\",\n                    \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n                  }\n                ]\n              },\n              \"modelType\": {\n                \"name\": \"Property\"\n              },\n              \"value\": \"24 V DC ± 4,8 V DC\",\n              \"valueType\": {\n                \"dataObjectType\": {\n                  \"name\": \"String\"\n                }\n              }\n            },\n            {\n              \"embeddedDataSpecifications\": [],\n              \"semanticId\": {\n                \"keys\": [\n                  {\n                    \"idType\": \"IRDI\",\n                    \"type\": \"GlobalReference\",\n                    \"value\": \"0173-1#02-AAG004#0037\",\n                    \"local\": false\n                  }\n                ]\n              },\n              \"kind\": \"Instance\",\n              \"descriptions\": [],\n              \"idShort\": \"abmessung\",\n              \"parent\": {\n                \"keys\": [\n                  {\n                    \"idType\": \"IdShort\",\n                    \"type\": \"SubmodelElementCollection\",\n                    \"value\": \"parameterset\"\n                  },\n                  {\n                    \"index\": 1,\n                    \"idType\": \"URI\",\n                    \"type\": \"Submodel\",\n                    \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n                  }\n                ]\n              },\n              \"modelType\": {\n                \"name\": \"Property\"\n              },\n              \"value\": \"214 mm (H) x 85 mm (B) x 157 mm (T)\",\n              \"valueType\": {\n                \"dataObjectType\": {\n                  \"name\": \"String\"\n                }\n              }\n            }\n          ]\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/methodSet\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"methodset\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"SubmodelElementCollection\"\n          },\n          \"ordered\": false,\n          \"allowDuplicates\": true,\n          \"value\": []\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/functionalGroups\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"functionalgroups\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"SubmodelElementCollection\"\n          },\n          \"ordered\": false,\n          \"allowDuplicates\": true,\n          \"value\": []\n        }\n      ]\n    }\n]\n"
+							"raw": "[\n    {\n      \"embeddedDataSpecifications\": [],\n      \"semanticId\": {\n        \"keys\": [\n          {\n            \"idType\": \"URI\",\n            \"type\": \"GlobalReference\",\n            \"value\": \"opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/sampleSM\",\n            \"local\": false\n          }\n        ]\n      },\n      \"kind\": \"Instance\",\n      \"descriptions\": [],\n      \"idShort\": \"opc-ua-devices\",\n      \"identification\": {\n        \"id\": \"sap.com/aas/submodels/part-100-device-information-model/sampleSM\",\n        \"idType\": \"URI\"\n      },\n      \"modelType\": {\n        \"name\": \"Submodel\"\n      },\n      \"submodelElements\": [\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/deviceHealth\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [\n            {\n              \"language\": \"EN\",\n              \"text\": \"NORMAL_0 ;FAILURE_1 ;CHECK_FUNCTION_2 ;OFF_SPEC_3 ;MAINTENANCE_REQUIRED_4 \"\n            }\n          ],\n          \"idShort\": \"devicehealth\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"NORMAL_0\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"0112/2///61987#ABA565\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"manufacturer\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"foobar\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"manufactureruri\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"foobar.com\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"0112/2///61987#ABA567\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"model\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"NIOT-E-TIJCX-GB-RE\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"0112/2///61987#ABA951\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"serialnumber\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"6534235\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"0112/2///61987#ABA926\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"hardwarerevision\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"1.0\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"0112/2///61987#ABA601\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"softwarerevision\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"1.0\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"devicerevision\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"1.0\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"revisioncounter\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"Integer\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"0112/2///61987#ABA300\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"productcode\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"1321.300\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"kind\": \"Instance\",\n          \"descriptions\": [\n            {\n              \"language\": \"EN\",\n              \"text\": \"OI4 identifier is used\"\n            }\n          ],\n          \"idShort\": \"productinstanceuri\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"foobar.com/bar/\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"devicemanual\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"https://www.foobar.com/de/produkte/testpruduct\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"deviceclass\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"Gateway\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/parameterSet\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"parameterset\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"SubmodelElementCollection\"\n          },\n          \"ordered\": false,\n          \"allowDuplicates\": true,\n          \"value\": [\n            {\n              \"embeddedDataSpecifications\": [],\n              \"semanticId\": {\n                \"keys\": [\n                  {\n                    \"idType\": \"IRDI\",\n                    \"type\": \"GlobalReference\",\n                    \"value\": \"0173-1#02-AAB911#007\",\n                    \"local\": false\n                  }\n                ]\n              },\n              \"kind\": \"Instance\",\n              \"descriptions\": [],\n              \"idShort\": \"versorgungsspannung\",\n              \"parent\": {\n                \"keys\": [\n                  {\n                    \"idType\": \"IdShort\",\n                    \"type\": \"SubmodelElementCollection\",\n                    \"value\": \"parameterset\"\n                  },\n                  {\n                    \"index\": 1,\n                    \"idType\": \"URI\",\n                    \"type\": \"Submodel\",\n                    \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n                  }\n                ]\n              },\n              \"modelType\": {\n                \"name\": \"Property\"\n              },\n              \"value\": \"24 V DC ± 4,8 V DC\",\n              \"valueType\": {\n                \"dataObjectType\": {\n                  \"name\": \"String\"\n                }\n              }\n            },\n            {\n              \"embeddedDataSpecifications\": [],\n              \"semanticId\": {\n                \"keys\": [\n                  {\n                    \"idType\": \"IRDI\",\n                    \"type\": \"GlobalReference\",\n                    \"value\": \"0173-1#02-AAG004#0037\",\n                    \"local\": false\n                  }\n                ]\n              },\n              \"kind\": \"Instance\",\n              \"descriptions\": [],\n              \"idShort\": \"abmessung\",\n              \"parent\": {\n                \"keys\": [\n                  {\n                    \"idType\": \"IdShort\",\n                    \"type\": \"SubmodelElementCollection\",\n                    \"value\": \"parameterset\"\n                  },\n                  {\n                    \"index\": 1,\n                    \"idType\": \"URI\",\n                    \"type\": \"Submodel\",\n                    \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n                  }\n                ]\n              },\n              \"modelType\": {\n                \"name\": \"Property\"\n              },\n              \"value\": \"214 mm (H) x 85 mm (B) x 157 mm (T)\",\n              \"valueType\": {\n                \"dataObjectType\": {\n                  \"name\": \"String\"\n                }\n              }\n            }\n          ]\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/methodSet\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"methodset\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"SubmodelElementCollection\"\n          },\n          \"ordered\": false,\n          \"allowDuplicates\": true,\n          \"value\": []\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/functionalGroups\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"functionalgroups\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"SubmodelElementCollection\"\n          },\n          \"ordered\": false,\n          \"allowDuplicates\": true,\n          \"value\": []\n        }\n      ]\n    }\n]\n",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "{{i40-aas-data-manager}}/submodels",
@@ -429,10 +1059,13 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": ""
+							"raw": "",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
-							"raw": "{{i40-aas-data-manager}}/submodels?submodelid=sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22",
+							"raw": "{{i40-aas-data-manager}}/submodels",
 							"host": [
 								"{{i40-aas-data-manager}}"
 							],
@@ -442,7 +1075,8 @@
 							"query": [
 								{
 									"key": "submodelid",
-									"value": "sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22"
+									"value": "sap.com/aas/submodels/part-100-device-information-model/sampleSM",
+									"disabled": true
 								}
 							]
 						}
@@ -451,6 +1085,53 @@
 				}
 			],
 			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Check that mock adapter is empty",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "27627ba8-14c5-4e5f-af86-406285d975d6",
+						"exec": [
+							"pm.test(\"Status code is 200 and Body is empty\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.have.body(\"[]\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "k!ndHeat60",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{i40-aas-storage-adapter-mongodb}}/submodels",
+					"host": [
+						"{{i40-aas-storage-adapter-mongodb}}"
+					],
+					"path": [
+						"submodels"
+					]
+				}
+			},
+			"response": []
 		},
 		{
 			"name": "Send Interaction Message to https-endpoint",
@@ -480,7 +1161,10 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"frame\":\n  {\n    \"semanticProtocol\": \"i40:registry-semanticProtocol/onboarding\",\n    \"type\": \"publishInstance\",\n    \"messageId\": \"Sample_Msg_ID_000\",\n    \"replyBy\": 29993912,\n    \"receiver\": { \n      \"role\":{\"name\":\"CentralAssetRepository\" }\n    },\n    \"sender\": { \n      \"identification\": {\n      \"id\":  \"http://www.operator.com/aas\",\n      \"idType\": \"URI\"\n    }\n      ,\"role\":{\"name\":\"Operator\" }\n    },\n    \"conversationId\": \"{{$randomInt}}\"\n  },\n  \"interactionElements\": [\n    {\n      \"embeddedDataSpecifications\": [],\n      \"semanticId\": {\n        \"keys\": [\n          {\n            \"idType\": \"URI\",\n            \"type\": \"GlobalReference\",\n            \"value\": \"opcfoundation.org/specifications-unified-architecture/part-100-device-information-model\",\n            \"local\": false\n          }\n        ]\n      },\n      \"kind\": \"Instance\",\n      \"descriptions\": [],\n      \"idShort\": \"opc-ua-devices\",\n      \"identification\": {\n        \"id\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\",\n        \"idType\": \"URI\"\n      },\n      \"modelType\": {\n        \"name\": \"Submodel\"\n      },\n      \"submodelElements\": [\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/deviceHealth\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [\n            {\n              \"language\": \"EN\",\n              \"text\": \"NORMAL_0 ;FAILURE_1 ;CHECK_FUNCTION_2 ;OFF_SPEC_3 ;MAINTENANCE_REQUIRED_4 \"\n            }\n          ],\n          \"idShort\": \"devicehealth\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"NORMAL_0\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"0112/2///61987#ABA565\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"manufacturer\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"foobar\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"manufactureruri\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"foobar.com\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"0112/2///61987#ABA567\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"model\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"NIOT-E-TIJCX-GB-RE\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"0112/2///61987#ABA951\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"serialnumber\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"6534235\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"0112/2///61987#ABA926\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"hardwarerevision\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"1.0\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"0112/2///61987#ABA601\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"softwarerevision\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"1.0\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"devicerevision\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"1.0\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"revisioncounter\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"Integer\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"0112/2///61987#ABA300\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"productcode\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"1321.300\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"kind\": \"Instance\",\n          \"descriptions\": [\n            {\n              \"language\": \"EN\",\n              \"text\": \"OI4 identifier is used\"\n            }\n          ],\n          \"idShort\": \"productinstanceuri\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"foobar.com/bar/\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"devicemanual\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"https://www.foobar.com/de/produkte/testpruduct\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"deviceclass\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"Gateway\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/parameterSet\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"parameterset\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"SubmodelElementCollection\"\n          },\n          \"ordered\": false,\n          \"allowDuplicates\": true,\n          \"value\": [\n            {\n              \"embeddedDataSpecifications\": [],\n              \"semanticId\": {\n                \"keys\": [\n                  {\n                    \"idType\": \"IRDI\",\n                    \"type\": \"GlobalReference\",\n                    \"value\": \"0173-1#02-AAB911#007\",\n                    \"local\": false\n                  }\n                ]\n              },\n              \"kind\": \"Instance\",\n              \"descriptions\": [],\n              \"idShort\": \"versorgungsspannung\",\n              \"parent\": {\n                \"keys\": [\n                  {\n                    \"idType\": \"IdShort\",\n                    \"type\": \"SubmodelElementCollection\",\n                    \"value\": \"parameterset\"\n                  },\n                  {\n                    \"index\": 1,\n                    \"idType\": \"URI\",\n                    \"type\": \"Submodel\",\n                    \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n                  }\n                ]\n              },\n              \"modelType\": {\n                \"name\": \"Property\"\n              },\n              \"value\": \"24 V DC ± 4,8 V DC\",\n              \"valueType\": {\n                \"dataObjectType\": {\n                  \"name\": \"String\"\n                }\n              }\n            },\n            {\n              \"embeddedDataSpecifications\": [],\n              \"semanticId\": {\n                \"keys\": [\n                  {\n                    \"idType\": \"IRDI\",\n                    \"type\": \"GlobalReference\",\n                    \"value\": \"0173-1#02-AAG004#0037\",\n                    \"local\": false\n                  }\n                ]\n              },\n              \"kind\": \"Instance\",\n              \"descriptions\": [],\n              \"idShort\": \"abmessung\",\n              \"parent\": {\n                \"keys\": [\n                  {\n                    \"idType\": \"IdShort\",\n                    \"type\": \"SubmodelElementCollection\",\n                    \"value\": \"parameterset\"\n                  },\n                  {\n                    \"index\": 1,\n                    \"idType\": \"URI\",\n                    \"type\": \"Submodel\",\n                    \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n                  }\n                ]\n              },\n              \"modelType\": {\n                \"name\": \"Property\"\n              },\n              \"value\": \"214 mm (H) x 85 mm (B) x 157 mm (T)\",\n              \"valueType\": {\n                \"dataObjectType\": {\n                  \"name\": \"String\"\n                }\n              }\n            }\n          ]\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/methodSet\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"methodset\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"SubmodelElementCollection\"\n          },\n          \"ordered\": false,\n          \"allowDuplicates\": true,\n          \"value\": []\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/functionalGroups\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"functionalgroups\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"SubmodelElementCollection\"\n          },\n          \"ordered\": false,\n          \"allowDuplicates\": true,\n          \"value\": []\n        }\n      ]\n    }\n    \n      \n  ]\n}\n"
+					"raw": "{\n\t\"frame\":\n  {\n    \"semanticProtocol\": \"i40:registry-semanticProtocol/onboarding\",\n    \"type\": \"publishInstance\",\n    \"messageId\": \"Sample_Msg_ID_000\",\n    \"replyBy\": 29993912,\n    \"receiver\": { \n      \"role\":{\"name\":\"CentralAssetRepository\" }\n    },\n    \"sender\": { \n      \"identification\": {\n      \"id\":  \"www.sampleOperator/aas\",\n      \"idType\": \"URI\"\n    }\n      ,\"role\":{\"name\":\"Operator\" }\n    },\n    \"conversationId\": \"{{$randomInt}}\"\n  },\n  \"interactionElements\": [\n    {\n      \"embeddedDataSpecifications\": [],\n      \"semanticId\": {\n        \"keys\": [\n          {\n            \"idType\": \"URI\",\n            \"type\": \"GlobalReference\",\n            \"value\": \"opcfoundation.org/specifications-unified-architecture/part-100-device-information-model\",\n            \"local\": false\n          }\n        ]\n      },\n      \"kind\": \"Instance\",\n      \"descriptions\": [],\n      \"idShort\": \"opc-ua-devices\",\n      \"identification\": {\n        \"id\": \"sap.com/aas/submodels/part-100-device-information-model/sampleSM\",\n        \"idType\": \"URI\"\n      },\n      \"modelType\": {\n        \"name\": \"Submodel\"\n      },\n      \"submodelElements\": [\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/deviceHealth\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [\n            {\n              \"language\": \"EN\",\n              \"text\": \"NORMAL_0 ;FAILURE_1 ;CHECK_FUNCTION_2 ;OFF_SPEC_3 ;MAINTENANCE_REQUIRED_4 \"\n            }\n          ],\n          \"idShort\": \"devicehealth\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"NORMAL_0\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"0112/2///61987#ABA565\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"manufacturer\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"foobar\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"manufactureruri\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"foobar.com\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"0112/2///61987#ABA567\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"model\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"NIOT-E-TIJCX-GB-RE\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"0112/2///61987#ABA951\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"serialnumber\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"6534235\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"0112/2///61987#ABA926\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"hardwarerevision\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"1.0\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"0112/2///61987#ABA601\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"softwarerevision\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"1.0\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"devicerevision\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"1.0\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"revisioncounter\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"Integer\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"0112/2///61987#ABA300\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"productcode\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"1321.300\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"kind\": \"Instance\",\n          \"descriptions\": [\n            {\n              \"language\": \"EN\",\n              \"text\": \"OI4 identifier is used\"\n            }\n          ],\n          \"idShort\": \"productinstanceuri\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"foobar.com/bar/\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"devicemanual\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"https://www.foobar.com/de/produkte/testpruduct\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"deviceclass\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"Property\"\n          },\n          \"value\": \"Gateway\",\n          \"valueType\": {\n            \"dataObjectType\": {\n              \"name\": \"String\"\n            }\n          }\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/parameterSet\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"parameterset\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"SubmodelElementCollection\"\n          },\n          \"ordered\": false,\n          \"allowDuplicates\": true,\n          \"value\": [\n            {\n              \"embeddedDataSpecifications\": [],\n              \"semanticId\": {\n                \"keys\": [\n                  {\n                    \"idType\": \"IRDI\",\n                    \"type\": \"GlobalReference\",\n                    \"value\": \"0173-1#02-AAB911#007\",\n                    \"local\": false\n                  }\n                ]\n              },\n              \"kind\": \"Instance\",\n              \"descriptions\": [],\n              \"idShort\": \"versorgungsspannung\",\n              \"parent\": {\n                \"keys\": [\n                  {\n                    \"idType\": \"IdShort\",\n                    \"type\": \"SubmodelElementCollection\",\n                    \"value\": \"parameterset\"\n                  },\n                  {\n                    \"index\": 1,\n                    \"idType\": \"URI\",\n                    \"type\": \"Submodel\",\n                    \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n                  }\n                ]\n              },\n              \"modelType\": {\n                \"name\": \"Property\"\n              },\n              \"value\": \"24 V DC ± 4,8 V DC\",\n              \"valueType\": {\n                \"dataObjectType\": {\n                  \"name\": \"String\"\n                }\n              }\n            },\n            {\n              \"embeddedDataSpecifications\": [],\n              \"semanticId\": {\n                \"keys\": [\n                  {\n                    \"idType\": \"IRDI\",\n                    \"type\": \"GlobalReference\",\n                    \"value\": \"0173-1#02-AAG004#0037\",\n                    \"local\": false\n                  }\n                ]\n              },\n              \"kind\": \"Instance\",\n              \"descriptions\": [],\n              \"idShort\": \"abmessung\",\n              \"parent\": {\n                \"keys\": [\n                  {\n                    \"idType\": \"IdShort\",\n                    \"type\": \"SubmodelElementCollection\",\n                    \"value\": \"parameterset\"\n                  },\n                  {\n                    \"index\": 1,\n                    \"idType\": \"URI\",\n                    \"type\": \"Submodel\",\n                    \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n                  }\n                ]\n              },\n              \"modelType\": {\n                \"name\": \"Property\"\n              },\n              \"value\": \"214 mm (H) x 85 mm (B) x 157 mm (T)\",\n              \"valueType\": {\n                \"dataObjectType\": {\n                  \"name\": \"String\"\n                }\n              }\n            }\n          ]\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/methodSet\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"methodset\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"SubmodelElementCollection\"\n          },\n          \"ordered\": false,\n          \"allowDuplicates\": true,\n          \"value\": []\n        },\n        {\n          \"embeddedDataSpecifications\": [],\n          \"semanticId\": {\n            \"keys\": [\n              {\n                \"idType\": \"IRDI\",\n                \"type\": \"GlobalReference\",\n                \"value\": \"opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/functionalGroups\",\n                \"local\": false\n              }\n            ]\n          },\n          \"kind\": \"Instance\",\n          \"descriptions\": [],\n          \"idShort\": \"functionalgroups\",\n          \"parent\": {\n            \"keys\": [\n              {\n                \"idType\": \"URI\",\n                \"type\": \"Submodel\",\n                \"value\": \"sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22\"\n              }\n            ]\n          },\n          \"modelType\": {\n            \"name\": \"SubmodelElementCollection\"\n          },\n          \"ordered\": false,\n          \"allowDuplicates\": true,\n          \"value\": []\n        }\n      ]\n    }\n    \n      \n  ]\n}\n",
+					"options": {
+						"raw": {}
+					}
 				},
 				"url": {
 					"raw": "{{i40-aas-http-endpoint-ingress}}/interaction",
@@ -489,6 +1173,53 @@
 					],
 					"path": [
 						"interaction"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check that mock adapter is populated",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "27627ba8-14c5-4e5f-af86-406285d975d6",
+						"exec": [
+							"pm.test(\"Status code is 200 and body has submodelElements\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.expect(pm.response.text()).to.include(\"submodelElements\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "k!ndHeat60",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{i40-aas-storage-adapter-mongodb}}/submodels",
+					"host": [
+						"{{i40-aas-storage-adapter-mongodb}}"
+					],
+					"path": [
+						"submodels"
 					]
 				}
 			},
@@ -514,7 +1245,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "ab79e154-e022-4cb4-8813-21c0c2ee0627",
+				"id": "fd67415a-0bd6-45b9-84e2-10892744c377",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -524,51 +1255,91 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "3f54fb8e-224e-4ba7-b20f-f5d7c596843d",
+				"id": "3bf66a0d-b52b-4284-9d96-d60797d7c978",
 				"type": "text/javascript",
 				"exec": [
-					"// pm.test(\"Status code is 200\", function () {",
-					"//     pm.response.to.have.status(200);",
-					"// });"
+					""
 				]
 			}
 		}
 	],
 	"variable": [
 		{
-			"id": "fe7dfd51-efb0-4273-91b6-f039c9586039",
+			"id": "161114b6-af4a-4d72-a9ac-a024ca573333",
 			"key": "endpoint_ingress_user",
 			"value": "admin",
 			"type": "string"
 		},
 		{
-			"id": "ead26a00-1455-4f2e-99d9-293f77444661",
+			"id": "6e0f78e2-a16c-4de0-a204-800564d097cb",
 			"key": "endpoint_ingress_pwd",
 			"value": "admin",
 			"type": "string"
 		},
 		{
-			"id": "93c469e4-271f-42fe-9486-dac792b97e88",
+			"id": "46c39b2e-ac45-4168-a114-f67de0df9e67",
 			"key": "i40-aas-http-endpoint-ingress",
 			"value": "http://localhost:2000",
 			"type": "string"
 		},
 		{
-			"id": "f0b618e7-7e5b-43da-912a-cc3651b25b12",
+			"id": "24c84915-dbaf-4982-bb17-8ae52fe9a323",
 			"key": "i40-aas-endpoint-registry",
 			"value": "http://localhost:4400",
 			"type": "string"
 		},
 		{
-			"id": "1a80fe6c-ffe1-482e-8706-4fdd8f963b26",
+			"id": "2f05729f-ae88-4447-9b50-d8d7d78472fa",
 			"key": "i40-aas-data-manager",
 			"value": "http://localhost:4000",
 			"type": "string"
 		},
 		{
-			"id": "89edd925-4a0e-4e63-858e-bd7e6ccf9095",
+			"id": "4d5b534c-0705-433a-9118-0adc014a382b",
 			"key": "i40-aas-adapter-registry",
 			"value": "http://localhost:4500",
+			"type": "string"
+		},
+		{
+			"id": "6c38dfed-5c34-4894-992a-43e4904b63d7",
+			"key": "i40-aas-storage-adapter-mongodb",
+			"value": "http://localhost:3100",
+			"type": "string"
+		},
+		{
+			"id": "3fe4ee6c-2b0c-47d1-982d-8e2a81af8fd3",
+			"key": "https-endpoint-ingress-host",
+			"value": "i40-aas-https-endpoint-ingress",
+			"type": "string"
+		},
+		{
+			"id": "8e5cfc1f-b0d9-4ba5-a81a-b110322edc26",
+			"key": "grpc-endpoint-ingress-host",
+			"value": "i40-aas-grpc-endpoint-ingress",
+			"type": "string"
+		},
+		{
+			"id": "8efecdf1-4d69-4081-afb9-981abaa43dc0",
+			"key": "https-endpoint-ingress-port",
+			"value": "2000",
+			"type": "string"
+		},
+		{
+			"id": "e0a3bd7d-4a7d-46e1-91d4-fbb82743f866",
+			"key": "grpc-endpoint-ingress-port",
+			"value": "8384",
+			"type": "string"
+		},
+		{
+			"id": "54b5aecf-a2f6-402c-80c5-111803be4895",
+			"key": "storage-adapter-mongodb-host",
+			"value": "i40-aas-storage-adapter-mongodb",
+			"type": "string"
+		},
+		{
+			"id": "25cc6507-b55a-4d13-94b1-b4f2d0d55720",
+			"key": "storage-adapter-mongodb-port",
+			"value": "3100",
 			"type": "string"
 		}
 	],
