@@ -38,12 +38,12 @@ purge:
 ## start everything using the docker-compose.yml file
 .PHONY: install
 install:
-	docker-compose -f docker-compose.yml up --force-recreate
+	docker-compose -f docker-compose.yml up --force-recreate --renew-anon-volumes
 
 ## start everything using the docker-compose.dev.yml file
 .PHONY: dev
 dev:
-	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --force-recreate
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --force-recreate --renew-anon-volumes
 
 ## build and tag a single service image
 .PHONY: build-%
@@ -61,7 +61,7 @@ push-%:
 ## up a specific service
 .PHONY: up-%
 up-%:
-	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d $*
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --force-recreate --renew-anon-volumes $*
 
 ## down a specific service
 .PHONY: down-%
