@@ -227,6 +227,8 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=${SKILLS_ONBOARDING_DATABASE_USER}
       - MONGO_INITDB_ROOT_PASSWORD=${SKILLS_ONBOARDING_DATABASE_PASSWORD}
       - MONGO_INITDB_DATABASE=${SKILLS_ONBOARDING_DATABASE_NAME}
+    volumes:
+      - mongodb-data:/data/db
   ##########################################
   postgres:
     image: postgres:alpine
@@ -234,6 +236,7 @@ services:
       - "${CORE_REGISTRIES_ENDPOINTS_DATABASE_PORT}:${CORE_REGISTRIES_ENDPOINTS_DATABASE_PORT}"
     volumes:
       - ./src/compose/volumes/postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - postgres-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=${CORE_REGISTRIES_ENDPOINTS_DATABASE_USER}
       - POSTGRES_PASSWORD=${CORE_REGISTRIES_ENDPOINTS_DATABASE_PASSWORD}
@@ -282,3 +285,7 @@ services:
       ## once healthchecks are added
       # - =${}
   ##########################################
+
+volumes:
+  mongodb-data:
+  postgres-data:
