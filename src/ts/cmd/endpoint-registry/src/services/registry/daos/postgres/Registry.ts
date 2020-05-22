@@ -31,7 +31,6 @@ class Registry implements iRegistry {
     try {
 
       let aasDescriptorRepository = this.client.getRepository(AASDescriptorEntity);
-      let endpointsRepository = this.client.getRepository(EndpointEntity);
       let assetssRepository = this.client.getRepository(AssetEntity);
 
       //create Asset associated with this AAS
@@ -55,21 +54,8 @@ class Registry implements iRegistry {
       //update individual endpoints since no endpoint-id is used.
       //Thus, the client should sent the whole endpoints array every time (i.e.) first get then put
 
-      // if no delete is done previous Endpoint record will be deleted and replaced
-      // with .save() the previous stays in DB */
-      record.descriptor.endpoints.map(async endpoint => {
-        let deleteResult = await this.client
-          .createQueryBuilder()
-          .delete()
-          .from(EndpointEntity)
-          .where("aasdescriptor = :aasdescriptor", { aasdescriptor: record.identification.id })
-          .execute();
-
-        logger.debug("Endpoint delete result: " + JSON.stringify(deleteResult))
-      })
-
       aasDescriptor.endpoints = record.descriptor.endpoints as EndpointEntity[]
-      logger.debug("Endpoints ", aasDescriptor.endpoints);
+      logger.debug("Endpoints are:  " + JSON.stringify(aasDescriptor.endpoints));
 
       //Create if not exists, update if it does
       let savedAASDescriptor = await aasDescriptorRepository.save(aasDescriptor);
@@ -93,27 +79,10 @@ class Registry implements iRegistry {
     try {
 
       let aasDescriptorRepository = this.client.getRepository(AASDescriptorEntity);
-      let endpointsRepository = this.client.getRepository(EndpointEntity);
 
       //check if the AASDescriptor is already registered in DB
       var loadedAASDescriptor = await aasDescriptorRepository.findOne({ id: record.identification.id });
       if (loadedAASDescriptor == undefined) {
-
-        var endpointsIds = record.descriptor.endpoints.map(id => id.address)
-        var types = record.descriptor.endpoints.map(type => type.type)
-
-        //The Endpoints array is set with the one in the request. It is not possible to
-        //update individual endpoints since no endpoint-id is used.
-        //Thus, the client should sent the whole endpoints array every time (i.e.) first get then put
-        var endpointsFound = await endpointsRepository.find({
-          address: In(endpointsIds),
-          type: In(types)
-        })
-
-        if (endpointsFound.length > 0) {
-          throw new HTTP422Error("Duplicate Endpoint-Ids found in Database. Transaction will be cancelled ...")
-        }
-
 
         //finally create the AASDescriptor in DB
         let aasDescriptor = new AASDescriptorEntity();
@@ -250,14 +219,13 @@ class Registry implements iRegistry {
     try {
       //get an Entityrepository for the AASDescriptor and the Asset
       let semProtocolRepository = this.client.getRepository(SemanticProtocolEntity);
-      let rolesRepository = this.client.getRepository(RoleEntity);
 
       //try to find the AASDescriptor in the DB
       var loadedSemProtocol = await semProtocolRepository.findOne({ id: record.identification.id });
 
       if (!loadedSemProtocol) {
 
-        //1. create a semantic protocol and save it to the DB
+        //create a semantic protocol and save it to the DB
         let semProtocol = new SemanticProtocolEntity();
         semProtocol.id = record.identification.id;
         semProtocol.idType = record.identification.idType;
