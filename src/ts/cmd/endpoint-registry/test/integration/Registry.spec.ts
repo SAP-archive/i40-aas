@@ -250,23 +250,21 @@ describe('Tests with a simple data model', function () {
 
 // PUT AASDescriptor test
   it(
-    'returns a 422 error if an endpoint with the given uri and type already' +
-      'exists in the registry and removes all traces of the failed descriptor',
+    'can assign the same endpoint to multiple AASDescriptors',
     async function () {
       var uniqueTestId = 'simpleDataTest' + getRandomInteger();
       var requester = chai.request(app).keepOpen();
+      var firstDescriptorRequest =   replaceAddressAndTypeInFirstEndpoint(
+        makeGoodAASDescriptor(uniqueTestId),
+        'http://abc.com-'+uniqueTestId,
+        'http'
+      )
 
       await requester
       //send the first Request
         .put('/AASDescriptors')
         .auth(user, password)
-        .send(
-          replaceAddressAndTypeInFirstEndpoint(
-            makeGoodAASDescriptor(uniqueTestId),
-            'http://abc.com-'+uniqueTestId,
-            'http'
-          )
-        )
+        .send(firstDescriptorRequest)
         //send a second request with different AASId and descriptor.Certificate but same Endpoint{address,type}
         .then(async (res: any) => {
           chai.expect(res.status).to.eql(200);
@@ -280,15 +278,16 @@ describe('Tests with a simple data model', function () {
                 'http://abc.com-'+uniqueTestId,
                 'http'              )
             )
-            //after failing to register, check if traces from the previous, erroneous request was correctly not registered
-            //i.e. the resource id should not be registed and thus return error
+            //after succeeding to assign the endpoint also to the second AAS, check if the first AAS is still
+            //related to it
             .then(async (res: any) => {
-              chai.expect(res.status).to.eql(422);
+              chai.expect(res.status).to.eql(200);
               await requester
-                .get('/AASDescriptors/aasId' + newUniqueTestId)
+                .get('/AASDescriptors/aasId' + uniqueTestId)
                 .auth(user, password)
                 .then((res: any) => {
-                  chai.expect(res.status).to.eql(404);
+                  chai.expect(res.status).to.eql(200);
+                  chai.expect(res.body.descriptor.endpoints[0]).to.eql(firstDescriptorRequest.descriptor.endpoints[0])
                 });
             });
         })
@@ -297,6 +296,8 @@ describe('Tests with a simple data model', function () {
         });
     }
   );
+
+
 
   it(
     'registers an AASDescriptor if it contains Endpoints that have the same address ' +

@@ -1,4 +1,4 @@
-import {Entity, Column, PrimaryGeneratedColumn, Unique, ManyToOne, Index, PrimaryColumn, JoinTable} from "typeorm";
+import {Entity, Column, PrimaryGeneratedColumn, Unique, ManyToOne, Index, PrimaryColumn, JoinTable, ManyToMany} from "typeorm";
 import { AASDescriptorEntity } from "./AASDescriptorEntity";
 
 @Entity()
@@ -21,10 +21,10 @@ export class EndpointEntity {
       })
     target!: string;
 
-    //AASDescriptor : many Endpoints
-    @ManyToOne(type => AASDescriptorEntity, aasdescriptor => aasdescriptor.endpoints, { onUpdate: 'CASCADE', onDelete: 'CASCADE'})
+    //m AASDescriptor : n Endpoints
+    @ManyToMany(type => AASDescriptorEntity, aasdescriptor => aasdescriptor.endpoints, { onUpdate: 'CASCADE', onDelete: 'CASCADE'})
     @JoinTable()
-    aasdescriptor!: AASDescriptorEntity;
+    aasdescriptorIds!: AASDescriptorEntity[];
 
 
 }

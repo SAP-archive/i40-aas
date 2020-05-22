@@ -93,7 +93,6 @@ class Registry implements iRegistry {
     try {
 
       let aasDescriptorRepository = this.client.getRepository(AASDescriptorEntity);
-      let assetssRepository = this.client.getRepository(AssetEntity);
       let endpointsRepository = this.client.getRepository(EndpointEntity);
 
       //check if the AASDescriptor is already registered in DB
