@@ -123,10 +123,9 @@ class Registry implements iRegistry {
     try {
       //find the current entry
       let aasDescriptorRepository = this.client.getRepository(AASDescriptorEntity);
-      let endpointsRepository = this.client.getRepository(EndpointEntity);
 
       //try to find the AASDescriptor in the DB
-      var loadedAASDescriptor = await aasDescriptorRepository.findOne({ id: record.identification.id });
+      var loadedAASDescriptor = await aasDescriptorRepository.findOne({ id: record.identification.id },{ relations: ["endpoints","asset"] });
       if (loadedAASDescriptor) {
 
         /*NOTE: The Endpoints array is replaced with the one in the request. It is not possible to
@@ -134,17 +133,15 @@ class Registry implements iRegistry {
         Thus, the client should sent the whole endpoints array every time (i.e.) first get then put
         if no delete is done previous Endpoint record will be deleted and replaced
         with .save() the previous stays in DB */
-        let deleteResult = await this.client
-          .createQueryBuilder()
-          .delete()
-          .from(EndpointEntity)
-          .where("aasdescriptor = :aasdescriptor", { aasdescriptor: record.identification.id })
-          .execute();
 
-        logger.debug("Endpoint delete result: " + deleteResult)
+        var deleted = await aasDescriptorRepository.delete(record.identification.id)
+   //let softRemoveResult  = await this.client.manager.softRemove(loadedAASDescriptor.endpoints);
+        logger.debug("Endpoint delete result: " + JSON.stringify(deleted) )
+        //TODO: the endpoints that are not anymore assigned to an AASDescriptor should be deleted from DB
 
+        // loadedAASDescriptor.endpoints = record.descriptor.endpoints.filter(endpoint => {
+        //   endpoint.address !== endpoint.address }) as EndpointEntity[];
 
-        //after deleting existing endpoints, replace them with the new
         loadedAASDescriptor.endpoints = record.descriptor.endpoints as EndpointEntity[]
         loadedAASDescriptor.asset = record.asset;
         loadedAASDescriptor.certificate_x509_i40 = record.descriptor.certificate_x509_i40
@@ -152,15 +149,7 @@ class Registry implements iRegistry {
         //Create if not exists, update if it does
         let savedAasDescriptor = await aasDescriptorRepository.save(loadedAASDescriptor);
 
-        //TODO: maybe alternative with QueryBuilder
-        // let updateResult = await this.client
-        // .createQueryBuilder()
-        // .update(AASDescriptorEntity)
-        // .set({
-        //   endpoints: record.descriptor.endpoints
-        // })
-        // .where("id = :id", { id: record.identification.id })
-        // .execute();
+
 
         logger.debug("AASDescriptor updated in Db " + JSON.stringify(savedAasDescriptor));
 
@@ -316,12 +305,16 @@ class Registry implements iRegistry {
       //Load the AASDescriptor object from the DB as well as the related Objects (Endpoints, Asset)
       let resultAasDescriptor = await aasDescriptorRepository.findOne({
         where: [
-          { id: aasId },],
+          { id: aasId }],
         relations: ["endpoints", "asset", "roles"]
       }) as AASDescriptorEntity;
 
       if (resultAasDescriptor) {
         logger.debug("asset id " + JSON.stringify(resultAasDescriptor));
+
+        //the auto generated Ids are not to be returned in the endpoint object
+       // resultAasDescriptor.endpoints.map(endpoint => delete endpoint.id)
+
         let resultAsset = await aasAssetRepository.findOne({ id: resultAasDescriptor.asset.id }) as AssetEntity
         let aasDescrIdentifier = new Identifier(resultAasDescriptor.id, resultAasDescriptor.idType as TIdType);
         let descr = new GenericDescriptor(resultAasDescriptor.endpoints, resultAasDescriptor.certificate_x509_i40, resultAasDescriptor.signature);

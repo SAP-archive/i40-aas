@@ -3,20 +3,19 @@ import { AASDescriptorEntity } from "./AASDescriptorEntity";
 
 @Entity()
 //the combination for address and type should also be unique (to avoid saving double)
-//@Unique("UniqueAddressAndType", ["address", "type"])
 
 export class EndpointEntity {
 
-  @PrimaryGeneratedColumn()
-  id!: string;
+  // @PrimaryColumn()
+  // id!: string;
 
-  @Column({
+  @PrimaryColumn({
     length: 1024
     })
     //TODO: validate here if this is a valid URL format
    address!: string;
 
-   @Column({
+   @PrimaryColumn({
     length: 1024
     })
     type!: string;
