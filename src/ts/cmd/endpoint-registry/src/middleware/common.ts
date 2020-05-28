@@ -1,11 +1,23 @@
-import { Router } from 'express';
+import { Request, Response, NextFunction, Router } from 'express';
 import cors from 'cors';
 import parser from 'body-parser';
 import compression from 'compression';
 import * as basicAuth from 'express-basic-auth';
+const logger = require('aas-logger/lib/log');
 
 //const dotenv = require('dotenv');
 //dotenv.config();
+
+//add a handler for debugging that logs all requests
+export const handleLogRequest = (router: Router) => {
+  router.use((req: Request, res: Response, next:NextFunction) => {
+    logger.debug("Incoming request.path to Registry:  "+ JSON.stringify(req.path));
+    next();
+  });
+};
+
+
+
 
 export const handleCors = (router: Router) =>
   router.use(cors({ credentials: true, origin: true }));

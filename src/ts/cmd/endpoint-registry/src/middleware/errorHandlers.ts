@@ -2,11 +2,14 @@ import { Request, Response, NextFunction, Router } from "express";
 import * as ErrorHandler from "../utils/ErrorHandler";
 const logger = require('aas-logger/lib/log');
 
+
+
+
 //the way you handle 404 in express. By adding a fallback middleware if nothing else was found
 //We don’t handle 404 error in its middleware — we directly propagate it further for a dedicated client errors handler.
 const handle404Error = (router: Router) => {
   router.use((req: Request, res: Response) => {
-    //logger.debug("Handle 404 Error called");
+  //  logger.debug("Handle 404 Error called");
     ErrorHandler.notFoundError();
   });
 };
