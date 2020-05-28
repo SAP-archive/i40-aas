@@ -69,7 +69,7 @@ export default [
     method: 'get',
     handler: async (req: Request, res: Response, next: NextFunction) => {
       try {
-        console.log('Path parameters received:' + JSON.stringify(req.params.aasId));
+        logger.debug('Path parameters received:' + JSON.stringify(req.params.aasId));
         if (req.params.aasId) {
           res.json(
             await registryApi.readAASDescriptorByAASId(
@@ -92,7 +92,7 @@ export default [
     handler:[validateAASDescriptorRequest,
       async (req: Request, res: Response, next: NextFunction) => {
       try {
-        console.log('Path parameters received:' + JSON.stringify(req.params));
+        logger.debug('Path parameters received:' + JSON.stringify(req.params));
         if (req.params.aasId && req.params.aasId === req.body.identification.id ) {
           res.json(
             await registryApi.updateAASDescriptorByAASId(
@@ -114,7 +114,7 @@ export default [
     method: 'delete',
     handler: async (req: Request, res: Response, next: NextFunction) => {
       try {
-        console.log('Path parameters received:' + JSON.stringify(req.params));
+        logger.debug('Path parameters received:' + JSON.stringify(req.params));
         if (req.params.aasId) {
           res.json(
             await registryApi.deleteAASDescriptorByAASId(
@@ -163,10 +163,10 @@ export default [
     path: '/semanticProtocols',
     method: 'put',
     handler: async (req: Request, res: Response, next: NextFunction) => {
-      console.log('/semanticprotocol PUT request received');
+      logger.debug('/semanticprotocol PUT request received');
       try {
         await registryApi.createSemanticProtocol(req.body);
-        console.log('Sent back response of /semanticprotocol PUT request');
+        logger.debug('Sent back response of /semanticprotocol PUT request');
         res.json(req.body);
       } catch (err) {
         logger.error(err);
@@ -179,10 +179,10 @@ export default [
     path: '/semanticProtocols',
     method: 'get',
     handler: async (req: Request, res: Response, next: NextFunction) => {
-      console.log('/semanticprotocol GET request received');
+      logger.debug('/semanticprotocol GET request received');
       try {
        let response: ISemanticProtocol[] = await registryApi.readAllSemanticProtocols();
-        console.log('Sent back response of /semanticprotocol PUT request');
+       logger.debug('Sent back response of /semanticprotocol PUT request');
         res.json(response);
       } catch (err) {
         logger.error(err);
@@ -195,10 +195,10 @@ export default [
     path: '/semanticProtocols/:sematicProtocolId',
     method: 'delete',
     handler: async (req: Request, res: Response, next: NextFunction) => {
-      console.log('/semanticprotocol DELETE request received');
+      logger.debug('/semanticprotocol DELETE request received');
 
       try {
-        console.log('Path parameters received:' + JSON.stringify(req.params));
+        logger.debug('Path parameters received:' + JSON.stringify(req.params));
         if (req.params.sematicProtocolId) {
           res.json(
             await registryApi.deleteSemanticProtocol(
@@ -223,7 +223,7 @@ export default [
       try {
         logger.debug('Path parameters received:' + JSON.stringify(req.params));
         var response = await registryApi.readAASBySemanticProtocolAndRole(req.params.semanticProtocolId, req.params.roleName)
-       // console.log('Sent back response of /semanticprotocol GET request');
+       // logger.debug('Sent back response of /semanticprotocol GET request');
         res.json(response);
       } catch (err) {
         logger.error(err);
@@ -241,7 +241,7 @@ export default [
         logger.debug('Path parameters received:' + JSON.stringify(req.params));
         if(req.params.semanticProtocolId || req.params.roleName){
         var response = await registryApi.updatedAASIDsToRole(req.params.semanticProtocolId, req.params.roleName, req.body)
-       // console.log('Sent back response of /semanticprotocol GET request');
+       // logger.debug('Sent back response of /semanticprotocol GET request');
         res.json(response);}
         else{ throw new HTTP422Error("One or more path parameter is missing fron request")}
       } catch (err) {
@@ -261,7 +261,7 @@ export default [
         if(req.params.semanticProtocolId || req.params.roleName || req.params.aasId){
 
         var response = await registryApi.deleteAASIdFromRole(req.params.semanticProtocolId, req.params.roleName, req.params.aasId)
-       // console.log('Sent back response of /semanticprotocol GET request');
+       // logger.debug('Sent back response of /semanticprotocol GET request');
         res.json(response);}
         else{ throw new HTTP422Error("One or more path parameter is missing fron request")}
       } catch (err) {
@@ -276,11 +276,11 @@ export default [
     path: '/semanticProtocols/:semanticProtocolId',
     method: 'get',
     handler: async (req: Request, res: Response, next: NextFunction) => {
-      console.log('GET SemanticProtocol by semanticprotocol request received');
+      logger.debug('GET SemanticProtocol by semanticprotocol request received');
       try {
-        console.log('Path parameters received:' + JSON.stringify(req.params));
+        logger.debug('Path parameters received:' + JSON.stringify(req.params));
         var response = await registryApi.readSemanticProtocolBySemanticProtocolId(req.params.semanticProtocolId)
-       // console.log('Sent back response of /semanticprotocol GET request');
+       // logger.debug('Sent back response of /semanticprotocol GET request');
         res.json(response);
       } catch (err) {
         logger.error(err);
@@ -295,7 +295,7 @@ export default [
     handler:[validateSemanticProtocolRequest,
       async (req: Request, res: Response, next: NextFunction) => {
       try {
-        console.log('Path parameters received:' + JSON.stringify(req.params));
+        logger.debug('Path parameters received:' + JSON.stringify(req.params));
         if (req.params.semanticProtocolId && req.params.semanticProtocolId === req.body.identification.id ) {
           res.json( await registryApi.updateSemanticProtocolById( req.body));
         } else
@@ -313,11 +313,11 @@ export default [
     path: '/semanticProtocols/:semanticProtocolId',
     method: 'get',
     handler: async (req: Request, res: Response, next: NextFunction) => {
-      console.log('GET SemanticProtocol by semanticprotocol request received');
+      logger.debug('GET SemanticProtocol by semanticprotocol request received');
       try {
-        console.log('Path parameters received:' + JSON.stringify(req.params));
+        logger.debug('Path parameters received:' + JSON.stringify(req.params));
         var response = await registryApi.readSemanticProtocolBySemanticProtocolId(req.params.semanticProtocolId)
-       // console.log('Sent back response of /semanticprotocol GET request');
+       // logger.debug('Sent back response of /semanticprotocol GET request');
         res.json(response);
       } catch (e) {
         res.end(e.message);
