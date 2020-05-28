@@ -40,7 +40,7 @@ export class AASDescriptorEntity {
   signature!: string;
 
 
-  @OneToMany(type => EndpointEntity, endpoint => endpoint.aasdescriptor, {cascade:true, eager:true})
+  @ManyToMany(type => EndpointEntity, endpoint => endpoint.aasdescriptorIds, {cascade:true})
   @JoinTable()
   endpoints!: EndpointEntity[];
 
