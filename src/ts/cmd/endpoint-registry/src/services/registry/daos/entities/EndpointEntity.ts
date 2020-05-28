@@ -1,9 +1,13 @@
-import {Entity, Column, PrimaryGeneratedColumn, Unique, ManyToOne, Index, PrimaryColumn, JoinTable} from "typeorm";
+import {Entity, Column, PrimaryGeneratedColumn, Unique, ManyToOne, Index, PrimaryColumn, JoinTable, ManyToMany} from "typeorm";
 import { AASDescriptorEntity } from "./AASDescriptorEntity";
 
 @Entity()
 //the combination for address and type should also be unique (to avoid saving double)
+
 export class EndpointEntity {
+
+  // @PrimaryColumn()
+  // id!: string;
 
   @PrimaryColumn({
     length: 1024
@@ -21,10 +25,9 @@ export class EndpointEntity {
       })
     target!: string;
 
-    //AASDescriptor : many Endpoints
-    @ManyToOne(type => AASDescriptorEntity, aasdescriptor => aasdescriptor.endpoints, { onUpdate: 'CASCADE', onDelete: 'CASCADE'})
-    @JoinTable()
-    aasdescriptor!: AASDescriptorEntity;
+    //m AASDescriptor : n Endpoints
+    @ManyToMany(type => AASDescriptorEntity, aasdescriptor => aasdescriptor.endpoints, { onUpdate: 'CASCADE', onDelete: 'CASCADE'})
+    aasdescriptorIds!: AASDescriptorEntity[];
 
 
 }
