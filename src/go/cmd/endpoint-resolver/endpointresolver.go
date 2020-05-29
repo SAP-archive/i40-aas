@@ -142,7 +142,26 @@ func (r *EndpointResolver) processGenericEgressMsg(d amqp.Delivery) error {
 	}
 
 	for _, aasDescriptor := range aasDescriptors {
-		for _, endpoint := range aasDescriptor.(map[string]interface{})["descriptor"].(map[string]interface{})["endpoints"].([]interface{}) {
+		descriptor := aasDescriptor.(map[string]interface{})["descriptor"]
+		if descriptor == nil {
+			jsonDescriptor, err := json.Marshal(aasDescriptor)
+			if err != nil {
+				log.Error().Err(err).Msgf("could not convert map to JSON: %v", aasDescriptor)
+			}
+			log.Warn().Msgf("\"descriptor\" key not found in JSON, dropping aasDescriptor %v", string(jsonDescriptor))
+			continue
+		}
+
+		endpoints := descriptor.(map[string]interface{})["endpoints"]
+		if endpoints == nil {
+			jsonDescriptor, err := json.Marshal(aasDescriptor)
+			if err != nil {
+				log.Error().Err(err).Msgf("could not convert map to JSON: %v", aasDescriptor)
+			}
+			log.Warn().Msgf("\"endpoints\" key not found in JSON, dropping aasDescriptor %v", string(jsonDescriptor))
+			continue
+		}
+		for _, endpoint := range endpoints.([]interface{}) {
 			log.Debug().Msgf("%v", endpoint)
 
 			urlHost := fmt.Sprintf("%v", endpoint.(map[string]interface{})["address"])
@@ -288,6 +307,10 @@ func (cfg *Config) validate() error {
 		return err
 	}
 
+	if cfg.EndpointRegistryConfig == nil {
+		err = fmt.Errorf("EndpointRegistryConfig cannot be nil")
+		return err
+	}
 	err = cfg.EndpointRegistryConfig.validate()
 	if err != nil {
 		return err
