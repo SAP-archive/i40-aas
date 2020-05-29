@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "c93e5ddb-4150-4e4e-99fd-cd0ecc01d12c",
-		"name": "AAS-Service",
+		"_postman_id": "6b5c0225-d6ad-49dc-92d7-c7083e5c11f9",
+		"name": "AAS-Service copy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -39,7 +39,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "  {\n    \"identification\": {\n        \"id\": \"www.sampleOperator/aas\",\n        \"idType\": \"IRI\"\n    },\n    \"descriptor\": {\n    \"endpoints\": [\n        {\n            \"address\": \"{{grpc-endpoint-ingress-host}}:{{grpc-endpoint-ingress-port}}\",\n            \"type\": \"grpc\",\n            \"target\": \"cloud\"\n        },\n        {\n          \"address\":  \"http://{{endpoint_ingress_user}}:{{endpoint_ingress_pwd}}@{{https-endpoint-ingress-host}}:{{https-endpoint-ingress-port}}/interaction\" ,\n          \"type\": \"http\",\n          \"target\": \"cloud\"\n      }\n    ],\n      \"certificate_x509_i40\": \"sample_crt\",\n    \"signature\": \"sample_sig\"\n    },\n    \"asset\": {\n        \"id\": \"Sample-Asset-Id\",\n        \"idType\": \"IRI\"\n    }\n  }\n",
+									"raw": "  {\n    \"identification\": {\n        \"id\": \"www.sampleOperator/aas\",\n        \"idType\": \"IRI\"\n    },\n    \"descriptor\": {\n    \"endpoints\": [\n        {\n            \"address\": \"{{grpc-endpoint-ingress-host}}:{{grpc-endpoint-ingress-port}}\",\n            \"type\": \"grpc\",\n            \"target\": \"cloud\"\n        },\n        {\n          \"address\":  \"http://{{endpoint_ingress_user}}:{{endpoint_ingress_pwd}}@{{https-endpoint-ingress-host}}:{{https-endpoint-ingress-port}}/interaction\" ,\n          \"type\": \"http\",\n          \"target\": \"cloud\"\n      }\n    ],\n      \"certificate_x509_i40\": \"-----BEGIN CERTIFICATE----- MIICpDCCAYwCCQDW6HuJgsJ2CzANBgkqhkiG9w0BAQsFADAUMRIwEAYDVQQDDAls b2NhbGhvc3QwHhcNMjAwNTI5MDgxNTU0WhcNMzAwNTI3MDgxNTU0WjAUMRIwEAYD VQQDDAlsb2NhbGhvc3QwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC24rw2uNM3Tf8kk0NCJccMd4GuJj+oGxgKMryo4slBDbxj1Ydt51WeaGqxV6w6oEeHGkVEF8ItVT+q+btlDLe8Wehwj6XbN7n80gHnaQae1GF1Z+3hyXQuk3OAHU+aiOAviz+qRzg+1L+K3G2UwTWSrKoJr2UVgHfplgacIhAgU4xqvTfiNTPD5fLBfWNTdvBtm6Tv0fixpMnOMO+gQw51ap0zfdnYC0728XGVC8ru8hXlv75Fnl2GwxLfXscO8UFBE1OZkk+ehgVIxPzcIueA2vpifagtuh20xDdSTtXFfR2RinNECczpOJ0ZurrEXZAs/Q/1GN3hhLWWfOQob9wJAgMBAAEwDQYJKoZIhvcNAQELBQADggEBABLlp9E45N2QtIsP74Z3s5D0WVEond+dR/gTsAakqkopz36eOyz65z4mdZJu3YwUdEYIkDsyGkooOgZUCUQMKBsaUkaWaA7P114ryqIWqKgJmvftE6HAUHbuZ0t2/zCY7cRcgey8P6DunSXLwKNcuRb3D6OAgouvqwPop09GuduDPc9f9S4vNmf5Pu+i6VF3GxthchYLV1afH3hbnZ7EwrLdnaQTBvjCCoZA/IhlGu5mIE3rLq8COMR8VrvXGbdR+lr6Xm7yr/AJBz1uRxoFrrXZHSbXK9tD4OGxkuMLqqBSKiuWuSyeXyNhG+sysrBmZbBGRNCCbTUWpRLqMgZqUWA= -----END CERTIFICATE-----\",\n    \"signature\": \"sample_sig\"\n    },\n    \"asset\": {\n        \"id\": \"Sample-Asset-Id\",\n        \"idType\": \"IRI\"\n    }\n  }\n",
 									"options": {
 										"raw": {}
 									}
@@ -96,7 +96,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "  {\n    \"identification\": {\n        \"id\": \"www.sampleOperator/aas\",\n        \"idType\": \"IRI\"\n    },\n    \"descriptor\": {\n    \"endpoints\": [\n        {\n            \"address\": \"{{grpc-endpoint-ingress-host}}:{{grpc-endpoint-ingress-port}}\",\n            \"type\": \"grpc\",\n            \"target\": \"cloud\"\n        },\n        {\n          \"address\":  \"http://{{endpoint_ingress_user}}:{{endpoint_ingress_pwd}}@{{https-endpoint-ingress-host}}:{{https-endpoint-ingress-port}}/interaction\" ,\n          \"type\": \"http\",\n          \"target\": \"cloud\"\n      }\n    ],\n      \"certificate_x509_i40\": \"sample_crt\",\n    \"signature\": \"sample_sig\"\n    },\n    \"asset\": {\n        \"id\": \"Sample-Asset-Id\",\n        \"idType\": \"IRI\"\n    }\n  }",
+									"raw": "  {\n    \"identification\": {\n        \"id\": \"www.sampleOperator/aas\",\n        \"idType\": \"IRI\"\n    },\n    \"descriptor\": {\n    \"endpoints\": [\n        {\n            \"address\": \"{{grpc-endpoint-ingress-host}}:{{grpc-endpoint-ingress-port}}\",\n            \"type\": \"grpc\",\n            \"target\": \"cloud\"\n        },\n        {\n          \"address\":  \"http://{{endpoint_ingress_user}}:{{endpoint_ingress_pwd}}@{{https-endpoint-ingress-host}}:{{https-endpoint-ingress-port}}/interaction\" ,\n          \"type\": \"http\",\n          \"target\": \"cloud\"\n      }\n    ],\n      \"certificate_x509_i40\": \"-----BEGIN CERTIFICATE----- MIICpDCCAYwCCQDW6HuJgsJ2CzANBgkqhkiG9w0BAQsFADAUMRIwEAYDVQQDDAls b2NhbGhvc3QwHhcNMjAwNTI5MDgxNTU0WhcNMzAwNTI3MDgxNTU0WjAUMRIwEAYD VQQDDAlsb2NhbGhvc3QwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC24rw2uNM3Tf8kk0NCJccMd4GuJj+oGxgKMryo4slBDbxj1Ydt51WeaGqxV6w6oEeHGkVEF8ItVT+q+btlDLe8Wehwj6XbN7n80gHnaQae1GF1Z+3hyXQuk3OAHU+aiOAviz+qRzg+1L+K3G2UwTWSrKoJr2UVgHfplgacIhAgU4xqvTfiNTPD5fLBfWNTdvBtm6Tv0fixpMnOMO+gQw51ap0zfdnYC0728XGVC8ru8hXlv75Fnl2GwxLfXscO8UFBE1OZkk+ehgVIxPzcIueA2vpifagtuh20xDdSTtXFfR2RinNECczpOJ0ZurrEXZAs/Q/1GN3hhLWWfOQob9wJAgMBAAEwDQYJKoZIhvcNAQELBQADggEBABLlp9E45N2QtIsP74Z3s5D0WVEond+dR/gTsAakqkopz36eOyz65z4mdZJu3YwUdEYIkDsyGkooOgZUCUQMKBsaUkaWaA7P114ryqIWqKgJmvftE6HAUHbuZ0t2/zCY7cRcgey8P6DunSXLwKNcuRb3D6OAgouvqwPop09GuduDPc9f9S4vNmf5Pu+i6VF3GxthchYLV1afH3hbnZ7EwrLdnaQTBvjCCoZA/IhlGu5mIE3rLq8COMR8VrvXGbdR+lr6Xm7yr/AJBz1uRxoFrrXZHSbXK9tD4OGxkuMLqqBSKiuWuSyeXyNhG+sysrBmZbBGRNCCbTUWpRLqMgZqUWA= -----END CERTIFICATE-----\",\n    \"signature\": \"sample_sig\"\n    },\n    \"asset\": {\n        \"id\": \"Sample-Asset-Id\",\n        \"idType\": \"IRI\"\n    }\n  }",
 									"options": {
 										"raw": {}
 									}
@@ -502,7 +502,7 @@
 										},
 										{
 											"key": "roleName",
-											"value": ""
+											"value": "Operator"
 										}
 									]
 								}
@@ -1092,7 +1092,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "27627ba8-14c5-4e5f-af86-406285d975d6",
+						"id": "c20283a4-f173-41be-93c3-2ea50f68fc6c",
 						"exec": [
 							"pm.test(\"Status code is 200 and Body is empty\", function () {",
 							"    pm.response.to.have.status(200);",
@@ -1184,7 +1184,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "27627ba8-14c5-4e5f-af86-406285d975d6",
+						"id": "2a8a357e-abc8-4394-9db2-32a20a6fd18e",
 						"exec": [
 							"pm.test(\"Status code is 200 and body has submodelElements\", function () {",
 							"    pm.response.to.have.status(200);",
@@ -1245,7 +1245,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "fd67415a-0bd6-45b9-84e2-10892744c377",
+				"id": "a0b4330d-151c-47fc-92a4-3b9b6958b8fa",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -1255,7 +1255,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "3bf66a0d-b52b-4284-9d96-d60797d7c978",
+				"id": "863b9595-4695-47d3-b83f-109650698ccc",
 				"type": "text/javascript",
 				"exec": [
 					""
