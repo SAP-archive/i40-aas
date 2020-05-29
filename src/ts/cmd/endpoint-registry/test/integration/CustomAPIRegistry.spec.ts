@@ -732,6 +732,14 @@ describe('Tests with a simple data model', function () {
                       _.some(response.body, {
                         identification: aasRequest_1.identification
                       })).to.be.true;
+
+
+                      //check if the endpoints are also there
+                      chai.expect(
+                        _.some(response.body[0].descriptor?.endpoints, {
+                          address: aasRequest_1.descriptor.endpoints[0].address
+                        })).to.be.true;
+
                   });
               })
               .then(async (res: any) => {
@@ -747,6 +755,14 @@ describe('Tests with a simple data model', function () {
                       _.some(response.body, {
                         identification: aasRequest_2.identification
                       })).to.be.true;
+
+
+                      //check if the endpoints are also there
+                      chai.expect(
+                        _.some(response.body[0].descriptor?.endpoints, {
+                          address: aasRequest_2.descriptor.endpoints[0].address
+                        })).to.be.true;
+
                   });
               })
               .then(() => {
