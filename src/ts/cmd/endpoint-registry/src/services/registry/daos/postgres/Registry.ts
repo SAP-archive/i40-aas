@@ -471,7 +471,8 @@ class Registry implements iRegistry {
       let aasIds = loadedRole.aasDescriptorIds.map(identifier => identifier.id)
 
       //load the AASDescriptorEntities from the Database
-      let AASDescriptorEntitiesArray = await aasDescriptorRepository.find({ id: In(aasIds) });
+      let AASDescriptorEntitiesArray = await aasDescriptorRepository
+      .find({where: [{ id: In(aasIds)}], relations: ["endpoints", "asset"]});
 
       //For each entity we need to construct a IAASDescriptor Object
       if (AASDescriptorEntitiesArray) {
