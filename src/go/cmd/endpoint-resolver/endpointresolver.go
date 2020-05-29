@@ -147,8 +147,10 @@ func (r *EndpointResolver) processGenericEgressMsg(d amqp.Delivery) error {
 			jsonDescriptor, err := json.Marshal(aasDescriptor)
 			if err != nil {
 				log.Error().Err(err).Msgf("could not convert map to JSON: %v", aasDescriptor)
+				log.Warn().Msgf("\"descriptor\" key not found in JSON, dropping aasDescriptor %v", aasDescriptor)
+			} else {
+				log.Warn().Msgf("\"descriptor\" key not found in JSON, dropping aasDescriptor %v", string(jsonDescriptor))
 			}
-			log.Warn().Msgf("\"descriptor\" key not found in JSON, dropping aasDescriptor %v", string(jsonDescriptor))
 			continue
 		}
 
@@ -157,8 +159,10 @@ func (r *EndpointResolver) processGenericEgressMsg(d amqp.Delivery) error {
 			jsonDescriptor, err := json.Marshal(aasDescriptor)
 			if err != nil {
 				log.Error().Err(err).Msgf("could not convert map to JSON: %v", aasDescriptor)
+				log.Warn().Msgf("\"endpoints\" key not found in JSON, dropping aasDescriptor %v", aasDescriptor)
+			} else {
+				log.Warn().Msgf("\"endpoints\" key not found in JSON, dropping aasDescriptor %v", string(jsonDescriptor))
 			}
-			log.Warn().Msgf("\"endpoints\" key not found in JSON, dropping aasDescriptor %v", string(jsonDescriptor))
 			continue
 		}
 		for _, endpoint := range endpoints.([]interface{}) {
