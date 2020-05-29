@@ -13,6 +13,7 @@ let CORE_EGRESS_HTTP_QUEUE = checkEnvVar('CORE_EGRESS_HTTP_QUEUE');
 let CORE_EGRESS_HTTP_BROKER_BINDINGKEY =
   CORE_EGRESS_EXCHANGE + '.' + CORE_EGRESS_HTTP_QUEUE;
 
+
 var brokerClient = new AmqpClient(
   CORE_BROKER_HOST,
   CORE_BROKER_PORT,
@@ -21,6 +22,8 @@ var brokerClient = new AmqpClient(
   CORE_EGRESS_PASSWORD,
   CORE_EGRESS_HTTP_QUEUE
 );
+
+var CORE_EGRESS_HTTP_TLS_ENABLE = checkEnvVar('CORE_EGRESS_HTTP_TLS_ENABLE');
 
 logger.info('HTTP Endpoint - Egress Service Started');
 

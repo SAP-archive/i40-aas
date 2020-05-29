@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
+	"crypto/x509"
 	"fmt"
 	"time"
 
@@ -15,8 +17,9 @@ import (
 
 // GRPCClientConfig struct
 type GRPCClientConfig struct {
-	URL      string
-	RootCert string
+	URL        string
+	TLSEnabled bool
+	Cert       string
 }
 
 // grpcClient struct
@@ -43,14 +46,18 @@ func newGRPCClient(cfg *GRPCClientConfig) (*grpcClient, error) {
 	c.cfg = cfg
 	grpcOpts = []grpc.DialOption{}
 
-	if cfg.RootCert != "" {
-		grpcCreds, err := credentials.NewClientTLSFromFile(cfg.RootCert, "localhost")
-		if err != nil {
-			log.Error().Err(err).Msgf("failed to create grpc tls client via root-cert %s", cfg.RootCert)
+	if cfg.TLSEnabled {
+		certPool := x509.NewCertPool()
+		certPool.AppendCertsFromPEM([]byte(cfg.Cert))
+
+		tlsCfg := &tls.Config{
+			RootCAs: certPool,
 		}
+
+		grpcCreds := credentials.NewTLS(tlsCfg)
 		grpcOpts = append(grpcOpts, grpc.WithTransportCredentials(grpcCreds))
 	} else {
-		log.Warn().Msg("missing cfg.RootCert - reverting to WithInsecure()")
+		log.Warn().Msg("TLS disabled - reverting to WithInsecure()")
 		grpcOpts = append(grpcOpts, grpc.WithInsecure())
 	}
 

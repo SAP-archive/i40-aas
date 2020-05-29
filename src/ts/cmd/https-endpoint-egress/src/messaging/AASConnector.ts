@@ -10,12 +10,15 @@ class AASConnector {
     this.webClient = wC;
   }
 
-  //Send a request to a dummy AAS service (e.g. an operator in case of an onboarding process)
-  async sendInteractionReplyToAAS(receiverURL: string, message: string) {
+  //Send a request to a AAS service (e.g. an operator in case of an onboarding process)
+  async sendInteractionReplyToAAS(receiverURL: string, message: string, urlSuffix?:string, username?:string, password?: string, cert?: string) {
     let response: AxiosResponse = await this.webClient.postRequest(
       receiverURL,
       message,
-      undefined
+      urlSuffix,
+      username,
+      password,
+      cert
     );
     return response;
   }

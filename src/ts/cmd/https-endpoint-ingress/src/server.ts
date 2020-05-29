@@ -1,4 +1,6 @@
 import express from 'express';
+import https from 'https';
+import fs from 'fs';
 import { applyMiddleware, applyRoutes } from './utils';
 import middleware from './middleware';
 import errorHandlers from './middleware/errorHandlers';
@@ -19,6 +21,9 @@ let CORE_BROKER_PORT = checkEnvVar('CORE_BROKER_PORT');
 var CORE_INGRESS_EXCHANGE = checkEnvVar('CORE_INGRESS_EXCHANGE');
 var CORE_INGRESS_USER = checkEnvVar('CORE_INGRESS_USER');
 var CORE_INGRESS_PASSWORD = checkEnvVar('CORE_INGRESS_PASSWORD');
+var CORE_INGRESS_HTTP_TLS_KEYFILEPATH = checkEnvVar('CORE_INGRESS_HTTP_TLS_KEYFILEPATH');
+var CORE_INGRESS_HTTP_TLS_CRTFILEPATH = checkEnvVar('CORE_INGRESS_HTTP_TLS_CRTFILEPATH');
+var CORE_INGRESS_HTTP_TLS_ENABLE = checkEnvVar('CORE_INGRESS_HTTP_TLS_ENABLE');
 
 const PORT = checkEnvVar('CORE_INGRESS_HTTP_PORT');
 // The queue is generated based on the binding key and is unique for the client
@@ -65,9 +70,18 @@ initiateBroker(brokerClient);
  * start the broker client and connect
  *  */
 
-router.listen(PORT, () => {
-  logger.info(`A Server is running http://localhost:${PORT}...`);
-});
+if (CORE_INGRESS_HTTP_TLS_ENABLE == 'true') {
+  https.createServer({
+    key: fs.readFileSync(CORE_INGRESS_HTTP_TLS_KEYFILEPATH),
+    cert: fs.readFileSync(CORE_INGRESS_HTTP_TLS_CRTFILEPATH)
+  }, router).listen(PORT, () => {
+    logger.info(`A Server is running http://localhost:${PORT}...`);
+  });
+} else {
+  router.listen(PORT, () => {
+    logger.info(`A Server is running http://localhost:${PORT}...`);
+  });
+}
 
 function checkEnvVar(variableName: string): string {
   let retVal: string | undefined = process.env[variableName];

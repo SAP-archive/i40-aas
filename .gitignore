@@ -73,12 +73,16 @@ typings/
 *.pem
 *.key
 *.crt
+*.csr
 *.priv
 
 # exclude the whole .compose/cert* directory
 /src/compose/volumes/certs/*
 # except for
-!/src/compose/volumes/certs/.gitkeep
+!/src/compose/volumes/certs/README.md
+!/src/compose/volumes/certs/server.conf
+!/src/compose/volumes/certs/server.key
+!/src/compose/volumes/certs/server.crt
 
 #######################
 # ignore all .env files

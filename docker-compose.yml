@@ -21,6 +21,11 @@ services:
       - CORE_INGRESS_HTTP_PORT=${CORE_INGRESS_HTTP_PORT}
       - CORE_INGRESS_HTTP_USER=${CORE_INGRESS_HTTP_USER}
       - CORE_INGRESS_HTTP_PASSWORD=${CORE_INGRESS_HTTP_PASSWORD}
+      - CORE_INGRESS_HTTP_TLS_ENABLE=${CORE_INGRESS_HTTP_TLS_ENABLE}
+      - CORE_INGRESS_HTTP_TLS_KEYFILEPATH=${CORE_INGRESS_HTTP_TLS_KEYFILEPATH}
+      - CORE_INGRESS_HTTP_TLS_CRTFILEPATH=${CORE_INGRESS_HTTP_TLS_CRTFILEPATH}
+    volumes:
+      - ./src/compose/volumes/certs/:/certs/
   ##########################################
   i40-aas-https-endpoint-egress:
     image: sapi40/i40-aas-https-endpoint-egress
@@ -36,6 +41,7 @@ services:
       - CORE_EGRESS_EXCHANGE=${CORE_EGRESS_EXCHANGE}
       - CORE_EGRESS_HTTP_QUEUE=${CORE_EGRESS_HTTP_QUEUE}
       - CORE_EGRESS_HTTP_CTAG=${CORE_EGRESS_HTTP_CTAG}
+      - CORE_EGRESS_HTTP_TLS_ENABLE=${CORE_EGRESS_HTTP_TLS_ENABLE}
   ##########################################
   i40-aas-grpc-endpoint-ingress:
     image: sapi40/i40-aas-grpc-endpoint-ingress
@@ -53,6 +59,11 @@ services:
       - CORE_INGRESS_EXCHANGE=${CORE_INGRESS_EXCHANGE}
       ## server config
       - CORE_INGRESS_GRPC_PORT=${CORE_INGRESS_GRPC_PORT}
+      - CORE_INGRESS_GRPC_TLS_ENABLE=${CORE_INGRESS_GRPC_TLS_ENABLE}
+      - CORE_INGRESS_GRPC_TLS_KEYFILEPATH=${CORE_INGRESS_GRPC_TLS_KEYFILEPATH}
+      - CORE_INGRESS_GRPC_TLS_CRTFILEPATH=${CORE_INGRESS_GRPC_TLS_CRTFILEPATH}
+    volumes:
+      - ./src/compose/volumes/certs/:/certs/
   ##########################################
   i40-aas-grpc-endpoint-egress:
     image: sapi40/i40-aas-grpc-endpoint-egress
@@ -68,6 +79,7 @@ services:
       - CORE_EGRESS_EXCHANGE=${CORE_EGRESS_EXCHANGE}
       - CORE_EGRESS_GRPC_QUEUE=${CORE_EGRESS_GRPC_QUEUE}
       - CORE_EGRESS_GRPC_CTAG=${CORE_EGRESS_GRPC_CTAG}
+      - CORE_EGRESS_GRPC_TLS_ENABLE=${CORE_EGRESS_GRPC_TLS_ENABLE}
   ##########################################
   i40-aas-endpoint-resolver:
     image: sapi40/i40-aas-endpoint-resolver

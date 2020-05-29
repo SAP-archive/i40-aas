@@ -18,6 +18,7 @@ type ResolverMsg struct {
 	EgressPayload []byte
 	ReceiverURL   string
 	ReceiverType  string
+	ReceiverCert  string
 }
 
 // GRPCEgressConfig struct
@@ -67,6 +68,13 @@ func (e *GRPCEgress) Init() error {
 	bindingKey := e.config.AMQPConfig.Exchange + "." + queue
 	ctag := os.Getenv("CORE_EGRESS_GRPC_CTAG")
 
+	var tlsEnabled bool
+	if os.Getenv("CORE_EGRESS_GRPC_TLS_ENABLE") == "true" {
+		tlsEnabled = true
+	} else {
+		tlsEnabled = false
+	}
+
 	go func() {
 		for {
 			deliveries := e.amqpClient.Listen(queue, bindingKey, ctag)
@@ -86,12 +94,13 @@ func (e *GRPCEgress) Init() error {
 					log.Error().Err(err).Msgf("unable to genera")
 					continue
 				}
-				log.Debug().Msgf("got new InteractionMessage (%dB) for %q (%q)", len(rMsg.EgressPayload), rMsg.ReceiverURL, rMsg.ReceiverType)
+				log.Debug().Msgf("got new InteractionMessage (%dB) for %q (%q) using cert %q", len(rMsg.EgressPayload), rMsg.ReceiverURL, rMsg.ReceiverType, rMsg.ReceiverCert)
 
 				if rMsg.ReceiverType == "cloud" {
 					cfg := &GRPCClientConfig{
-						URL:      rMsg.ReceiverURL,
-						RootCert: "",
+						URL:        rMsg.ReceiverURL,
+						TLSEnabled: tlsEnabled,
+						Cert:       rMsg.ReceiverCert,
 					}
 
 					c, err := e.obtainGRPCClient(cfg)
