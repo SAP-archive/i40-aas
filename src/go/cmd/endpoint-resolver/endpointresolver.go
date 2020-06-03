@@ -46,6 +46,7 @@ type Config struct {
 type EndpointResolver struct {
 	config     *Config
 	amqpClient *amqpclient.AMQPClient
+	deliveries <-chan amqp.Delivery
 }
 
 // NewEndpointResolver instance
@@ -82,17 +83,9 @@ func (r *EndpointResolver) Init() error {
 
 	go func() {
 		for {
-			deliveries := r.amqpClient.Listen(r.config.Queue, r.config.BindingKey, r.config.Ctag)
-			for d := range deliveries {
-				log.Debug().Msgf("got new %dB delivery [%v]", len(d.Body), d.DeliveryTag)
-				err := r.processGenericEgressMsg(d)
-				if err != nil {
-					log.Error().Err(err).Msgf("failed to process %dB delivery [%v]", len(d.Body), d.DeliveryTag)
-					d.Nack(false, false)
-				} else {
-					log.Debug().Msgf("processed %dB delivery [%v]: ACK", len(d.Body), d.DeliveryTag)
-					d.Ack(false)
-				}
+			r.deliveries = r.amqpClient.Listen(r.config.Queue, r.config.BindingKey, r.config.Ctag)
+			for d := range r.deliveries {
+				r.processDelivery(d)
 			}
 			log.Warn().Msg("deliveries channel closed, restarting...")
 		}
@@ -111,6 +104,21 @@ func (r *EndpointResolver) Shutdown() error {
 	}
 
 	return nil
+}
+
+func (r *EndpointResolver) processDelivery(d amqp.Delivery) {
+	var (
+		err error
+	)
+
+	log.Debug().Msgf("got new %dB delivery [%v]", len(d.Body), d.DeliveryTag)
+	err = r.processGenericEgressMsg(d)
+	if err != nil {
+		log.Error().Err(err).Msgf("failed to process %dB delivery [%v]", len(d.Body), d.DeliveryTag)
+		d.Nack(false, false)
+	}
+	log.Debug().Msgf("processed %dB delivery [%v]: ACK", len(d.Body), d.DeliveryTag)
+	d.Ack(false)
 }
 
 func (r *EndpointResolver) processGenericEgressMsg(d amqp.Delivery) error {
