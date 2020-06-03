@@ -1,6 +1,9 @@
 # i40-aas
 
-[![Build Status](https://travis-ci.com/SAP/i40-aas.svg?branch=master)](https://travis-ci.com/SAP/i40-aas)
+<p align="left">
+    <a href="https://travis-ci.com/SAP/i40-aas" title="Build Status"><img src="https://travis-ci.com/SAP/i40-aas.svg?branch=master"></a>
+    <a href="./LICENSE" title="License"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg"></a>
+</p>
 
 :warning: **i40-aas** is **alpha** :warning:
 
