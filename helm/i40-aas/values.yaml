@@ -15,12 +15,20 @@ core:
 
     grpc:
       port: 8384
+      tls:
+        enable: false
+        keyfilepath: /certs/server.key
+        crtfilepath: /certs/server.crt
 
     http:
       port: 2000
       ## Leave empty "" to generate a random 20 character alphanumeric string.
       user: admin
       password: admin
+      tls:
+        enable: false
+        keyfilepath: /certs/server.key
+        crtfilepath: /certs/server.crt
 
   egress:
     broker:
@@ -33,10 +41,14 @@ core:
     grpc:
       ctag: grpc
       queue: grpc
+      tls:
+        enable: false
 
     http:
       ctag: http
       queue: http
+      tls:
+        enable: false
 
   dataManager:
     port: 4000
@@ -79,6 +91,7 @@ rabbitmq:
     username: guest
     ## password can be left empty. 
     ## In that case, a random 10 character alphanumeric string is generated. 
+    ## !!! But careful! Password generation can cause unpredictable behaviour with chart upgrades.
     password: guest
     extraPlugins: rabbitmq_mqtt
   service:
@@ -100,6 +113,7 @@ endpointregistrypostgres:
   postgresqlUsername: aas-user
   ## postgresqlPassword can be left empty. 
   ## In that case, a random 10 character alphanumeric string is generated. 
+  ## !!! But careful! Password generation can cause unpredictable behaviour with chart upgrades.
   postgresqlPassword: postgres
   service: 
     port: 5432
@@ -113,6 +127,7 @@ onboardingskillmongodb:
   mongodbUsername: mongouser
   ## mongodbPassword can be left empty. 
   ## In that case, a random 10 character alphanumeric string is generated. 
+  ## !!! But careful! Password generation can cause unpredictable behaviour with chart upgrades.
   mongodbPassword: mongopassword
   service:
     port: 27017

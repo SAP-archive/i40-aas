@@ -61,6 +61,12 @@ spec:
               value: {{ .Values.core.ingress.broker.exchange | quote }}
             - name: CORE_INGRESS_HTTP_PORT
               value: {{ .Values.core.ingress.http.port | quote }}
+            - name: CORE_INGRESS_HTTP_TLS_ENABLE
+              value: {{ .Values.core.ingress.http.tls.enable | quote }}
+            - name: CORE_INGRESS_HTTP_TLS_KEYFILEPATH
+              value: {{ .Values.core.ingress.http.tls.keyfilepath | quote }}
+            - name: CORE_INGRESS_HTTP_TLS_CRTFILEPATH
+              value: {{ .Values.core.ingress.http.tls.crtfilepath | quote }}
           envFrom:
             - secretRef:
                 name: {{ .Release.Name }}-core-ingress

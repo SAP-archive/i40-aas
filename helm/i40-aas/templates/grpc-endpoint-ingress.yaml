@@ -61,6 +61,12 @@ spec:
           value: {{ .Values.core.ingress.broker.exchange | quote }}
         - name: CORE_INGRESS_GRPC_PORT
           value: {{ .Values.core.ingress.grpc.port | quote }}
+        - name: CORE_INGRESS_GRPC_TLS_ENABLE
+          value: {{ .Values.core.ingress.grpc.tls.enable | quote }}
+        - name: CORE_INGRESS_GRPC_TLS_KEYFILEPATH
+          value: {{ .Values.core.ingress.grpc.tls.keyfilepath | quote }}
+        - name: CORE_INGRESS_GRPC_TLS_CRTFILEPATH
+          value: {{ .Values.core.ingress.grpc.tls.crtfilepath | quote }}
         envFrom:
         - secretRef:
             name: {{ .Release.Name }}-core-ingress

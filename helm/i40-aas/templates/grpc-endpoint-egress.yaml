@@ -44,6 +44,8 @@ spec:
           value: {{ .Values.core.egress.grpc.queue | quote }}
         - name: CORE_EGRESS_GRPC_CTAG
           value: {{ .Values.core.egress.grpc.ctag | quote }}
+        - name: CORE_EGRESS_GRPC_TLS_ENABLE
+          value: {{ .Values.core.egress.grpc.tls.enable | quote }}
         envFrom:
         - secretRef:
             name: {{ .Release.Name }}-core-egress

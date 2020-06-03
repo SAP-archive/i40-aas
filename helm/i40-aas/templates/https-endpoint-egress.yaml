@@ -63,6 +63,8 @@ spec:
               value: {{ .Values.core.egress.http.queue | quote }}
             - name: CORE_EGRESS_HTTP_CTAG
               value: {{ .Values.core.egress.http.ctag | quote }}
+            - name: CORE_EGRESS_HTTP_TLS_ENABLE
+              value: {{ .Values.core.egress.http.tls.enable | quote }}
           envFrom:
             - secretRef:
                 name: {{ .Release.Name }}-core-egress
