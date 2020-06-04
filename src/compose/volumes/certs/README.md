@@ -3,19 +3,19 @@
 
 ## Configuration
 You can enable/disable TLS entirely by setting the following to anything but `true`. These are the defaults:
-- `CORE_INGRESS_GRPC_TLS_ENABLE=true`
-- `CORE_EGRESS_GRPC_TLS_ENABLE=true`
-- `CORE_INGRESS_HTTP_TLS_ENABLE=true`
-- `CORE_EGRESS_HTTP_TLS_ENABLE=true`
+- `CORE_INGRESS_GRPC_TLS_ENABLED=true`
+- `CORE_EGRESS_GRPC_TLS_ENABLED=true`
+- `CORE_INGRESS_HTTP_TLS_ENABLED=true`
+- `CORE_EGRESS_HTTP_TLS_ENABLED=true`
 
 If you have your own certificate/key pair and want to use it for GRPC/HTTP you can do so for both Docker-Compose and Helm.
 
 #### Docker-Compose
-Place them in the `src/compose/volumes/certs/` dir (which is mounted to `/certs/` for both ingresses) and change the respective path settings within the `.env`. These are the defaults:
-  - `CORE_INGRESS_GRPC_TLS_KEYFILEPATH=/certs/server.key`
-  - `CORE_INGRESS_GRPC_TLS_CRTFILEPATH=/certs/server.crt`
-  - `CORE_INGRESS_HTTP_TLS_KEYFILEPATH=/certs/server.key`
-  - `CORE_INGRESS_HTTP_TLS_CRTFILEPATH=/certs/server.crt`
+Place them in the `src/compose/volumes/certs/` dir (which is mounted to `/etc/ssl/certs/` for both ingresses) and change the respective path settings within the `.env`. These are the defaults:
+  - `CORE_INGRESS_GRPC_TLS_KEYFILEPATH=/etc/ssl/certs/server.key`
+  - `CORE_INGRESS_GRPC_TLS_CRTFILEPATH=/etc/ssl/certs/server.crt`
+  - `CORE_INGRESS_HTTP_TLS_KEYFILEPATH=/etc/ssl/certs/server.key`
+  - `CORE_INGRESS_HTTP_TLS_CRTFILEPATH=/etc/ssl/certs/server.crt`
 
 #### Helm
 Mount your files into the corresponding Pods for cluster usage by adjusting the corresponding Kubernetes Deployments and then adjust the environment values by modifying the `values.yaml` file.

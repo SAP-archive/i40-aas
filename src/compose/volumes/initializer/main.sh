@@ -37,11 +37,13 @@ wait
 printf "SERVICES ARE AVAILABLE - EXECUTING INIT SCRIPT\n"
 
 newman run AAS.postman_collection.json \
+--insecure \
 --delay-request 1000 \
---env-var i40-aas-endpoint-registry="${CORE_REGISTRIES_ENDPOINTS_HOST}:${CORE_REGISTRIES_ENDPOINTS_PORT}" \
---env-var i40-aas-adapter-registry="${CORE_REGISTRIES_ADAPTERS_HOST}:${CORE_REGISTRIES_ADAPTERS_PORT}" \
---env-var i40-aas-data-manager="${CORE_DATA_MANAGER_HOST}:${CORE_DATA_MANAGER_PORT}" \
---env-var i40-aas-http-endpoint-ingress="${CORE_INGRESS_HTTP_HOST}:${CORE_INGRESS_HTTP_PORT}" \
+--env-var i40-aas-endpoint-registry="https://${CORE_REGISTRIES_ENDPOINTS_HOST}:${CORE_REGISTRIES_ENDPOINTS_PORT}" \
+--env-var i40-aas-adapter-registry="https://${CORE_REGISTRIES_ADAPTERS_HOST}:${CORE_REGISTRIES_ADAPTERS_PORT}" \
+--env-var i40-aas-data-manager="https://${CORE_DATA_MANAGER_HOST}:${CORE_DATA_MANAGER_PORT}" \
+--env-var i40-aas-http-endpoint-ingress="https://${CORE_INGRESS_HTTP_HOST}:${CORE_INGRESS_HTTP_PORT}" \
 --folder "Create or Update assetadministrationshells (not in standard)" \
 --folder "Create or Update semanticProtocol" \
 --folder "Create Assignment Submodel to Application Adapter"
+

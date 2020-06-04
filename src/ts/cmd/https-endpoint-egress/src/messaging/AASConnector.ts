@@ -20,6 +20,7 @@ class AASConnector {
       password,
       cert
     );
+
     return response;
   }
 }

@@ -61,10 +61,10 @@ func main() {
 	}
 
 	var certPath, keyPath, tlsEnabled string
-	tlsEnabled = os.Getenv("CORE_INGRESS_GRPC_TLS_ENABLE")
+	tlsEnabled = os.Getenv("TLS_ENABLED")
 	if tlsEnabled == "true" {
-		certPath = os.Getenv("CORE_INGRESS_GRPC_TLS_CRTFILEPATH")
-		keyPath = os.Getenv("CORE_INGRESS_GRPC_TLS_KEYFILEPATH")
+		certPath = os.Getenv("TLS_CERTFILE")
+		keyPath = os.Getenv("TLS_KEYFILE")
 		log.Debug().Msgf("server will be using certificate (%q) and key (%q)", certPath, keyPath)
 	} else {
 		certPath = ""

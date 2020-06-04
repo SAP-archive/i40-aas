@@ -257,10 +257,10 @@ jobs:
       install:
         - yarn global add newman
         - make
-        - docker-compose -f docker-compose.yml up -d 
+        - docker-compose -f docker-compose.yml up -d
         - sleep 60
       script:
-        - newman run docs/postman/AAS.postman_collection.json --delay-request 2000 --folder "Check that mock adapter is empty" --folder "Send Interaction Message to https-endpoint" --folder "Check that mock adapter is populated"
+        - newman run docs/postman/AAS.postman_collection.json --insecure --delay-request 2000 --folder "Check that mock adapter is empty" --folder "Send Interaction Message to https-endpoint" --folder "Check that mock adapter is populated"
 
     - stage: deploy
       before_install:
