@@ -80,9 +80,9 @@ typings/
 /src/compose/volumes/certs/*
 # except for
 !/src/compose/volumes/certs/README.md
-!/src/compose/volumes/certs/server.conf
-!/src/compose/volumes/certs/server.key
-!/src/compose/volumes/certs/server.crt
+!/src/compose/volumes/certs/i40-aas.conf
+!/src/compose/volumes/certs/i40-aas.key.pem
+!/src/compose/volumes/certs/i40-aas.crt.pem
 
 #######################
 # ignore all .env files
