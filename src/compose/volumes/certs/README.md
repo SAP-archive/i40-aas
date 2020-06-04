@@ -17,19 +17,19 @@ At least use a new self-signed certificate.
 Activate/Deactivate TLS by setting the variable `TLS_ENABLED` in the `.env` file to `true`/`false` (default `true`).
 
 To use custom credentials, place them in the `src/compose/volumes/certs/` dir (which is mounted to `/etc/ssl/certs/` for all serving applications) and change the respective path within the `.env` variables. These are the defaults:
-  - `TLS_KEYFILE=/etc/ssl/certs/server.key`
-  - `TLS_CERTFILE=/etc/ssl/certs/server.crt`
+  - `TLS_KEYFILE=/etc/ssl/certs/i40-aas.key.pem`
+  - `TLS_CERTFILE=/etc/ssl/certs/i40-aas.crt.pem`
 
 #### Helm
 TODO
 
 ## Create your own self-signed crt/key via openssl
-Adjust the configuration in `server.conf` to your needs and run:
+Adjust the configuration in `i40-aas.conf` to your needs and run:
 ```bash
-openssl req -config server.conf -new -x509 -newkey rsa:2048 -nodes -keyout server.key -days 3650 -out server.crt
+openssl req -config i40-aas.conf -new -x509 -newkey rsa:2048 -nodes -keyout i40-aas.key.pem -days 3650 -out i40-aas.crt.pem
 ```
 
 Verify your certificate using:
 ```bash
-openssl x509 -in server.crt -text -noout
+openssl x509 -in i40-aas.crt.pem -text -noout
 ```
