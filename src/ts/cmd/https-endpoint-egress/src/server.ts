@@ -23,8 +23,6 @@ var brokerClient = new AmqpClient(
   CORE_EGRESS_HTTP_QUEUE
 );
 
-var CORE_EGRESS_HTTP_TLS_ENABLE = checkEnvVar('CORE_EGRESS_HTTP_TLS_ENABLE');
-
 logger.info('HTTP Endpoint - Egress Service Started');
 
 let messageInterpreter: BrokerMessageInterpreter = new BrokerMessageInterpreter(

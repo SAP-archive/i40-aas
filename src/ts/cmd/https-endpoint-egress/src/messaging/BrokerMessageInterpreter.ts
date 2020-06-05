@@ -107,7 +107,7 @@ Decide what to do if the message can not be handled (eg. because receiver role i
         undefined,
         undefined,
         undefined,
-        (process.env['CORE_EGRESS_HTTP_TLS_ENABLE'] == 'true')? resolverMessage.ReceiverCert: undefined
+        (resolverMessage.ReceiverProtocol == 'https')? resolverMessage.ReceiverCert: undefined
       );
 
       logger.info(

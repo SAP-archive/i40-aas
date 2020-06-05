@@ -1,4 +1,6 @@
 import http from 'http';
+import https from 'https';
+import fs from 'fs';
 import express from 'express';
 import { applyMiddleware, applyRoutes } from './utils';
 import healthRoute from './services/health/routes';
@@ -12,7 +14,6 @@ import { AdapterRegistryConnector } from './services/data-manager/RegistryConnec
 
 const logger = require('aas-logger/lib/log');
 
-let CORE_DATA_MANAGER_PORT = checkEnvVar('CORE_DATA_MANAGER_PORT');
 let CORE_REGISTRIES_ADAPTERS_PROTOCOL = checkEnvVar(
   'CORE_REGISTRIES_ADAPTERS_PROTOCOL'
 );
@@ -56,8 +57,6 @@ applyRoutes(routes, router);
 //error handling
 applyMiddleware(errorHandlers, router);
 
-const server = http.createServer(router);
-
 var webClient = new WebClient();
 var buildUrl = (
   protocol: string,
@@ -86,11 +85,25 @@ let registryConnector = new AdapterRegistryConnector(
 );
 RoutingController.initController(registryConnector, adapterConnector);
 
-server.listen(CORE_DATA_MANAGER_PORT, () =>
-  logger.info(
-    `A Server is running http://localhost:${CORE_DATA_MANAGER_PORT} ...`
-  )
-);
+const PORT = checkEnvVar('CORE_DATA_MANAGER_PORT');
+const TLS_KEYFILE = checkEnvVar('TLS_KEYFILE');
+const TLS_CERTFILE = checkEnvVar('TLS_CERTFILE');
+const TLS_ENABLED = checkEnvVar('TLS_ENABLED');
+
+if (TLS_ENABLED == 'true') {
+  https.createServer({
+    key: fs.readFileSync(TLS_KEYFILE),
+    cert: fs.readFileSync(TLS_CERTFILE)
+  }, router).listen(PORT, () => {
+    logger.info(`A Server is running http://localhost:${PORT}...`);
+  });
+} else {
+  http.createServer(router).listen(PORT, () =>
+    logger.info(`A Server is running http://localhost:${PORT}...`)
+  );
+}
+
+export { router as app };
 
 function checkEnvVar(variableName: string): string {
   let retVal: string | undefined = process.env[variableName];
@@ -103,5 +116,3 @@ function checkEnvVar(variableName: string): string {
     );
   }
 }
-
-export { router as app };

@@ -18,19 +18,21 @@ import (
 
 // ResolverMsg struct
 type ResolverMsg struct {
-	EgressPayload []byte
-	ReceiverURL   string
-	ReceiverType  string
-	ReceiverCert  string
+	EgressPayload    []byte
+	ReceiverURL      string
+	ReceiverProtocol string
+	ReceiverType     string
+	ReceiverCert     string
 }
 
 // EndpointRegistryConfig struct
 type EndpointRegistryConfig struct {
-	Protocol string
-	Host     string
-	Port     int
-	User     string
-	Password string
+	Protocol    string
+	CrtFilePath string
+	Host        string
+	Port        int
+	User        string
+	Password    string
 }
 
 // Config struct
@@ -189,10 +191,11 @@ func (r *EndpointResolver) processGenericEgressMsg(d amqp.Delivery) error {
 			target := fmt.Sprintf("%v", endpoint.(map[string]interface{})["target"])
 
 			resolverMsg := ResolverMsg{
-				EgressPayload: msg,
-				ReceiverURL:   urlHost,
-				ReceiverType:  target,
-				ReceiverCert:  fmt.Sprintf("%v", cert),
+				EgressPayload:    msg,
+				ReceiverURL:      urlHost,
+				ReceiverProtocol: protocol,
+				ReceiverType:     target,
+				ReceiverCert:     fmt.Sprintf("%v", cert),
 			}
 			payload, err := json.Marshal(resolverMsg)
 			if err != nil {
@@ -279,10 +282,11 @@ func getAASDescriptorsFromEndpointRegistry(frame *interaction.Frame, reg *Endpoi
 func queryEndpointRegistry(route string, q url.Values, reg *EndpointRegistryConfig) ([]byte, error) {
 	var (
 		bodyText []byte
+		client   *http.Client
 		err      error
 	)
 
-	client := &http.Client{}
+	client = &http.Client{}
 
 	registryURL := reg.Protocol + "://" + reg.Host + ":" + strconv.Itoa(reg.Port) + route
 	req, err := http.NewRequest("GET", registryURL, nil)
@@ -358,6 +362,10 @@ func (cfg *EndpointRegistryConfig) validate() error {
 
 	if cfg.Protocol == "" {
 		err = fmt.Errorf("protocol has not been specified")
+		return err
+	}
+	if cfg.CrtFilePath == "" && cfg.Protocol == "https" {
+		err = fmt.Errorf("path to certificate has not been specified")
 		return err
 	}
 	if cfg.Host == "" {

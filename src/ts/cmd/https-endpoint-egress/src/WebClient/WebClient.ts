@@ -1,3 +1,4 @@
+import tls from 'tls';
 import Axios, { AxiosError, AxiosResponse, AxiosRequestConfig } from 'axios';
 import https from 'https'
 
@@ -8,7 +9,7 @@ class WebClient {
 
   async postRequest<T>(
     baseUrl: string,
-    bo: string,
+    body: string,
     urlSuffix?: string,
     username?: string,
     password?: string,
@@ -16,12 +17,11 @@ class WebClient {
   ): Promise<AxiosResponse<T>> {
     let url: string = baseUrl;
 
-    // logger.debug( "[AAS Client] Posting to " + url + " Message: "+ bo);
-    logger.debug('[AAS Client] Posting to AAS ' + url);
-    //logger.debug(bo);
+    logger.debug( "[AAS Client] Posting to AAS ingress at " + url + " message: "+ JSON.stringify(body));
+
     var response;
     if (username && password) {
-      response = await Axios.post<T>(url, bo, {
+      response = await Axios.post<T>(url, body, {
         auth: {
           username: username as string,
           password: password as string,
@@ -31,7 +31,7 @@ class WebClient {
         }),
       });
     } else {
-      response = await Axios.post<T>(url, bo, {
+      response = await Axios.post<T>(url, body, {
         httpsAgent: new https.Agent({
           ca: cert as string
         }),

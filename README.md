@@ -1,13 +1,27 @@
-# i40-aas
+<h1 align="center">
+  i40-aas
+</h1>
 
-<p align="left">
+<div align="center">
     <a href="https://travis-ci.com/SAP/i40-aas" title="Build Status"><img src="https://travis-ci.com/SAP/i40-aas.svg?branch=master"></a>
-    <a href="./LICENSE" title="License"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg"></a>
-</p>
+    <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/SAP/i40-aas" />
+    <img alt="Repository Size" src="https://img.shields.io/github/repo-size/SAP/i40-aas" />
+    <img alt="License" src="https://img.shields.io/badge/License-Apache%202.0-green.svg" />
+</div>
 
-:warning: **i40-aas** is **alpha** :warning:
+<div align="center">
 
-**i40-aas** welcomes [contributions](#contributing). Please read about [known issues](#known-issues) and [upcoming changes](#upcoming-changes).
+  ### ⚠️ **i40-aas** is **alpha** ⚠️
+
+</div>
+
+<div align="center">
+
+  **i40-aas** welcomes [contributions](#contributing). Please read about [known issues](#known-issues) and [upcoming changes](#upcoming-changes).
+
+</div>
+
+<br/>
 
 ## Contents
 

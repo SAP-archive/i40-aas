@@ -47,11 +47,27 @@ func newGRPCClient(cfg *GRPCClientConfig) (*grpcClient, error) {
 	grpcOpts = []grpc.DialOption{}
 
 	if cfg.TLSEnabled {
-		certPool := x509.NewCertPool()
-		certPool.AppendCertsFromPEM([]byte(cfg.Cert))
+		// Ref. for self-signed cert security issues & workarounds
+		// https://forfuncsake.github.io/post/2017/08/trust-extra-ca-cert-in-go-app/
 
+		// Get the SystemCertPool, continue with an empty pool on error
+		rootCAs, err := x509.SystemCertPool()
+		if err != nil {
+			log.Error().Err(err).Msgf("failed to read system rootCAs")
+			return nil, err
+		}
+		if rootCAs == nil {
+			rootCAs = x509.NewCertPool()
+		}
+
+		// Append our cert to the system pool
+		if ok := rootCAs.AppendCertsFromPEM([]byte(cfg.Cert)); !ok {
+			log.Warn().Msgf("No certs appended, using system certs only")
+		}
+
+		// Trust the augmented cert pool in our client
 		tlsCfg := &tls.Config{
-			RootCAs: certPool,
+			RootCAs: rootCAs,
 		}
 
 		grpcCreds := credentials.NewTLS(tlsCfg)
