@@ -63,6 +63,14 @@ spec:
           value: {{ .Values.logging.logLevel | quote }}
         - name: LOGGING_LOGOUTPUT
           value: {{ .Values.logging.logOutput | quote }}
+        - name: CORE_REGISTRIES_ADAPTERS_PORT
+          value: {{ .Values.core.registries.adapters.port | quote }}
+        - name: TLS_ENABLED
+          value: {{ .Values.security.tls.enabled | quote }}
+        - name: TLS_KEYFILE
+          value: {{ .Values.security.tls.keyfile | quote }}
+        - name: TLS_CERTFILE
+          value: {{ .Values.security.tls.crtfile | quote }}        
         envFrom:
         - secretRef:
             name: {{ .Release.Name }}-core-registries-adapters
@@ -72,11 +80,24 @@ spec:
           httpGet:
             path: /health
             port: endpoint
+            scheme: HTTPS
           initialDelaySeconds: 600
           periodSeconds: 60
         volumeMounts:
         - mountPath: /service/.node-persist
           name: {{ .Release.Name }}-adapter-registry
+        {{- if .Values.security.certificates }}
+        - name: certs
+          mountPath: "/etc/ssl/certs"
+          readOnly: true
+        {{- end }}
+      volumes:
+      {{- if .Values.security.certificates }}
+      - name: certs
+        secret:
+          secretName: {{ .Values.security.certificates.secretName }}
+          optional: true
+      {{- end }}
   volumeClaimTemplates:
   - metadata:
       name: {{ .Release.Name }}-adapter-registry

@@ -61,19 +61,19 @@ spec:
           value: {{ .Values.core.ingress.broker.exchange | quote }}
         - name: CORE_INGRESS_GRPC_PORT
           value: {{ .Values.core.ingress.grpc.port | quote }}
-        - name: CORE_INGRESS_GRPC_TLS_ENABLE
-          value: {{ .Values.core.ingress.grpc.tls.enable | quote }}
-        - name: CORE_INGRESS_GRPC_TLS_KEYFILEPATH
-          value: {{ .Values.core.ingress.grpc.tls.keyfilepath | quote }}
-        - name: CORE_INGRESS_GRPC_TLS_CRTFILEPATH
-          value: {{ .Values.core.ingress.grpc.tls.crtfilepath | quote }}
+        - name: TLS_ENABLED
+          value: {{ .Values.security.tls.enabled | quote }}
+        - name: TLS_KEYFILE
+          value: {{ .Values.security.tls.keyfile | quote }}
+        - name: TLS_CERTFILE
+          value: {{ .Values.security.tls.crtfile | quote }}
         envFrom:
         - secretRef:
             name: {{ .Release.Name }}-core-ingress
         volumeMounts:
-        {{- if .Values.certificates }}
+        {{- if .Values.security.certificates }}
         - name: certs
-          mountPath: "/certs"
+          mountPath: "/etc/ssl/certs"
           readOnly: true
         {{- end }}
         resources:
@@ -82,13 +82,14 @@ spec:
 #          httpGet:
 #            path: /health
 #            port: endpoint
+#            scheme: HTTPS
 #          initialDelaySeconds: 600
 #          periodSeconds: 60
       volumes:
-      {{- if .Values.certificates }}
+      {{- if .Values.security.certificates }}
       - name: certs
         secret:
-          secretName: {{ .Values.certificates.secretName }}
+          secretName: {{ .Values.security.certificates.secretName }}
           optional: true
       {{- end }}
 ---

@@ -44,30 +44,16 @@ spec:
           value: {{ .Values.core.egress.grpc.queue | quote }}
         - name: CORE_EGRESS_GRPC_CTAG
           value: {{ .Values.core.egress.grpc.ctag | quote }}
-        - name: CORE_EGRESS_GRPC_TLS_ENABLE
-          value: {{ .Values.core.egress.grpc.tls.enable | quote }}
         envFrom:
         - secretRef:
             name: {{ .Release.Name }}-core-egress
-        volumeMounts:
-        {{- if .Values.certificates }}
-        - name: certs
-          mountPath: "/certs"
-          readOnly: true
-        {{- end }}
         resources:
           {{- toYaml .Values.resources.go | nindent 10 }}
 #        livenessProbe:
 #          httpGet:
 #            path: /health
 #            port: endpoint
+#            scheme: HTTPS
 #          initialDelaySeconds: 600
 #          periodSeconds: 60
-      volumes:
-      {{- if .Values.certificates }}
-      - name: certs
-        secret:
-          secretName: {{ .Values.certificates.secretName }}
-          optional: true
-      {{- end }}
 ---

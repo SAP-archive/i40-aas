@@ -11,7 +11,7 @@ data:
   CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST: "{{ .Release.Name }}-endpointregistrypostgres"
   CORE_REGISTRIES_ENDPOINTS_HOST: "{{ .Release.Name }}-endpoint-registry"
   CORE_DATA_MANAGER_HOST: "{{ .Release.Name }}-data-manager"
-  CORE_REGISTRIES_ADAPTERS_HOST: "{{ .Release.Name }}-adapter-registry-0.{{ .Release.Name }}-adapter-registry"
+  CORE_REGISTRIES_ADAPTERS_HOST: "{{ .Release.Name }}-adapter-registry"
   CORE_INGRESS_HTTP_HOST: "{{ .Release.Name }}-https-endpoint-ingress"
   CORE_INGRESS_GRPC_HOST: "{{ .Release.Name }}-grpc-endpoint-ingress"
   APPLICATION_ADAPTERS_MONGODB_HOST: "{{ .Release.Name }}-storage-adapter-mongodb"
