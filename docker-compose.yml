@@ -116,7 +116,6 @@ services:
       - LOGGING_LOGLEVEL=${LOGGING_LOGLEVEL}
       - LOGGING_LOGOUTPUT=${LOGGING_LOGOUTPUT}
       ## adapter-registry
-      - CORE_REGISTRIES_ADAPTERS_PROTOCOL=http
       - CORE_REGISTRIES_ADAPTERS_HOST=i40-aas-adapter-registry
       - CORE_REGISTRIES_ADAPTERS_PORT=${CORE_REGISTRIES_ADAPTERS_PORT}
       - CORE_REGISTRIES_ADAPTERS_URL_SUFFIX=${CORE_REGISTRIES_ADAPTERS_URL_SUFFIX}
@@ -226,12 +225,16 @@ services:
       - SKILLS_ONBOARDING_ROLE=${SKILLS_ONBOARDING_ROLE}
       - SKILLS_ONBOARDING_URI=${SKILLS_ONBOARDING_URI}
       ## data-manager
-      - CORE_DATA_MANAGER_PROTOCOL=http
       - CORE_DATA_MANAGER_HOST=i40-aas-data-manager
       - CORE_DATA_MANAGER_PORT=${CORE_DATA_MANAGER_PORT}
       - CORE_DATA_MANAGER_SUBMODELS_ROUTE=${CORE_DATA_MANAGER_SUBMODELS_ROUTE}
       - CORE_DATA_MANAGER_USER=${CORE_DATA_MANAGER_USER}
       - CORE_DATA_MANAGER_PASSWORD=${CORE_DATA_MANAGER_PASSWORD}
+      ## TLS
+      - TLS_ENABLED=${TLS_ENABLED}
+      - TLS_CERTFILE=${TLS_CERTFILE}
+    volumes:
+      - ./src/compose/volumes/certs/:/etc/ssl/certs/
   ##########################################
   i40-aas-storage-adapter-mongodb:
     image: sapi40/i40-aas-storage-adapter-mongodb
