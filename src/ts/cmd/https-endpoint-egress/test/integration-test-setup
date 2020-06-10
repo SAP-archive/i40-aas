@@ -8,4 +8,4 @@ export CORE_EGRESS_HTTP_USER=admin
 export CORE_EGRESS_HTTP_PASSWORD=admin
 export CORE_EGRESS_HTTP_QUEUE=http
 
-docker run --rm -d --name test-rabbit -p 5672:5672 -p 1883:1883 rabbitmq:3-management
+docker run --rm -d --name test-rabbit -p 5672:5672 -p 1883:1883 rabbitmq:3-management-alpine

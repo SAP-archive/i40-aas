@@ -248,6 +248,8 @@ jobs:
       install:
         - cd src/go/cmd/${SVC}
         - go mod download
+        - source ./test-setup
+        - sleep 30
       script:
         - go test
 
