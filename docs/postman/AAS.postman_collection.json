@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "6b5c0225-d6ad-49dc-92d7-c7083e5c11f9",
-		"name": "AAS-Service copy",
+		"_postman_id": "1723b84c-340e-4020-b5a4-17206d552537",
+		"name": "AAS-Service",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -14,21 +14,6 @@
 						{
 							"name": "Create assetadministrationshells",
 							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{endpoint_ingress_pwd}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{endpoint_ingress_user}}",
-											"type": "string"
-										}
-									]
-								},
 								"method": "PUT",
 								"header": [
 									{
@@ -39,7 +24,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "  {\n    \"identification\": {\n        \"id\": \"www.sampleOperator/aas\",\n        \"idType\": \"IRI\"\n    },\n    \"descriptor\": {\n    \"endpoints\": [\n        {\n            \"address\": \"{{grpc-endpoint-ingress-host}}:{{grpc-endpoint-ingress-port}}\",\n            \"type\": \"grpc\",\n            \"target\": \"cloud\"\n        },\n        {\n          \"address\":  \"https://{{endpoint_ingress_user}}:{{endpoint_ingress_pwd}}@{{https-endpoint-ingress-host}}:{{https-endpoint-ingress-port}}/interaction\" ,\n          \"type\": \"https\",\n          \"target\": \"cloud\"\n      }\n    ],\n      \"certificate_x509_i40\": \"-----BEGIN CERTIFICATE-----\\nMIIEAjCCAuqgAwIBAgIJAO532Qo7zQsZMA0GCSqGSIb3DQEBCwUAMBIxEDAOBgNV\\nBAMMB2k0MC1hYXMwHhcNMjAwNjA0MjAwNDExWhcNMzAwNjAyMjAwNDExWjASMRAw\\nDgYDVQQDDAdpNDAtYWFzMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA\\nr5MiTeu4p/DN4R++9pVHRBcIHuELitUG+SoLUSrD9VfGcTCpr++mYgS+4W/elw2K\\njlHHzQYrf+qDAjmFLNngk9OxFMIC0RJeB9czco04U+rzimD4Z4fWtE9VlcWrCqgj\\n1FbM+etbSgpP4NMMiBuEhdQVQguVDpSFp2qmBnYM88WdqJCNzh7IauNggGENs2iJ\\nHgVu2GhJhzul27AcIZNxbf/vrRcknEs60QPEmJhlZXQZuzTm7XVJxb+E0GllZt5j\\nGYgO/un++eZ4r3lO0b7Q6i9gPYePwQOqdgjSGgKi1mI5mW3Q4VkaTi0y4e8quHJR\\nL2WR4UHybStlOK8hEcA+JwIDAQABo4IBWTCCAVUwHQYDVR0OBBYEFF3XT+rQe+fW\\n3Y823lEeV7ZYIHjyMB8GA1UdIwQYMBaAFF3XT+rQe+fW3Y823lEeV7ZYIHjyMAwG\\nA1UdEwQFMAMBAf8wEwYDVR0lBAwwCgYIKwYBBQUHAwEwgcEGA1UdEQSBuTCBtoIJ\\nbG9jYWxob3N0gh5pNDAtYWFzLWh0dHBzLWVuZHBvaW50LWluZ3Jlc3OCHWk0MC1h\\nYXMtZ3JwYy1lbmRwb2ludC1pbmdyZXNzghlpNDAtYWFzLWVuZHBvaW50LXJlZ2lz\\ndHJ5ghhpNDAtYWFzLWFkYXB0ZXItcmVnaXN0cnmCFGk0MC1hYXMtZGF0YS1tYW5h\\nZ2Vygh9pNDAtYWFzLXN0b3JhZ2UtYWRhcHRlci1tb25nb2RiMCwGCWCGSAGG+EIB\\nDQQfFh1PcGVuU1NMIEdlbmVyYXRlZCBDZXJ0aWZpY2F0ZTANBgkqhkiG9w0BAQsF\\nAAOCAQEARNdtaVbrnRRXu1Y8eNb5yRIOnPD1K0PkUUhAyQMer6EryNznd/1R554g\\noqT1ldTi64Vpmkfi5OwBUDBRm7w56YMMwDjX8jccC2gIfVq3YqIukuT9FPjhhZEn\\nySaXIIKCfTF0SrrlOgX/MqFLuA8aLW5H6Smup0TGQ5EhTTxzYiTnwTnosEvR7K5s\\np+Iosecw5SY9OM9cfHlx8AS6E5kiyJZiqBZXnNVKisBIJPK0BBNzkNybx5wpyAXb\\nJRW07J8KbxlD3CrXqPWePcv9wx1ypiwwIeIMSg6usuTmbGTYiUY2Zx/jgib3dgOF\\n7oDojf/CVDDf24DlAxm7DHf6cj0XEw==\\n-----END CERTIFICATE-----\",\n    \"signature\": \"sample_sig\"\n    },\n    \"asset\": {\n        \"id\": \"Sample-Asset-Id\",\n        \"idType\": \"IRI\"\n    }\n  }\n",
+									"raw": "  {\n    \"identification\": {\n        \"id\": \"www.sampleOperator/aas\",\n        \"idType\": \"IRI\"\n    },\n    \"descriptor\": {\n    \"endpoints\": [\n        {\n            \"address\": \"{{grpc-endpoint-ingress-host}}:{{grpc-endpoint-ingress-port}}\",\n            \"type\": \"grpc\",\n            \"target\": \"cloud\"\n        },\n        {\n          \"address\":  \"https://{{endpoint_ingress_user}}:{{endpoint_ingress_pwd}}@{{https-endpoint-ingress-host}}:{{https-endpoint-ingress-port}}/interaction\" ,\n          \"type\": \"https\",\n          \"target\": \"cloud\"\n      }\n    ],\n      \"certificate_x509_i40\": \"{{certificate}}\",\n    \"signature\": \"sample_sig\"\n    },\n    \"asset\": {\n        \"id\": \"Sample-Asset-Id\",\n        \"idType\": \"IRI\"\n    }\n  }\n",
 									"options": {
 										"raw": {}
 									}
@@ -71,21 +56,6 @@
 						{
 							"name": "Create or Update assetadministrationshells (not in standard)",
 							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{endpoint_ingress_pwd}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{endpoint_ingress_user}}",
-											"type": "string"
-										}
-									]
-								},
 								"method": "PUT",
 								"header": [
 									{
@@ -96,7 +66,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "  {\n    \"identification\": {\n        \"id\": \"www.sampleOperator/aas\",\n        \"idType\": \"IRI\"\n    },\n    \"descriptor\": {\n    \"endpoints\": [\n        {\n            \"address\": \"{{grpc-endpoint-ingress-host}}:{{grpc-endpoint-ingress-port}}\",\n            \"type\": \"grpc\",\n            \"target\": \"cloud\"\n        },\n        {\n          \"address\":  \"https://{{endpoint_ingress_user}}:{{endpoint_ingress_pwd}}@{{https-endpoint-ingress-host}}:{{https-endpoint-ingress-port}}/interaction\" ,\n          \"type\": \"https\",\n          \"target\": \"cloud\"\n      }\n    ],\n      \"certificate_x509_i40\": \"-----BEGIN CERTIFICATE-----\\nMIIEAjCCAuqgAwIBAgIJAO532Qo7zQsZMA0GCSqGSIb3DQEBCwUAMBIxEDAOBgNV\\nBAMMB2k0MC1hYXMwHhcNMjAwNjA0MjAwNDExWhcNMzAwNjAyMjAwNDExWjASMRAw\\nDgYDVQQDDAdpNDAtYWFzMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA\\nr5MiTeu4p/DN4R++9pVHRBcIHuELitUG+SoLUSrD9VfGcTCpr++mYgS+4W/elw2K\\njlHHzQYrf+qDAjmFLNngk9OxFMIC0RJeB9czco04U+rzimD4Z4fWtE9VlcWrCqgj\\n1FbM+etbSgpP4NMMiBuEhdQVQguVDpSFp2qmBnYM88WdqJCNzh7IauNggGENs2iJ\\nHgVu2GhJhzul27AcIZNxbf/vrRcknEs60QPEmJhlZXQZuzTm7XVJxb+E0GllZt5j\\nGYgO/un++eZ4r3lO0b7Q6i9gPYePwQOqdgjSGgKi1mI5mW3Q4VkaTi0y4e8quHJR\\nL2WR4UHybStlOK8hEcA+JwIDAQABo4IBWTCCAVUwHQYDVR0OBBYEFF3XT+rQe+fW\\n3Y823lEeV7ZYIHjyMB8GA1UdIwQYMBaAFF3XT+rQe+fW3Y823lEeV7ZYIHjyMAwG\\nA1UdEwQFMAMBAf8wEwYDVR0lBAwwCgYIKwYBBQUHAwEwgcEGA1UdEQSBuTCBtoIJ\\nbG9jYWxob3N0gh5pNDAtYWFzLWh0dHBzLWVuZHBvaW50LWluZ3Jlc3OCHWk0MC1h\\nYXMtZ3JwYy1lbmRwb2ludC1pbmdyZXNzghlpNDAtYWFzLWVuZHBvaW50LXJlZ2lz\\ndHJ5ghhpNDAtYWFzLWFkYXB0ZXItcmVnaXN0cnmCFGk0MC1hYXMtZGF0YS1tYW5h\\nZ2Vygh9pNDAtYWFzLXN0b3JhZ2UtYWRhcHRlci1tb25nb2RiMCwGCWCGSAGG+EIB\\nDQQfFh1PcGVuU1NMIEdlbmVyYXRlZCBDZXJ0aWZpY2F0ZTANBgkqhkiG9w0BAQsF\\nAAOCAQEARNdtaVbrnRRXu1Y8eNb5yRIOnPD1K0PkUUhAyQMer6EryNznd/1R554g\\noqT1ldTi64Vpmkfi5OwBUDBRm7w56YMMwDjX8jccC2gIfVq3YqIukuT9FPjhhZEn\\nySaXIIKCfTF0SrrlOgX/MqFLuA8aLW5H6Smup0TGQ5EhTTxzYiTnwTnosEvR7K5s\\np+Iosecw5SY9OM9cfHlx8AS6E5kiyJZiqBZXnNVKisBIJPK0BBNzkNybx5wpyAXb\\nJRW07J8KbxlD3CrXqPWePcv9wx1ypiwwIeIMSg6usuTmbGTYiUY2Zx/jgib3dgOF\\n7oDojf/CVDDf24DlAxm7DHf6cj0XEw==\\n-----END CERTIFICATE-----\",\n    \"signature\": \"sample_sig\"\n    },\n    \"asset\": {\n        \"id\": \"Sample-Asset-Id\",\n        \"idType\": \"IRI\"\n    }\n  }",
+									"raw": "  {\n    \"identification\": {\n        \"id\": \"www.sampleOperator/aas\",\n        \"idType\": \"IRI\"\n    },\n    \"descriptor\": {\n    \"endpoints\": [\n        {\n            \"address\": \"{{grpc-endpoint-ingress-host}}:{{grpc-endpoint-ingress-port}}\",\n            \"type\": \"grpc\",\n            \"target\": \"cloud\"\n        },\n        {\n          \"address\":  \"https://{{endpoint_ingress_user}}:{{endpoint_ingress_pwd}}@{{https-endpoint-ingress-host}}:{{https-endpoint-ingress-port}}/interaction\" ,\n          \"type\": \"https\",\n          \"target\": \"cloud\"\n      }\n    ],\n      \"certificate_x509_i40\": \"{{certificate}}\",\n    \"signature\": \"sample_sig\"\n    },\n    \"asset\": {\n        \"id\": \"Sample-Asset-Id\",\n        \"idType\": \"IRI\"\n    }\n  }",
 									"options": {
 										"raw": {}
 									}
@@ -129,21 +99,6 @@
 						{
 							"name": "UPDATE assetadministrationshells",
 							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{endpoint_ingress_pwd}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{endpoint_ingress_user}}",
-											"type": "string"
-										}
-									]
-								},
 								"method": "PATCH",
 								"header": [
 									{
@@ -154,7 +109,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "  {\n    \"identification\": {\n        \"id\": \"www.sampleOperator/aas\",\n        \"idType\": \"IRI\"\n    },\n    \"descriptor\": {\n    \"endpoints\": [\n        {\n            \"address\": \"{{grpc-endpoint-ingress-host}}:{{grpc-endpoint-ingress-port}}\",\n            \"type\": \"grpc\",\n            \"target\": \"cloud\"\n        },\n        {\n          \"address\":  \"http://{{endpoint_ingress_user}}:{{endpoint_ingress_pwd}}@{{https-endpoint-ingress-host}}:{{https-endpoint-ingress-port}}/interaction\" ,\n          \"type\": \"http\",\n          \"target\": \"cloud\"\n      }\n    ],\n      \"certificate_x509_i40\": \"sample_crt\",\n    \"signature\": \"sample_sig\"\n    },\n    \"asset\": {\n        \"id\": \"Sample-Asset-Id--\",\n        \"idType\": \"IRI\"\n    }\n  }",
+									"raw": "  {\n    \"identification\": {\n        \"id\": \"www.sampleOperator/aas\",\n        \"idType\": \"IRI\"\n    },\n    \"descriptor\": {\n    \"endpoints\": [\n        {\n            \"address\": \"{{grpc-endpoint-ingress-host}}:{{grpc-endpoint-ingress-port}}\",\n            \"type\": \"grpc\",\n            \"target\": \"cloud\"\n        },\n        {\n          \"address\":  \"https://{{endpoint_ingress_user}}:{{endpoint_ingress_pwd}}@{{https-endpoint-ingress-host}}:{{https-endpoint-ingress-port}}/interaction\" ,\n          \"type\": \"https\",\n          \"target\": \"cloud\"\n      }\n    ],\n      \"certificate_x509_i40\": \"{{certificate}}\",\n    \"signature\": \"sample_sig\"\n    },\n    \"asset\": {\n        \"id\": \"Sample-Asset-Id\",\n        \"idType\": \"IRI\"\n    }\n  }",
 									"options": {
 										"raw": {}
 									}
@@ -182,8 +137,10 @@
 									],
 									"variable": [
 										{
+											"id": "32fcd6ed-cc4f-4950-a447-bbb9e20e01b7",
 											"key": "aasId",
-											"value": "www.sampleOperator%2Faas"
+											"value": "www.sampleOperator%2Faas",
+											"type": "string"
 										}
 									]
 								}
@@ -193,21 +150,6 @@
 						{
 							"name": "DELETE assetadministrationshells",
 							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{endpoint_ingress_pwd}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{endpoint_ingress_user}}",
-											"type": "string"
-										}
-									]
-								},
 								"method": "DELETE",
 								"header": [
 									{
@@ -246,8 +188,10 @@
 									],
 									"variable": [
 										{
+											"id": "8267d362-d588-45ce-8cb5-b080dba8b19f",
 											"key": "aasId",
-											"value": "www.sampleOperator%2Faas"
+											"value": "www.sampleOperator%2Faas",
+											"type": "string"
 										}
 									]
 								}
@@ -260,21 +204,6 @@
 								"disableBodyPruning": true
 							},
 							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{endpoint_ingress_pwd}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{endpoint_ingress_user}}",
-											"type": "string"
-										}
-									]
-								},
 								"method": "GET",
 								"header": [
 									{
@@ -313,8 +242,10 @@
 									],
 									"variable": [
 										{
+											"id": "5986b9b7-fbc6-4621-b78a-6dbb1497264a",
 											"key": "aasId",
-											"value": "www.sampleOperator%2Faas"
+											"value": "www.sampleOperator%2Faas",
+											"type": "string"
 										}
 									]
 								}
@@ -331,21 +262,6 @@
 						{
 							"name": "Create semanticProtocols",
 							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{endpoint_ingress_pwd}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{endpoint_ingress_user}}",
-											"type": "string"
-										}
-									]
-								},
 								"method": "PUT",
 								"header": [
 									{
@@ -356,7 +272,10 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"identification\": {\n    \"id\": \"i40:registry-semanticProtocol/onboarding\",\n    \"idType\": \"Custom\"\n  },\n  \"roles\": [\n    {\n      \"name\": \"Operator\",\n      \"aasDescriptorIds\": [\n        {\n          \"id\": \"www.sampleOperator/aas\",\n          \"idType\": \"IRI\"\n        }\n      ]\n    }\n  ]\n}"
+									"raw": "{\n  \"identification\": {\n    \"id\": \"i40:registry-semanticProtocol/onboarding\",\n    \"idType\": \"Custom\"\n  },\n  \"roles\": [\n    {\n      \"name\": \"Operator\",\n      \"aasDescriptorIds\": [\n        {\n          \"id\": \"www.sampleOperator/aas\",\n          \"idType\": \"IRI\"\n        }\n      ]\n    }\n  ]\n}",
+									"options": {
+										"raw": {}
+									}
 								},
 								"url": {
 									"raw": "{{i40-aas-endpoint-registry}}/semanticProtocols",
@@ -385,21 +304,6 @@
 						{
 							"name": "Create or Update semanticProtocol",
 							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{endpoint_ingress_pwd}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{endpoint_ingress_user}}",
-											"type": "string"
-										}
-									]
-								},
 								"method": "PUT",
 								"header": [
 									{
@@ -410,7 +314,10 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"identification\": {\n    \"id\": \"i40:registry-semanticProtocol/onboarding\",\n    \"idType\": \"Custom\"\n  },\n  \"roles\": [\n    {\n      \"name\": \"Operator\",\n      \"aasDescriptorIds\": [\n        {\n          \"id\": \"www.sampleOperator/aas\",\n          \"idType\": \"IRI\"\n        }\n      ]\n    }\n  ]\n}"
+									"raw": "{\n  \"identification\": {\n    \"id\": \"i40:registry-semanticProtocol/onboarding\",\n    \"idType\": \"Custom\"\n  },\n  \"roles\": [\n    {\n      \"name\": \"Operator\",\n      \"aasDescriptorIds\": [\n        {\n          \"id\": \"www.sampleOperator/aas\",\n          \"idType\": \"IRI\"\n        }\n      ]\n    }\n  ]\n}",
+									"options": {
+										"raw": {}
+									}
 								},
 								"url": {
 									"raw": "{{i40-aas-endpoint-registry}}/admin/semanticProtocols",
@@ -443,21 +350,6 @@
 								"disableBodyPruning": true
 							},
 							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{endpoint_ingress_pwd}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{endpoint_ingress_user}}",
-											"type": "string"
-										}
-									]
-								},
 								"method": "GET",
 								"header": [
 									{
@@ -468,7 +360,10 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": ""
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
 								},
 								"url": {
 									"raw": "{{i40-aas-endpoint-registry}}/semanticProtocols/:semanticProtocolId/role/:roleName/AASDescriptors",
@@ -496,13 +391,17 @@
 									],
 									"variable": [
 										{
+											"id": "755bf832-4260-4308-a6bc-4278721a2392",
 											"key": "semanticProtocolId",
 											"value": "i40:registry-semanticProtocol%2Fonboarding",
+											"type": "string",
 											"description": "i40:registry-semanticProtocol/onboarding"
 										},
 										{
+											"id": "c8dfb890-df42-4d5a-ac8b-d2e6b7fff580",
 											"key": "roleName",
-											"value": "Operator"
+											"value": "Operator",
+											"type": "string"
 										}
 									]
 								}
@@ -512,21 +411,6 @@
 						{
 							"name": "Update a Role of  SemanticProtocol with AASDesciroptor IDs",
 							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{endpoint_ingress_pwd}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{endpoint_ingress_user}}",
-											"type": "string"
-										}
-									]
-								},
 								"method": "PATCH",
 								"header": [
 									{
@@ -537,7 +421,10 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "[\n        {\n          \"id\": \"www.sampleOperator/aas\",\n          \"idType\": \"IRI\"\n        },\n        {\n          \"id\": \"www.new_sample_aas_that_needs_to_be_registerd_beforehand\",\n          \"idType\": \"IRI\"\n        }\n      ]"
+									"raw": "[\n        {\n          \"id\": \"www.sampleOperator/aas\",\n          \"idType\": \"IRI\"\n        },\n        {\n          \"id\": \"www.new_sample_aas_that_needs_to_be_registerd_beforehand\",\n          \"idType\": \"IRI\"\n        }\n      ]",
+									"options": {
+										"raw": {}
+									}
 								},
 								"url": {
 									"raw": "{{i40-aas-endpoint-registry}}/semanticProtocols/:semanticProtocolId/role/:roleName/AASDescriptors",
@@ -565,13 +452,17 @@
 									],
 									"variable": [
 										{
+											"id": "c034d71a-4184-41d8-a43e-cddc67e33649",
 											"key": "semanticProtocolId",
 											"value": "i40:registry-semanticProtocol%2Fonboarding",
+											"type": "string",
 											"description": "i40:registry-semanticProtocol/onboarding"
 										},
 										{
+											"id": "76d795d0-5ec8-4346-b927-087dc8d60bcf",
 											"key": "roleName",
-											"value": "Operator"
+											"value": "Operator",
+											"type": "string"
 										}
 									]
 								}
@@ -581,21 +472,6 @@
 						{
 							"name": "Remove an AASId from a  Role of  SemanticProtocol",
 							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{endpoint_ingress_pwd}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{endpoint_ingress_user}}",
-											"type": "string"
-										}
-									]
-								},
 								"method": "DELETE",
 								"header": [
 									{
@@ -606,7 +482,10 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": ""
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
 								},
 								"url": {
 									"raw": "{{i40-aas-endpoint-registry}}/semanticProtocols/:semanticProtocolId/role/:roleName/AASDescriptors/:aasId",
@@ -635,17 +514,23 @@
 									],
 									"variable": [
 										{
+											"id": "10445246-6d51-4bf5-b71e-ceb3c5361e09",
 											"key": "semanticProtocolId",
 											"value": "i40:registry-semanticProtocol%2Fonboarding",
+											"type": "string",
 											"description": "i40:registry-semanticProtocol/onboarding"
 										},
 										{
+											"id": "a1fad7a5-0108-4149-8067-b9074e620f3e",
 											"key": "roleName",
-											"value": "Operator"
+											"value": "Operator",
+											"type": "string"
 										},
 										{
+											"id": "5a78c0f2-cf1b-4ebe-8f31-7e2205a7d1b9",
 											"key": "aasId",
-											"value": "www.sampleOperator%2Faas"
+											"value": "www.sampleOperator%2Faas",
+											"type": "string"
 										}
 									]
 								}
@@ -658,21 +543,6 @@
 								"disableBodyPruning": true
 							},
 							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{endpoint_ingress_pwd}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{endpoint_ingress_user}}",
-											"type": "string"
-										}
-									]
-								},
 								"method": "GET",
 								"header": [
 									{
@@ -683,7 +553,10 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": ""
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
 								},
 								"url": {
 									"raw": "{{i40-aas-endpoint-registry}}/semanticProtocols/:semanticProtocolId",
@@ -708,8 +581,10 @@
 									],
 									"variable": [
 										{
+											"id": "0c4c115b-a609-409c-a785-9d8d30447f6c",
 											"key": "semanticProtocolId",
-											"value": "i40:registry-semanticProtocol%2Fonboarding"
+											"value": "i40:registry-semanticProtocol%2Fonboarding",
+											"type": "string"
 										}
 									]
 								}
@@ -722,21 +597,6 @@
 								"disableBodyPruning": true
 							},
 							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{endpoint_ingress_pwd}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{endpoint_ingress_user}}",
-											"type": "string"
-										}
-									]
-								},
 								"method": "GET",
 								"header": [
 									{
@@ -747,7 +607,10 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": ""
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
 								},
 								"url": {
 									"raw": "{{i40-aas-endpoint-registry}}/semanticProtocols",
@@ -776,21 +639,6 @@
 						{
 							"name": "DELETE SemanticProtocol",
 							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{endpoint_ingress_pwd}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{endpoint_ingress_user}}",
-											"type": "string"
-										}
-									]
-								},
 								"method": "DELETE",
 								"header": [
 									{
@@ -801,7 +649,10 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": ""
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
 								},
 								"url": {
 									"raw": "{{i40-aas-endpoint-registry}}/semanticProtocols/:semanticProtocolId",
@@ -826,8 +677,10 @@
 									],
 									"variable": [
 										{
+											"id": "173e5bde-cd68-4590-8cc1-3378e8eac652",
 											"key": "semanticProtocolId",
-											"value": "i40:registry-semanticProtocol%2Fonboarding"
+											"value": "i40:registry-semanticProtocol%2Fonboarding",
+											"type": "string"
 										}
 									]
 								}
@@ -847,21 +700,6 @@
 				{
 					"name": "Create Assignment Submodel to Application Adapter",
 					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "password",
-									"value": "admin",
-									"type": "string"
-								},
-								{
-									"key": "username",
-									"value": "admin",
-									"type": "string"
-								}
-							]
-						},
 						"method": "POST",
 						"header": [
 							{
@@ -873,7 +711,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "[\n  {\n    \"adapterid\": \"storage-adapter-mongodb\",\n    \"url\": \"http://{{storage-adapter-mongodb-host}}:{{storage-adapter-mongodb-port}}/submodels\",\n    \"name\": \"mongo-adapter\",\n    \"submodelid\": \"sap.com/aas/submodels/part-100-device-information-model/sampleSM\",\n    \"submodelsemanticid\": \"opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/sampleSM\"\n  }\n]",
+							"raw": "[\n  {\n    \"adapterid\": \"storage-adapter-mongodb\",\n    \"url\": \"https://{{storage-adapter-mongodb-host}}:{{storage-adapter-mongodb-port}}/submodels\",\n    \"name\": \"mongo-adapter\",\n    \"submodelid\": \"sap.com/aas/submodels/part-100-device-information-model/sampleSM\",\n    \"submodelsemanticid\": \"opcfoundation.org/specifications-unified-architecture/part-100-device-information-model/sampleSM\"\n  }\n]",
 							"options": {
 								"raw": {}
 							}
@@ -896,21 +734,6 @@
 						"disableBodyPruning": true
 					},
 					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "password",
-									"value": "admin",
-									"type": "string"
-								},
-								{
-									"key": "username",
-									"value": "admin",
-									"type": "string"
-								}
-							]
-						},
 						"method": "GET",
 						"header": [
 							{
@@ -953,25 +776,7 @@
 				},
 				{
 					"name": "Get a list of all adapters in registry",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "password",
-									"value": "admin",
-									"type": "string"
-								},
-								{
-									"key": "username",
-									"value": "admin",
-									"type": "string"
-								}
-							]
-						},
 						"method": "GET",
 						"header": [
 							{
@@ -981,13 +786,6 @@
 								"type": "text"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": "[\n  {\n    \"adapterid\": \"storage-adapter-mongodb\",\n    \"url\": \"http://i40-aas-storage-adapter-mongodb:3100/submodels\",\n    \"name\": \"mongo-adapter\",\n    \"submodelid\": \"sap.com/aas/submodels/part-100-device-information-model\",\n    \"submodelsemanticid\": \"opcfoundation.org/specifications-unified-architecture/part-100-device-information-model\"\n  }\n]\n",
-							"options": {
-								"raw": {}
-							}
-						},
 						"url": {
 							"raw": "{{i40-aas-adapter-registry}}/listall",
 							"host": [
@@ -1065,7 +863,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{i40-aas-data-manager}}/submodels",
+							"raw": "{{i40-aas-data-manager}}/submodels?submodelid=sap.com/aas/submodels/part-100-device-information-model/sampleSM",
 							"host": [
 								"{{i40-aas-data-manager}}"
 							],
@@ -1075,8 +873,7 @@
 							"query": [
 								{
 									"key": "submodelid",
-									"value": "sap.com/aas/submodels/part-100-device-information-model/sampleSM",
-									"disabled": true
+									"value": "sap.com/aas/submodels/part-100-device-information-model/sampleSM"
 								}
 							]
 						}
@@ -1092,7 +889,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "c20283a4-f173-41be-93c3-2ea50f68fc6c",
+						"id": "2050b51a-9a68-482b-907d-eb7a7f0cb024",
 						"exec": [
 							"pm.test(\"Status code is 200 and Body is empty\", function () {",
 							"    pm.response.to.have.status(200);",
@@ -1104,21 +901,6 @@
 				}
 			],
 			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "k!ndHeat60",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "admin",
-							"type": "string"
-						}
-					]
-				},
 				"method": "GET",
 				"header": [],
 				"url": {
@@ -1136,21 +918,6 @@
 		{
 			"name": "Send Interaction Message to https-endpoint",
 			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "username",
-							"value": "{{endpoint_ingress_user}}",
-							"type": "string"
-						},
-						{
-							"key": "password",
-							"value": "{{endpoint_ingress_pwd}}",
-							"type": "string"
-						}
-					]
-				},
 				"method": "POST",
 				"header": [
 					{
@@ -1184,7 +951,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "2a8a357e-abc8-4394-9db2-32a20a6fd18e",
+						"id": "99f1bcf2-ac09-4ece-9b91-1b56514119e8",
 						"exec": [
 							"pm.test(\"Status code is 200 and body has submodelElements\", function () {",
 							"    pm.response.to.have.status(200);",
@@ -1196,21 +963,6 @@
 				}
 			],
 			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "k!ndHeat60",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "admin",
-							"type": "string"
-						}
-					]
-				},
 				"method": "GET",
 				"header": [],
 				"url": {
@@ -1231,12 +983,12 @@
 		"basic": [
 			{
 				"key": "password",
-				"value": "admin",
+				"value": "{{endpoint_ingress_pwd}}",
 				"type": "string"
 			},
 			{
 				"key": "username",
-				"value": "admin",
+				"value": "{{endpoint_ingress_user}}",
 				"type": "string"
 			}
 		]
@@ -1245,7 +997,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "a0b4330d-151c-47fc-92a4-3b9b6958b8fa",
+				"id": "eca6e877-d389-4196-8eb4-8ef741bc7640",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -1255,7 +1007,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "863b9595-4695-47d3-b83f-109650698ccc",
+				"id": "d4ad746a-4ca3-4aa9-b311-acec3ad6fc5e",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -1265,81 +1017,87 @@
 	],
 	"variable": [
 		{
-			"id": "161114b6-af4a-4d72-a9ac-a024ca573333",
+			"id": "e5336763-6470-4ec2-94a7-44ee9463a954",
 			"key": "endpoint_ingress_user",
 			"value": "admin",
 			"type": "string"
 		},
 		{
-			"id": "6e0f78e2-a16c-4de0-a204-800564d097cb",
+			"id": "0d935dc6-865d-453d-ae10-f2d3149248a4",
 			"key": "endpoint_ingress_pwd",
 			"value": "admin",
 			"type": "string"
 		},
 		{
-			"id": "46c39b2e-ac45-4168-a114-f67de0df9e67",
+			"id": "f479db8c-0851-4bf9-90b8-5eb9a5be6d43",
 			"key": "i40-aas-http-endpoint-ingress",
-			"value": "http://localhost:2000",
+			"value": "https://localhost:2000",
 			"type": "string"
 		},
 		{
-			"id": "24c84915-dbaf-4982-bb17-8ae52fe9a323",
+			"id": "abb9b431-d4c0-48c7-84b9-6f48fc201868",
 			"key": "i40-aas-endpoint-registry",
-			"value": "http://localhost:4400",
+			"value": "https://localhost:4400",
 			"type": "string"
 		},
 		{
-			"id": "2f05729f-ae88-4447-9b50-d8d7d78472fa",
+			"id": "530bfd01-88cf-4cdc-a39c-d155c1f13ec4",
 			"key": "i40-aas-data-manager",
-			"value": "http://localhost:4000",
+			"value": "https://localhost:4000",
 			"type": "string"
 		},
 		{
-			"id": "4d5b534c-0705-433a-9118-0adc014a382b",
+			"id": "1a650c90-26b3-4fab-8338-f80824a5fee9",
 			"key": "i40-aas-adapter-registry",
-			"value": "http://localhost:4500",
+			"value": "https://localhost:4500",
 			"type": "string"
 		},
 		{
-			"id": "6c38dfed-5c34-4894-992a-43e4904b63d7",
+			"id": "95d6d2a3-cff7-4e38-82e9-07d15a4a62d1",
 			"key": "i40-aas-storage-adapter-mongodb",
-			"value": "http://localhost:3100",
+			"value": "https://localhost:3100",
 			"type": "string"
 		},
 		{
-			"id": "3fe4ee6c-2b0c-47d1-982d-8e2a81af8fd3",
+			"id": "60d1017c-fb08-451e-9348-0d17b347a8f9",
 			"key": "https-endpoint-ingress-host",
 			"value": "i40-aas-https-endpoint-ingress",
 			"type": "string"
 		},
 		{
-			"id": "8e5cfc1f-b0d9-4ba5-a81a-b110322edc26",
+			"id": "42f7b776-7b81-4338-b82e-f05c7c5f0720",
 			"key": "grpc-endpoint-ingress-host",
 			"value": "i40-aas-grpc-endpoint-ingress",
 			"type": "string"
 		},
 		{
-			"id": "8efecdf1-4d69-4081-afb9-981abaa43dc0",
+			"id": "48b78559-d058-4c02-8d3e-dc700e78da76",
 			"key": "https-endpoint-ingress-port",
 			"value": "2000",
 			"type": "string"
 		},
 		{
-			"id": "e0a3bd7d-4a7d-46e1-91d4-fbb82743f866",
+			"id": "d6b47a25-bc91-46a1-93f2-4c5b99d10da2",
 			"key": "grpc-endpoint-ingress-port",
 			"value": "8384",
 			"type": "string"
 		},
 		{
-			"id": "54b5aecf-a2f6-402c-80c5-111803be4895",
+			"id": "67018d02-c61f-4748-87d1-6e57c9352ad5",
 			"key": "storage-adapter-mongodb-host",
 			"value": "i40-aas-storage-adapter-mongodb",
 			"type": "string"
 		},
 		{
-			"id": "25cc6507-b55a-4d13-94b1-b4f2d0d55720",
+			"id": "451f67a3-8f5d-4fbb-925b-a8e9c880f928",
 			"key": "storage-adapter-mongodb-port",
 			"value": "3100",
+			"type": "string"
+		},
+		{
+			"id": "da842b64-3154-4bc3-9190-a7a6d2b1be98",
+			"key": "certificate",
+			"value": "-----BEGIN CERTIFICATE-----\\nMIIEAjCCAuqgAwIBAgIJAO532Qo7zQsZMA0GCSqGSIb3DQEBCwUAMBIxEDAOBgNV\\nBAMMB2k0MC1hYXMwHhcNMjAwNjA0MjAwNDExWhcNMzAwNjAyMjAwNDExWjASMRAw\\nDgYDVQQDDAdpNDAtYWFzMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA\\nr5MiTeu4p/DN4R++9pVHRBcIHuELitUG+SoLUSrD9VfGcTCpr++mYgS+4W/elw2K\\njlHHzQYrf+qDAjmFLNngk9OxFMIC0RJeB9czco04U+rzimD4Z4fWtE9VlcWrCqgj\\n1FbM+etbSgpP4NMMiBuEhdQVQguVDpSFp2qmBnYM88WdqJCNzh7IauNggGENs2iJ\\nHgVu2GhJhzul27AcIZNxbf/vrRcknEs60QPEmJhlZXQZuzTm7XVJxb+E0GllZt5j\\nGYgO/un++eZ4r3lO0b7Q6i9gPYePwQOqdgjSGgKi1mI5mW3Q4VkaTi0y4e8quHJR\\nL2WR4UHybStlOK8hEcA+JwIDAQABo4IBWTCCAVUwHQYDVR0OBBYEFF3XT+rQe+fW\\n3Y823lEeV7ZYIHjyMB8GA1UdIwQYMBaAFF3XT+rQe+fW3Y823lEeV7ZYIHjyMAwG\\nA1UdEwQFMAMBAf8wEwYDVR0lBAwwCgYIKwYBBQUHAwEwgcEGA1UdEQSBuTCBtoIJ\\nbG9jYWxob3N0gh5pNDAtYWFzLWh0dHBzLWVuZHBvaW50LWluZ3Jlc3OCHWk0MC1h\\nYXMtZ3JwYy1lbmRwb2ludC1pbmdyZXNzghlpNDAtYWFzLWVuZHBvaW50LXJlZ2lz\\ndHJ5ghhpNDAtYWFzLWFkYXB0ZXItcmVnaXN0cnmCFGk0MC1hYXMtZGF0YS1tYW5h\\nZ2Vygh9pNDAtYWFzLXN0b3JhZ2UtYWRhcHRlci1tb25nb2RiMCwGCWCGSAGG+EIB\\nDQQfFh1PcGVuU1NMIEdlbmVyYXRlZCBDZXJ0aWZpY2F0ZTANBgkqhkiG9w0BAQsF\\nAAOCAQEARNdtaVbrnRRXu1Y8eNb5yRIOnPD1K0PkUUhAyQMer6EryNznd/1R554g\\noqT1ldTi64Vpmkfi5OwBUDBRm7w56YMMwDjX8jccC2gIfVq3YqIukuT9FPjhhZEn\\nySaXIIKCfTF0SrrlOgX/MqFLuA8aLW5H6Smup0TGQ5EhTTxzYiTnwTnosEvR7K5s\\np+Iosecw5SY9OM9cfHlx8AS6E5kiyJZiqBZXnNVKisBIJPK0BBNzkNybx5wpyAXb\\nJRW07J8KbxlD3CrXqPWePcv9wx1ypiwwIeIMSg6usuTmbGTYiUY2Zx/jgib3dgOF\\n7oDojf/CVDDf24DlAxm7DHf6cj0XEw==\\n-----END CERTIFICATE-----",
 			"type": "string"
 		}
 	],

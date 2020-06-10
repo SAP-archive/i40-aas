@@ -21,7 +21,17 @@ To use custom credentials, place them in the `src/compose/volumes/certs/` dir (w
   - `TLS_CERTFILE=/etc/ssl/certs/i40-aas.crt.pem`
 
 #### Helm
-TODO
+Activate/Deactivate TLS by setting the variable `security.tls.enabled` in the `values.yaml` file of the [Helm chart](https://github.com/SAP/i40-aas/tree/master/helm/i40-aas) to `true`/`false` (default `false`).
+
+Add your credentials as a *secret* to the cluster where you want to deploy the i40-aas Helm chart: 
+```bash
+kubectl create secret generic YOUR-SECRET -n YOUR-NAMESPACE --from-file=i40-aas.crt.pem --from-file=i40-aas.key.pem
+```
+Then, in the `values.yaml`, set the variable `security.certificates.secretName` to the name of the secret you just created. 
+
+If you change the name of the certificate or key file in the process, then adapt the values `security.tls.keyfile` or `security.tls.crtfile` in the `values.yaml` accordingly.  
+**BEWARE**: By doing so, you **MUST NOT** modify the path of the certificate/key files in these variables as that is hardcoded in the chart templates **!**  
+
 
 ## Create your own self-signed crt/key via openssl
 Adjust the configuration in `i40-aas.conf` to your needs and run:
