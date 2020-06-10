@@ -570,8 +570,44 @@ class Registry implements iRegistry {
 
 
 
-  listAllEndpoints(): Promise<IEndpoint[]> {
-    throw new Error("Method not implemented.");
+  async listAllAASDescriptors(): Promise<IAASDescriptor[]> {
+
+    try {
+      //get an Entityrepository for the AASDescriptor and the Asset
+      let aasDescriptorRepository = this.client.getRepository(AASDescriptorEntity);
+
+      //Load the AASDescriptor object from the DB as well as the related Objects (Endpoints, Asset)
+      let resultAasDescriptors = await aasDescriptorRepository.find({
+        relations: ["endpoints", "asset"]
+      }) as AASDescriptorEntity[];
+
+      var responseAASList = new Array<IAASDescriptor>();
+
+      if (resultAasDescriptors.length > 0) {
+
+        resultAasDescriptors.map(resultAASDescriptor => {
+
+          //construct an AASDescriptor to be returned in the List oder from each element
+        let resultAsset = resultAASDescriptor.asset as AssetEntity
+        let aasDescrIdentifier = new Identifier(resultAASDescriptor.id, resultAASDescriptor.idType as TIdType);
+        let descr = new GenericDescriptor(resultAASDescriptor.endpoints, resultAASDescriptor.certificate_x509_i40, resultAASDescriptor.signature);
+
+        let assetIdentifier = new Identifier(resultAsset.id, resultAsset.idType as TIdType);
+
+        let responseAAS = new AASDescriptorResponse(aasDescrIdentifier, assetIdentifier, descr);
+
+        responseAASList.push(responseAAS);
+      })
+      return responseAASList;
+      }
+      else {
+        logger.info("No AASDescriptors found, returning empty list")
+        return responseAASList;
+      }
+    } catch (error) {
+      logger.error("Error caught " + error)
+      throw error;
+    }
   }
 }
 

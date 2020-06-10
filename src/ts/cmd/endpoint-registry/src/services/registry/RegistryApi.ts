@@ -151,14 +151,13 @@ class RegistryApi {
   }
 
 
-  async getAllEndpointsList(): Promise<Array<IEndpoint>> {
+  async getAllAASDescriptorsList(): Promise<Array<IAASDescriptor>> {
     var registryDao: iRegistry = await RegistryFactory.getRegistry();
     try {
-      var result = await registryDao.listAllEndpoints();
-      logger.debug(result);
+      var result = await registryDao.listAllAASDescriptors();
+      // logger.debug(result);
       return result;
     } catch (e) {
-      logger.error(e);
             throw e;
     }
   }
