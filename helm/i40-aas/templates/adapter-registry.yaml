@@ -80,7 +80,11 @@ spec:
           httpGet:
             path: /health
             port: endpoint
+            {{- if .Values.security.tls.enabled }}
             scheme: HTTPS
+            {{- else }}
+            scheme: HTTP
+            {{- end }}
           initialDelaySeconds: 600
           periodSeconds: 60
         volumeMounts:
