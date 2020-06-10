@@ -299,9 +299,6 @@ class Registry implements iRegistry {
     try {
       //get an Entityrepository for the AASDescriptor and the Asset
       let aasDescriptorRepository = this.client.getRepository(AASDescriptorEntity);
-      let aasAssetRepository = this.client.getRepository(AssetEntity);
-
-
       //Load the AASDescriptor object from the DB as well as the related Objects (Endpoints, Asset)
       let resultAasDescriptor = await aasDescriptorRepository.findOne({
         where: [
@@ -315,7 +312,7 @@ class Registry implements iRegistry {
         //the auto generated Ids are not to be returned in the endpoint object
        // resultAasDescriptor.endpoints.map(endpoint => delete endpoint.id)
 
-        let resultAsset = await aasAssetRepository.findOne({ id: resultAasDescriptor.asset.id }) as AssetEntity
+        let resultAsset = resultAasDescriptor.asset as AssetEntity
         let aasDescrIdentifier = new Identifier(resultAasDescriptor.id, resultAasDescriptor.idType as TIdType);
         let descr = new GenericDescriptor(resultAasDescriptor.endpoints, resultAasDescriptor.certificate_x509_i40, resultAasDescriptor.signature);
 
