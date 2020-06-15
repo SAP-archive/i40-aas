@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
+	"net/http"
 	"net/url"
 	"os"
 	"strconv"
@@ -12,6 +14,47 @@ import (
 	"github.com/SAP/i40-aas/src/go/pkg/interaction"
 	"github.com/streadway/amqp"
 )
+
+func init() {
+	var (
+		testRoute    string
+		testResponse string
+		c            *http.Client
+		err          error
+	)
+
+	testRoute = "/semanticProtocols/i40:registry-semanticProtocol/onboarding/role/Operator/AASDescriptors"
+	testResponse = "[{\"asset\":{\"id\":\"Sample-Asset-Id\",\"idType\":\"IRI\"},\"descriptor\":{\"endpoints\":[{\"address\":\"https://admin:admin@i40-aas-https-endpoint-ingress:2000/interaction\",\"type\":\"https\",\"target\":\"cloud\"},{\"address\":\"i40-aas-grpc-endpoint-ingress:8384\",\"type\":\"grpc\",\"target\":\"cloud\"}],\"certificate_x509_i40\":\"-----BEGIN CERTIFICATE-----\\nMIIEAjCCAuqgAwIBAgIJAO532Qo7zQsZMA0GCSqGSIb3DQEBCwUAMBIxEDAOBgNV\\nBAMMB2k0MC1hYXMwHhcNMjAwNjA0MjAwNDExWhcNMzAwNjAyMjAwNDExWjASMRAw\\nDgYDVQQDDAdpNDAtYWFzMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA\\nr5MiTeu4p/DN4R++9pVHRBcIHuELitUG+SoLUSrD9VfGcTCpr++mYgS+4W/elw2K\\njlHHzQYrf+qDAjmFLNngk9OxFMIC0RJeB9czco04U+rzimD4Z4fWtE9VlcWrCqgj\\n1FbM+etbSgpP4NMMiBuEhdQVQguVDpSFp2qmBnYM88WdqJCNzh7IauNggGENs2iJ\\nHgVu2GhJhzul27AcIZNxbf/vrRcknEs60QPEmJhlZXQZuzTm7XVJxb+E0GllZt5j\\nGYgO/un++eZ4r3lO0b7Q6i9gPYePwQOqdgjSGgKi1mI5mW3Q4VkaTi0y4e8quHJR\\nL2WR4UHybStlOK8hEcA+JwIDAQABo4IBWTCCAVUwHQYDVR0OBBYEFF3XT+rQe+fW\\n3Y823lEeV7ZYIHjyMB8GA1UdIwQYMBaAFF3XT+rQe+fW3Y823lEeV7ZYIHjyMAwG\\nA1UdEwQFMAMBAf8wEwYDVR0lBAwwCgYIKwYBBQUHAwEwgcEGA1UdEQSBuTCBtoIJ\\nbG9jYWxob3N0gh5pNDAtYWFzLWh0dHBzLWVuZHBvaW50LWluZ3Jlc3OCHWk0MC1h\\nYXMtZ3JwYy1lbmRwb2ludC1pbmdyZXNzghlpNDAtYWFzLWVuZHBvaW50LXJlZ2lz\\ndHJ5ghhpNDAtYWFzLWFkYXB0ZXItcmVnaXN0cnmCFGk0MC1hYXMtZGF0YS1tYW5h\\nZ2Vygh9pNDAtYWFzLXN0b3JhZ2UtYWRhcHRlci1tb25nb2RiMCwGCWCGSAGG+EIB\\nDQQfFh1PcGVuU1NMIEdlbmVyYXRlZCBDZXJ0aWZpY2F0ZTANBgkqhkiG9w0BAQsF\\nAAOCAQEARNdtaVbrnRRXu1Y8eNb5yRIOnPD1K0PkUUhAyQMer6EryNznd/1R554g\\noqT1ldTi64Vpmkfi5OwBUDBRm7w56YMMwDjX8jccC2gIfVq3YqIukuT9FPjhhZEn\\nySaXIIKCfTF0SrrlOgX/MqFLuA8aLW5H6Smup0TGQ5EhTTxzYiTnwTnosEvR7K5s\\np+Iosecw5SY9OM9cfHlx8AS6E5kiyJZiqBZXnNVKisBIJPK0BBNzkNybx5wpyAXb\\nJRW07J8KbxlD3CrXqPWePcv9wx1ypiwwIeIMSg6usuTmbGTYiUY2Zx/jgib3dgOF\\n7oDojf/CVDDf24DlAxm7DHf6cj0XEw==\\n-----END CERTIFICATE-----\",\"signature\":\"sample_sig\"},\"identification\":{\"id\":\"www.sampleOperator/aas\",\"idType\":\"IRI\"}}]"
+
+	http.HandleFunc(testRoute, func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(200)
+		w.Write([]byte(testResponse))
+	})
+	http.HandleFunc("/up", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(200)
+		w.Write([]byte("OK"))
+	})
+
+	go func() {
+		log.Fatal(http.ListenAndServe(":4400", nil))
+	}()
+
+	c = &http.Client{}
+	req, err := http.NewRequest("GET", "http://localhost:4400/up", nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for {
+		_, err = c.Do(req)
+		if err != nil {
+			log.Printf("%v", err)
+		} else {
+			log.Print("dummy is online")
+			break
+		}
+	}
+}
 
 func TestNewEndpointResolver(t *testing.T) {
 	var (
