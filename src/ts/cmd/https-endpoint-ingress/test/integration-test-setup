@@ -7,5 +7,8 @@ export CORE_INGRESS_EXCHANGE=ingress
 export CORE_INGRESS_HTTP_USER=admin
 export CORE_INGRESS_HTTP_PASSWORD=admin
 export CORE_INGRESS_HTTP_PORT=2000
+export TLS_ENABLED=false
+export TLS_KEYFILE=src/compose/volumes/certs/i40-aas.key.pem
+export TLS_CERTFILE=src/compose/volumes/certs/i40-aas.crt.pem
 
-docker run --rm -d --name test-rabbit -p 5672:5672 -p 1883:1883 rabbitmq:3-management
+docker run --rm -d --name test-rabbit -p 5672:5672 -p 1883:1883 rabbitmq:3-management-alpine

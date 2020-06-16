@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
+	"crypto/x509"
 	"fmt"
 	"time"
 
@@ -15,8 +17,9 @@ import (
 
 // GRPCClientConfig struct
 type GRPCClientConfig struct {
-	URL      string
-	RootCert string
+	URL        string
+	TLSEnabled bool
+	Cert       string
 }
 
 // grpcClient struct
@@ -43,14 +46,34 @@ func newGRPCClient(cfg *GRPCClientConfig) (*grpcClient, error) {
 	c.cfg = cfg
 	grpcOpts = []grpc.DialOption{}
 
-	if cfg.RootCert != "" {
-		grpcCreds, err := credentials.NewClientTLSFromFile(cfg.RootCert, "localhost")
+	if cfg.TLSEnabled {
+		// Ref. for self-signed cert security issues & workarounds
+		// https://forfuncsake.github.io/post/2017/08/trust-extra-ca-cert-in-go-app/
+
+		// Get the SystemCertPool, continue with an empty pool on error
+		rootCAs, err := x509.SystemCertPool()
 		if err != nil {
-			log.Error().Err(err).Msgf("failed to create grpc tls client via root-cert %s", cfg.RootCert)
+			log.Error().Err(err).Msgf("failed to read system rootCAs")
+			return nil, err
 		}
+		if rootCAs == nil {
+			rootCAs = x509.NewCertPool()
+		}
+
+		// Append our cert to the system pool
+		if ok := rootCAs.AppendCertsFromPEM([]byte(cfg.Cert)); !ok {
+			log.Warn().Msgf("No certs appended, using system certs only")
+		}
+
+		// Trust the augmented cert pool in our client
+		tlsCfg := &tls.Config{
+			RootCAs: rootCAs,
+		}
+
+		grpcCreds := credentials.NewTLS(tlsCfg)
 		grpcOpts = append(grpcOpts, grpc.WithTransportCredentials(grpcCreds))
 	} else {
-		log.Warn().Msg("missing cfg.RootCert - reverting to WithInsecure()")
+		log.Warn().Msg("TLS disabled - reverting to WithInsecure()")
 		grpcOpts = append(grpcOpts, grpc.WithInsecure())
 	}
 

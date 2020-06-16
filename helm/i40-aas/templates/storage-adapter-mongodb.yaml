@@ -50,6 +50,8 @@ spec:
             value: {{ .Values.logging.logLevel | quote }}
           - name: LOGGING_LOGOUTPUT
             value: {{ .Values.logging.logOutput | quote }}
+          - name: APPLICATION_ADAPTERS_MONGODB_PORT
+            value: {{ .Values.applicationAdapters.mongoDb.port | quote }}
           - name: APPLICATION_ADAPTERS_MONGODB_DATABASE_HOST
             valueFrom:
               configMapKeyRef:
@@ -68,6 +70,25 @@ spec:
             value: {{ .Values.onboardingskillmongodb.mongodbDatabase | quote }}
           - name: APPLICATION_ADAPTERS_MONGODB_SUBMODELS_COLLECTION
             value: {{ .Values.applicationAdapters.mongoDb.submodelsCollection | quote }}
+          - name: TLS_ENABLED
+            value: {{ .Values.security.tls.enabled | quote }}
+          - name: TLS_KEYFILE
+            value: {{ .Values.security.tls.keyfile | quote }}
+          - name: TLS_CERTFILE
+            value: {{ .Values.security.tls.crtfile | quote }}
+          volumeMounts:
+          {{- if .Values.security.certificates }}
+          - name: certs
+            mountPath: "/etc/ssl/certs"
+            readOnly: true
+          {{- end }}
           resources:
             {{- toYaml .Values.resources.ts | nindent 12 }}
+      volumes:
+      {{- if .Values.security.certificates }}
+      - name: certs
+        secret:
+          secretName: {{ .Values.security.certificates.secretName }}
+          optional: true
+      {{- end }}
 ---

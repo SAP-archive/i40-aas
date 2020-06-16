@@ -1,4 +1,7 @@
 import express from 'express';
+import https from 'https';
+import http from 'http';
+import fs from 'fs';
 import { applyMiddleware, applyRoutes } from './utils';
 import middleware from './middleware';
 import errorHandlers from './middleware/errorHandlers';
@@ -19,6 +22,9 @@ let CORE_BROKER_PORT = checkEnvVar('CORE_BROKER_PORT');
 var CORE_INGRESS_EXCHANGE = checkEnvVar('CORE_INGRESS_EXCHANGE');
 var CORE_INGRESS_USER = checkEnvVar('CORE_INGRESS_USER');
 var CORE_INGRESS_PASSWORD = checkEnvVar('CORE_INGRESS_PASSWORD');
+var TLS_KEYFILE = checkEnvVar('TLS_KEYFILE');
+var TLS_CERTFILE = checkEnvVar('TLS_CERTFILE');
+var TLS_ENABLED = checkEnvVar('TLS_ENABLED');
 
 const PORT = checkEnvVar('CORE_INGRESS_HTTP_PORT');
 // The queue is generated based on the binding key and is unique for the client
@@ -65,9 +71,18 @@ initiateBroker(brokerClient);
  * start the broker client and connect
  *  */
 
-router.listen(PORT, () => {
-  logger.info(`A Server is running http://localhost:${PORT}...`);
-});
+if (TLS_ENABLED == 'true') {
+  https.createServer({
+    key: fs.readFileSync(TLS_KEYFILE),
+    cert: fs.readFileSync(TLS_CERTFILE)
+  }, router).listen(PORT, () => {
+    logger.info(`A Server is running http://localhost:${PORT}...`);
+  });
+} else {
+  http.createServer(router).listen(PORT, () =>
+    logger.info(`A Server is running http://localhost:${PORT}...`)
+  );
+}
 
 function checkEnvVar(variableName: string): string {
   let retVal: string | undefined = process.env[variableName];

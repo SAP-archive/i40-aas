@@ -59,10 +59,22 @@ func main() {
 	if err != nil {
 		log.Error().Err(err).Msg("failed to read and cast CORE_INGRESS_GRPC_PORT")
 	}
+
+	var certPath, keyPath, tlsEnabled string
+	tlsEnabled = os.Getenv("TLS_ENABLED")
+	if tlsEnabled == "true" {
+		certPath = os.Getenv("TLS_CERTFILE")
+		keyPath = os.Getenv("TLS_KEYFILE")
+		log.Debug().Msgf("server will be using certificate (%q) and key (%q)", certPath, keyPath)
+	} else {
+		certPath = ""
+		keyPath = ""
+	}
+
 	grpcSrvCfg = &GRPCServerConfig{
 		Port: grpcPort,
-		Cert: "",
-		Key:  "",
+		Cert: certPath,
+		Key:  keyPath,
 	}
 
 	ingressCfg = &GRPCIngressConfig{

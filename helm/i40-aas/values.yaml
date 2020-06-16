@@ -2,6 +2,73 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+logging:
+  ## LOG_LEVEL regulates the verbosity of application logs,
+  ## acceptepted values are
+  ##   - INFO
+  ##   - DEBUG
+  logLevel: DEBUG
+
+  ## LOG_FORMAT specifies whether the logs are formatted for
+  ## console or log collector (json) consumption
+  ## acceptepted values are
+  ##   - CONSOLE
+  ##   - JSON
+  logOutput: JSON
+
+security: 
+  tls:
+    enabled: false
+    keyfile: /etc/ssl/certs/i40-aas.key.pem
+    crtfile: /etc/ssl/certs/i40-aas.crt.pem
+
+  certificates: {}
+  ## Kubernetes Secret containing the TLS certificates for mounting into the pods.
+  ## secretName: certificates
+
+ingress:
+  certManager: {}
+##    clusterIssuer: ""
+##    acmeChallengeType: ""
+  host: ""
+
+replicaCount: 1
+
+image:
+  repository: sapi40
+  release: latest 
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+storageClassName: default
+
+resources: {}
+  ## We usually recommend not to specify default resources and to leave this as a conscious
+  ## choice for the user. This also increases chances charts run on environments with little
+  ## resources, such as Minikube. If you do want to specify resources, uncomment the following
+  ## lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  ## Vice versa, if you want to disable setting resources, comment the following lines
+  ## and uncomment the curly braces after 'resources'.
+  ## The following values are our recommendations,
+  ## according to the consumption of resources as we have observed it.
+  ##go:
+  ##  limits:
+  ##    cpu: 40m
+  ##    memory: 20Mi
+  ##  requests:
+  ##    cpu: 25m
+  ##    memory: 10Mi
+  ##ts:
+  ##  limits:
+  ##    cpu: 40m
+  ##    memory: 100Mi
+  ##  requests:
+  ##    cpu: 25m
+  ##    memory: 60Mi
+
 core:
   endpointResolver:
     ctag: endpoint-resolver
@@ -21,6 +88,9 @@ core:
       ## Leave empty "" to generate a random 20 character alphanumeric string.
       user: admin
       password: admin
+      tls:
+        keyfilepath: /certs/server.key
+        crtfilepath: /certs/server.crt
 
   egress:
     broker:
@@ -79,6 +149,7 @@ rabbitmq:
     username: guest
     ## password can be left empty. 
     ## In that case, a random 10 character alphanumeric string is generated. 
+    ## !!! But careful! Password generation can cause unpredictable behaviour with chart upgrades.
     password: guest
     extraPlugins: rabbitmq_mqtt
   service:
@@ -100,6 +171,7 @@ endpointregistrypostgres:
   postgresqlUsername: aas-user
   ## postgresqlPassword can be left empty. 
   ## In that case, a random 10 character alphanumeric string is generated. 
+  ## !!! But careful! Password generation can cause unpredictable behaviour with chart upgrades.
   postgresqlPassword: postgres
   service: 
     port: 5432
@@ -113,6 +185,7 @@ onboardingskillmongodb:
   mongodbUsername: mongouser
   ## mongodbPassword can be left empty. 
   ## In that case, a random 10 character alphanumeric string is generated. 
+  ## !!! But careful! Password generation can cause unpredictable behaviour with chart upgrades.
   mongodbPassword: mongopassword
   service:
     port: 27017
@@ -126,64 +199,3 @@ onboardingskillmongodb:
       arbiter: 0
   readinessProbe:
     enabled: false
-
-logging:
-  ## LOG_LEVEL regulates the verbosity of application logs,
-  ## acceptepted values are
-  ##   - INFO
-  ##   - DEBUG
-  logLevel: DEBUG
-
-  ## LOG_FORMAT specifies whether the logs are formatted for
-  ## console or log collector (json) consumption
-  ## acceptepted values are
-  ##   - CONSOLE
-  ##   - JSON
-  logOutput: JSON
-
-certificates: {}
-  ## Kubernetes Secret containing TLS certificates for authentication.
-  ## secretName: certificates
-
-ingress:
-  certManager: {}
-##    clusterIssuer: ""
-##    acmeChallengeType: ""
-  host: ""
-
-replicaCount: 1
-
-image:
-  repository: sapi40
-  release: latest 
-  pullPolicy: IfNotPresent
-
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
-
-storageClassName: default
-
-resources: {}
-  ## We usually recommend not to specify default resources and to leave this as a conscious
-  ## choice for the user. This also increases chances charts run on environments with little
-  ## resources, such as Minikube. If you do want to specify resources, uncomment the following
-  ## lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  ## Vice versa, if you want to disable setting resources, comment the following lines
-  ## and uncomment the curly braces after 'resources'.
-  ## The following values are our recommendations,
-  ## according to the consumption of resources as we have observed it.
-  ##go:
-  ##  limits:
-  ##    cpu: 40m
-  ##    memory: 20Mi
-  ##  requests:
-  ##    cpu: 25m
-  ##    memory: 10Mi
-  ##ts:
-  ##  limits:
-  ##    cpu: 40m
-  ##    memory: 100Mi
-  ##  requests:
-  ##    cpu: 25m
-  ##    memory: 60Mi

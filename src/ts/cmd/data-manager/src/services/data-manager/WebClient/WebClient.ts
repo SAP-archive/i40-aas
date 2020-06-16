@@ -1,9 +1,13 @@
 import Axios, { AxiosError, AxiosResponse, AxiosRequestConfig } from 'axios';
+import tls from 'tls';
+import https from 'https';
 
 const logger = require('aas-logger/lib/log');
 
 class WebClient {
-  constructor() {}
+  constructor(private cert?: string) {
+    logger.debug(this.cert)
+  }
   //TODO: remove the hardcoding of params, its also case sensitive!
   private getURLRequestConfig(
     params?: object,
@@ -12,6 +16,9 @@ class WebClient {
   ): AxiosRequestConfig {
     let config: AxiosRequestConfig = {};
 
+    config.httpsAgent = new https.Agent({
+      ca: this.cert as string
+    });
     if (params) {
       config.params = params;
     }
@@ -67,12 +74,11 @@ class WebClient {
 
     logger.debug('POSTing to adapter with url: ' + url);
 
-    const response = await Axios.post<T>(url, body, {
-      auth: {
-        username: username as string,
-        password: password as string,
-      },
-    });
+    const response = await Axios.post<T>(
+      url, 
+      body, 
+      this.getURLRequestConfig(undefined, username, password)
+    );
     logger.debug('Adapter response ' + response.statusText);
     return response as AxiosResponse<T>;
   }

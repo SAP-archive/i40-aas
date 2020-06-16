@@ -69,30 +69,41 @@ spec:
           value: {{ .Values.core.registries.endpoints.port | quote }}
         - name: CORE_REGISTRIES_ENDPOINTS_URL_SUFFIX
           value: {{ .Values.core.registries.endpoints.urlSuffix | quote }}
+        - name: TLS_ENABLED
+          value: {{ .Values.security.tls.enabled | quote }}
+        - name: TLS_CERTFILE
+          value: {{ .Values.security.tls.crtfile | quote }}          
         envFrom:
         - secretRef:
             name: {{ .Release.Name }}-core-egress
         - secretRef:
             name: {{ .Release.Name }}-core-registries-endpoints
         volumeMounts:
-        {{- if .Values.certificates }}
+        {{- if .Values.security.certificates }}
         - name: certs
-          mountPath: "/certs"
+          mountPath: "/etc/ssl/certs"
           readOnly: true
         {{- end }}
         resources:
           {{- toYaml .Values.resources.go | nindent 10 }}
-#        livenessProbe:
-#          httpGet:
-#            path: /health
-#            port: endpoint
-#          initialDelaySeconds: 600
-#          periodSeconds: 60
+{{- /*
+         livenessProbe:
+          httpGet:
+            path: /health
+            port: endpoint
+            {{- if .Values.security.tls.enabled }}
+            scheme: HTTPS
+            {{- else }}
+            scheme: HTTP
+            {{- end }}
+          initialDelaySeconds: 600
+          periodSeconds: 60 
+*/ -}}
       volumes:
-      {{- if .Values.certificates }}
+      {{- if .Values.security.certificates }}
       - name: certs
         secret:
-          secretName: {{ .Values.certificates.secretName }}
+          secretName: {{ .Values.security.certificates.secretName }}
           optional: true
       {{- end }}
 ---
