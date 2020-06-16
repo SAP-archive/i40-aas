@@ -47,12 +47,21 @@ func main() {
 	if err != nil {
 		log.Error().Err(err).Msg("failed to read and cast CORE_REGISTRIES_ENDPOINTS_PORT")
 	}
+
+	registryProtocol := os.Getenv("TLS_ENABLED")
+	if registryProtocol == "true" {
+		registryProtocol = "https"
+	} else {
+		registryProtocol = "http"
+	}
+
 	registryCfg = &EndpointRegistryConfig{
-		Protocol: "http",
-		Host:     os.Getenv("CORE_REGISTRIES_ENDPOINTS_HOST"),
-		Port:     registryPort,
-		User:     os.Getenv("CORE_REGISTRIES_ENDPOINTS_USER"),
-		Password: os.Getenv("CORE_REGISTRIES_ENDPOINTS_PASSWORD"),
+		Protocol:    registryProtocol,
+		CrtFilePath: os.Getenv("TLS_CERTFILE"),
+		Host:        os.Getenv("CORE_REGISTRIES_ENDPOINTS_HOST"),
+		Port:        registryPort,
+		User:        os.Getenv("CORE_REGISTRIES_ENDPOINTS_USER"),
+		Password:    os.Getenv("CORE_REGISTRIES_ENDPOINTS_PASSWORD"),
 	}
 
 	amqpPort, err := strconv.Atoi(os.Getenv("CORE_BROKER_PORT"))

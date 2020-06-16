@@ -73,12 +73,16 @@ typings/
 *.pem
 *.key
 *.crt
+*.csr
 *.priv
 
 # exclude the whole .compose/cert* directory
 /src/compose/volumes/certs/*
 # except for
-!/src/compose/volumes/certs/.gitkeep
+!/src/compose/volumes/certs/README.md
+!/src/compose/volumes/certs/i40-aas.conf
+!/src/compose/volumes/certs/i40-aas.key.pem
+!/src/compose/volumes/certs/i40-aas.crt.pem
 
 #######################
 # ignore all .env files

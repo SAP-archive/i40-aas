@@ -9,6 +9,9 @@ metadata:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/rewrite-target: /$1
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    {{- if .Values.security.tls.enabled }}
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    {{- end }}
     {{- if .Values.ingress.certManager }}
     cert-manager.io/cluster-issuer: {{ required "A valid .Values.ingress.certManager.clusterIssuer entry required!" .Values.ingress.certManager.clusterIssuer }}
     cert-manager.io/acme-challenge-type: {{ required "A valid .Values.ingress.certManager.acmeChallengeType entry required!" .Values.ingress.certManager.acmeChallengeType }}
@@ -46,13 +49,17 @@ spec:
           serviceName: {{ .Release.Name }}-storage-adapter-mongodb
           servicePort: {{ .Values.applicationAdapters.mongoDb.port }}
         path: /storage-adapter-mongodb/(.*)
-      - backend:
+{{- /*
+       - backend:
           serviceName: {{ .Release.Name }}-rabbitmq
           servicePort: {{ .Values.rabbitmq.service.managerPort }}
-        path: /rabbitmq/(.*)
-      - backend: 
+        path: /rabbitmq/(.*) 
+*/ -}}
+{{- /*
+       - backend: 
           serviceName: {{ .Release.Name }}-onboardingskillmongodb
           servicePort: {{ .Values.onboardingskillmongodb.service.port }}
-        path: /mongodb/(.*)
+        path: /mongodb/(.*) 
+*/ -}}
 
 

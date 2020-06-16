@@ -99,10 +99,15 @@ Decide what to do if the message can not be handled (eg. because receiver role i
         ]);
         return undefined;
       }
+
       //POST the Interaction message to the Receiver AAS
       var AASResponse = await this.aasConn.sendInteractionReplyToAAS(
         receiverURL,
-        interactionMessageString
+        interactionMessageString,
+        undefined,
+        undefined,
+        undefined,
+        (resolverMessage.ReceiverProtocol == 'https')? resolverMessage.ReceiverCert: undefined
       );
 
       logger.info(

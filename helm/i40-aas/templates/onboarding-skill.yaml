@@ -93,8 +93,6 @@ spec:
               value: {{ .Values.skills.onboarding.role | quote }}
             - name: SKILLS_ONBOARDING_URI
               value: {{ .Values.skills.onboarding.uri | quote }}
-            - name: CORE_DATA_MANAGER_PROTOCOL
-              value: "http"
             - name: CORE_DATA_MANAGER_HOST
               valueFrom:
                 configMapKeyRef:
@@ -104,6 +102,10 @@ spec:
               value: {{ .Values.core.dataManager.port | quote }}
             - name: CORE_DATA_MANAGER_SUBMODELS_ROUTE
               value: {{ .Values.core.dataManager.submodelsRoute | quote }}
+            - name: TLS_ENABLED
+              value: {{ .Values.security.tls.enabled | quote }}
+            - name: TLS_CERTFILE
+              value: {{ .Values.security.tls.crtfile | quote }}
           envFrom:
             - secretRef:
                 name: {{ .Release.Name }}-core-egress
@@ -111,6 +113,19 @@ spec:
                 name: {{ .Release.Name }}-core-ingress
             - secretRef:
                 name: {{ .Release.Name }}-core-data-manager
+          volumeMounts:
+          {{- if .Values.security.certificates }}
+            - name: certs
+              mountPath: "/etc/ssl/certs"
+              readOnly: true
+          {{- end }}
           resources:
             {{- toYaml .Values.resources.ts | nindent 12 }}
+      volumes:
+      {{- if .Values.security.certificates }}
+        - name: certs
+          secret:
+            secretName: {{ .Values.security.certificates.secretName }}
+            optional: true
+      {{- end }}
 ---

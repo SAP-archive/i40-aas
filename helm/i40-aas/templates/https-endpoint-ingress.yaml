@@ -61,17 +61,41 @@ spec:
               value: {{ .Values.core.ingress.broker.exchange | quote }}
             - name: CORE_INGRESS_HTTP_PORT
               value: {{ .Values.core.ingress.http.port | quote }}
+            - name: TLS_ENABLED
+              value: {{ .Values.security.tls.enabled | quote }}
+            - name: TLS_KEYFILE
+              value: {{ .Values.security.tls.keyfile | quote }}
+            - name: TLS_CERTFILE
+              value: {{ .Values.security.tls.crtfile | quote }}
           envFrom:
             - secretRef:
                 name: {{ .Release.Name }}-core-ingress
             - secretRef:
                 name: {{ .Release.Name }}-core-ingress-http
+          volumeMounts:
+          {{- if .Values.security.certificates }}
+            - name: certs
+              mountPath: "/etc/ssl/certs"
+              readOnly: true
+          {{- end }}
           resources:
             {{- toYaml .Values.resources.ts | nindent 12 }}
           livenessProbe:
             httpGet:
               path: /health
               port: endpoint
+              {{- if .Values.security.tls.enabled }}
+              scheme: HTTPS
+              {{- else }}
+              scheme: HTTP
+              {{- end }}
             initialDelaySeconds: 600
             periodSeconds: 60
+      volumes:
+      {{- if .Values.security.certificates }}
+        - name: certs
+          secret:
+            secretName: {{ .Values.security.certificates.secretName }}
+            optional: true
+      {{- end }}
 ---
