@@ -1,13 +1,13 @@
-import { IAASDescriptor } from '../../src/services/registry/daos/interfaces/IAASDescriptor';
-import { IEndpoint } from '../../src/services/registry/daos/interfaces/IEndpoint';
+import { IAASDescriptor } from '../src/services/registry/daos/interfaces/IAASDescriptor';
+import { IEndpoint } from '../src/services/registry/daos/interfaces/IEndpoint';
 import {getConnection, AdvancedConsoleLogger } from 'typeorm';
-import { EndpointEntity } from '../../src/services/registry/daos/entities/EndpointEntity'
+import { EndpointEntity } from '../src/services/registry/daos/entities/EndpointEntity'
 import { IAsset, IIdentifier } from 'i40-aas-objects';
-import {Identifier} from '../../src/services/registry/daos/responses/Identifier'
+import {Identifier} from '../src/services/registry/daos/responses/Identifier'
 import { Identifiable } from 'i40-aas-objects/dist/src/characteristics/Identifiable';
 import { TIdType } from 'i40-aas-objects/src/types/IdTypeEnum';
-import { AssetEntity } from '../../src/services/registry/daos/entities/AssetEntity';
-import { AASDescriptorEntity } from '../../src/services/registry/daos/entities/AASDescriptorEntity';
+import { AssetEntity } from '../src/services/registry/daos/entities/AssetEntity';
+import { AASDescriptorEntity } from '../src/services/registry/daos/entities/AASDescriptorEntity';
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const app = require('../../src/server').app;

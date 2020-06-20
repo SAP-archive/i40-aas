@@ -94,6 +94,19 @@ function addAASIDtoFirstRoleofSemanticProtocol(originalSemProtocol: ISemanticPro
   return originalSemProtocol;
 }
 
+
+function replaceAddressAndTypeInFirstEndpoint(
+  descriptor: IAASDescriptor,
+  addressReplacement: string,
+  typeReplacement: string
+) {
+  descriptor.descriptor.endpoints[0].address = addressReplacement;
+  descriptor.descriptor.endpoints[0].type = typeReplacement;
+  return descriptor;
+}
+
+
+
 function makeGoodAASDescriptor(idTag: string) {
   return <IAASDescriptor>{
     identification: {
@@ -734,11 +747,11 @@ describe('Tests with a simple data model', function () {
                       })).to.be.true;
 
 
-                      //check if the endpoints are also there
-                      chai.expect(
-                        _.some(response.body[0].descriptor?.endpoints, {
-                          address: aasRequest_1.descriptor.endpoints[0].address
-                        })).to.be.true;
+                    //check if the endpoints are also there
+                    chai.expect(
+                      _.some(response.body[0].descriptor?.endpoints, {
+                        address: aasRequest_1.descriptor.endpoints[0].address
+                      })).to.be.true;
 
                   });
               })
@@ -757,11 +770,11 @@ describe('Tests with a simple data model', function () {
                       })).to.be.true;
 
 
-                      //check if the endpoints are also there
-                      chai.expect(
-                        _.some(response.body[0].descriptor?.endpoints, {
-                          address: aasRequest_2.descriptor.endpoints[0].address
-                        })).to.be.true;
+                    //check if the endpoints are also there
+                    chai.expect(
+                      _.some(response.body[0].descriptor?.endpoints, {
+                        address: aasRequest_2.descriptor.endpoints[0].address
+                      })).to.be.true;
 
                   });
               })
@@ -770,6 +783,107 @@ describe('Tests with a simple data model', function () {
               });
           });
       });
+  });
+
+  it('correctly retrieves all AASDescriptors by semanticProtocol and role after Patching an AASDescriptor',
+    async function () {
+      var firstTestId = 'randId-' + getRandomInteger();
+      var secondTestId = 'randId' + getRandomInteger();
+      var semProtocolTestId = 'randId' + getRandomInteger();
+      var requester = chai.request(app).keepOpen();
+
+      //first register an AAS
+      var aasRequest_1 = makeGoodAASDescriptor(firstTestId)
+      var aasRequest_2 = makeGoodAASDescriptor(secondTestId)
+
+      await requester
+        .put('/AASDescriptors')
+        .auth(user, password)
+        .send(aasRequest_1)
+        .then(async (res: any) => {
+          chai.expect(res.status).to.eql(200);
+          //register second AAS
+          await requester
+            .put('/AASDescriptors')
+            .auth(user, password)
+            .send(aasRequest_2)
+            .then(async (res: any) => {
+
+              //the SemanticProtocol to be registered
+              var semProtocolRequest = makeGoodSemanticProtocolWith2Roles(semProtocolTestId, firstTestId, secondTestId)
+              //then register a SemanticProtocol
+              await requester
+                .put('/SemanticProtocols')
+                .auth(user, password)
+                .send(semProtocolRequest)
+                .then(async (res: any) => {
+                  chai.expect(res.status).to.eql(200);
+
+                  //Patch the first AASDescriptor changing one Endpoint
+                  await requester
+                  .patch('/AASDescriptors/aasId'+firstTestId)
+          .auth(user, password)
+          .send(
+            replaceAddressAndTypeInFirstEndpoint(
+              makeGoodAASDescriptor(firstTestId),
+              'http://sampleEndpoint.com-'+firstTestId, //new Endpoint
+              'http'              )
+          )
+                  .then(async (res: any) => {
+                    chai.expect(res.status).to.eql(200);
+                  //finally try retrieving the list of AASs based on the semanticprotocol and rolename
+                  //read the AASDescriptor for the first role
+                  await requester
+                    .get('/SemanticProtocols/semanticProtocolId' + semProtocolTestId + '/role/' + semProtocolRequest.roles[0].name + '/AASDescriptors')
+                    .auth(user, password)
+                    .then((response: any) => {
+                      chai.expect(response.status).to.eql(200);
+                      console.log("first read response is " + JSON.stringify(response.body) + " first AASID was " + JSON.stringify(aasRequest_1.identification))
+                      //check if role registered correctly
+
+                      chai.expect(
+                        _.some(response.body, {
+                          identification: aasRequest_1.identification
+                        })).to.be.true;
+
+
+                      //check if the endpoints are also there
+                      chai.expect(
+                        _.some(response.body[0].descriptor?.endpoints, {
+                          address: aasRequest_1.descriptor.endpoints[0].address
+                        })).to.be.true;
+
+                    });
+                })
+                .then(async (res: any) => {
+                  //read the AASDescriptor for the second role
+                  await requester
+                    .get('/SemanticProtocols/semanticProtocolId' + semProtocolTestId + '/role/' + semProtocolRequest.roles[1].name + '/AASDescriptors')
+                    .auth(user, password)
+                    .then((response: any) => {
+                      chai.expect(response.status).to.eql(200);
+                      console.log("second read response is " + JSON.stringify(response.body) + " second AASID was " + JSON.stringify(aasRequest_2.identification))
+                      //check if role registered correctly
+                      chai.expect(
+                        _.some(response.body, {
+                          identification: aasRequest_2.identification
+                        })).to.be.true;
+
+
+                      //check if the endpoints are also there
+                      chai.expect(
+                        _.some(response.body[0].descriptor?.endpoints, {
+                          address: aasRequest_2.descriptor.endpoints[0].address
+                        })).to.be.true;
+
+                    });
+                })
+                .then(() => {
+                  requester.close();
+                });
+            });
+        });
+    });
   });
 
 
@@ -989,112 +1103,112 @@ describe('Tests with a simple data model', function () {
           });
       });
   });
-/*
-  it('do not alter or remove a role already related to multiple AASDescriptors when updating a semantic protodol', async function () {
-    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
-    var newUniqueTestId = 'newsimpleDataTest' + getRandomInteger();
-    var requester = chai.request(app).keepOpen();
+  /*
+    it('do not alter or remove a role already related to multiple AASDescriptors when updating a semantic protodol', async function () {
+      var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+      var newUniqueTestId = 'newsimpleDataTest' + getRandomInteger();
+      var requester = chai.request(app).keepOpen();
 
-    //first register an AAS
-    var aasRequest = makeGoodAASDescriptor(uniqueTestId)
-    var secondAASRequest = makeGoodAASDescriptor(newUniqueTestId)
-    var semProtocolRequestWithOneAAS = makeGoodSemanticProtocolWithOneRole(uniqueTestId)
-    var secondSemProtocolRequestWithOneAAS = makeGoodSemanticProtocolWithOneRole(newUniqueTestId)
+      //first register an AAS
+      var aasRequest = makeGoodAASDescriptor(uniqueTestId)
+      var secondAASRequest = makeGoodAASDescriptor(newUniqueTestId)
+      var semProtocolRequestWithOneAAS = makeGoodSemanticProtocolWithOneRole(uniqueTestId)
+      var secondSemProtocolRequestWithOneAAS = makeGoodSemanticProtocolWithOneRole(newUniqueTestId)
 
-    // change the role of the second semProtocol to have the same AAS to the first one
-    var secondSemProtocolRequest = addAASIDtoFirstRoleofSemanticProtocol(secondSemProtocolRequestWithOneAAS, aasRequest.identification)
+      // change the role of the second semProtocol to have the same AAS to the first one
+      var secondSemProtocolRequest = addAASIDtoFirstRoleofSemanticProtocol(secondSemProtocolRequestWithOneAAS, aasRequest.identification)
 
-    //register an AASDescriptor
-    await requester
-      .put('/AASDescriptors')
-      .auth(user, password)
-      .send(aasRequest)
-      .then(async (res: any) => {
-        chai.expect(res.status).to.eql(200);
-        //register a second AAS (that will be assigned lated to the role with the patch)
-        await requester
-          .put('/AASDescriptors')
-          .auth(user, password)
-          .send(secondAASRequest)
-          //register a semantic protocol with a role
-          .then(async (res: any) => {
-            chai.expect(res.status).to.eql(200);
-            //then register a SemanticProtocol with the first AAS associated to a role
-            await requester
-              .put('/SemanticProtocols')
-              .auth(user, password)
-              .send(semProtocolRequestWithOneAAS)
-              .then(async (res: any) => {
-                chai.expect(res.status).to.eql(200);
-                //check if AAS was assigned correctly to the role
-                let loadedRole = await getConnection().getRepository(RoleEntity).findOne({
-                  where: [
-                    { semProtocol: 'semanticProtocolId' + uniqueTestId }, { name: semProtocolRequestWithOneAAS.roles[0].name }],
-                  relations: ["aasDescriptorIds"]
-                })
-
-                //The role should be assigned now to AASDescriptors
-                console.log("Registered role AASs " + JSON.stringify(loadedRole?.aasDescriptorIds))
-                chai.expect(
-                  _.some(loadedRole?.aasDescriptorIds, {
-                    id: semProtocolRequestWithOneAAS.roles[0].aasDescriptorIds[0].id
-                  })).to.be.true;
-
-                  //now register a second semantic protocol with a role that has the same AAS with the previous
-                await requester
-                  .put('/SemanticProtocols')
-                  .auth(user, password)
-                  .send(secondSemProtocolRequest)
+      //register an AASDescriptor
+      await requester
+        .put('/AASDescriptors')
+        .auth(user, password)
+        .send(aasRequest)
+        .then(async (res: any) => {
+          chai.expect(res.status).to.eql(200);
+          //register a second AAS (that will be assigned lated to the role with the patch)
+          await requester
+            .put('/AASDescriptors')
+            .auth(user, password)
+            .send(secondAASRequest)
+            //register a semantic protocol with a role
+            .then(async (res: any) => {
+              chai.expect(res.status).to.eql(200);
+              //then register a SemanticProtocol with the first AAS associated to a role
+              await requester
+                .put('/SemanticProtocols')
+                .auth(user, password)
+                .send(semProtocolRequestWithOneAAS)
+                .then(async (res: any) => {
                   chai.expect(res.status).to.eql(200);
-
-                  let loadedRole2 = await getConnection().getRepository(RoleEntity).findOne({
+                  //check if AAS was assigned correctly to the role
+                  let loadedRole = await getConnection().getRepository(RoleEntity).findOne({
                     where: [
-                      { semProtocol: 'semanticProtocolId' + newUniqueTestId }, { name: secondSemProtocolRequest.roles[0].name }],
+                      { semProtocol: 'semanticProtocolId' + uniqueTestId }, { name: semProtocolRequestWithOneAAS.roles[0].name }],
                     relations: ["aasDescriptorIds"]
                   })
-                  //see if this role has indeed this AAS
+
+                  //The role should be assigned now to AASDescriptors
+                  console.log("Registered role AASs " + JSON.stringify(loadedRole?.aasDescriptorIds))
                   chai.expect(
-                    _.some(loadedRole2?.aasDescriptorIds, {
-                      id: secondSemProtocolRequest.roles[0].aasDescriptorIds[0].id
+                    _.some(loadedRole?.aasDescriptorIds, {
+                      id: semProtocolRequestWithOneAAS.roles[0].aasDescriptorIds[0].id
                     })).to.be.true;
 
-                //finally try un-assigning am AASId from the role
-                 await requester
-                   .delete('/SemanticProtocols/semanticProtocolId' + uniqueTestId + '/role/'
-                     + semProtocolRequestWithOneAAS.roles[0].name + '/AASDescriptors/' + semProtocolRequestWithOneAAS.identification.id)
-                   .auth(user, password)
-                   .then(async (response: any) => {
-                    chai.expect(response.status).to.eql(200);
-                    //  console.log("body is " + JSON.stringify(response.body))
-                    //check if AAS Assignment was correctly removed from  the role
-                    let loadedRole = await getConnection().getRepository(RoleEntity).findOne({
+                    //now register a second semantic protocol with a role that has the same AAS with the previous
+                  await requester
+                    .put('/SemanticProtocols')
+                    .auth(user, password)
+                    .send(secondSemProtocolRequest)
+                    chai.expect(res.status).to.eql(200);
+
+                    let loadedRole2 = await getConnection().getRepository(RoleEntity).findOne({
                       where: [
-                        { semProtocol: 'semanticProtocolId' + uniqueTestId }, { name: semProtocolRequestWithOneAAS.roles[0].name }],
+                        { semProtocol: 'semanticProtocolId' + newUniqueTestId }, { name: secondSemProtocolRequest.roles[0].name }],
                       relations: ["aasDescriptorIds"]
                     })
-                    console.log("AAS IDs " + JSON.stringify(loadedRole?.aasDescriptorIds))
-                    console.log("Original AAS IDs " + JSON.stringify(semProtocolRequestWithOneAAS))
-                    //check if the new AAS was assigned to the role
+                    //see if this role has indeed this AAS
                     chai.expect(
-                      _.some(loadedRole?.aasDescriptorIds, {
-                        id: secondSemProtocolRequest.identification.id
-                      })).to.be.false;
-                      //check that the original role AAS Assignment still exists
-                    chai.expect(
-                      _.some(loadedRole?.aasDescriptorIds, {
-                        id: semProtocolRequestWithOneAAS.identification.id
+                      _.some(loadedRole2?.aasDescriptorIds, {
+                        id: secondSemProtocolRequest.roles[0].aasDescriptorIds[0].id
                       })).to.be.true;
 
-                  });
-              })
-              .then(async (res: any) => {
-              })
-              .then(() => {
-                requester.close();
-              });
-          });
-      });
-  });
-  */
+                  //finally try un-assigning am AASId from the role
+                   await requester
+                     .delete('/SemanticProtocols/semanticProtocolId' + uniqueTestId + '/role/'
+                       + semProtocolRequestWithOneAAS.roles[0].name + '/AASDescriptors/' + semProtocolRequestWithOneAAS.identification.id)
+                     .auth(user, password)
+                     .then(async (response: any) => {
+                      chai.expect(response.status).to.eql(200);
+                      //  console.log("body is " + JSON.stringify(response.body))
+                      //check if AAS Assignment was correctly removed from  the role
+                      let loadedRole = await getConnection().getRepository(RoleEntity).findOne({
+                        where: [
+                          { semProtocol: 'semanticProtocolId' + uniqueTestId }, { name: semProtocolRequestWithOneAAS.roles[0].name }],
+                        relations: ["aasDescriptorIds"]
+                      })
+                      console.log("AAS IDs " + JSON.stringify(loadedRole?.aasDescriptorIds))
+                      console.log("Original AAS IDs " + JSON.stringify(semProtocolRequestWithOneAAS))
+                      //check if the new AAS was assigned to the role
+                      chai.expect(
+                        _.some(loadedRole?.aasDescriptorIds, {
+                          id: secondSemProtocolRequest.identification.id
+                        })).to.be.false;
+                        //check that the original role AAS Assignment still exists
+                      chai.expect(
+                        _.some(loadedRole?.aasDescriptorIds, {
+                          id: semProtocolRequestWithOneAAS.identification.id
+                        })).to.be.true;
+
+                    });
+                })
+                .then(async (res: any) => {
+                })
+                .then(() => {
+                  requester.close();
+                });
+            });
+        });
+    });
+    */
 
 });
