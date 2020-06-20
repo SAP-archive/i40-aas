@@ -845,37 +845,6 @@ describe('Tests with a simple data model', function () {
                         _.some(response.body, {
                           identification: aasRequest_1.identification
                         })).to.be.true;
-
-
-                      //check if the endpoints are also there
-                      chai.expect(
-                        _.some(response.body[0].descriptor?.endpoints, {
-                          address: aasRequest_1.descriptor.endpoints[0].address
-                        })).to.be.true;
-
-                    });
-                })
-                .then(async (res: any) => {
-                  //read the AASDescriptor for the second role
-                  await requester
-                    .get('/SemanticProtocols/semanticProtocolId' + semProtocolTestId + '/role/' + semProtocolRequest.roles[1].name + '/AASDescriptors')
-                    .auth(user, password)
-                    .then((response: any) => {
-                      chai.expect(response.status).to.eql(200);
-                      console.log("second read response is " + JSON.stringify(response.body) + " second AASID was " + JSON.stringify(aasRequest_2.identification))
-                      //check if role registered correctly
-                      chai.expect(
-                        _.some(response.body, {
-                          identification: aasRequest_2.identification
-                        })).to.be.true;
-
-
-                      //check if the endpoints are also there
-                      chai.expect(
-                        _.some(response.body[0].descriptor?.endpoints, {
-                          address: aasRequest_2.descriptor.endpoints[0].address
-                        })).to.be.true;
-
                     });
                 })
                 .then(() => {
