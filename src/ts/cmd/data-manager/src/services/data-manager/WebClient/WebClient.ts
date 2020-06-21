@@ -5,9 +5,8 @@ import https from 'https';
 const logger = require('aas-logger/lib/log');
 
 class WebClient {
-  constructor(private cert?: string) {
-    logger.debug(this.cert)
-  }
+  constructor(private cert?: string) {}
+  
   //TODO: remove the hardcoding of params, its also case sensitive!
   private getURLRequestConfig(
     params?: object,
