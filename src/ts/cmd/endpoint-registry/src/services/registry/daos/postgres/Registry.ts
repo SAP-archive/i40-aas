@@ -133,11 +133,7 @@ class Registry implements iRegistry {
         Thus, the client should sent the whole endpoints array every time (i.e.) first get then put
 
         //TODO: the endpoints that are not anymore assigned to an AASDescriptor should be deleted from DB
-       TODO: if no delete is done previous Endpoint record will not be deleted and with update old stays in DB */
-
-       // var deleted = await aasDescriptorRepository.delete(record.identification.id)
-  // let softRemoveResult  = await this.client.manager.softRemove(loadedAASDescriptor.endpoints);
-     //   logger.debug("Endpoint delete result: " + JSON.stringify(deleted) )
+         if no delete is done previous Endpoint record will not be deleted and with update old stays in DB */
 
         // loadedAASDescriptor.endpoints = record.descriptor.endpoints.filter(endpoint => {
         //   endpoint.address !== endpoint.address }) as EndpointEntity[];
