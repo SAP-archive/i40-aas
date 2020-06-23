@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, Unique, ManyToOne, PrimaryColumn, OneToMany } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, Unique, ManyToOne, PrimaryColumn, OneToMany, JoinTable } from "typeorm";
 import { RoleEntity } from "./RoleEntity";
 
 @Entity()
@@ -11,7 +11,8 @@ export class SemanticProtocolEntity {
   idType!: string;
 
   //Role : many SemanticProtocols
-  @OneToMany(type => RoleEntity, role => role.semProtocol, { cascade: true, eager: true })
+  @OneToMany(type => RoleEntity, role => role.semProtocol, {cascade: true, eager:true} )
+  @JoinTable()
   roles!: RoleEntity[];
 
 }

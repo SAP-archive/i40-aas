@@ -131,13 +131,9 @@ class Registry implements iRegistry {
         /*NOTE: The Endpoints array is replaced with the one in the request. It is not possible to
         update individual endpoints since no endpoint-id is used.
         Thus, the client should sent the whole endpoints array every time (i.e.) first get then put
-        if no delete is done previous Endpoint record will be deleted and replaced
-        with .save() the previous stays in DB */
 
-        var deleted = await aasDescriptorRepository.delete(record.identification.id)
-   //let softRemoveResult  = await this.client.manager.softRemove(loadedAASDescriptor.endpoints);
-        logger.debug("Endpoint delete result: " + JSON.stringify(deleted) )
         //TODO: the endpoints that are not anymore assigned to an AASDescriptor should be deleted from DB
+         if no delete is done previous Endpoint record will not be deleted and with update old stays in DB */
 
         // loadedAASDescriptor.endpoints = record.descriptor.endpoints.filter(endpoint => {
         //   endpoint.address !== endpoint.address }) as EndpointEntity[];
@@ -148,8 +144,6 @@ class Registry implements iRegistry {
         loadedAASDescriptor.signature = record.descriptor.signature
         //Create if not exists, update if it does
         let savedAasDescriptor = await aasDescriptorRepository.save(loadedAASDescriptor);
-
-
 
         logger.debug("AASDescriptor updated in Db " + JSON.stringify(savedAasDescriptor));
 
@@ -210,7 +204,7 @@ class Registry implements iRegistry {
       let semProtocolRepository = this.client.getRepository(SemanticProtocolEntity);
 
       //try to find the AASDescriptor in the DB
-      var loadedSemProtocol = await semProtocolRepository.findOne({ id: record.identification.id });
+      var loadedSemProtocol = await semProtocolRepository.findOne({ id: record.identification.id});
 
       if (!loadedSemProtocol) {
 
@@ -340,11 +334,16 @@ class Registry implements iRegistry {
       //Load the AASDescriptor object from the DB as well as the related Objects (Endpoints, Asset)
       let resultSemanticProtocol = await semProtocolRepository.findOne({
         where: [
-          { id: semanticProtocolId },],
+          { id: semanticProtocolId }],
         relations: ["roles"]
       }) as SemanticProtocolEntity;
       //if not found throw error
-      if (resultSemanticProtocol) {
+      if (resultSemanticProtocol && resultSemanticProtocol.roles) {
+        logger.debug("Roles are "+ JSON.stringify(resultSemanticProtocol.roles) )
+        if( resultSemanticProtocol.roles.length ===0){
+          logger.error("No Roles for this semanticProtocolId found in Registry: " + semanticProtocolId)
+          return {} as ISemanticProtocol;
+        }
 
         let protocolIdentifier = new Identifier(resultSemanticProtocol.id, resultSemanticProtocol.idType as TIdType);
         //get the IRole Array for returning, contruct from the RoleEntity
@@ -369,7 +368,7 @@ class Registry implements iRegistry {
         //   .getMany();
       }
       else {
-        logger.info("No Entry with this semanticProtocolId found in DB: " + semanticProtocolId)
+        logger.error("No Entry with this semanticProtocolId found in DB: " + semanticProtocolId)
         throw new HTTP422Error("No Entry with this semanticProtocolId found in Database")
       }
     }

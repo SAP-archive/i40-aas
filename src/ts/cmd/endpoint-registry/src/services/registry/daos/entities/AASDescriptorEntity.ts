@@ -44,7 +44,7 @@ export class AASDescriptorEntity {
   @JoinTable()
   endpoints!: EndpointEntity[];
 
-  @ManyToMany(type => RoleEntity, role=> role.aasDescriptorIds, { cascade:true})
+  @ManyToMany(type => RoleEntity, role=> role.aasDescriptorIds,  {cascade:true})
   @JoinTable()
   roles!: RoleEntity[];
 }
