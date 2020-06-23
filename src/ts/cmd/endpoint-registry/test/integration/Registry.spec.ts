@@ -183,7 +183,56 @@ describe('Tests with a simple data model', function () {
         chai.expect(res.status).to.eql(401);
       });
   });
-//  GET /AASDescriptors
+
+//GET /AASDescriptors Fetch a list of all AASDescriptors
+//TODO: add a Test that returns an empty list
+it('correctly retrieves a list of all AASDescriptors from the DB ', async function () {
+  var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+  var uniqueTestId2 = 'simpleDataTest' + getRandomInteger();
+  var requester = chai.request(app).keepOpen();
+  var AASDescriptorRequest1 = makeGoodAASDescriptor(uniqueTestId);
+  var AASDescriptorRequest2 = makeGoodAASDescriptor(uniqueTestId2);
+
+
+  await requester
+    .put('/AASDescriptors')
+    .auth(user, password)
+    .send(AASDescriptorRequest1)
+    .then(async (res: any) => {
+      chai.expect(res.status).to.eql(200);
+
+      await requester
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(AASDescriptorRequest2)
+        .then((res: any) => {
+          chai.expect(res.status).to.eql(200);
+       //   chai.expect((res.body as IAASDescriptor).identification.id).to.equal(uniqueTestId)
+        });
+
+    })
+    .then(async () => {
+      await requester
+        .get('/AASDescriptors')
+        .auth(user, password)
+        .then((res: any) => {
+          chai.expect(res.status).to.eql(200);
+          chai.expect(res.body.length).not.to.eql(0)
+          // chai.expect(
+          //   _.some(res.body[0].descriptor.identification.id, {
+          //     id: AASDescriptorRequest1.identification.id })).to.be.true;
+
+       //   chai.expect((res.body as IAASDescriptor).identification.id).to.equal(uniqueTestId)
+        });
+
+    })
+    .then(() => {
+      requester.close();
+    });
+});
+
+
+//  GET /AASDescriptors/aasid
   it('can handle slashes in the id', async function () {
     var uniqueTestId = 'simpleDataTest' + getRandomInteger();
     var requester = chai.request(app).keepOpen();

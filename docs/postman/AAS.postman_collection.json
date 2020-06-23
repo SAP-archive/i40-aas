@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "1723b84c-340e-4020-b5a4-17206d552537",
+		"_postman_id": "a579888e-31aa-445e-ae97-b7e1658e6b32",
 		"name": "AAS-Service",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -137,10 +137,8 @@
 									],
 									"variable": [
 										{
-											"id": "32fcd6ed-cc4f-4950-a447-bbb9e20e01b7",
 											"key": "aasId",
-											"value": "www.sampleOperator%2Faas",
-											"type": "string"
+											"value": "www.sampleOperator%2Faas"
 										}
 									]
 								}
@@ -188,10 +186,8 @@
 									],
 									"variable": [
 										{
-											"id": "8267d362-d588-45ce-8cb5-b080dba8b19f",
 											"key": "aasId",
-											"value": "www.sampleOperator%2Faas",
-											"type": "string"
+											"value": "www.sampleOperator%2Faas"
 										}
 									]
 								}
@@ -242,10 +238,54 @@
 									],
 									"variable": [
 										{
-											"id": "5986b9b7-fbc6-4621-b78a-6dbb1497264a",
 											"key": "aasId",
-											"value": "www.sampleOperator%2Faas",
-											"type": "string"
+											"value": "www.sampleOperator%2Faas"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "READ All Assetadministrationshells",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{i40-aas-endpoint-registry}}/AASDescriptors/",
+									"host": [
+										"{{i40-aas-endpoint-registry}}"
+									],
+									"path": [
+										"AASDescriptors",
+										""
+									],
+									"query": [
+										{
+											"key": "REGISTRY_ADMIN_USER",
+											"value": "{{user}}",
+											"disabled": true
+										},
+										{
+											"key": "REGISTRY_ADMIN_PASSWORD",
+											"value": "{{pwd}}",
+											"disabled": true
 										}
 									]
 								}
@@ -391,17 +431,13 @@
 									],
 									"variable": [
 										{
-											"id": "755bf832-4260-4308-a6bc-4278721a2392",
 											"key": "semanticProtocolId",
 											"value": "i40:registry-semanticProtocol%2Fonboarding",
-											"type": "string",
 											"description": "i40:registry-semanticProtocol/onboarding"
 										},
 										{
-											"id": "c8dfb890-df42-4d5a-ac8b-d2e6b7fff580",
 											"key": "roleName",
-											"value": "Operator",
-											"type": "string"
+											"value": "Operator"
 										}
 									]
 								}
@@ -452,17 +488,13 @@
 									],
 									"variable": [
 										{
-											"id": "c034d71a-4184-41d8-a43e-cddc67e33649",
 											"key": "semanticProtocolId",
 											"value": "i40:registry-semanticProtocol%2Fonboarding",
-											"type": "string",
 											"description": "i40:registry-semanticProtocol/onboarding"
 										},
 										{
-											"id": "76d795d0-5ec8-4346-b927-087dc8d60bcf",
 											"key": "roleName",
-											"value": "Operator",
-											"type": "string"
+											"value": "Operator"
 										}
 									]
 								}
@@ -514,23 +546,17 @@
 									],
 									"variable": [
 										{
-											"id": "10445246-6d51-4bf5-b71e-ceb3c5361e09",
 											"key": "semanticProtocolId",
 											"value": "i40:registry-semanticProtocol%2Fonboarding",
-											"type": "string",
 											"description": "i40:registry-semanticProtocol/onboarding"
 										},
 										{
-											"id": "a1fad7a5-0108-4149-8067-b9074e620f3e",
 											"key": "roleName",
-											"value": "Operator",
-											"type": "string"
+											"value": "Operator"
 										},
 										{
-											"id": "5a78c0f2-cf1b-4ebe-8f31-7e2205a7d1b9",
 											"key": "aasId",
-											"value": "www.sampleOperator%2Faas",
-											"type": "string"
+											"value": "www.sampleOperator%2Faas"
 										}
 									]
 								}
@@ -581,10 +607,8 @@
 									],
 									"variable": [
 										{
-											"id": "0c4c115b-a609-409c-a785-9d8d30447f6c",
 											"key": "semanticProtocolId",
-											"value": "i40:registry-semanticProtocol%2Fonboarding",
-											"type": "string"
+											"value": "i40:registry-semanticProtocol%2Fonboarding"
 										}
 									]
 								}
@@ -677,10 +701,8 @@
 									],
 									"variable": [
 										{
-											"id": "173e5bde-cd68-4590-8cc1-3378e8eac652",
 											"key": "semanticProtocolId",
-											"value": "i40:registry-semanticProtocol%2Fonboarding",
-											"type": "string"
+											"value": "i40:registry-semanticProtocol%2Fonboarding"
 										}
 									]
 								}
@@ -889,7 +911,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "2050b51a-9a68-482b-907d-eb7a7f0cb024",
+						"id": "18b6ac23-62d2-4400-9406-3f34ec892aae",
 						"exec": [
 							"pm.test(\"Status code is 200 and Body is empty\", function () {",
 							"    pm.response.to.have.status(200);",
@@ -951,7 +973,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "99f1bcf2-ac09-4ece-9b91-1b56514119e8",
+						"id": "45afe164-68e5-48fc-877d-f297d988eb6f",
 						"exec": [
 							"pm.test(\"Status code is 200 and body has submodelElements\", function () {",
 							"    pm.response.to.have.status(200);",
@@ -997,7 +1019,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "eca6e877-d389-4196-8eb4-8ef741bc7640",
+				"id": "07268a9f-aba7-4ee2-874c-a2c9bba3673a",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -1007,7 +1029,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "d4ad746a-4ca3-4aa9-b311-acec3ad6fc5e",
+				"id": "b0223e65-ec24-4009-a78b-45c0d5a1fd16",
 				"type": "text/javascript",
 				"exec": [
 					""

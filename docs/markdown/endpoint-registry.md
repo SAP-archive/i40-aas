@@ -206,6 +206,55 @@ The Asset Administration Shell was unregistered successfully  * **Code:** 202 <b
 
 
 
+
+
+
+
+
+
+
+
+
+
+## GET /AASDescriptors/
+### Retrieves a list of defined, registered Asset Administration Shells within a system (e.g. site, area, production line, station)
+
+
+**Success Response:**
+The List of Asset Administration Shells was read successfully
+  * **Code:** 200 <br />
+    **Content:**
+```javascript
+[{
+  "identification": {
+    "id": "string",
+    "idType": "Custom"
+  },
+  "asset": {
+    "id": "string",
+    "idType": "Custom"
+  },
+  "descriptor": {
+    "endpoints": [
+      {
+        "address": "string",
+        "type": "string"
+      }
+    ],
+    "certificate_x509_i40": "string",
+    "signature": "string"
+  }
+}]
+```
+
+**Error Response:**
+
+  * **Code:** 401 UNAUTHORIZED <br />
+  * **Code:** 400 <br />
+    **Description:** `Bad Request`
+  * **Code:** 502 <br />
+    **Description:** `Bad Gateway`
+
 ## PUT /semanticProtocols
 ### Create a new semanticProtocol
 Body:

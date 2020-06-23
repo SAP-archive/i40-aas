@@ -16,7 +16,7 @@ interface iRegistry {
   deleteSemanticProtocolById(semanticProtocolId: string): Promise<DeleteResult>;
   readSemanticProtocolById(semanticProtocolId: string): Promise<ISemanticProtocol>;
   updateSemanticProtocolById(semanticProtocol: ISemanticProtocol): Promise<ISemanticProtocol>;
-  listAllEndpoints(): Promise<Array<IEndpoint>>;
+  listAllAASDescriptors(): Promise<Array<IAASDescriptor>>;
   listAllSemanticProtocols(): Promise<Array<ISemanticProtocol>>;
   createSemanticProtocol(req: ISemanticProtocol): Promise<ISemanticProtocol>;
   upsertSemanticProtocol(req: ISemanticProtocol): Promise<ISemanticProtocol>;
