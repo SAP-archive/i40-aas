@@ -86,19 +86,17 @@ spec:
         {{- end }}
         resources:
           {{- toYaml .Values.resources.go | nindent 10 }}
-{{- /*
-         livenessProbe:
-          httpGet:
-            path: /health
-            port: endpoint
-            {{- if .Values.security.tls.enabled }}
-            scheme: HTTPS
-            {{- else }}
-            scheme: HTTP
-            {{- end }}
-          initialDelaySeconds: 600
-          periodSeconds: 60 
-*/ -}}
+#        livenessProbe:
+#          httpGet:
+#            path: /health
+#            port: endpoint
+#            {{- if .Values.security.tls.enabled }}
+#            scheme: HTTPS
+#            {{- else }}
+#            scheme: HTTP
+#            {{- end }}
+#          initialDelaySeconds: 600
+#          periodSeconds: 60 
       volumes:
       {{- if .Values.security.certificates }}
       - name: certs
