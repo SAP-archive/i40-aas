@@ -36,6 +36,8 @@ function makeGoodAASDescriptor(idTag: string) {
         { address: 'efg.hij/' + idTag, type: 'type', target: 'edge' },
       ],
       certificate_x509_i40: 'certificate',
+      user: 'user',
+      password: 'password',
       signature: 'signature',
     },
   };

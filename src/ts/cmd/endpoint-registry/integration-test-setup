@@ -1,3 +1,4 @@
+export CORE_REGISTRIES_ENDPOINTS_ENCRYPTIONKEY=testkey
 export CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST=localhost
 export CORE_REGISTRIES_ENDPOINTS_DATABASE_PORT=5433
 export CORE_REGISTRIES_ENDPOINTS_DATABASE_NAME=postgres
@@ -13,4 +14,3 @@ export TLS_CERTFILE=src/compose/volumes/certs/i40-aas.crt.pem
 
 
 docker run --rm --name test-postgres -e POSTGRES_PASSWORD=postgres -d -p 5433:5432 postgres:alpine
-docker run -p 80:80 --name test-pgadmin -e 'PGADMIN_DEFAULT_EMAIL=user@domain.com'     -e 'PGADMIN_DEFAULT_PASSWORD=SuperSecret'     -d dpage/pgadmin4

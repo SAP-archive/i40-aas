@@ -20,6 +20,8 @@ type ResolverMsg struct {
 	ReceiverProtocol string
 	ReceiverType     string
 	ReceiverCert     string
+	ReceiverUser     string
+	ReceiverPassword string
 }
 
 // GRPCEgressConfig struct

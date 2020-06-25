@@ -32,7 +32,22 @@ export class AASDescriptorEntity {
   @Column({
     length: 2048
   })
+  user!: string;
+
+  @Column({
+    length: 2048
+  })
+  password!: string;
+
+  @Column({
+    length: 2048
+  })
   certificate_x509_i40!: string;
+
+  @Column({
+    length: 2048
+  })
+  salt!: string;
 
   @Column({
     length: 1024

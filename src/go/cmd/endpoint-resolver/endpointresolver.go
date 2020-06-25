@@ -23,6 +23,8 @@ type ResolverMsg struct {
 	ReceiverProtocol string
 	ReceiverType     string
 	ReceiverCert     string
+	ReceiverUser     string
+	ReceiverPassword string
 }
 
 // EndpointRegistryConfig struct
@@ -165,8 +167,6 @@ func (r *EndpointResolver) processGenericEgressMsg(d amqp.Delivery) error {
 			continue
 		}
 
-		cert := descriptor.(map[string]interface{})["certificate_x509_i40"]
-
 		endpoints := descriptor.(map[string]interface{})["endpoints"]
 		if endpoints == nil {
 			jsonDescriptor, err := json.Marshal(aasDescriptor)
@@ -195,7 +195,9 @@ func (r *EndpointResolver) processGenericEgressMsg(d amqp.Delivery) error {
 				ReceiverURL:      urlHost,
 				ReceiverProtocol: protocol,
 				ReceiverType:     target,
-				ReceiverCert:     fmt.Sprintf("%v", cert),
+				ReceiverCert:     fmt.Sprintf("%v", descriptor.(map[string]interface{})["certificate_x509_i40"]),
+				ReceiverUser:     fmt.Sprintf("%v", descriptor.(map[string]interface{})["user"]),
+				ReceiverPassword: fmt.Sprintf("%v", descriptor.(map[string]interface{})["password"]),
 			}
 			payload, err := json.Marshal(resolverMsg)
 			if err != nil {
