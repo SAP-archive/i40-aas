@@ -50,8 +50,6 @@ spec:
           value: {{ .Values.logging.logLevel | quote }}
         - name: LOGGING_LOGOUTPUT
           value: {{ .Values.logging.logOutput | quote }}
-        - name: CORE_REGISTRIES_ENDPOINTS_ENCRYPTIONKEY
-          value: {{ .Values.core.registries.endpoints.encryptionkey | quote }}
         - name: CORE_REGISTRIES_ENDPOINTS_PORT
           value: {{ .Values.core.registries.endpoints.port | quote }}
         - name: CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST
