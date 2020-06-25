@@ -6,11 +6,10 @@ metadata:
     service: ingress
     {{- include "i40-aas.labels" . | nindent 4 }}
   annotations:
-    kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    ingress.kubernetes.io/ingress.class: "haproxy"
+    ingress.kubernetes.io/path-rewrite: "/([^/]*)(/.*) \\2"
     {{- if .Values.security.tls.enabled }}
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    ingress.kubernetes.io/server-ssl: "true"
     {{- end }}
     {{- if .Values.ingress.certManager }}
     cert-manager.io/cluster-issuer: {{ required "A valid .Values.ingress.certManager.clusterIssuer entry required!" .Values.ingress.certManager.clusterIssuer }}
@@ -30,25 +29,24 @@ spec:
     http:
       paths:
       - backend: 
-          serviceName: {{ .Release.Name }}-https-endpoint-ingress
-          servicePort: {{ .Values.core.ingress.http.port }}
-        path: /https-endpoint/(interaction(.*))
-      - backend: 
           serviceName: {{ .Release.Name }}-grpc-endpoint-ingress
           servicePort: {{ .Values.core.ingress.grpc.port }}
-        path: /grpc-endpoint/(.*)
-      - backend: 
+      - path: /https-endpoint
+        backend: 
+          serviceName: {{ .Release.Name }}-https-endpoint-ingress
+          servicePort: {{ .Values.core.ingress.http.port }}
+      - path: /adapter-registry
+        backend: 
           serviceName: {{ .Release.Name }}-adapter-registry-api
           servicePort: {{ .Values.core.registries.adapters.port }}
-        path: /adapter-registry/(.*)
-      - backend: 
+      - path: /endpoint-registry
+        backend: 
           serviceName: {{ .Release.Name }}-endpoint-registry
-          servicePort: {{ .Values.core.registries.endpoints.port }}
-        path: /endpoint-registry/(.*)
-      - backend: 
+          servicePort: {{ .Values.core.registries.endpoints.port }}        
+      - path: /storage-adapter-mongodb
+        backend: 
           serviceName: {{ .Release.Name }}-storage-adapter-mongodb
           servicePort: {{ .Values.applicationAdapters.mongoDb.port }}
-        path: /storage-adapter-mongodb/(.*)
 {{- /*
        - backend:
           serviceName: {{ .Release.Name }}-rabbitmq
