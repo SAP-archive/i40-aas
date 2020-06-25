@@ -333,7 +333,8 @@ class Registry implements iRegistry {
 
         let resultAsset = resultAasDescriptor.asset as AssetEntity
         let aasDescrIdentifier = new Identifier(resultAasDescriptor.id, resultAasDescriptor.idType as TIdType);
-        let descr = new GenericDescriptor(resultAasDescriptor.endpoints, resultAasDescriptor.certificate_x509_i40, resultAasDescriptor.user, resultAasDescriptor.password, resultAasDescriptor.signature);
+
+        let descr = new GenericDescriptor(resultAasDescriptor.endpoints, resultAasDescriptor.certificate_x509_i40, resultAasDescriptor.signature, resultAasDescriptor.user, resultAasDescriptor.password);
 
         let assetIdentifier = new Identifier(resultAsset.id, resultAsset.idType as TIdType);
 
@@ -504,7 +505,7 @@ class Registry implements iRegistry {
           aasDescrEntity.password = decrypted.replace(aasDescrEntity.salt+'.','')
 
           let aasDescrIdentifier = new Identifier(aasDescrEntity.id, aasDescrEntity.idType as TIdType);
-          let descr = new GenericDescriptor(aasDescrEntity.endpoints, aasDescrEntity.certificate_x509_i40, aasDescrEntity.user, aasDescrEntity.password, aasDescrEntity.signature);
+          let descr = new GenericDescriptor(aasDescrEntity.endpoints, aasDescrEntity.certificate_x509_i40, aasDescrEntity.signature, aasDescrEntity.user, aasDescrEntity.password);
           let assetIdentifier = new Identifier(aasDescrEntity.asset.id, aasDescrEntity.asset.idType as TIdType);
           let response = new AASDescriptorResponse(aasDescrIdentifier, assetIdentifier, descr);
           return response as IAASDescriptor
@@ -618,7 +619,7 @@ class Registry implements iRegistry {
         //construct an AASDescriptor to be returned in the List oder from each element
         let resultAsset = resultAASDescriptor.asset as AssetEntity
         let aasDescrIdentifier = new Identifier(resultAASDescriptor.id, resultAASDescriptor.idType as TIdType);
-        let descr = new GenericDescriptor(resultAASDescriptor.endpoints, resultAASDescriptor.certificate_x509_i40, resultAASDescriptor.user, resultAASDescriptor.password, resultAASDescriptor.signature);
+        let descr = new GenericDescriptor(resultAASDescriptor.endpoints, resultAASDescriptor.certificate_x509_i40, resultAASDescriptor.signature, resultAASDescriptor.user, resultAASDescriptor.password);
 
         let assetIdentifier = new Identifier(resultAsset.id, resultAsset.idType as TIdType);
 

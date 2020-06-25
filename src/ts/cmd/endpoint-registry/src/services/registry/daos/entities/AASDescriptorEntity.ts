@@ -32,12 +32,12 @@ export class AASDescriptorEntity {
   @Column({
     length: 2048
   })
-  user!: string;
+  user?: string;
 
   @Column({
     length: 2048
   })
-  password!: string;
+  password?: string;
 
   @Column({
     length: 2048
@@ -47,7 +47,7 @@ export class AASDescriptorEntity {
   @Column({
     length: 2048
   })
-  salt!: string;
+  salt?: string;
 
   @Column({
     length: 1024

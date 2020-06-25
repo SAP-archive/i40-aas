@@ -105,8 +105,8 @@ Decide what to do if the message can not be handled (eg. because receiver role i
         receiverURL,
         interactionMessageString,
         undefined,
-        undefined,
-        undefined,
+        resolverMessage.ReceiverUser,
+        resolverMessage.ReceiverPassword,
         (resolverMessage.ReceiverProtocol == 'https')? resolverMessage.ReceiverCert: undefined
       );
 
@@ -130,7 +130,7 @@ Decide what to do if the message can not be handled (eg. because receiver role i
     if (message) {
       //if validation successful, get the AAS receiver endpoint from AAS-registry service
 
-      // logger.info("Received Msg [" + message.EgressPayload.frame.sender.role.name + " , " + message.EgressPayload.frame.receiver.role.name + " , " + message.EgressPayload.frame.type + " , " + message.EgressPayload.frame.conversationId + "]");
+      logger.debug("Received ResolverMessage "+JSON.stringify(message));
       await this.handleResolverMessage(message).catch((err) => {
         logger.error('[AAS Client] Error posting to AAS Client : ' + err);
       });
