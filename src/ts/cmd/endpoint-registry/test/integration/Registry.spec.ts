@@ -33,11 +33,9 @@ function makeGoodAASDescriptor(idTag: string) {
     descriptor: {
       endpoints: [
         { address: 'abc.def/' + idTag, type: 'type', target: 'cloud' },
-        { address: 'efg.hij/' + idTag, type: 'type', target: 'edge' },
+        { address: 'efg.hij/' + idTag, type: 'type', target: 'edge', user: 'user', password: 'password' },
       ],
       certificate_x509_i40: 'certificate',
-      user: 'user',
-      password: 'password',
       signature: 'signature',
     },
   };

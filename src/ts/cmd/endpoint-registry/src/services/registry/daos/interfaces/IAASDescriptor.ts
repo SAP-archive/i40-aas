@@ -12,11 +12,8 @@ interface IAASDescriptor {
 
 interface IGenericDescriptor {
   endpoints: Array<IEndpoint>;
-  certificate_x509_i40: string;
-  signature: string;
-  user?: string;
-  password?: string;
-  salt?: string;
+  certificate_x509_i40?: string;
+  signature?: string;
 }
 
 export{IAASDescriptor, IGenericDescriptor}

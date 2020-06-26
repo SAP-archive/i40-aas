@@ -196,8 +196,8 @@ func (r *EndpointResolver) processGenericEgressMsg(d amqp.Delivery) error {
 				ReceiverProtocol: protocol,
 				ReceiverType:     target,
 				ReceiverCert:     fmt.Sprintf("%v", descriptor.(map[string]interface{})["certificate_x509_i40"]),
-				ReceiverUser:     fmt.Sprintf("%v", descriptor.(map[string]interface{})["user"]),
-				ReceiverPassword: fmt.Sprintf("%v", descriptor.(map[string]interface{})["password"]),
+				ReceiverUser:     fmt.Sprintf("%v", endpoint.(map[string]interface{})["user"]),
+				ReceiverPassword: fmt.Sprintf("%v", endpoint.(map[string]interface{})["password"]),
 			}
 			payload, err := json.Marshal(resolverMsg)
 			if err != nil {

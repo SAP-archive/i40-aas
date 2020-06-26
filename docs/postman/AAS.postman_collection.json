@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "633880fc-a8fb-4362-b0d4-4a5e121ac600",
+		"_postman_id": "d0566c1a-9420-4be2-8f60-884696ee8227",
 		"name": "AAS-Service",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -24,7 +24,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "  {\n    \"identification\": {\n        \"id\": \"www.sampleOperator/aas\",\n        \"idType\": \"IRI\"\n    },\n    \"descriptor\": {\n    \"endpoints\": [\n        {\n            \"address\": \"{{grpc-endpoint-ingress-host}}:{{grpc-endpoint-ingress-port}}\",\n            \"type\": \"grpc\",\n            \"target\": \"cloud\"\n        },\n        {\n          \"address\":  \"https://{{https-endpoint-ingress-host}}:{{https-endpoint-ingress-port}}/interaction\" ,\n          \"type\": \"https\",\n          \"target\": \"cloud\"\n      }\n    ],\n    \"certificate_x509_i40\": \"{{certificate}}\",\n    \"user\":\"{{endpoint_ingress_user}}\",\n    \"password\":\"{{endpoint_ingress_pwd}}\",\n    \"signature\": \"sample_sig\"\n    },\n    \"asset\": {\n        \"id\": \"Sample-Asset-Id\",\n        \"idType\": \"IRI\"\n    }\n  }\n"
+									"raw": "  {\n    \"identification\": {\n        \"id\": \"www.sampleOperator/aas\",\n        \"idType\": \"IRI\"\n    },\n    \"descriptor\": {\n    \"endpoints\": [\n        {\n            \"address\": \"{{grpc-endpoint-ingress-host}}:{{grpc-endpoint-ingress-port}}\",\n            \"type\": \"grpc\",\n            \"target\": \"cloud\"\n        },\n        {\n          \"address\":  \"https://{{https-endpoint-ingress-host}}:{{https-endpoint-ingress-port}}/interaction\" ,\n          \"type\": \"https\",\n          \"target\": \"cloud\",\n          \"user\":\"{{endpoint_ingress_user}}\",\n    \t  \"password\":\"{{endpoint_ingress_pwd}}\"\n      }\n    ],\n    \"certificate_x509_i40\": \"{{certificate}}\",\n    \"signature\": \"sample_sig\"\n    },\n    \"asset\": {\n        \"id\": \"Sample-Asset-Id\",\n        \"idType\": \"IRI\"\n    }\n  }\n"
 								},
 								"url": {
 									"raw": "{{i40-aas-endpoint-registry}}/AASDescriptors?",
@@ -63,7 +63,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "  {\n    \"identification\": {\n        \"id\": \"www.sampleOperator/aas\",\n        \"idType\": \"IRI\"\n    },\n    \"descriptor\": {\n    \"endpoints\": [\n        {\n            \"address\": \"{{grpc-endpoint-ingress-host}}:{{grpc-endpoint-ingress-port}}\",\n            \"type\": \"grpc\",\n            \"target\": \"cloud\"\n        },\n        {\n          \"address\":  \"https://{{https-endpoint-ingress-host}}:{{https-endpoint-ingress-port}}/interaction\" ,\n          \"type\": \"https\",\n          \"target\": \"cloud\"\n      }\n    ],\n    \"certificate_x509_i40\": \"{{certificate}}\",\n    \"user\":\"{{endpoint_ingress_user}}\",\n    \"password\":\"{{endpoint_ingress_pwd}}\",\n    \"signature\": \"sample_sig\"\n    },\n    \"asset\": {\n        \"id\": \"Sample-Asset-Id\",\n        \"idType\": \"IRI\"\n    }\n  }"
+									"raw": "  {\n    \"identification\": {\n        \"id\": \"www.sampleOperator/aas\",\n        \"idType\": \"IRI\"\n    },\n    \"descriptor\": {\n    \"endpoints\": [\n        {\n            \"address\": \"{{grpc-endpoint-ingress-host}}:{{grpc-endpoint-ingress-port}}\",\n            \"type\": \"grpc\",\n            \"target\": \"cloud\"\n        },\n        {\n          \"address\":  \"https://{{https-endpoint-ingress-host}}:{{https-endpoint-ingress-port}}/interaction\" ,\n          \"type\": \"https\",\n          \"target\": \"cloud\",\n          \"user\":\"{{endpoint_ingress_user}}\",\n    \t  \"password\":\"{{endpoint_ingress_pwd}}\"\n      }\n    ],\n    \"certificate_x509_i40\": \"{{certificate}}\",\n    \"signature\": \"sample_sig\"\n    },\n    \"asset\": {\n        \"id\": \"Sample-Asset-Id\",\n        \"idType\": \"IRI\"\n    }\n  }"
 								},
 								"url": {
 									"raw": "{{i40-aas-endpoint-registry}}/admin/AASDescriptors?",
@@ -103,7 +103,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "  {\n    \"identification\": {\n        \"id\": \"www.sampleOperator/aas\",\n        \"idType\": \"IRI\"\n    },\n    \"descriptor\": {\n    \"endpoints\": [\n        {\n            \"address\": \"{{grpc-endpoint-ingress-host}}:{{grpc-endpoint-ingress-port}}\",\n            \"type\": \"grpc\",\n            \"target\": \"cloud\"\n        },\n        {\n          \"address\":  \"https://{{https-endpoint-ingress-host}}:{{https-endpoint-ingress-port}}/interaction\" ,\n          \"type\": \"https\",\n          \"target\": \"cloud\"\n      }\n    ],\n    \"certificate_x509_i40\": \"{{certificate}}\",\n    \"user\":\"{{endpoint_ingress_user}}\",\n    \"password\":\"{{endpoint_ingress_pwd}}\",\n    \"signature\": \"sample_sig\"\n    },\n    \"asset\": {\n        \"id\": \"Sample-Asset-Id\",\n        \"idType\": \"IRI\"\n    }\n  }"
+									"raw": "  {\n    \"identification\": {\n        \"id\": \"www.sampleOperator/aas\",\n        \"idType\": \"IRI\"\n    },\n    \"descriptor\": {\n    \"endpoints\": [\n        {\n            \"address\": \"{{grpc-endpoint-ingress-host}}:{{grpc-endpoint-ingress-port}}\",\n            \"type\": \"grpc\",\n            \"target\": \"cloud\"\n        },\n        {\n          \"address\":  \"https://{{https-endpoint-ingress-host}}:{{https-endpoint-ingress-port}}/interaction\" ,\n          \"type\": \"https\",\n          \"target\": \"cloud\",\n          \"user\":\"{{endpoint_ingress_user}}\",\n    \t  \"password\":\"{{endpoint_ingress_pwd}}\"\n      }\n    ],\n    \"certificate_x509_i40\": \"{{certificate}}\",\n    \"signature\": \"sample_sig\"\n    },\n    \"asset\": {\n        \"id\": \"Sample-Asset-Id\",\n        \"idType\": \"IRI\"\n    }\n  }"
 								},
 								"url": {
 									"raw": "{{i40-aas-endpoint-registry}}/AASDescriptors/:aasId?",

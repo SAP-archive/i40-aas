@@ -16,6 +16,7 @@ import { SemanticProtocolResponse } from '../responses/SemanticProtocolResponse'
 import { IRole } from '../interfaces/IRole';
 import { HTTP422Error, HTTP404Error } from '../../../../utils/httpErrors';
 import { IIdentifier } from 'i40-aas-objects';
+import { strict } from 'assert';
 const logger = require('aas-logger/lib/log');
 const cryptojs = require("crypto-js");
 const csprng = require('csprng');
@@ -52,16 +53,26 @@ class Registry implements iRegistry {
       aasDescriptor.certificate_x509_i40 = record.descriptor.certificate_x509_i40;
       aasDescriptor.signature = record.descriptor.signature;
 
-      // generate salt and encrypt salted password.
-      aasDescriptor.user = record.descriptor.user;
-      aasDescriptor.salt = csprng(512,36);
-      aasDescriptor.password = cryptojs.AES.encrypt(aasDescriptor.salt + '.' + record.descriptor.password, process.env.CORE_REGISTRIES_ENDPOINTS_ENCRYPTIONKEY).toString();
-
       //The Endpoints array is replaced with the one in the request. It is not possible to
       //update individual endpoints since no endpoint-id is used.
       //Thus, the client should sent the whole endpoints array every time (i.e.) first get then put
       aasDescriptor.endpoints = record.descriptor.endpoints as EndpointEntity[]
+
       logger.debug("Endpoints are:  " + JSON.stringify(aasDescriptor.endpoints));
+
+      // encrypt credentials within given endpoints before storing them in the DB
+      aasDescriptor.endpoints = aasDescriptor.endpoints.map((endpoint, i) => {
+        if(record.descriptor.endpoints[i].user) {
+          endpoint.user = record.descriptor.endpoints[i].user
+        }
+        if(record.descriptor.endpoints[i].password) {
+          // generate salt and encrypt salted password.
+          endpoint.salt = csprng(512,36);
+          endpoint.password = cryptojs.AES.encrypt(endpoint.salt + '.' + record.descriptor.endpoints[i].password, process.env.CORE_REGISTRIES_ENDPOINTS_ENCRYPTIONKEY).toString();
+        }
+
+        return endpoint
+      })
 
       //Create if not exists, update if it does
       let savedAASDescriptor = await aasDescriptorRepository.save(aasDescriptor);
@@ -98,13 +109,23 @@ class Registry implements iRegistry {
         aasDescriptor.certificate_x509_i40 = record.descriptor.certificate_x509_i40;
         aasDescriptor.signature = record.descriptor.signature;
 
-        // generate salt and encrypt salted password
-        aasDescriptor.user = record.descriptor.user;
-        aasDescriptor.salt = csprng(512,36);
-        aasDescriptor.password = cryptojs.AES.encrypt(aasDescriptor.salt + '.' + record.descriptor.password, process.env.CORE_REGISTRIES_ENDPOINTS_ENCRYPTIONKEY).toString();
-
         aasDescriptor.endpoints = record.descriptor.endpoints as EndpointEntity[]
-        logger.debug("Endpoints ", aasDescriptor.endpoints);
+
+        logger.debug("Endpoints are ", aasDescriptor.endpoints);
+
+        // encrypt credentials within given endpoints before storing them in the DB
+        aasDescriptor.endpoints = aasDescriptor.endpoints.map((endpoint, i) => {
+          if(record.descriptor.endpoints[i].user) {
+            endpoint.user = record.descriptor.endpoints[i].user
+          }
+          if(record.descriptor.endpoints[i].password) {
+            // generate salt and encrypt salted password.
+            endpoint.salt = csprng(512,36);
+            endpoint.password = cryptojs.AES.encrypt(endpoint.salt + '.' + record.descriptor.endpoints[i].password, process.env.CORE_REGISTRIES_ENDPOINTS_ENCRYPTIONKEY).toString();
+          }
+
+          return endpoint
+        })
 
         //Create if not exists, update if it does
         let savedAASDescriptor = await aasDescriptorRepository.save(aasDescriptor);
@@ -153,15 +174,19 @@ class Registry implements iRegistry {
         loadedAASDescriptor.certificate_x509_i40 = record.descriptor.certificate_x509_i40
         loadedAASDescriptor.signature = record.descriptor.signature
 
-        // check if credentials have changed. If yes, generate new salt and update.
-        if(loadedAASDescriptor.user != record.descriptor.user) {
-          loadedAASDescriptor.user = record.descriptor.user;
-        }
-        var decrypted  = cryptojs.AES.decrypt(loadedAASDescriptor.password, process.env.CORE_REGISTRIES_ENDPOINTS_ENCRYPTIONKEY).toString(cryptojs.enc.Utf8).replace(loadedAASDescriptor.salt+'.','');
-        if(decrypted != record.descriptor.password) {
-          loadedAASDescriptor.salt = csprng(512,36);
-          loadedAASDescriptor.password = cryptojs.AES.encrypt(loadedAASDescriptor.salt + '.' + record.descriptor.password, process.env.CORE_REGISTRIES_ENDPOINTS_ENCRYPTIONKEY).toString();
-        }
+        // encrypt credentials within given endpoints before storing them in the DB
+        loadedAASDescriptor.endpoints = loadedAASDescriptor.endpoints.map((endpoint, i) => {
+          if(record.descriptor.endpoints[i].user) {
+            endpoint.user = record.descriptor.endpoints[i].user
+          }
+          if(record.descriptor.endpoints[i].password) {
+            // generate salt and encrypt salted password.
+            endpoint.salt = csprng(512,36);
+            endpoint.password = cryptojs.AES.encrypt(endpoint.salt + '.' + record.descriptor.endpoints[i].password, process.env.CORE_REGISTRIES_ENDPOINTS_ENCRYPTIONKEY).toString();
+          }
+
+          return endpoint
+        })
 
         //Create if not exists, update if it does
         let savedAasDescriptor = await aasDescriptorRepository.save(loadedAASDescriptor);
@@ -327,14 +352,25 @@ class Registry implements iRegistry {
         //the auto generated Ids are not to be returned in the endpoint object
         // resultAasDescriptor.endpoints.map(endpoint => delete endpoint.id)
 
-        // decrypt password and remove salt
-        var decrypted  = cryptojs.AES.decrypt(resultAasDescriptor.password, process.env.CORE_REGISTRIES_ENDPOINTS_ENCRYPTIONKEY).toString(cryptojs.enc.Utf8);
-        resultAasDescriptor.password = decrypted.replace(resultAasDescriptor.salt+'.','')
+        // decrypt password and remove salt for each endpoint
+        resultAasDescriptor.endpoints = resultAasDescriptor.endpoints.map((endpoint) => {
+          // only attempt to decrypt if password is present (not the case for e.g. GRPC)
+          if(endpoint.password && endpoint.salt) {
+            var decrypted  = cryptojs.AES.decrypt(endpoint.password, process.env.CORE_REGISTRIES_ENDPOINTS_ENCRYPTIONKEY).toString(cryptojs.enc.Utf8);
+            endpoint.password = decrypted.replace(endpoint.salt+'.','')
+          }
+
+          if(endpoint.salt || endpoint.salt == null) {
+            delete endpoint.salt
+          }
+
+          return endpoint
+        })
 
         let resultAsset = resultAasDescriptor.asset as AssetEntity
         let aasDescrIdentifier = new Identifier(resultAasDescriptor.id, resultAasDescriptor.idType as TIdType);
 
-        let descr = new GenericDescriptor(resultAasDescriptor.endpoints, resultAasDescriptor.certificate_x509_i40, resultAasDescriptor.signature, resultAasDescriptor.user, resultAasDescriptor.password);
+        let descr = new GenericDescriptor(resultAasDescriptor.endpoints, resultAasDescriptor.certificate_x509_i40, resultAasDescriptor.signature);
 
         let assetIdentifier = new Identifier(resultAsset.id, resultAsset.idType as TIdType);
 
@@ -500,12 +536,23 @@ class Registry implements iRegistry {
       if (AASDescriptorEntitiesArray) {
 
         var AASDescriptorArr = AASDescriptorEntitiesArray.map((aasDescrEntity) => {
-          // decrypt password and remove salt
-          var decrypted  = cryptojs.AES.decrypt(aasDescrEntity.password, process.env.CORE_REGISTRIES_ENDPOINTS_ENCRYPTIONKEY).toString(cryptojs.enc.Utf8);
-          aasDescrEntity.password = decrypted.replace(aasDescrEntity.salt+'.','')
+          // decrypt password and remove salt for each endpoint
+          aasDescrEntity.endpoints = aasDescrEntity.endpoints.map((endpoint) => {
+            // only attempt to decrypt if password is present (not the case for e.g. GRPC)
+            if(endpoint.password && endpoint.salt) {
+              var decrypted  = cryptojs.AES.decrypt(endpoint.password, process.env.CORE_REGISTRIES_ENDPOINTS_ENCRYPTIONKEY).toString(cryptojs.enc.Utf8);
+              endpoint.password = decrypted.replace(endpoint.salt+'.','')
+            }
+
+            if(endpoint.salt || endpoint.salt == null) {
+              delete endpoint.salt
+            }
+
+            return endpoint
+          })
 
           let aasDescrIdentifier = new Identifier(aasDescrEntity.id, aasDescrEntity.idType as TIdType);
-          let descr = new GenericDescriptor(aasDescrEntity.endpoints, aasDescrEntity.certificate_x509_i40, aasDescrEntity.signature, aasDescrEntity.user, aasDescrEntity.password);
+          let descr = new GenericDescriptor(aasDescrEntity.endpoints, aasDescrEntity.certificate_x509_i40, aasDescrEntity.signature);
           let assetIdentifier = new Identifier(aasDescrEntity.asset.id, aasDescrEntity.asset.idType as TIdType);
           let response = new AASDescriptorResponse(aasDescrIdentifier, assetIdentifier, descr);
           return response as IAASDescriptor
@@ -611,21 +658,31 @@ class Registry implements iRegistry {
 
       if (resultAasDescriptors.length > 0) {
 
-        resultAasDescriptors.map(resultAASDescriptor => {
-        // decrypt password and remove salt
-        var decrypted  = cryptojs.AES.decrypt(resultAASDescriptor.password, process.env.CORE_REGISTRIES_ENDPOINTS_ENCRYPTIONKEY).toString(cryptojs.enc.Utf8);
-        resultAASDescriptor.password = decrypted.replace(resultAASDescriptor.salt+'.','')
+        resultAasDescriptors.forEach(resultAASDescriptor => {
+          // decrypt password and remove salt for each endpoint
+          resultAASDescriptor.endpoints = resultAASDescriptor.endpoints.map((endpoint) => {
+            // only attempt to decrypt if password is present (not the case for e.g. GRPC)
+            if(endpoint.password && endpoint.salt) {
+              var decrypted  = cryptojs.AES.decrypt(endpoint.password, process.env.CORE_REGISTRIES_ENDPOINTS_ENCRYPTIONKEY).toString(cryptojs.enc.Utf8);
+              endpoint.password = decrypted.replace(endpoint.salt+'.','')
+            }
 
-        //construct an AASDescriptor to be returned in the List oder from each element
-        let resultAsset = resultAASDescriptor.asset as AssetEntity
-        let aasDescrIdentifier = new Identifier(resultAASDescriptor.id, resultAASDescriptor.idType as TIdType);
-        let descr = new GenericDescriptor(resultAASDescriptor.endpoints, resultAASDescriptor.certificate_x509_i40, resultAASDescriptor.signature, resultAASDescriptor.user, resultAASDescriptor.password);
+            if(endpoint.salt || endpoint.salt == null) {
+              delete endpoint.salt
+            }
+            return endpoint
+          })
 
-        let assetIdentifier = new Identifier(resultAsset.id, resultAsset.idType as TIdType);
+          //construct an AASDescriptor to be returned in the List oder from each element
+          let resultAsset = resultAASDescriptor.asset as AssetEntity
+          let aasDescrIdentifier = new Identifier(resultAASDescriptor.id, resultAASDescriptor.idType as TIdType);
+          let descr = new GenericDescriptor(resultAASDescriptor.endpoints, resultAASDescriptor.certificate_x509_i40, resultAASDescriptor.signature);
 
-        let responseAAS = new AASDescriptorResponse(aasDescrIdentifier, assetIdentifier, descr);
+          let assetIdentifier = new Identifier(resultAsset.id, resultAsset.idType as TIdType);
 
-        responseAASList.push(responseAAS);
+          let responseAAS = new AASDescriptorResponse(aasDescrIdentifier, assetIdentifier, descr);
+
+          responseAASList.push(responseAAS);
       })
       return responseAASList;
       }
