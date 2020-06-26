@@ -1,43 +1,29 @@
-For internal communication between the parts within the AAS Service we mainly use a message broker.
-
-We deciced for AMQP (v0.9.1) as our messaging protocol and deploy the open source [RabbitMQ](https://www.rabbitmq.com/) to handle the messaging.
+We opted for AMQP (v0.9.1) as messaging protocol and deploy a [RabbitMQ](https://www.rabbitmq.com/) broker for internal communication.
 
 
 ## Message Flow
-
 (For an introduction about RabbitMQ exchanges and queues, routing keys and bindings see for instance [this blog](https://www.cloudamqp.com/blog/2015-09-03-part4-rabbitmq-for-beginners-exchanges-routing-keys-bindings.html))
 
-We seperate the message flow of incoming and outgoing messages by using two seperate topic exchanges:
-The exchange `ingress` for all incoming messages.
-The exchange `egress` for all outgoing messages.
+We separate the message flow of incoming and outgoing messages by using two separate topic exchanges:
+- `ingress` for incoming messages
+- `egress` for outgoing messages
 
 ### Ingress Exchange
 
-An _ingress_ receives a "I40 Interaction Message" and publishes it for any further processing to the internal message broker on the exchange topic __ingress__ and with a routing key that is determined by the `semanticProtocol`, `receiverRoleName`, and `type` parameter of the I40 message in the following way:
+An _ingress_ (ref. [https](https-endpoint-ingress.md)/[gRPC](grpc-endpoint-ingress.md)) receives interaction messages and publishes them for further processing to the internal broker on the exchange __ingress__ with a routing key determined by the `semanticProtocol`, `receiverRoleName`, and `type` parameters of the I40 message as follows:
 ```
 ingress.(semanticProtocol).(receiverRoleName).(type)
 ```
 
-Any actor (_Skill_) wishing to receive incoming messages consumes a queue from the broker with a binding pattern that matches this key pattern.
-
+Any actor (_Skill_) wishing to receive incoming messages should consume from the broker with a binding matching this pattern.
 
 
 ### Egress Exchange
 
-Outgoing messages are handled in several steps.
+_Skills_ should publish outgoing messages to the exchange __egress__ with routing key `egress.generic`, since neither skill nor the interaction message itself know the message receiver.
 
-At first, a _skill_ publishes the outgoing message to the broker exchange __egress__ with the message routing key `egress.generic` since the skill and the message itself do not know the message receiver.
+The [_endpoint-resolver_](./endpoint-resolver.md) consumes payloads of the queue with binding pattern `egress.generic` and then retrieves matching receivers of the message and their external endpoints from the [_endpoint-registry_](./endpoint-registry.md).
 
-The _endpoint-resolver_ consumes the payloads of the queue with binding pattern `egress.generic` and retrieves the receivers of the message and their external endpoints from the `endpoint-registry`.
+The [_endpoint-resolver_](./endpoint-resolver.md) then publishes the message to `egress.<PROTOCOL>` for each receiving endpoint depending on the transport protocol (`http` or `grpc`). For a cloud target listening on HTTP for example, the message would be published to `egress.http`.
 
-The _endpoint_resolver_ then republishes the message to the __egress__ exchange with a different routing key depending on the transport protocol (`http` or `grpc`) in the following way:
-```
-egress.(protocol)
-```
-
-For a cloud target instance listening on HTTP for example, the message would be published to
-```
-egress.http
-```
-
-Any _egress_ service can consume a queue on the __egress__ exchange with a binding matching this routing pattern, to process and finally send the message accordingly.
+There is an _egress_ application per protocol (ref. [https](https-endpoint-egress.md)/[gRPC](grpc-endpoint-egress.md)), which consumes corresponding messages and transmits the message accordingly.

@@ -19,7 +19,10 @@
     "endpoints": [
       {
         "address": "string",
-        "type": "string"
+        "type": "string",
+        "target": "string",
+        "user": "string",
+        "password": "string"
       }
     ],
     "certificate_x509_i40": "string",
@@ -65,7 +68,10 @@ The Asset Administration Shell was registered successfully
     "endpoints": [
       {
         "address": "string",
-        "type": "string"
+        "type": "string",
+        "target": "string",
+        "user": "string",
+        "password": "string"
       }
     ],
     "certificate_x509_i40": "string",
@@ -93,7 +99,10 @@ The Asset Administration Shell was updated successfully
     "endpoints": [
       {
         "address": "string",
-        "type": "string"
+        "type": "string",
+        "target": "string",
+        "user": "string",
+        "password": "string"
       }
     ],
     "certificate_x509_i40": "string",
@@ -141,7 +150,10 @@ The Asset Administration Shell was read successfully
     "endpoints": [
       {
         "address": "string",
-        "type": "string"
+        "type": "string",
+        "target": "string",
+        "user": "string",
+        "password": "string"
       }
     ],
     "certificate_x509_i40": "string",
@@ -185,7 +197,10 @@ The Asset Administration Shell was unregistered successfully  * **Code:** 202 <b
     "endpoints": [
       {
         "address": "string",
-        "type": "string"
+        "type": "string",
+        "target": "string",
+        "user": "string",
+        "password": "string"
       }
     ],
     "certificate_x509_i40": "string",
@@ -238,7 +253,10 @@ The List of Asset Administration Shells was read successfully
     "endpoints": [
       {
         "address": "string",
-        "type": "string"
+        "type": "string",
+        "target": "string",
+        "user": "string",
+        "password": "string"
       }
     ],
     "certificate_x509_i40": "string",
