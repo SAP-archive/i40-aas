@@ -3,7 +3,7 @@
 ## these owners will be the default owners for everything in
 ## the repo. Unless a later match takes precedence, they will
 ## be requested for review when someone opens a pull request.
-* @heldic @kasimrehman @etoster @akiskips
+* @heldic @etoster @akiskips
 
 ## Order is important; the last matching pattern takes the most
 ## precedence. When someone opens a pull request that only
@@ -31,8 +31,8 @@
 /src/ts/cmd/data-manager/ @akiskips
 /src/ts/cmd/https-endpoint-egress/ @akiskips
 /src/ts/cmd/https-endpoint-ingress/ @akiskips
-/src/ts/cmd/onboarding-skill/ @kasimrehman
-/src/ts/cmd/storage-adapter-mongodb/ @kasimrehman
+/src/ts/cmd/onboarding-skill/ @etoster
+/src/ts/cmd/storage-adapter-mongodb/ @etoster
 /src/go/cmd/endpoint-resolver/ @heldic
 /src/go/cmd/grpc-endpoint-egress/ @heldic
 /src/go/cmd/grpc-endpoint-ingress/ @heldic
