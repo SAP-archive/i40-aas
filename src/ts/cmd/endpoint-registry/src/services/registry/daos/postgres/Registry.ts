@@ -63,11 +63,15 @@ class Registry implements iRegistry {
       // encrypt credentials within given endpoints before storing them in the DB
       aasDescriptor.endpoints = aasDescriptor.endpoints.map((endpoint, i) => {
         if(record.descriptor.endpoints[i].user) {
-          endpoint.user = record.descriptor.endpoints[i].user
+          // generate salt and encrypt salted user.
+          endpoint.salt = csprng(512,36);
+          endpoint.user = cryptojs.AES.encrypt(endpoint.salt + '.' + record.descriptor.endpoints[i].user, process.env.CORE_REGISTRIES_ENDPOINTS_ENCRYPTIONKEY).toString();
         }
         if(record.descriptor.endpoints[i].password) {
-          // generate salt and encrypt salted password.
-          endpoint.salt = csprng(512,36);
+          // check if salt has been created, if not: generate salt and proceed to encrypt salted password.
+          if(!endpoint.salt) {
+            endpoint.salt = csprng(512,36);
+          }
           endpoint.password = cryptojs.AES.encrypt(endpoint.salt + '.' + record.descriptor.endpoints[i].password, process.env.CORE_REGISTRIES_ENDPOINTS_ENCRYPTIONKEY).toString();
         }
 
@@ -116,11 +120,15 @@ class Registry implements iRegistry {
         // encrypt credentials within given endpoints before storing them in the DB
         aasDescriptor.endpoints = aasDescriptor.endpoints.map((endpoint, i) => {
           if(record.descriptor.endpoints[i].user) {
-            endpoint.user = record.descriptor.endpoints[i].user
+            // generate salt and encrypt salted user.
+            endpoint.salt = csprng(512,36);
+            endpoint.user = cryptojs.AES.encrypt(endpoint.salt + '.' + record.descriptor.endpoints[i].user, process.env.CORE_REGISTRIES_ENDPOINTS_ENCRYPTIONKEY).toString();
           }
           if(record.descriptor.endpoints[i].password) {
-            // generate salt and encrypt salted password.
-            endpoint.salt = csprng(512,36);
+            // check if salt has been created, if not: generate salt and proceed to encrypt salted password.
+            if(!endpoint.salt) {
+              endpoint.salt = csprng(512,36);
+            }
             endpoint.password = cryptojs.AES.encrypt(endpoint.salt + '.' + record.descriptor.endpoints[i].password, process.env.CORE_REGISTRIES_ENDPOINTS_ENCRYPTIONKEY).toString();
           }
 
@@ -177,11 +185,15 @@ class Registry implements iRegistry {
         // encrypt credentials within given endpoints before storing them in the DB
         loadedAASDescriptor.endpoints = loadedAASDescriptor.endpoints.map((endpoint, i) => {
           if(record.descriptor.endpoints[i].user) {
-            endpoint.user = record.descriptor.endpoints[i].user
+            // generate salt and encrypt salted user.
+            endpoint.salt = csprng(512,36);
+            endpoint.user = cryptojs.AES.encrypt(endpoint.salt + '.' + record.descriptor.endpoints[i].user, process.env.CORE_REGISTRIES_ENDPOINTS_ENCRYPTIONKEY).toString();
           }
           if(record.descriptor.endpoints[i].password) {
-            // generate salt and encrypt salted password.
-            endpoint.salt = csprng(512,36);
+            // check if salt has been created, if not: generate salt and proceed to encrypt salted password.
+            if(!endpoint.salt) {
+              endpoint.salt = csprng(512,36);
+            }
             endpoint.password = cryptojs.AES.encrypt(endpoint.salt + '.' + record.descriptor.endpoints[i].password, process.env.CORE_REGISTRIES_ENDPOINTS_ENCRYPTIONKEY).toString();
           }
 
@@ -354,7 +366,12 @@ class Registry implements iRegistry {
 
         // decrypt password and remove salt for each endpoint
         resultAasDescriptor.endpoints = resultAasDescriptor.endpoints.map((endpoint) => {
-          // only attempt to decrypt if password is present (not the case for e.g. GRPC)
+          // only attempt to decrypt if user and salt are present (not the case for e.g. GRPC)
+          if(endpoint.user && endpoint.salt) {
+            var decrypted  = cryptojs.AES.decrypt(endpoint.user, process.env.CORE_REGISTRIES_ENDPOINTS_ENCRYPTIONKEY).toString(cryptojs.enc.Utf8);
+            endpoint.user = decrypted.replace(endpoint.salt+'.','')
+          }
+          // only attempt to decrypt if password and salt are present (not the case for e.g. GRPC)
           if(endpoint.password && endpoint.salt) {
             var decrypted  = cryptojs.AES.decrypt(endpoint.password, process.env.CORE_REGISTRIES_ENDPOINTS_ENCRYPTIONKEY).toString(cryptojs.enc.Utf8);
             endpoint.password = decrypted.replace(endpoint.salt+'.','')
@@ -538,7 +555,12 @@ class Registry implements iRegistry {
         var AASDescriptorArr = AASDescriptorEntitiesArray.map((aasDescrEntity) => {
           // decrypt password and remove salt for each endpoint
           aasDescrEntity.endpoints = aasDescrEntity.endpoints.map((endpoint) => {
-            // only attempt to decrypt if password is present (not the case for e.g. GRPC)
+            // only attempt to decrypt if user and salt are present (not the case for e.g. GRPC)
+            if(endpoint.user && endpoint.salt) {
+              var decrypted  = cryptojs.AES.decrypt(endpoint.user, process.env.CORE_REGISTRIES_ENDPOINTS_ENCRYPTIONKEY).toString(cryptojs.enc.Utf8);
+              endpoint.user = decrypted.replace(endpoint.salt+'.','')
+            }
+            // only attempt to decrypt if password and salt are present (not the case for e.g. GRPC)
             if(endpoint.password && endpoint.salt) {
               var decrypted  = cryptojs.AES.decrypt(endpoint.password, process.env.CORE_REGISTRIES_ENDPOINTS_ENCRYPTIONKEY).toString(cryptojs.enc.Utf8);
               endpoint.password = decrypted.replace(endpoint.salt+'.','')
@@ -661,7 +683,12 @@ class Registry implements iRegistry {
         resultAasDescriptors.forEach(resultAASDescriptor => {
           // decrypt password and remove salt for each endpoint
           resultAASDescriptor.endpoints = resultAASDescriptor.endpoints.map((endpoint) => {
-            // only attempt to decrypt if password is present (not the case for e.g. GRPC)
+            // only attempt to decrypt if user and salt are present (not the case for e.g. GRPC)
+            if(endpoint.user && endpoint.salt) {
+              var decrypted  = cryptojs.AES.decrypt(endpoint.user, process.env.CORE_REGISTRIES_ENDPOINTS_ENCRYPTIONKEY).toString(cryptojs.enc.Utf8);
+              endpoint.user = decrypted.replace(endpoint.salt+'.','')
+            }
+            // only attempt to decrypt if password and salt are present (not the case for e.g. GRPC)
             if(endpoint.password && endpoint.salt) {
               var decrypted  = cryptojs.AES.decrypt(endpoint.password, process.env.CORE_REGISTRIES_ENDPOINTS_ENCRYPTIONKEY).toString(cryptojs.enc.Utf8);
               endpoint.password = decrypted.replace(endpoint.salt+'.','')
