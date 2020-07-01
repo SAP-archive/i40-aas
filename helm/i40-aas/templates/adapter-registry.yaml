@@ -6,6 +6,8 @@ metadata:
   labels: 
     service: adapter-registry
     {{- include "i40-aas.labels" . | nindent 4 }}
+  annotations:
+    ingress.kubernetes.io/path-rewrite: "/([^/]*)(/?.*) \\2"
 spec:
   clusterIP: None
   ports:

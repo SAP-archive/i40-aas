@@ -7,7 +7,6 @@ metadata:
     {{- include "i40-aas.labels" . | nindent 4 }}
   annotations:
     ingress.kubernetes.io/ingress.class: "haproxy"
-    ingress.kubernetes.io/path-rewrite: "/([^/]*)(/.*) \\2"
     {{- if .Values.security.tls.enabled }}
     ingress.kubernetes.io/server-ssl: "true"
     {{- end }}
@@ -43,21 +42,12 @@ spec:
         backend: 
           serviceName: {{ .Release.Name }}-endpoint-registry
           servicePort: {{ .Values.core.registries.endpoints.port }}        
+      - path: /data-manager
+        backend: 
+          serviceName: {{ .Release.Name }}-data-manager
+          servicePort: {{ .Values.core.dataManager.port }}       
       - path: /storage-adapter-mongodb
         backend: 
           serviceName: {{ .Release.Name }}-storage-adapter-mongodb
           servicePort: {{ .Values.applicationAdapters.mongoDb.port }}
-{{- /*
-       - backend:
-          serviceName: {{ .Release.Name }}-rabbitmq
-          servicePort: {{ .Values.rabbitmq.service.managerPort }}
-        path: /rabbitmq/(.*) 
-*/ -}}
-{{- /*
-       - backend: 
-          serviceName: {{ .Release.Name }}-onboardingskillmongodb
-          servicePort: {{ .Values.onboardingskillmongodb.service.port }}
-        path: /mongodb/(.*) 
-*/ -}}
-
-
+---
