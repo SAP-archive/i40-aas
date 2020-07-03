@@ -42,9 +42,6 @@ services:
       - CORE_EGRESS_EXCHANGE=${CORE_EGRESS_EXCHANGE}
       - CORE_EGRESS_HTTP_QUEUE=${CORE_EGRESS_HTTP_QUEUE}
       - CORE_EGRESS_HTTP_CTAG=${CORE_EGRESS_HTTP_CTAG}
-      - NODE_EXTRA_CA_CERTS=${TLS_CERTFILE}
-    volumes:
-      - ./src/compose/volumes/certs/:/etc/ssl/certs/
   ##########################################
   i40-aas-grpc-endpoint-ingress:
     image: sapi40/i40-aas-grpc-endpoint-ingress

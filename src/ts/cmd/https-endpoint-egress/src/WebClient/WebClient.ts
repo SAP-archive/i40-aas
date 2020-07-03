@@ -25,10 +25,17 @@ class WebClient {
         auth: {
           username: username as string,
           password: password as string,
-        }
+        },
+        httpsAgent: new https.Agent({
+          ca: cert as string
+        }),
       });
     } else {
-      response = await Axios.post<T>(url, body);
+      response = await Axios.post<T>(url, body, {
+        httpsAgent: new https.Agent({
+          ca: cert as string
+        }),
+      });
     }
     return response as AxiosResponse<T>;
   }
