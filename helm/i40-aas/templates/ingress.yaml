@@ -36,7 +36,7 @@ spec:
           servicePort: {{ .Values.core.ingress.http.port }}
       - path: /adapter-registry
         backend: 
-          serviceName: {{ .Release.Name }}-adapter-registry-api
+          serviceName: {{ .Release.Name }}-adapter-registry
           servicePort: {{ .Values.core.registries.adapters.port }}
       - path: /endpoint-registry
         backend: 
