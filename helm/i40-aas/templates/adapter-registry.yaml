@@ -88,7 +88,7 @@ spec:
           initialDelaySeconds: 600
           periodSeconds: 60
         volumeMounts:
-        - mountPath: /service/.node-persist
+        - mountPath: "/etc/nodepersist"
           name: {{ .Release.Name }}-adapter-registry
         {{- if .Values.security.certificates }}
         - name: certs
