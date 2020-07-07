@@ -8,5 +8,8 @@ dependencies:
 - name: mongodb
   repository: https://charts.bitnami.com/bitnami
   version: 7.13.0
-digest: sha256:f2d95d0f034749fd1efc407b609882a4d43161de4c6aa1398d4867718a602f7b
-generated: "2020-04-23T12:42:05.84050605+02:00"
+- name: kubernetes-ingress
+  repository: https://haproxytech.github.io/helm-charts
+  version: 1.4.1
+digest: sha256:8181df5ce61074093da953f0639887ec06bfb8e76e5b461bcb9d323ef2a94e93
+generated: "2020-07-03T13:43:00.11969124+02:00"
