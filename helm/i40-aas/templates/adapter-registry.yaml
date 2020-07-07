@@ -74,8 +74,8 @@ spec:
         envFrom:
         - secretRef:
             name: {{ .Release.Name }}-core-registries-adapters
-        resources:
-          {{- toYaml .Values.resources.ts | nindent 10 }}
+#        resources:
+#          {{- toYaml .Values.resources.ts | nindent 10 }}
         livenessProbe:
           httpGet:
             path: /health
@@ -88,7 +88,7 @@ spec:
           initialDelaySeconds: 600
           periodSeconds: 60
         volumeMounts:
-        - mountPath: /service/.node-persist
+        - mountPath: "/etc/nodepersist"
           name: {{ .Release.Name }}-adapter-registry
         {{- if .Values.security.certificates }}
         - name: certs
