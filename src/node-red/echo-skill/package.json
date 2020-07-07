@@ -11,7 +11,7 @@
     "i40-aas-nodes": "file:customNodes",
     "node-red": "1.0.3",
     "node-red-contrib-amqp": "1.0.2",
-    "npm": "~6.13.7"
+    "npm": "~6.14.6"
   },
   "engines": {
     "node": ">=10"
