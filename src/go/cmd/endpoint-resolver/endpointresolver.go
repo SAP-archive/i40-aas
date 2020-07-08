@@ -18,18 +18,21 @@ import (
 
 // ResolverMsg struct
 type ResolverMsg struct {
-	EgressPayload []byte
-	ReceiverURL   string
-	ReceiverType  string
+	EgressPayload    []byte
+	ReceiverURL      string
+	ReceiverProtocol string
+	ReceiverType     string
+	ReceiverCert     string
 }
 
 // EndpointRegistryConfig struct
 type EndpointRegistryConfig struct {
-	Protocol string
-	Host     string
-	Port     int
-	User     string
-	Password string
+	Protocol    string
+	CrtFilePath string
+	Host        string
+	Port        int
+	User        string
+	Password    string
 }
 
 // Config struct
@@ -45,6 +48,7 @@ type Config struct {
 type EndpointResolver struct {
 	config     *Config
 	amqpClient *amqpclient.AMQPClient
+	deliveries <-chan amqp.Delivery
 }
 
 // NewEndpointResolver instance
@@ -81,17 +85,9 @@ func (r *EndpointResolver) Init() error {
 
 	go func() {
 		for {
-			deliveries := r.amqpClient.Listen(r.config.Queue, r.config.BindingKey, r.config.Ctag)
-			for d := range deliveries {
-				log.Debug().Msgf("got new %dB delivery [%v]", len(d.Body), d.DeliveryTag)
-				err := r.processGenericEgressMsg(d)
-				if err != nil {
-					log.Error().Err(err).Msgf("failed to process %dB delivery [%v]", len(d.Body), d.DeliveryTag)
-					d.Nack(false, false)
-				} else {
-					log.Debug().Msgf("processed %dB delivery [%v]: ACK", len(d.Body), d.DeliveryTag)
-					d.Ack(false)
-				}
+			r.deliveries = r.amqpClient.Listen(r.config.Queue, r.config.BindingKey, r.config.Ctag)
+			for d := range r.deliveries {
+				r.processDelivery(d)
 			}
 			log.Warn().Msg("deliveries channel closed, restarting...")
 		}
@@ -110,6 +106,21 @@ func (r *EndpointResolver) Shutdown() error {
 	}
 
 	return nil
+}
+
+func (r *EndpointResolver) processDelivery(d amqp.Delivery) {
+	var (
+		err error
+	)
+
+	log.Debug().Msgf("got new %dB delivery [%v]", len(d.Body), d.DeliveryTag)
+	err = r.processGenericEgressMsg(d)
+	if err != nil {
+		log.Error().Err(err).Msgf("failed to process %dB delivery [%v]", len(d.Body), d.DeliveryTag)
+		d.Nack(false, false)
+	}
+	log.Debug().Msgf("processed %dB delivery [%v]: ACK", len(d.Body), d.DeliveryTag)
+	d.Ack(false)
 }
 
 func (r *EndpointResolver) processGenericEgressMsg(d amqp.Delivery) error {
@@ -142,17 +153,49 @@ func (r *EndpointResolver) processGenericEgressMsg(d amqp.Delivery) error {
 	}
 
 	for _, aasDescriptor := range aasDescriptors {
-		for _, endpoint := range aasDescriptor.(map[string]interface{})["descriptor"].(map[string]interface{})["endpoints"].([]interface{}) {
-			log.Debug().Msgf("%v", endpoint)
+		descriptor := aasDescriptor.(map[string]interface{})["descriptor"]
+		if descriptor == nil {
+			jsonDescriptor, err := json.Marshal(aasDescriptor)
+			if err != nil {
+				log.Error().Err(err).Msgf("could not convert map to JSON: %v", aasDescriptor)
+				log.Warn().Msgf("\"descriptor\" key not found in JSON, dropping aasDescriptor %v", aasDescriptor)
+			} else {
+				log.Warn().Msgf("\"descriptor\" key not found in JSON, dropping aasDescriptor %v", string(jsonDescriptor))
+			}
+			continue
+		}
+
+		cert := descriptor.(map[string]interface{})["certificate_x509_i40"]
+
+		endpoints := descriptor.(map[string]interface{})["endpoints"]
+		if endpoints == nil {
+			jsonDescriptor, err := json.Marshal(aasDescriptor)
+			if err != nil {
+				log.Error().Err(err).Msgf("could not convert map to JSON: %v", aasDescriptor)
+				log.Warn().Msgf("\"endpoints\" key not found in JSON, dropping aasDescriptor %v", aasDescriptor)
+			} else {
+				log.Warn().Msgf("\"endpoints\" key not found in JSON, dropping aasDescriptor %v", string(jsonDescriptor))
+			}
+			continue
+		}
+		for _, endpoint := range endpoints.([]interface{}) {
+			jsonEndpoint, err := json.Marshal(endpoint)
+			if err != nil {
+				log.Debug().Msgf("resolving for endpoint %v", endpoint)
+			} else {
+				log.Debug().Msgf("resolving for endpoint %v", string(jsonEndpoint))
+			}
 
 			urlHost := fmt.Sprintf("%v", endpoint.(map[string]interface{})["address"])
 			protocol := fmt.Sprintf("%v", endpoint.(map[string]interface{})["type"])
 			target := fmt.Sprintf("%v", endpoint.(map[string]interface{})["target"])
 
 			resolverMsg := ResolverMsg{
-				EgressPayload: msg,
-				ReceiverURL:   urlHost,
-				ReceiverType:  target,
+				EgressPayload:    msg,
+				ReceiverURL:      urlHost,
+				ReceiverProtocol: protocol,
+				ReceiverType:     target,
+				ReceiverCert:     fmt.Sprintf("%v", cert),
 			}
 			payload, err := json.Marshal(resolverMsg)
 			if err != nil {
@@ -239,10 +282,11 @@ func getAASDescriptorsFromEndpointRegistry(frame *interaction.Frame, reg *Endpoi
 func queryEndpointRegistry(route string, q url.Values, reg *EndpointRegistryConfig) ([]byte, error) {
 	var (
 		bodyText []byte
+		client   *http.Client
 		err      error
 	)
 
-	client := &http.Client{}
+	client = &http.Client{}
 
 	registryURL := reg.Protocol + "://" + reg.Host + ":" + strconv.Itoa(reg.Port) + route
 	req, err := http.NewRequest("GET", registryURL, nil)
@@ -288,6 +332,10 @@ func (cfg *Config) validate() error {
 		return err
 	}
 
+	if cfg.EndpointRegistryConfig == nil {
+		err = fmt.Errorf("EndpointRegistryConfig cannot be nil")
+		return err
+	}
 	err = cfg.EndpointRegistryConfig.validate()
 	if err != nil {
 		return err
@@ -314,6 +362,10 @@ func (cfg *EndpointRegistryConfig) validate() error {
 
 	if cfg.Protocol == "" {
 		err = fmt.Errorf("protocol has not been specified")
+		return err
+	}
+	if cfg.CrtFilePath == "" && cfg.Protocol == "https" {
+		err = fmt.Errorf("path to certificate has not been specified")
 		return err
 	}
 	if cfg.Host == "" {

@@ -2,7 +2,12 @@ import { IAASDescriptor } from '../../src/services/registry/daos/interfaces/IAAS
 import { IEndpoint } from '../../src/services/registry/daos/interfaces/IEndpoint';
 import {getConnection, AdvancedConsoleLogger } from 'typeorm';
 import { EndpointEntity } from '../../src/services/registry/daos/entities/EndpointEntity'
-
+import { IAsset, IIdentifier } from 'i40-aas-objects';
+import {Identifier} from '../../src/services/registry/daos/responses/Identifier'
+import { Identifiable } from 'i40-aas-objects/dist/src/characteristics/Identifiable';
+import { TIdType } from 'i40-aas-objects/src/types/IdTypeEnum';
+import { AssetEntity } from '../../src/services/registry/daos/entities/AssetEntity';
+import { AASDescriptorEntity } from '../../src/services/registry/daos/entities/AASDescriptorEntity';
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const app = require('../../src/server').app;
@@ -77,6 +82,13 @@ function replaceAddressAndTypeInFirstEndpoint(
 ) {
   descriptor.descriptor.endpoints[0].address = addressReplacement;
   descriptor.descriptor.endpoints[0].type = typeReplacement;
+  return descriptor;
+}
+function replaceAsset(
+  descriptor: IAASDescriptor,
+  assetReplacementId: string,
+) {
+  descriptor.asset.id = assetReplacementId
   return descriptor;
 }
 function replaceAddressAndTypeInSecondEndpoint(
@@ -171,7 +183,56 @@ describe('Tests with a simple data model', function () {
         chai.expect(res.status).to.eql(401);
       });
   });
-//  GET /AASDescriptors
+
+//GET /AASDescriptors Fetch a list of all AASDescriptors
+//TODO: add a Test that returns an empty list
+it('correctly retrieves a list of all AASDescriptors from the DB ', async function () {
+  var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+  var uniqueTestId2 = 'simpleDataTest' + getRandomInteger();
+  var requester = chai.request(app).keepOpen();
+  var AASDescriptorRequest1 = makeGoodAASDescriptor(uniqueTestId);
+  var AASDescriptorRequest2 = makeGoodAASDescriptor(uniqueTestId2);
+
+
+  await requester
+    .put('/AASDescriptors')
+    .auth(user, password)
+    .send(AASDescriptorRequest1)
+    .then(async (res: any) => {
+      chai.expect(res.status).to.eql(200);
+
+      await requester
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(AASDescriptorRequest2)
+        .then((res: any) => {
+          chai.expect(res.status).to.eql(200);
+       //   chai.expect((res.body as IAASDescriptor).identification.id).to.equal(uniqueTestId)
+        });
+
+    })
+    .then(async () => {
+      await requester
+        .get('/AASDescriptors')
+        .auth(user, password)
+        .then((res: any) => {
+          chai.expect(res.status).to.eql(200);
+          chai.expect(res.body.length).not.to.eql(0)
+          // chai.expect(
+          //   _.some(res.body[0].descriptor.identification.id, {
+          //     id: AASDescriptorRequest1.identification.id })).to.be.true;
+
+       //   chai.expect((res.body as IAASDescriptor).identification.id).to.equal(uniqueTestId)
+        });
+
+    })
+    .then(() => {
+      requester.close();
+    });
+});
+
+
+//  GET /AASDescriptors/aasid
   it('can handle slashes in the id', async function () {
     var uniqueTestId = 'simpleDataTest' + getRandomInteger();
     var requester = chai.request(app).keepOpen();
@@ -250,23 +311,21 @@ describe('Tests with a simple data model', function () {
 
 // PUT AASDescriptor test
   it(
-    'returns a 422 error if an endpoint with the given uri and type already' +
-      'exists in the registry and removes all traces of the failed descriptor',
+    'can assign the same endpoint to multiple AASDescriptors',
     async function () {
       var uniqueTestId = 'simpleDataTest' + getRandomInteger();
       var requester = chai.request(app).keepOpen();
+      var firstDescriptorRequest =   replaceAddressAndTypeInFirstEndpoint(
+        makeGoodAASDescriptor(uniqueTestId),
+        'http://abc.com-'+uniqueTestId,
+        'http'
+      )
 
       await requester
       //send the first Request
         .put('/AASDescriptors')
         .auth(user, password)
-        .send(
-          replaceAddressAndTypeInFirstEndpoint(
-            makeGoodAASDescriptor(uniqueTestId),
-            'http://abc.com-'+uniqueTestId,
-            'http'
-          )
-        )
+        .send(firstDescriptorRequest)
         //send a second request with different AASId and descriptor.Certificate but same Endpoint{address,type}
         .then(async (res: any) => {
           chai.expect(res.status).to.eql(200);
@@ -280,15 +339,18 @@ describe('Tests with a simple data model', function () {
                 'http://abc.com-'+uniqueTestId,
                 'http'              )
             )
-            //after failing to register, check if traces from the previous, erroneous request was correctly not registered
-            //i.e. the resource id should not be registed and thus return error
+            //after succeeding to assign the endpoint also to the second AAS, check if the first AAS is still
+            //related to it
             .then(async (res: any) => {
-              chai.expect(res.status).to.eql(422);
+              chai.expect(res.status).to.eql(200);
               await requester
-                .get('/AASDescriptors/aasId' + newUniqueTestId)
+                .get('/AASDescriptors/aasId' + uniqueTestId)
                 .auth(user, password)
                 .then((res: any) => {
-                  chai.expect(res.status).to.eql(404);
+                  chai.expect(res.status).to.eql(200);
+                  chai.expect(
+                    _.some(res.body.descriptor.endpoints, {
+                      address: firstDescriptorRequest.descriptor.endpoints[0].address })).to.be.true;
                 });
             });
         })
@@ -297,6 +359,8 @@ describe('Tests with a simple data model', function () {
         });
     }
   );
+
+
 
   it(
     'registers an AASDescriptor if it contains Endpoints that have the same address ' +
@@ -541,7 +605,9 @@ describe('Tests with a simple data model', function () {
       });
   });
 
-  it('should remove previously related Endpoints' +
+  //TODO: consider deleting endpoints from the DB that are no longer related to an AASDescriptor
+  //maybe with an DB Procedure
+ /* it('should remove previously related Endpoints' +
      ' when updated with a AASDescriptor that has a lesser number of Endpoints',
   async function () {
     var uniqueTestId = 'simpleDataTest' + getRandomInteger();
@@ -594,49 +660,120 @@ describe('Tests with a simple data model', function () {
         requester.close();
       });
   }
-);
-  it('should remove previously related Entities such as Endpoints and Asset when a AASDescriptor gets updated',
+); */
+
+  it('should remove previously related Assets when a AASDescriptor gets updated with a new Asset',
   async function () {
     var uniqueTestId = 'simpleDataTest' + getRandomInteger();
     var requester = chai.request(app).keepOpen();
+    var request = makeGoodAASDescriptor(uniqueTestId)
+    var originalAsset = request.asset;
+    var newAsset = new Identifier("newAssetId", request.asset.idType as TIdType);
+    let aasRepo = getConnection().getRepository(AASDescriptorEntity);
 
     await requester
     //send the first Request
       .put('/AASDescriptors')
       .auth(user, password)
       .send(
+        request      )
+      // Update the AASDescriptor with a new Asset
+      .then(async (res: any) => {
+        chai.expect(res.status).to.eql(200);
+        var aasFound = await aasRepo.findOne({
+          id: request.identification.id
+        },{ relations: ["asset"] })
+//this Asset should have been removed
+      chai.expect(aasFound?.asset.id).to.be.eql(originalAsset.id);
+      await requester
+          .patch('/AASDescriptors/aasId'+uniqueTestId)
+          .auth(user, password)
+          .send(replaceAsset(request,"newAssetId"+uniqueTestId))
+            .then(async (res: any) => {
+            chai.expect(res.status).to.eql(200);
+          //the previous asset should have been replaced with the new one)
+           aasFound = await aasRepo.findOne({
+            id: request.identification.id
+          },{ relations: ["asset"] })
+
+          //relation to this Asset should have been removed (note: Asset entity still exists in DB)
+          chai.expect(aasFound?.asset.id).to.be.eql("newAssetId"+uniqueTestId);
+        })
+      })
+      .then(() => {
+        requester.close();
+      });
+  });
+
+  it('should not alter the Endpoints already associated other AASDescriptors when patching the Endpoints of an AASDescriptor',
+  async function () {
+    var uniqueTestId = 'simpleDataTest' + getRandomInteger();
+    var secondUniqueTestId = 'simpleDataTest' + getRandomInteger();
+
+    var requester = chai.request(app).keepOpen();
+
+    await requester
+    //register a first AAS with an Endpoint
+      .put('/AASDescriptors')
+      .auth(user, password)
+      .send(
         replaceAddressAndTypeInFirstEndpoint(
           makeGoodAASDescriptor(uniqueTestId),
-          'http://abc.com-'+uniqueTestId,
+          'http://sampleEndpoint.com-'+uniqueTestId,
           'http'
         )
       )
-      // Update the AASDescriptor with a new Endpoint
+      //register a Second AAS with the same Endpoint
       .then(async (res: any) => {
         chai.expect(res.status).to.eql(200);
-        var newUniqueTestId = 'simpleDataTest' + getRandomInteger();
         await requester
-          .patch('/AASDescriptors/aasId'+uniqueTestId)
+        //register a first AAS with an Endpoint
+          .put('/AASDescriptors')
           .auth(user, password)
           .send(
             replaceAddressAndTypeInFirstEndpoint(
-              makeGoodAASDescriptor(uniqueTestId),
-              'http://abc.com-'+newUniqueTestId,
+              makeGoodAASDescriptor(secondUniqueTestId), //new AASId
+              'http://sampleEndpoint.com-'+uniqueTestId, //old endpoint
+              'http'
+            )
+          )
+          //check how many AAS are assigned to this endpoint
+               let endpointsRepository = getConnection().getRepository(EndpointEntity);
+               let endpointFound = await endpointsRepository.findOne({
+                 address: 'http://sampleEndpoint.com-'+uniqueTestId,
+                 type: 'http'
+               },{ relations: ["aasdescriptorIds"] })
+               console.log("Found endpoint :"+JSON.stringify(endpointFound))
+
+               chai.expect(endpointFound?.aasdescriptorIds.length).to.eql(2)
+        })
+      // Update the second AASDescriptor replacing the first Endpoint with another one
+      .then(async (res: any) => {
+        await requester
+          .patch('/AASDescriptors/aasId'+secondUniqueTestId)
+          .auth(user, password)
+          .send(
+            replaceAddressAndTypeInFirstEndpoint(
+              makeGoodAASDescriptor(secondUniqueTestId),
+              'http://sampleEndpoint.com-'+secondUniqueTestId, //new Endpoint
               'http'              )
           )
+      .then( async (res: any)=> {
+//check if patch succeeded
+        chai.expect(res.status).to.eql(200);
 
-          //the previous endpoint should have been deleted (and replaced with the new one)
-          let endpointsRepository = getConnection().getRepository(EndpointEntity);
-          // search for the original Endpoint (from the first PUT)
-          let endpointsFound = endpointsRepository.find({
-            address: 'http://abc.com-'+uniqueTestId,
-            type: 'http'
-          })
+        let endpointsRepository = getConnection().getRepository(EndpointEntity);
+        let endpointFound = await endpointsRepository.findOne({
+          address: 'http://sampleEndpoint.com-'+uniqueTestId,
+          type: 'http'
+        },{ relations: ["aasdescriptorIds"] })
+        console.log("Found endpoint after :"+JSON.stringify(endpointFound))
 
-          //this Endpoint should have been removed
-          chai.expect((await endpointsFound).length).to.eql(0)
+        // this endpoint should have not be removed
+        chai.expect(endpointFound?.aasdescriptorIds.length).to.eql(1)
 
-      })
+
+      } ) })
       .then(() => {
         requester.close();
       });

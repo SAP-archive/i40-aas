@@ -21,6 +21,12 @@ services:
       - CORE_INGRESS_HTTP_PORT=${CORE_INGRESS_HTTP_PORT}
       - CORE_INGRESS_HTTP_USER=${CORE_INGRESS_HTTP_USER}
       - CORE_INGRESS_HTTP_PASSWORD=${CORE_INGRESS_HTTP_PASSWORD}
+      ## TLS
+      - TLS_ENABLED=${TLS_ENABLED}
+      - TLS_KEYFILE=${TLS_KEYFILE}
+      - TLS_CERTFILE=${TLS_CERTFILE}
+    volumes:
+      - ./src/compose/volumes/certs/:/etc/ssl/certs/
   ##########################################
   i40-aas-https-endpoint-egress:
     image: sapi40/i40-aas-https-endpoint-egress
@@ -53,6 +59,12 @@ services:
       - CORE_INGRESS_EXCHANGE=${CORE_INGRESS_EXCHANGE}
       ## server config
       - CORE_INGRESS_GRPC_PORT=${CORE_INGRESS_GRPC_PORT}
+      ## TLS
+      - TLS_ENABLED=${TLS_ENABLED}
+      - TLS_KEYFILE=${TLS_KEYFILE}
+      - TLS_CERTFILE=${TLS_CERTFILE}
+    volumes:
+      - ./src/compose/volumes/certs/:/etc/ssl/certs/
   ##########################################
   i40-aas-grpc-endpoint-egress:
     image: sapi40/i40-aas-grpc-endpoint-egress
@@ -89,6 +101,11 @@ services:
       - CORE_REGISTRIES_ENDPOINTS_URL_SUFFIX=${CORE_REGISTRIES_ENDPOINTS_URL_SUFFIX}
       - CORE_REGISTRIES_ENDPOINTS_USER=${CORE_REGISTRIES_ENDPOINTS_USER}
       - CORE_REGISTRIES_ENDPOINTS_PASSWORD=${CORE_REGISTRIES_ENDPOINTS_PASSWORD}
+      ## TLS
+      - TLS_ENABLED=${TLS_ENABLED}
+      - TLS_CERTFILE=${TLS_CERTFILE}
+    volumes:
+      - ./src/compose/volumes/certs/:/etc/ssl/certs/
   ##########################################
   i40-aas-data-manager:
     image: sapi40/i40-aas-data-manager
@@ -99,7 +116,6 @@ services:
       - LOGGING_LOGLEVEL=${LOGGING_LOGLEVEL}
       - LOGGING_LOGOUTPUT=${LOGGING_LOGOUTPUT}
       ## adapter-registry
-      - CORE_REGISTRIES_ADAPTERS_PROTOCOL=http
       - CORE_REGISTRIES_ADAPTERS_HOST=i40-aas-adapter-registry
       - CORE_REGISTRIES_ADAPTERS_PORT=${CORE_REGISTRIES_ADAPTERS_PORT}
       - CORE_REGISTRIES_ADAPTERS_URL_SUFFIX=${CORE_REGISTRIES_ADAPTERS_URL_SUFFIX}
@@ -109,6 +125,12 @@ services:
       - CORE_DATA_MANAGER_PORT=${CORE_DATA_MANAGER_PORT}
       - CORE_DATA_MANAGER_USER=${CORE_DATA_MANAGER_USER}
       - CORE_DATA_MANAGER_PASSWORD=${CORE_DATA_MANAGER_PASSWORD}
+      ## TLS
+      - TLS_ENABLED=${TLS_ENABLED}
+      - TLS_KEYFILE=${TLS_KEYFILE}
+      - TLS_CERTFILE=${TLS_CERTFILE}
+    volumes:
+      - ./src/compose/volumes/certs/:/etc/ssl/certs/
   ##########################################
   i40-aas-endpoint-registry:
     image: sapi40/i40-aas-endpoint-registry
@@ -127,6 +149,13 @@ services:
       ## endpoint-registry
       - CORE_REGISTRIES_ENDPOINTS_USER=${CORE_REGISTRIES_ENDPOINTS_USER}
       - CORE_REGISTRIES_ENDPOINTS_PASSWORD=${CORE_REGISTRIES_ENDPOINTS_PASSWORD}
+      - CORE_REGISTRIES_ENDPOINTS_PORT=${CORE_REGISTRIES_ENDPOINTS_PORT}
+      ## TLS
+      - TLS_ENABLED=${TLS_ENABLED}
+      - TLS_KEYFILE=${TLS_KEYFILE}
+      - TLS_CERTFILE=${TLS_CERTFILE}
+    volumes:
+      - ./src/compose/volumes/certs/:/etc/ssl/certs/
   ##########################################
   i40-aas-adapter-registry:
     image: sapi40/i40-aas-adapter-registry
@@ -139,6 +168,13 @@ services:
       ## adapter-registry
       - CORE_REGISTRIES_ADAPTERS_USER=${CORE_REGISTRIES_ADAPTERS_USER}
       - CORE_REGISTRIES_ADAPTERS_PASSWORD=${CORE_REGISTRIES_ADAPTERS_PASSWORD}
+      - CORE_REGISTRIES_ADAPTERS_PORT=${CORE_REGISTRIES_ADAPTERS_PORT}
+      ## TLS
+      - TLS_ENABLED=${TLS_ENABLED}
+      - TLS_KEYFILE=${TLS_KEYFILE}
+      - TLS_CERTFILE=${TLS_CERTFILE}
+    volumes:
+      - ./src/compose/volumes/certs/:/etc/ssl/certs/
   ##########################################
 
 
@@ -189,12 +225,16 @@ services:
       - SKILLS_ONBOARDING_ROLE=${SKILLS_ONBOARDING_ROLE}
       - SKILLS_ONBOARDING_URI=${SKILLS_ONBOARDING_URI}
       ## data-manager
-      - CORE_DATA_MANAGER_PROTOCOL=http
       - CORE_DATA_MANAGER_HOST=i40-aas-data-manager
       - CORE_DATA_MANAGER_PORT=${CORE_DATA_MANAGER_PORT}
       - CORE_DATA_MANAGER_SUBMODELS_ROUTE=${CORE_DATA_MANAGER_SUBMODELS_ROUTE}
       - CORE_DATA_MANAGER_USER=${CORE_DATA_MANAGER_USER}
       - CORE_DATA_MANAGER_PASSWORD=${CORE_DATA_MANAGER_PASSWORD}
+      ## TLS
+      - TLS_ENABLED=${TLS_ENABLED}
+      - TLS_CERTFILE=${TLS_CERTFILE}
+    volumes:
+      - ./src/compose/volumes/certs/:/etc/ssl/certs/
   ##########################################
   i40-aas-storage-adapter-mongodb:
     image: sapi40/i40-aas-storage-adapter-mongodb
@@ -212,6 +252,13 @@ services:
       - APPLICATION_ADAPTERS_MONGODB_DATABASE_NAME=${SKILLS_ONBOARDING_DATABASE_NAME}
       ## storage-adapter-mongodb
       - APPLICATION_ADAPTERS_MONGODB_SUBMODELS_COLLECTION=${APPLICATION_ADAPTERS_MONGODB_SUBMODELS_COLLECTION}
+      - APPLICATION_ADAPTERS_MONGODB_PORT=${APPLICATION_ADAPTERS_MONGODB_PORT}
+      ## TLS
+      - TLS_ENABLED=${TLS_ENABLED}
+      - TLS_KEYFILE=${TLS_KEYFILE}
+      - TLS_CERTFILE=${TLS_CERTFILE}
+    volumes:
+      - ./src/compose/volumes/certs/:/etc/ssl/certs/
   ##########################################
 
 
@@ -227,6 +274,8 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=${SKILLS_ONBOARDING_DATABASE_USER}
       - MONGO_INITDB_ROOT_PASSWORD=${SKILLS_ONBOARDING_DATABASE_PASSWORD}
       - MONGO_INITDB_DATABASE=${SKILLS_ONBOARDING_DATABASE_NAME}
+    volumes:
+      - mongodb-data:/data/db
   ##########################################
   postgres:
     image: postgres:alpine
@@ -234,6 +283,7 @@ services:
       - "${CORE_REGISTRIES_ENDPOINTS_DATABASE_PORT}:${CORE_REGISTRIES_ENDPOINTS_DATABASE_PORT}"
     volumes:
       - ./src/compose/volumes/postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - postgres-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=${CORE_REGISTRIES_ENDPOINTS_DATABASE_USER}
       - POSTGRES_PASSWORD=${CORE_REGISTRIES_ENDPOINTS_DATABASE_PASSWORD}
@@ -282,3 +332,7 @@ services:
       ## once healthchecks are added
       # - =${}
   ##########################################
+
+volumes:
+  mongodb-data:
+  postgres-data:

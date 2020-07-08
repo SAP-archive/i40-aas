@@ -11,12 +11,11 @@ class RegistryFactory {
       let client = getConnection();
       return new Registry(client);
     } catch (error) {
-      logger.error(
+      logger.info(
         'No database Connection could be established, will try reconnecting'
       );
-      logger.error('Error:' + error)
       try{
-        let client =  await this.createDBConnection();
+         await this.createDBConnection();
         return new Registry(getConnection());
       }
       catch(err){

@@ -1,4 +1,6 @@
 import Axios, { AxiosError, AxiosResponse, AxiosRequestConfig } from 'axios';
+import tls from 'tls';
+import https from 'https';
 
 const logger = require('aas-logger/lib/log');
 
@@ -6,7 +8,8 @@ class WebClient {
   constructor(
     private baseUrl: string,
     private userName?: string,
-    private password?: string
+    private password?: string,
+    private cert?: string
   ) {}
 
   private auth(): AxiosRequestConfig {
@@ -16,8 +19,15 @@ class WebClient {
           username: this.userName,
           password: this.password,
         },
+        httpsAgent: new https.Agent({
+          ca: this.cert as string
+        }),
       };
-    } else return {};
+    } else return {
+      httpsAgent: new https.Agent({
+        ca: this.cert as string
+      }),
+    };
   }
 
   private buildUrl(urlSuffix: string): string {
@@ -29,7 +39,7 @@ class WebClient {
     logger.debug(
       'Posting to ' + url + ' with user ' + this.userName + ' following data: '
     );
-    logger.debug(bo);
+    logger.debug(JSON.stringify(bo));
     const response = await Axios.post<T>(url, bo, this.auth());
     logger.debug('Response:' + JSON.stringify(response.data));
     return response;

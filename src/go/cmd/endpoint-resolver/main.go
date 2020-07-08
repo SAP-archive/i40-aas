@@ -37,22 +37,31 @@ func main() {
 	}
 
 	var (
-		endpointRegCfg *EndpointRegistryConfig
-		amqpCfg        *amqpclient.Config
-		config         *Config
-		resolver       *EndpointResolver
+		registryCfg *EndpointRegistryConfig
+		amqpCfg     *amqpclient.Config
+		config      *Config
+		resolver    *EndpointResolver
 	)
 
 	registryPort, err := strconv.Atoi(os.Getenv("CORE_REGISTRIES_ENDPOINTS_PORT"))
 	if err != nil {
 		log.Error().Err(err).Msg("failed to read and cast CORE_REGISTRIES_ENDPOINTS_PORT")
 	}
-	endpointRegCfg = &EndpointRegistryConfig{
-		Protocol: "http",
-		Host:     os.Getenv("CORE_REGISTRIES_ENDPOINTS_HOST"),
-		Port:     registryPort,
-		User:     os.Getenv("CORE_REGISTRIES_ENDPOINTS_USER"),
-		Password: os.Getenv("CORE_REGISTRIES_ENDPOINTS_PASSWORD"),
+
+	registryProtocol := os.Getenv("TLS_ENABLED")
+	if registryProtocol == "true" {
+		registryProtocol = "https"
+	} else {
+		registryProtocol = "http"
+	}
+
+	registryCfg = &EndpointRegistryConfig{
+		Protocol:    registryProtocol,
+		CrtFilePath: os.Getenv("TLS_CERTFILE"),
+		Host:        os.Getenv("CORE_REGISTRIES_ENDPOINTS_HOST"),
+		Port:        registryPort,
+		User:        os.Getenv("CORE_REGISTRIES_ENDPOINTS_USER"),
+		Password:    os.Getenv("CORE_REGISTRIES_ENDPOINTS_PASSWORD"),
 	}
 
 	amqpPort, err := strconv.Atoi(os.Getenv("CORE_BROKER_PORT"))
@@ -69,7 +78,7 @@ func main() {
 
 	config = &Config{
 		AMQPConfig:             amqpCfg,
-		EndpointRegistryConfig: endpointRegCfg,
+		EndpointRegistryConfig: registryCfg,
 		Queue:                  "generic",
 		BindingKey:             os.Getenv("CORE_EGRESS_ROUTINGKEY"),
 		Ctag:                   os.Getenv("CORE_ENDPOINT_RESOLVER_CTAG"),

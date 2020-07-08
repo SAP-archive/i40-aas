@@ -30,7 +30,7 @@ export class AASDescriptorEntity {
   asset!: AssetEntity;
 
   @Column({
-    length: 1024
+    length: 2048
   })
   certificate_x509_i40!: string;
 
@@ -40,11 +40,11 @@ export class AASDescriptorEntity {
   signature!: string;
 
 
-  @OneToMany(type => EndpointEntity, endpoint => endpoint.aasdescriptor, {cascade:true, eager:true})
+  @ManyToMany(type => EndpointEntity, endpoint => endpoint.aasdescriptorIds, {cascade:true})
   @JoinTable()
   endpoints!: EndpointEntity[];
 
-  @ManyToMany(type => RoleEntity, role=> role.aasDescriptorIds, { cascade:true})
+  @ManyToMany(type => RoleEntity, role=> role.aasDescriptorIds,  {cascade:true})
   @JoinTable()
   roles!: RoleEntity[];
 }

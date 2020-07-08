@@ -131,15 +131,14 @@ export default [
     }
   },
   {
-    path: '/listAllEndpoints',
+    path: '/AASDescriptors',
     method: 'get',
     handler: async (req: Request, res: Response, next: NextFunction) => {
       try {
-        res.json(await registryApi.getAllEndpointsList());
-      } catch (e) {
-        logger.error(e);
-        res.statusCode = e.r_statusCode || 500;
-        res.end(JSON.stringify(e));
+        res.json(await registryApi.getAllAASDescriptorsList());
+      } catch (err) {
+        logger.error(err);
+        next(err);
       }
     }
   },

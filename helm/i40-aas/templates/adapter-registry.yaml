@@ -6,24 +6,10 @@ metadata:
   labels: 
     service: adapter-registry
     {{- include "i40-aas.labels" . | nindent 4 }}
+  annotations:
+    ingress.kubernetes.io/path-rewrite: "/([^/]*)(/?.*) \\2"
 spec:
   clusterIP: None
-  ports:
-  - targetPort: endpoint
-    port: {{ .Values.core.registries.adapters.port }}
-    protocol: TCP
-  selector:
-    service: adapter-registry
-    {{- include "i40-aas.selectorLabels" . | nindent 4 }}
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ .Release.Name }}-adapter-registry-api
-  labels: 
-    service: adapter-registry
-    {{- include "i40-aas.labels" . | nindent 4 }}
-spec:
   ports:
   - targetPort: endpoint
     port: {{ .Values.core.registries.adapters.port }}
@@ -63,20 +49,43 @@ spec:
           value: {{ .Values.logging.logLevel | quote }}
         - name: LOGGING_LOGOUTPUT
           value: {{ .Values.logging.logOutput | quote }}
+        - name: CORE_REGISTRIES_ADAPTERS_PORT
+          value: {{ .Values.core.registries.adapters.port | quote }}
+        - name: TLS_ENABLED
+          value: {{ .Values.security.tls.enabled | quote }}
+        - name: TLS_KEYFILE
+          value: {{ .Values.security.tls.keyfile | quote }}
+        - name: TLS_CERTFILE
+          value: {{ .Values.security.tls.crtfile | quote }}        
         envFrom:
         - secretRef:
             name: {{ .Release.Name }}-core-registries-adapters
-        resources:
-          {{- toYaml .Values.resources.ts | nindent 10 }}
         livenessProbe:
           httpGet:
             path: /health
             port: endpoint
+            {{- if .Values.security.tls.enabled }}
+            scheme: HTTPS
+            {{- else }}
+            scheme: HTTP
+            {{- end }}
           initialDelaySeconds: 600
           periodSeconds: 60
         volumeMounts:
-        - mountPath: /service/.node-persist
+        - mountPath: "/etc/nodepersist"
           name: {{ .Release.Name }}-adapter-registry
+        {{- if .Values.security.certificates }}
+        - name: certs
+          mountPath: "/etc/ssl/certs"
+          readOnly: true
+        {{- end }}
+      volumes:
+      {{- if .Values.security.certificates }}
+      - name: certs
+        secret:
+          secretName: {{ .Values.security.certificates.secretName }}
+          optional: true
+      {{- end }}
   volumeClaimTemplates:
   - metadata:
       name: {{ .Release.Name }}-adapter-registry

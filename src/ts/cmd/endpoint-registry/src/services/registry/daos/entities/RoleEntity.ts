@@ -14,12 +14,11 @@ export class RoleEntity {
   @Column()
   name!: string;
 
-  @ManyToMany(type => AASDescriptorEntity, aasDescriptor => aasDescriptor.roles, {onUpdate:'CASCADE', onDelete: 'CASCADE', eager:true})
+  @ManyToMany(type => AASDescriptorEntity, aasDescriptor => aasDescriptor.roles, {eager:true, onUpdate:'CASCADE'})
   aasDescriptorIds!: AASDescriptorEntity[];
 
 
-  @ManyToOne(type => SemanticProtocolEntity, semanticProtocol => semanticProtocol.roles, { onUpdate:'CASCADE',onDelete: 'CASCADE' })
-  @JoinTable()
+  @ManyToOne(type => SemanticProtocolEntity, semanticProtocol => semanticProtocol.roles, {onDelete: 'CASCADE', onUpdate:'CASCADE'})
   semProtocol!: SemanticProtocolEntity;
 
 }

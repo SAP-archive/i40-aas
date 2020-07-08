@@ -6,7 +6,7 @@ class RegistryFactory {
   static async getRegistryLocal(): Promise<Registry> {
     var storage = require('node-persist');
 
-    await storage.init(/* options ... */);
+    await storage.init({dir: '../../etc/nodepersist/data', forgiveParseErrors: true, logging: true});
     logger.debug('Local storage initialized ');
 
     return new Registry(storage);

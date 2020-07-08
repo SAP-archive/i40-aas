@@ -5,40 +5,39 @@ const PROJECT_ROOT = path.join(
   path.join(path.join(__dirname, '..'), '..'),
   '..'
 );
-const { combine, timestamp, label, printf } = format;
+const { combine, timestamp, printf, json } = format;
 
-const myFormat = (color?: boolean) =>
-  format.combine(
+const myFormat = () =>
+  combine(
     format((log: any) => {
-      switch (log.level) {
-        case "debug":
-          log.level = "DBG"
-          break;
-        case "info":
-          log.level = "INF"
-          break;
-        case "warn":
-          log.level = "WRN"
-          break;
-        case "error":
-          log.level = "ERR"
-          break;
-        default:
-          log.level = log.level
-          break;
+      if (process.env.LOGGING_LOGOUTPUT == "CONSOLE") {
+        switch (log.level) {
+          case "debug":
+            log.level = "DBG"
+            break;
+          case "info":
+            log.level = "INF"
+            break;
+          case "warn":
+            log.level = "WRN"
+            break;
+          case "error":
+            log.level = "ERR"
+            break;
+          default:
+            log.level = log.level
+            break;
+        }
       }
       return log;
     })(),
-    color ? format.colorize() : format.uncolorize(),
-    format((log: any) => {
-      log.timestamp = moment().utc().format()
-      return log;
-    })(),
-
-    format.printf((log: any) => {
-      const { timestamp, level, message, ...args } = log;
-      return `${timestamp} ${level} \u001b[1m${log.callee}\u001b[0m > ${log.message} `;
-    })
+    process.env.LOGGING_LOGOUTPUT == "CONSOLE" ? format.colorize() : format.uncolorize(),
+    timestamp(moment().utc().format()),
+    process.env.LOGGING_LOGOUTPUT == "JSON" 
+      ? json({stable: false}) 
+      : printf((log: any) => {
+          return `${log.timestamp} ${log.level} \u001b[1m${log.caller}\u001b[0m > ${log.message} `;
+        })
   );
 
 // https://github.com/Marak/colors.js/blob/master/lib/styles.js
@@ -53,7 +52,7 @@ const logger = createLogger({
   format: myFormat(),
   transports: [
     new transports.Console({
-      format: myFormat(true),
+      format: myFormat(),
       level: process.env.LOGGING_LOGLEVEL
         ? (process.env.LOGGING_LOGLEVEL as string).toLowerCase()
         : 'debug',
@@ -74,7 +73,7 @@ function formatLogArguments(args: any) {
     var calleeStr = stackInfo.relativePath + ':' + stackInfo.line;
 
     if (typeof args[0] === 'string') {
-      args[1] = { "callee": calleeStr }
+      args[1] = { "caller": calleeStr }
     } else {
       args.unshift(calleeStr);
     }

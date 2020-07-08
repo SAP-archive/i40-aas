@@ -1,4 +1,6 @@
 import http from 'http';
+import https from 'https';
+import fs from 'fs';
 import express from 'express';
 import { applyMiddleware, applyRoutes } from './utils';
 import healthRoute from './services/health/routes';
@@ -12,26 +14,23 @@ import { AdapterRegistryConnector } from './services/data-manager/RegistryConnec
 
 const logger = require('aas-logger/lib/log');
 
-let CORE_DATA_MANAGER_PORT = checkEnvVar('CORE_DATA_MANAGER_PORT');
-let CORE_REGISTRIES_ADAPTERS_PROTOCOL = checkEnvVar(
-  'CORE_REGISTRIES_ADAPTERS_PROTOCOL'
-);
-let CORE_REGISTRIES_ADAPTERS_HOST = checkEnvVar(
-  'CORE_REGISTRIES_ADAPTERS_HOST'
-);
-let CORE_REGISTRIES_ADAPTERS_PORT = checkEnvVar(
-  'CORE_REGISTRIES_ADAPTERS_PORT'
-);
-let CORE_REGISTRIES_ADAPTERS_USER = checkEnvVar(
-  'CORE_REGISTRIES_ADAPTERS_USER'
-);
-let CORE_REGISTRIES_ADAPTERS_PASSWORD = checkEnvVar(
-  'CORE_REGISTRIES_ADAPTERS_PASSWORD'
-);
-let CORE_REGISTRIES_ADAPTERS_URL_SUFFIX = checkEnvVar(
-  'CORE_REGISTRIES_ADAPTERS_URL_SUFFIX'
-);
-var webClient = new WebClient();
+const PORT = checkEnvVar('CORE_DATA_MANAGER_PORT');
+const TLS_KEYFILE = checkEnvVar('TLS_KEYFILE');
+const TLS_CERTFILE = checkEnvVar('TLS_CERTFILE');
+const TLS_ENABLED = checkEnvVar('TLS_ENABLED');
+
+const CORE_REGISTRIES_ADAPTERS_HOST = checkEnvVar('CORE_REGISTRIES_ADAPTERS_HOST');
+const CORE_REGISTRIES_ADAPTERS_PORT = checkEnvVar('CORE_REGISTRIES_ADAPTERS_PORT');
+const CORE_REGISTRIES_ADAPTERS_USER = checkEnvVar('CORE_REGISTRIES_ADAPTERS_USER');
+const CORE_REGISTRIES_ADAPTERS_PASSWORD = checkEnvVar('CORE_REGISTRIES_ADAPTERS_PASSWORD');
+const CORE_REGISTRIES_ADAPTERS_URL_SUFFIX = checkEnvVar('CORE_REGISTRIES_ADAPTERS_URL_SUFFIX');
+
+let CORE_REGISTRIES_ADAPTERS_PROTOCOL = checkEnvVar('TLS_ENABLED');
+if (CORE_REGISTRIES_ADAPTERS_PROTOCOL == 'true') {
+  CORE_REGISTRIES_ADAPTERS_PROTOCOL = 'https';
+} else {
+  CORE_REGISTRIES_ADAPTERS_PROTOCOL = 'http'
+}
 
 process.on('uncaughtException', (e) => {
   logger.error('Uncaught Exception ' + e);
@@ -56,9 +55,14 @@ applyRoutes(routes, router);
 //error handling
 applyMiddleware(errorHandlers, router);
 
-const server = http.createServer(router);
+var webClient: WebClient;
 
-var webClient = new WebClient();
+if ( TLS_ENABLED == 'true' ) { 
+  webClient = new WebClient(fs.readFileSync(TLS_CERTFILE, "utf8"));
+} else {
+  webClient = new WebClient();
+}
+
 var buildUrl = (
   protocol: string,
   host: string,
@@ -86,11 +90,21 @@ let registryConnector = new AdapterRegistryConnector(
 );
 RoutingController.initController(registryConnector, adapterConnector);
 
-server.listen(CORE_DATA_MANAGER_PORT, () =>
-  logger.info(
-    `A Server is running http://localhost:${CORE_DATA_MANAGER_PORT} ...`
-  )
-);
+
+if (TLS_ENABLED == 'true') {
+  https.createServer({
+    key: fs.readFileSync(TLS_KEYFILE),
+    cert: fs.readFileSync(TLS_CERTFILE)
+  }, router).listen(PORT, () => {
+    logger.info(`A Server is running https://localhost:${PORT}...`);
+  });
+} else {
+  http.createServer(router).listen(PORT, () =>
+    logger.info(`A Server is running http://localhost:${PORT}...`)
+  );
+}
+
+export { router as app };
 
 function checkEnvVar(variableName: string): string {
   let retVal: string | undefined = process.env[variableName];
@@ -103,5 +117,3 @@ function checkEnvVar(variableName: string): string {
     );
   }
 }
-
-export { router as app };

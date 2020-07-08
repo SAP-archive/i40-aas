@@ -1,1 +1,2 @@
 docker stop test-postgres
+docker stop test-pgadmin

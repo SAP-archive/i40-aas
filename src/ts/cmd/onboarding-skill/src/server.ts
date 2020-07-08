@@ -10,6 +10,7 @@ import { AmqpClient } from 'AMQP-Client/lib/AmqpClient';
 import { MyExternalRestServiceCaller } from './services/onboarding/MyExternalRestServiceCaller';
 import { MyInitializer } from './services/onboarding/MyInitializer';
 import { uuid } from 'uuidv4';
+import fs from 'fs';
 
 function checkEnvVar(variableName: string): string {
   let retVal: string | undefined = process.env[variableName];
@@ -23,15 +24,27 @@ function checkEnvVar(variableName: string): string {
   }
 }
 
+let TLS_CERTFILE = checkEnvVar('TLS_CERTFILE');
+let TLS_ENABLED = checkEnvVar('TLS_ENABLED');
+
 let DATA_MANAGER_USER = checkEnvVar('CORE_DATA_MANAGER_USER');
 let DATA_MANAGER_PASSWORD = checkEnvVar('CORE_DATA_MANAGER_PASSWORD');
 let DATA_MANAGER_URL_SUFFIX = checkEnvVar('CORE_DATA_MANAGER_SUBMODELS_ROUTE');
-let DATA_MANAGER_BASE_URL =
-  checkEnvVar('CORE_DATA_MANAGER_PROTOCOL') +
+
+let DATA_MANAGER_BASE_URL = checkEnvVar('TLS_ENABLED');
+if (DATA_MANAGER_BASE_URL == 'true') {
+  DATA_MANAGER_BASE_URL = 'https'+
   '://' +
   checkEnvVar('CORE_DATA_MANAGER_HOST') +
   ':' +
   checkEnvVar('CORE_DATA_MANAGER_PORT');
+} else {
+  DATA_MANAGER_BASE_URL = 'http'+
+  '://' +
+  checkEnvVar('CORE_DATA_MANAGER_HOST') +
+  ':' +
+  checkEnvVar('CORE_DATA_MANAGER_PORT');
+}
 
 let ROOT_TOPIC = checkEnvVar('SKILLS_ONBOARDING_ROOT_TOPIC');
 let TOPIC = ROOT_TOPIC + '.*';
@@ -107,7 +120,8 @@ let skill = new Skill(
       new WebClient(
         DATA_MANAGER_BASE_URL,
         DATA_MANAGER_USER,
-        DATA_MANAGER_PASSWORD
+        DATA_MANAGER_PASSWORD,
+        TLS_ENABLED == 'true' ? fs.readFileSync(TLS_CERTFILE, "utf8") : undefined
       ),
       DATA_MANAGER_URL_SUFFIX
     ),
