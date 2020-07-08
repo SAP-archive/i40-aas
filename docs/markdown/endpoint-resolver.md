@@ -20,18 +20,26 @@ if iMsg.Frame.Receiver.Identification != nil {
 The [endpoint-registry](endpoint-registry.md) returns an array of receiver endpoints with varying protocols. The *endpoint-resolver* wraps the original message in a new enriched format (cf. below) per endpoint and publishes it to the `egress` exchange using the routingkey `egress.<PROTOCOL>` that is then further processed by corresponding *\<PROTOCOL\>-endpoint-egress* ([https](https-endpoint-egress.md)/[gRPC](grpc-endpoint-egress.md)) applications.
 
 Resolver message struct:
-```golang
+```go
 type ResolverMsg struct {
-	EgressPayload []byte
-	ReceiverURL   string
-	ReceiverType  string
+	EgressPayload    []byte
+	ReceiverURL      string
+	ReceiverProtocol string
+	ReceiverType     string
+	ReceiverCert     string
+	ReceiverUser     string
+	ReceiverPassword string
 }
 ```
 Transmitted as RawJSON payload:
 ```json
 {
-	"EgressPayload": "<BASE64 encoded interaction message>",
-	"ReceiverURL":   "string",
-	"ReceiverType":  "string"
+  "EgressPayload":    "<BASE64 encoded interaction message>",
+  "ReceiverURL":      "string",
+  "ReceiverProtocol": "string",
+  "ReceiverType":     "string",
+  "ReceiverCert":     "string",
+  "ReceiverUser":     "string",
+  "ReceiverPassword": "string"
 }
 ```

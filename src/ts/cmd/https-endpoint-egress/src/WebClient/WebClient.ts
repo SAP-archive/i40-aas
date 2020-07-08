@@ -11,29 +11,29 @@ class WebClient {
     baseUrl: string,
     body: string,
     urlSuffix?: string,
-    username?: string,
+    user?: string,
     password?: string,
-    cert?: string
+    tlsCert?: string
   ): Promise<AxiosResponse<T>> {
     let url: string = baseUrl;
 
-    logger.debug( "[AAS Client] Posting to AAS ingress at " + url + " message: "+ JSON.stringify(body));
+    logger.debug( "[AAS Client] Posting to AAS ingress at " + url + " as user " + user + " with message: "+ JSON.stringify(body));
 
     var response;
-    if (username && password) {
+    if (user && password) {
       response = await Axios.post<T>(url, body, {
         auth: {
-          username: username as string,
+          username: user as string,
           password: password as string,
         },
         httpsAgent: new https.Agent({
-          ca: cert as string
+          ca: tlsCert as string
         }),
       });
     } else {
       response = await Axios.post<T>(url, body, {
         httpsAgent: new https.Agent({
-          ca: cert as string
+          ca: tlsCert as string
         }),
       });
     }

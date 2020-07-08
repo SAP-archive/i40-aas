@@ -19,7 +19,9 @@ type ResolverMsg struct {
 	ReceiverURL      string
 	ReceiverProtocol string
 	ReceiverType     string
-	ReceiverCert     string
+	ReceiverTLSCert  string
+	ReceiverUser     string
+	ReceiverPassword string
 }
 
 // GRPCEgressConfig struct
@@ -88,11 +90,11 @@ func (e *GRPCEgress) Init() error {
 					log.Error().Err(err).Msgf("unable to genera")
 					continue
 				}
-				log.Debug().Msgf("got new InteractionMessage (%dB) for %q (%q) using cert %q", len(rMsg.EgressPayload), rMsg.ReceiverURL, rMsg.ReceiverType, rMsg.ReceiverCert)
+				log.Debug().Msgf("got new InteractionMessage (%dB) for %q (%q) using cert %q", len(rMsg.EgressPayload), rMsg.ReceiverURL, rMsg.ReceiverType, rMsg.ReceiverTLSCert)
 
 				if rMsg.ReceiverType == "cloud" {
 					var tlsEnabled bool
-					if rMsg.ReceiverCert != "" {
+					if rMsg.ReceiverTLSCert != "" {
 						tlsEnabled = true
 					} else {
 						tlsEnabled = false
@@ -101,7 +103,7 @@ func (e *GRPCEgress) Init() error {
 					cfg := &GRPCClientConfig{
 						URL:        rMsg.ReceiverURL,
 						TLSEnabled: tlsEnabled,
-						Cert:       rMsg.ReceiverCert,
+						Cert:       rMsg.ReceiverTLSCert,
 					}
 
 					c, err := e.obtainGRPCClient(cfg)
@@ -111,21 +113,25 @@ func (e *GRPCEgress) Init() error {
 					}
 
 					b := &backoff.Backoff{
-						Min:    10 * time.Millisecond,
-						Max:    10 * time.Second,
+						Min:    100 * time.Millisecond,
+						Max:    30 * time.Second,
 						Factor: 2,
 						Jitter: true,
 					}
 
-					c.SendInteractionMessage(iMsg, b)
-					log.Debug().Msgf("sent InteractionMessage (%dB) to %s, (client state: %q)", len(rMsg.EgressPayload), c.cfg.URL, c.conn.GetState().String())
+					status, err := c.SendInteractionMessage(iMsg, b)
+					if err != nil {
+						log.Error().Err(err).Msgf("failed to send InteractionMessage (%dB) to %s, (client state: %q) and got status %s", len(rMsg.EgressPayload), c.cfg.URL, c.conn.GetState().String(), status.String())
+						d.Nack(false, false)
+					} else {
+						log.Debug().Msgf("sent InteractionMessage (%dB) to %s, (client state: %q) and got status %s", len(rMsg.EgressPayload), c.cfg.URL, c.conn.GetState().String(), status.String())
+						d.Ack(false)
+					}
 				} else if rMsg.ReceiverType == "edge" {
 					log.Warn().Msgf("NOT IMPLEMENTED: receiver type: %s", rMsg.ReceiverType)
 				} else {
 					log.Error().Err(err).Msgf("unknown receiver type: %s", rMsg.ReceiverType)
 				}
-
-				d.Ack(false)
 			}
 			log.Warn().Msg("deliveries channel closed, restarting...")
 		}

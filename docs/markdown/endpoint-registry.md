@@ -1,6 +1,11 @@
 # endpoint-registry
 
+## Schema
+The database schema is generated using [TypeORM](https://github.com/typeorm/typeorm). In the current state it looks as follows (generated using [DBeaver](https://dbeaver.io/)):
 
+<p align="center">
+  <img src="../images/endpointregistry_ERD.png" alt="Endpoint Registry ERD"/>
+</p>
 
 ## PUT /AASDescriptors
 ### Registers a new Asset Administration Shell
@@ -19,10 +24,14 @@
     "endpoints": [
       {
         "address": "string",
-        "type": "string"
+        "type": "string",
+        "target": "string",
+        "user": "string",
+        "password": "string",
+        "tls_certificate": "string",
+        "certificate_x509_i40": "string"
       }
     ],
-    "certificate_x509_i40": "string",
     "signature": "string"
   }
 }
@@ -65,10 +74,14 @@ The Asset Administration Shell was registered successfully
     "endpoints": [
       {
         "address": "string",
-        "type": "string"
+        "type": "string",
+        "target": "string",
+        "user": "string",
+        "password": "string",
+        "tls_certificate": "string",
+        "certificate_x509_i40": "string"
       }
     ],
-    "certificate_x509_i40": "string",
     "signature": "string"
   }
 }
@@ -93,10 +106,14 @@ The Asset Administration Shell was updated successfully
     "endpoints": [
       {
         "address": "string",
-        "type": "string"
+        "type": "string",
+        "target": "string",
+        "user": "string",
+        "password": "string",
+        "tls_certificate": "string",
+        "certificate_x509_i40": "string"
       }
     ],
-    "certificate_x509_i40": "string",
     "signature": "string"
   }
 }
@@ -141,10 +158,14 @@ The Asset Administration Shell was read successfully
     "endpoints": [
       {
         "address": "string",
-        "type": "string"
+        "type": "string",
+        "target": "string",
+        "user": "string",
+        "password": "string",
+        "tls_certificate": "string",
+        "certificate_x509_i40": "string"
       }
     ],
-    "certificate_x509_i40": "string",
     "signature": "string"
   }
 }
@@ -185,10 +206,14 @@ The Asset Administration Shell was unregistered successfully  * **Code:** 202 <b
     "endpoints": [
       {
         "address": "string",
-        "type": "string"
+        "type": "string",
+        "target": "string",
+        "user": "string",
+        "password": "string",
+        "tls_certificate": "string",
+        "certificate_x509_i40": "string"
       }
     ],
-    "certificate_x509_i40": "string",
     "signature": "string"
   }
 }
@@ -238,10 +263,14 @@ The List of Asset Administration Shells was read successfully
     "endpoints": [
       {
         "address": "string",
-        "type": "string"
+        "type": "string",
+        "target": "string",
+        "user": "string",
+        "password": "string",
+        "tls_certificate": "string",
+        "certificate_x509_i40": "string"
       }
     ],
-    "certificate_x509_i40": "string",
     "signature": "string"
   }
 }]
@@ -424,10 +453,14 @@ The SemanticProtocol was registered successfully
       "endpoints": [
         {
           "address": "string",
-          "type": "string"
+          "type": "string",
+          "target": "string",
+          "user": "string",
+          "password": "string",
+          "tls_certificate": "string",
+          "certificate_x509_i40": "string"
         }
       ],
-      "certificate_x509_i40": "string",
       "signature": "string"
     }
   }

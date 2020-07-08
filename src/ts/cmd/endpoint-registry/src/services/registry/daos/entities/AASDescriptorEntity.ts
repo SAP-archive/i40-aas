@@ -30,15 +30,10 @@ export class AASDescriptorEntity {
   asset!: AssetEntity;
 
   @Column({
-    length: 2048
+    length: 1024,
+    nullable: true
   })
-  certificate_x509_i40!: string;
-
-  @Column({
-    length: 1024
-  })
-  signature!: string;
-
+  signature?: string;
 
   @ManyToMany(type => EndpointEntity, endpoint => endpoint.aasdescriptorIds, {cascade:true})
   @JoinTable()

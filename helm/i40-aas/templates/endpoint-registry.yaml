@@ -75,7 +75,7 @@ spec:
         - name: TLS_KEYFILE
           value: {{ .Values.security.tls.keyfile | quote }}
         - name: TLS_CERTFILE
-          value: {{ .Values.security.tls.crtfile | quote }}        
+          value: {{ .Values.security.tls.crtfile | quote }}
         envFrom:
         - secretRef:
             name: {{ .Release.Name }}-core-registries-endpoints
