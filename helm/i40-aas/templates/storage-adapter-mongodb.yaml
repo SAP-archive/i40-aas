@@ -6,6 +6,8 @@ metadata:
   labels: 
     service: storage-adapter-mongodb
     {{- include "i40-aas.labels" . | nindent 4 }}
+  annotations:
+    ingress.kubernetes.io/path-rewrite: "/([^/]*)(/?.*) \\2"
 spec:
   ports:
   - targetPort: endpoint

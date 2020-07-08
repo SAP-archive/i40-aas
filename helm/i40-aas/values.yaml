@@ -200,3 +200,14 @@ onboardingskillmongodb:
       arbiter: 0
   readinessProbe:
     enabled: false
+
+kubernetes-ingress:
+  controller:
+    ingressClass: haproxy
+    service:
+      type: LoadBalancer
+    extraArgs:
+      - --namespace-whitelist=$(POD_NAMESPACE)
+    replicaCount: 1
+  defaultBackend:
+    replicaCount: 1
