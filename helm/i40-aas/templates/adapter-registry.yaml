@@ -60,8 +60,6 @@ spec:
         envFrom:
         - secretRef:
             name: {{ .Release.Name }}-core-registries-adapters
-#        resources:
-#          {{- toYaml .Values.resources.ts | nindent 10 }}
         livenessProbe:
           httpGet:
             path: /health
