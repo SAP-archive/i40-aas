@@ -7,12 +7,8 @@ interface IAASDescriptor {
   descriptor:IGenericDescriptor;
 }
 
-
-
-
 interface IGenericDescriptor {
   endpoints: Array<IEndpoint>;
-  certificate_x509_i40?: string;
   signature?: string;
 }
 

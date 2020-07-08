@@ -32,10 +32,22 @@ function makeGoodAASDescriptor(idTag: string) {
     },
     descriptor: {
       endpoints: [
-        { address: 'abc.def/' + idTag, type: 'type', target: 'cloud' },
-        { address: 'efg.hij/' + idTag, type: 'type', target: 'edge', user: 'user', password: 'password' },
+        {
+          address: 'abc.def/' + idTag,
+          type: 'type',
+          target: 'cloud',
+          certificate_x509_i40: 'certificate'
+        },
+        {
+          address: 'efg.hij/' + idTag,
+          type: 'type',
+          target: 'edge',
+          user: 'user',
+          password: 'password',
+          certificate_x509_i40: 'certificate',
+          tls_certificate: 'certificate'
+        },
       ],
-      certificate_x509_i40: 'certificate',
       signature: 'signature',
     },
   };
@@ -117,12 +129,10 @@ function replaceAddressTypeInFirstEndpointAndCertificateAndAsset(
   originalAASDescriptor: IAASDescriptor,
   addressReplacement: string,
   typeReplacement: string,
-  certificateReplacement: string,
   assetReplacementId:string
 ) {
   originalAASDescriptor.descriptor.endpoints[0].address = addressReplacement;
   originalAASDescriptor.descriptor.endpoints[0].type = typeReplacement;
-  originalAASDescriptor.descriptor.certificate_x509_i40 = certificateReplacement
   originalAASDescriptor.asset.id  = assetReplacementId;
   return originalAASDescriptor;
 }
@@ -516,7 +526,7 @@ it('correctly retrieves a list of all AASDescriptors from the DB ', async functi
           .patch('/AASDescriptors/aasId' + uniqueTestId)
           .auth(user, password)
           .send(replaceAddressTypeInFirstEndpointAndCertificateAndAsset(makeGoodAASDescriptor(uniqueTestId),
-          'http://def.com-'+uniqueTestId,"newType","new-Certificate","new-Asset-ID"+ uniqueTestId))
+          'http://def.com-'+uniqueTestId,"newType","new-Asset-ID"+ uniqueTestId))
           .then(async (res: any) => {
             chai.expect(res.status).to.eql(200);
             //read the AASDescriptor anc check if it was correctly updated
@@ -532,9 +542,6 @@ it('correctly retrieves a list of all AASDescriptors from the DB ', async functi
                   chai.expect(
                     _.some(res.body.descriptor.endpoints, {
                       address: 'http://def.com-'+uniqueTestId })).to.be.true;
-                chai
-                  .expect(res.body.descriptor.certificate_x509_i40)
-                  .to.eql("new-Certificate");
               });
           });
       })

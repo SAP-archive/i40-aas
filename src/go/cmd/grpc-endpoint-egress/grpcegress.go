@@ -19,7 +19,7 @@ type ResolverMsg struct {
 	ReceiverURL      string
 	ReceiverProtocol string
 	ReceiverType     string
-	ReceiverCert     string
+	ReceiverTLSCert  string
 	ReceiverUser     string
 	ReceiverPassword string
 }
@@ -90,11 +90,11 @@ func (e *GRPCEgress) Init() error {
 					log.Error().Err(err).Msgf("unable to genera")
 					continue
 				}
-				log.Debug().Msgf("got new InteractionMessage (%dB) for %q (%q) using cert %q", len(rMsg.EgressPayload), rMsg.ReceiverURL, rMsg.ReceiverType, rMsg.ReceiverCert)
+				log.Debug().Msgf("got new InteractionMessage (%dB) for %q (%q) using cert %q", len(rMsg.EgressPayload), rMsg.ReceiverURL, rMsg.ReceiverType, rMsg.ReceiverTLSCert)
 
 				if rMsg.ReceiverType == "cloud" {
 					var tlsEnabled bool
-					if rMsg.ReceiverCert != "" {
+					if rMsg.ReceiverTLSCert != "" {
 						tlsEnabled = true
 					} else {
 						tlsEnabled = false
@@ -103,7 +103,7 @@ func (e *GRPCEgress) Init() error {
 					cfg := &GRPCClientConfig{
 						URL:        rMsg.ReceiverURL,
 						TLSEnabled: tlsEnabled,
-						Cert:       rMsg.ReceiverCert,
+						Cert:       rMsg.ReceiverTLSCert,
 					}
 
 					c, err := e.obtainGRPCClient(cfg)

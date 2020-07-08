@@ -13,7 +13,7 @@ class WebClient {
     urlSuffix?: string,
     user?: string,
     password?: string,
-    cert?: string
+    tlsCert?: string
   ): Promise<AxiosResponse<T>> {
     let url: string = baseUrl;
 
@@ -27,13 +27,13 @@ class WebClient {
           password: password as string,
         },
         httpsAgent: new https.Agent({
-          ca: cert as string
+          ca: tlsCert as string
         }),
       });
     } else {
       response = await Axios.post<T>(url, body, {
         httpsAgent: new https.Agent({
-          ca: cert as string
+          ca: tlsCert as string
         }),
       });
     }

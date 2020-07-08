@@ -119,10 +119,22 @@ function makeGoodAASDescriptor(idTag: string) {
     },
     descriptor: {
       endpoints: [
-        { address: 'abc.def/' + idTag, type: 'type', target: 'cloud' },
-        { address: 'efg.hij/' + idTag, type: 'type', target: 'edge', user: 'user', password: 'password' },
+        {
+          address: 'abc.def/' + idTag,
+          type: 'type',
+          target: 'cloud',
+          certificate_x509_i40: 'certificate'
+        },
+        {
+          address: 'efg.hij/' + idTag,
+          type: 'type',
+          target: 'edge',
+          user: 'user',
+          password: 'password',
+          certificate_x509_i40: 'certificate',
+          tls_certificate: 'certificate'
+        },
       ],
-      certificate_x509_i40: 'certificate',
       signature: 'signature',
     },
   };

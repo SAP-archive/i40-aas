@@ -42,6 +42,18 @@ export class EndpointEntity {
   })
   salt?: string;
 
+  @Column({
+    length: 2048,
+    nullable: true
+  })
+  tls_certificate?: string;
+
+  @Column({
+    length: 2048,
+    nullable: true
+  })
+  certificate_x509_i40?: string;
+
   //m AASDescriptor : n Endpoints
   @ManyToMany(type => AASDescriptorEntity, aasdescriptor => aasdescriptor.endpoints, { onUpdate: 'CASCADE', onDelete: 'CASCADE'})
   aasdescriptorIds!: AASDescriptorEntity[];

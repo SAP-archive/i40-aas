@@ -30,12 +30,6 @@ export class AASDescriptorEntity {
   asset!: AssetEntity;
 
   @Column({
-    length: 2048,
-    nullable: true
-  })
-  certificate_x509_i40?: string;
-
-  @Column({
     length: 1024,
     nullable: true
   })

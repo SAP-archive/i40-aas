@@ -107,7 +107,7 @@ Decide what to do if the message can not be handled (eg. because receiver role i
         undefined,
         resolverMessage.ReceiverUser,
         resolverMessage.ReceiverPassword,
-        (resolverMessage.ReceiverProtocol == 'https')? resolverMessage.ReceiverCert: undefined
+        (resolverMessage.ReceiverProtocol == 'https')? resolverMessage.ReceiverTLSCert: undefined
       );
 
       logger.info(

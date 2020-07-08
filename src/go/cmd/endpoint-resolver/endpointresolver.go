@@ -22,7 +22,7 @@ type ResolverMsg struct {
 	ReceiverURL      string
 	ReceiverProtocol string
 	ReceiverType     string
-	ReceiverCert     string
+	ReceiverTLSCert  string
 	ReceiverUser     string
 	ReceiverPassword string
 }
@@ -195,7 +195,7 @@ func (r *EndpointResolver) processGenericEgressMsg(d amqp.Delivery) error {
 				ReceiverURL:      urlHost,
 				ReceiverProtocol: protocol,
 				ReceiverType:     target,
-				ReceiverCert:     fmt.Sprintf("%v", descriptor.(map[string]interface{})["certificate_x509_i40"]),
+				ReceiverTLSCert:  fmt.Sprintf("%v", endpoint.(map[string]interface{})["tls_certificate"]),
 				ReceiverUser:     fmt.Sprintf("%v", endpoint.(map[string]interface{})["user"]),
 				ReceiverPassword: fmt.Sprintf("%v", endpoint.(map[string]interface{})["password"]),
 			}

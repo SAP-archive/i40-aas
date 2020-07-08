@@ -50,7 +50,6 @@ class Registry implements iRegistry {
       aasDescriptor.id = record.identification.id;
       aasDescriptor.idType = record.identification.idType;
       aasDescriptor.asset = record.asset;
-      aasDescriptor.certificate_x509_i40 = record.descriptor.certificate_x509_i40;
       aasDescriptor.signature = record.descriptor.signature;
 
       //The Endpoints array is replaced with the one in the request. It is not possible to
@@ -110,7 +109,6 @@ class Registry implements iRegistry {
         aasDescriptor.id = record.identification.id;
         aasDescriptor.idType = record.identification.idType;
         aasDescriptor.asset = record.asset;
-        aasDescriptor.certificate_x509_i40 = record.descriptor.certificate_x509_i40;
         aasDescriptor.signature = record.descriptor.signature;
 
         aasDescriptor.endpoints = record.descriptor.endpoints as EndpointEntity[]
@@ -179,7 +177,6 @@ class Registry implements iRegistry {
 
         loadedAASDescriptor.endpoints = record.descriptor.endpoints as EndpointEntity[]
         loadedAASDescriptor.asset = record.asset;
-        loadedAASDescriptor.certificate_x509_i40 = record.descriptor.certificate_x509_i40
         loadedAASDescriptor.signature = record.descriptor.signature
 
         // encrypt credentials within given endpoints before storing them in the DB
@@ -387,7 +384,7 @@ class Registry implements iRegistry {
         let resultAsset = resultAasDescriptor.asset as AssetEntity
         let aasDescrIdentifier = new Identifier(resultAasDescriptor.id, resultAasDescriptor.idType as TIdType);
 
-        let descr = new GenericDescriptor(resultAasDescriptor.endpoints, resultAasDescriptor.certificate_x509_i40, resultAasDescriptor.signature);
+        let descr = new GenericDescriptor(resultAasDescriptor.endpoints, resultAasDescriptor.signature);
 
         let assetIdentifier = new Identifier(resultAsset.id, resultAsset.idType as TIdType);
 
@@ -574,7 +571,7 @@ class Registry implements iRegistry {
           })
 
           let aasDescrIdentifier = new Identifier(aasDescrEntity.id, aasDescrEntity.idType as TIdType);
-          let descr = new GenericDescriptor(aasDescrEntity.endpoints, aasDescrEntity.certificate_x509_i40, aasDescrEntity.signature);
+          let descr = new GenericDescriptor(aasDescrEntity.endpoints, aasDescrEntity.signature);
           let assetIdentifier = new Identifier(aasDescrEntity.asset.id, aasDescrEntity.asset.idType as TIdType);
           let response = new AASDescriptorResponse(aasDescrIdentifier, assetIdentifier, descr);
           return response as IAASDescriptor
@@ -703,7 +700,7 @@ class Registry implements iRegistry {
           //construct an AASDescriptor to be returned in the List oder from each element
           let resultAsset = resultAASDescriptor.asset as AssetEntity
           let aasDescrIdentifier = new Identifier(resultAASDescriptor.id, resultAASDescriptor.idType as TIdType);
-          let descr = new GenericDescriptor(resultAASDescriptor.endpoints, resultAASDescriptor.certificate_x509_i40, resultAASDescriptor.signature);
+          let descr = new GenericDescriptor(resultAASDescriptor.endpoints, resultAASDescriptor.signature);
 
           let assetIdentifier = new Identifier(resultAsset.id, resultAsset.idType as TIdType);
 
