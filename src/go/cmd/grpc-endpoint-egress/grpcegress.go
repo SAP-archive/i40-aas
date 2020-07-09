@@ -17,11 +17,11 @@ import (
 type ResolverMsg struct {
 	EgressPayload    []byte
 	ReceiverURL      string
-	ReceiverProtocol string
 	ReceiverType     string
-	ReceiverTLSCert  string
-	ReceiverUser     string
-	ReceiverPassword string
+	ReceiverTarget   string
+	ReceiverTLSCert  *string
+	ReceiverUser     *string
+	ReceiverPassword *string
 }
 
 // GRPCEgressConfig struct
@@ -90,11 +90,11 @@ func (e *GRPCEgress) Init() error {
 					log.Error().Err(err).Msgf("unable to genera")
 					continue
 				}
-				log.Debug().Msgf("got new InteractionMessage (%dB) for %q (%q) using cert %q", len(rMsg.EgressPayload), rMsg.ReceiverURL, rMsg.ReceiverType, rMsg.ReceiverTLSCert)
+				log.Debug().Msgf("got new InteractionMessage (%d Bytes) for %q (%q) using cert: %q", len(rMsg.EgressPayload), rMsg.ReceiverURL, rMsg.ReceiverType, *rMsg.ReceiverTLSCert)
 
-				if rMsg.ReceiverType == "cloud" {
+				if rMsg.ReceiverTarget == "cloud" {
 					var tlsEnabled bool
-					if rMsg.ReceiverTLSCert != "" {
+					if *rMsg.ReceiverTLSCert != "" {
 						tlsEnabled = true
 					} else {
 						tlsEnabled = false
@@ -103,7 +103,7 @@ func (e *GRPCEgress) Init() error {
 					cfg := &GRPCClientConfig{
 						URL:        rMsg.ReceiverURL,
 						TLSEnabled: tlsEnabled,
-						Cert:       rMsg.ReceiverTLSCert,
+						Cert:       *rMsg.ReceiverTLSCert,
 					}
 
 					c, err := e.obtainGRPCClient(cfg)
@@ -127,7 +127,7 @@ func (e *GRPCEgress) Init() error {
 						log.Debug().Msgf("sent InteractionMessage (%dB) to %s, (client state: %q) and got status %s", len(rMsg.EgressPayload), c.cfg.URL, c.conn.GetState().String(), status.String())
 						d.Ack(false)
 					}
-				} else if rMsg.ReceiverType == "edge" {
+				} else if rMsg.ReceiverTarget == "edge" {
 					log.Warn().Msgf("NOT IMPLEMENTED: receiver type: %s", rMsg.ReceiverType)
 				} else {
 					log.Error().Err(err).Msgf("unknown receiver type: %s", rMsg.ReceiverType)

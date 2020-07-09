@@ -10,7 +10,6 @@ class WebClient {
   async postRequest<T>(
     baseUrl: string,
     body: string,
-    urlSuffix?: string,
     user?: string,
     password?: string,
     tlsCert?: string

@@ -1,7 +1,9 @@
 package main
 
 import (
+	"crypto/x509"
 	"encoding/json"
+	"encoding/pem"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -20,11 +22,11 @@ import (
 type ResolverMsg struct {
 	EgressPayload    []byte
 	ReceiverURL      string
-	ReceiverProtocol string
 	ReceiverType     string
-	ReceiverTLSCert  string
-	ReceiverUser     string
-	ReceiverPassword string
+	ReceiverTarget   string
+	ReceiverTLSCert  *string
+	ReceiverUser     *string
+	ReceiverPassword *string
 }
 
 // EndpointRegistryConfig struct
@@ -181,23 +183,38 @@ func (r *EndpointResolver) processGenericEgressMsg(d amqp.Delivery) error {
 		for _, endpoint := range endpoints.([]interface{}) {
 			jsonEndpoint, err := json.Marshal(endpoint)
 			if err != nil {
-				log.Debug().Msgf("resolving for endpoint %v", endpoint)
+				log.Error().Err(err).Msgf("resolving for endpoint %v", endpoint)
 			} else {
 				log.Debug().Msgf("resolving for endpoint %v", string(jsonEndpoint))
 			}
 
 			urlHost := fmt.Sprintf("%v", endpoint.(map[string]interface{})["address"])
-			protocol := fmt.Sprintf("%v", endpoint.(map[string]interface{})["type"])
+			rType := fmt.Sprintf("%v", endpoint.(map[string]interface{})["type"])
 			target := fmt.Sprintf("%v", endpoint.(map[string]interface{})["target"])
+			user := fmt.Sprintf("%v", endpoint.(map[string]interface{})["user"])
+			password := fmt.Sprintf("%v", endpoint.(map[string]interface{})["password"])
+
+			tlsCert := fmt.Sprintf("%v", endpoint.(map[string]interface{})["tls_certificate"])
+			block, _ := pem.Decode([]byte(tlsCert))
+			if block == nil {
+				log.Error().Err(err).Msgf("failed to decode PEM string: %q", tlsCert)
+				tlsCert = ""
+			} else {
+				_, err = x509.ParseCertificate(block.Bytes)
+				if err != nil {
+					log.Error().Err(err).Msgf("failed to parse x509 certificate")
+					tlsCert = ""
+				}
+			}
 
 			resolverMsg := ResolverMsg{
 				EgressPayload:    msg,
 				ReceiverURL:      urlHost,
-				ReceiverProtocol: protocol,
-				ReceiverType:     target,
-				ReceiverTLSCert:  fmt.Sprintf("%v", endpoint.(map[string]interface{})["tls_certificate"]),
-				ReceiverUser:     fmt.Sprintf("%v", endpoint.(map[string]interface{})["user"]),
-				ReceiverPassword: fmt.Sprintf("%v", endpoint.(map[string]interface{})["password"]),
+				ReceiverType:     rType,
+				ReceiverTarget:   target,
+				ReceiverTLSCert:  &tlsCert,
+				ReceiverUser:     &user,
+				ReceiverPassword: &password,
 			}
 			payload, err := json.Marshal(resolverMsg)
 			if err != nil {
@@ -206,13 +223,13 @@ func (r *EndpointResolver) processGenericEgressMsg(d amqp.Delivery) error {
 			}
 
 			var routingKey string
-			if protocol == "grpc" {
+			if rType == "grpc" {
 				routingKey = "egress.grpc"
-			} else if protocol == "http" || protocol == "https" {
+			} else if rType == "http" || rType == "https" {
 				routingKey = "egress.http"
 			} else {
-				err = fmt.Errorf("unsupported protocol %q", protocol)
-				log.Error().Err(err).Msgf("unsupported protocol %q", protocol)
+				err = fmt.Errorf("unsupported endpoint type %q", rType)
+				log.Error().Err(err).Msgf("unsupported endpoint type %q", rType)
 				return err
 			}
 

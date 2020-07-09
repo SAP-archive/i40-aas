@@ -11,11 +11,10 @@ class AASConnector {
   }
 
   //Send a request to a AAS service (e.g. an operator in case of an onboarding process)
-  async sendInteractionReplyToAAS(receiverURL: string, message: string, urlSuffix?:string, user?:string, password?: string, tlsCert?: string) {
+  async sendInteractionReplyToAAS(receiverURL: string, message: string, user?:string, password?: string, tlsCert?: string) {
     let response: AxiosResponse = await this.webClient.postRequest(
       receiverURL,
       message,
-      urlSuffix,
       user,
       password,
       tlsCert

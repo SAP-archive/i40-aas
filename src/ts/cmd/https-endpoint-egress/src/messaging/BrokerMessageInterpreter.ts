@@ -100,14 +100,17 @@ Decide what to do if the message can not be handled (eg. because receiver role i
         return undefined;
       }
 
+      if (resolverMessage.ReceiverTLSCert == "") {
+        delete resolverMessage.ReceiverTLSCert
+      }
+
       //POST the Interaction message to the Receiver AAS
       var AASResponse = await this.aasConn.sendInteractionReplyToAAS(
         receiverURL,
         interactionMessageString,
-        undefined,
-        resolverMessage.ReceiverUser,
-        resolverMessage.ReceiverPassword,
-        (resolverMessage.ReceiverProtocol == 'https')? resolverMessage.ReceiverTLSCert: undefined
+        (resolverMessage.ReceiverUser)? resolverMessage.ReceiverUser: undefined,
+        (resolverMessage.ReceiverPassword)? resolverMessage.ReceiverPassword: undefined,
+        (resolverMessage.ReceiverTLSCert && resolverMessage.ReceiverType == 'https')? resolverMessage.ReceiverTLSCert: undefined
       );
 
       logger.info(
