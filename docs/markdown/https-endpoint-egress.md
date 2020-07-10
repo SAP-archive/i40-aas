@@ -2,20 +2,22 @@
 
 ## Overview
 
-This component listens to messages published to the broker from skills, and forwards the interaction message contained in them to their respective receivers-AAS.
-
-
-
-The message received from the broker should have the following structure :
-```
-{
-  "EgressPayload": "Interaction-Message",
-  "ReceiverURL": "The Url of the Receiver-AAS,
-  "ReceiverType": "cloud / edge"
+The **https-endpoint-egress** listens to messages published to the AMQP topic `egress.http` and forwards the contained interaction message to a receiving AAS instance (ref.: [*https-endpoint-ingress*](./https-endpoint-ingress)). Messages received from the broker passed through the [endpoint resolver](./endpoint-resolver.md) and are marshaled from the following Go struct:
+```go
+type ResolverMsg struct {
+	EgressPayload    []byte
+	ReceiverURL      string
+	ReceiverProtocol string
+	ReceiverType     string
+	ReceiverCert     string
+	ReceiverUser     string
+	ReceiverPassword string
 }
 ```
-What the service does:
-- The component subscribes to broker topics with the following keys: `egress.http` and listens for messages from the `endpoint-resolver` service.
-- Read the receiver endpoint URL (`{ReceiverURL}`) from the broker message
-- Make a POST to the AAS-Receiver (eg. Operator) endpoint with the interaction message in body (eg. the operator, in case case of an onboarding process)
-- Logs the response of the AAS-Receiver
+
+The **https-endpoint-egress**:
+- reads the receiver endpoint URL (`ReceiverURL`) from the resolver message
+- checks whether a `ReceiverCert` exists and TLS is enabled for the AAS instance (ref. [TLS enablement](../../src/compose/volumes/certs/README.md)) and opts in/out of TLS encryption
+- checks whether `ReceiverUser` and `ReceiverPassword` are set for Basic Auth
+- makes a POST to the AAS-Receiver (e.g. Operator, in case of an onboarding process) endpoint with the interaction message as body
+- Logs the status and response of the receiving server

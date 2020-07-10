@@ -100,14 +100,17 @@ Decide what to do if the message can not be handled (eg. because receiver role i
         return undefined;
       }
 
+      if (resolverMessage.ReceiverTLSCert == "") {
+        delete resolverMessage.ReceiverTLSCert
+      }
+
       //POST the Interaction message to the Receiver AAS
       var AASResponse = await this.aasConn.sendInteractionReplyToAAS(
         receiverURL,
         interactionMessageString,
-        undefined,
-        undefined,
-        undefined,
-        (resolverMessage.ReceiverProtocol == 'https')? resolverMessage.ReceiverCert: undefined
+        (resolverMessage.ReceiverUser)? resolverMessage.ReceiverUser: undefined,
+        (resolverMessage.ReceiverPassword)? resolverMessage.ReceiverPassword: undefined,
+        (resolverMessage.ReceiverTLSCert && resolverMessage.ReceiverType == 'https')? resolverMessage.ReceiverTLSCert: undefined
       );
 
       logger.info(
@@ -130,7 +133,7 @@ Decide what to do if the message can not be handled (eg. because receiver role i
     if (message) {
       //if validation successful, get the AAS receiver endpoint from AAS-registry service
 
-      // logger.info("Received Msg [" + message.EgressPayload.frame.sender.role.name + " , " + message.EgressPayload.frame.receiver.role.name + " , " + message.EgressPayload.frame.type + " , " + message.EgressPayload.frame.conversationId + "]");
+      logger.debug("Received ResolverMessage "+JSON.stringify(message));
       await this.handleResolverMessage(message).catch((err) => {
         logger.error('[AAS Client] Error posting to AAS Client : ' + err);
       });

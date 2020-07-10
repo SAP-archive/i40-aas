@@ -20,6 +20,7 @@ applyMiddleware(middleware, router);
 applyRoutes(routes, router);
 applyMiddleware(errorHandlers, router);
 
+checkEnvVar('CORE_REGISTRIES_ENDPOINTS_ENCRYPTIONKEY');
 const PORT = checkEnvVar('CORE_REGISTRIES_ENDPOINTS_PORT');
 const TLS_KEYFILE = checkEnvVar('TLS_KEYFILE');
 const TLS_CERTFILE = checkEnvVar('TLS_CERTFILE');

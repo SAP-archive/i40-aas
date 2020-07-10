@@ -60,7 +60,6 @@ docker-compose -f docker-compose.dev.yml build i40-aas-endpoint-resolver
 ## Further Information
 
 - For instructions on testing the running service look [here](markdown/test.md#Test)
-- For information on running **i40-aas** in minikube look [here](markdown/minikube.md)
 - For a detailed explanation of the ingress/egress message flow within **i40-aas** look [here](markdown/message-flow.md)
 - For instructions on how to join your own skills/additional services to a running docker-compose setup look [here](markdown/join-containers.md)
 

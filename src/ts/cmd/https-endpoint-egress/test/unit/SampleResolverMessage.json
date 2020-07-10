@@ -1,5 +1,6 @@
 {
   "EgressPayload": "eyJmcmFtZSI6eyJzZW1hbnRpY1Byb3RvY29sIjoiaTQwOnJlZ2lzdHJ5LXNlbWFudGljUHJvdG9jb2wvb25ib2FyZGluZyIsInR5cGUiOiJub3RVbmRlcnN0b29kIiwibWVzc2FnZUlkIjoiM2YxYmZkNjgtZDJiNi00NjZkLTk0YWEtOTM2MmU0NmMxZjdkIiwicmVwbHlCeSI6Mjk5OTM5MTIsInJlY2VpdmVyIjp7ImlkZW50aWZpY2F0aW9uIjp7ImlkIjoiaHR0cHM6Ly9pNDAtdGVzdC1hYXMtc2VydmVyLmNmYXBwcy5ldTEwLmhhbmEub25kZW1hbmQuY29tL2FhcyIsImlkVHlwZSI6IklSSSJ9LCJyb2xlIjp7Im5hbWUiOiJPcGVyYXRvciJ9fSwic2VuZGVyIjp7ImlkZW50aWZpY2F0aW9uIjp7ImlkIjoic2FwLmNvbS9hYXMvc2tpbGxzL29uYm9hcmRpbmcvQ2VudHJhbEFzc2V0UmVwb3NpdG9yeSIsImlkVHlwZSI6IklSSSJ9LCJyb2xlIjp7Im5hbWUiOiJDZW50cmFsQXNzZXRSZXBvc2l0b3J5In19LCJjb252ZXJzYXRpb25JZCI6IjIzMSJ9LCJpbnRlcmFjdGlvbkVsZW1lbnRzIjpbXX0=",
-  "ReceiverURL": "https://admin:admin123@i40-test-aas-server.cfapps.eu10.hana.ondemand.com/ingress",
-  "ReceiverType": "cloud"
+  "ReceiverURL": "http://i40-test-aas-server.cfapps.eu10.hana.ondemand.com/ingress",
+  "ReceiverTarget": "cloud",
+  "ReceiverType": "http"
 }

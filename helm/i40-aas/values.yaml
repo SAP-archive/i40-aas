@@ -16,7 +16,7 @@ logging:
   ##   - JSON
   logOutput: JSON
 
-security: 
+security:
   tls:
     enabled: false
     keyfile: /etc/ssl/certs/i40-aas.key.pem
@@ -36,7 +36,7 @@ replicaCount: 1
 
 image:
   repository: sapi40
-  release: latest 
+  release: latest
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
@@ -129,6 +129,7 @@ core:
       ## Leave empty "" to generate a random 20 character alphanumeric string.
       user: admin
       password: admin
+      encryptionkey: ENC_key123!
 
 applicationAdapters:
   mongoDb:
@@ -147,19 +148,19 @@ skills:
 rabbitmq:
   rabbitmq:
     username: guest
-    ## password can be left empty. 
-    ## In that case, a random 10 character alphanumeric string is generated. 
+    ## password can be left empty.
+    ## In that case, a random 10 character alphanumeric string is generated.
     ## !!! But careful! Password generation can cause unpredictable behaviour with chart upgrades.
     password: guest
     extraPlugins: rabbitmq_mqtt
   service:
     port: 5672
     managerPort: 15672
-    extraPorts: 
+    extraPorts:
       - name: mqtt
         port: 1883
         targetPort: mqtt
-    extraContainerPorts: 
+    extraContainerPorts:
       - name: mqtt
         containerPort: 1883
   persistence:
@@ -169,11 +170,11 @@ rabbitmq:
 endpointregistrypostgres:
   postgresqlDatabase: AAS_REGISTRY
   postgresqlUsername: aas-user
-  ## postgresqlPassword can be left empty. 
-  ## In that case, a random 10 character alphanumeric string is generated. 
+  ## postgresqlPassword can be left empty.
+  ## In that case, a random 10 character alphanumeric string is generated.
   ## !!! But careful! Password generation can cause unpredictable behaviour with chart upgrades.
   postgresqlPassword: postgres
-  service: 
+  service:
     port: 5432
   persistence:
     storageClass: default
@@ -183,15 +184,15 @@ onboardingskillmongodb:
   mongodbDatabase: mongodb
   ## mongodbUsername is mandatory if mongodbDatabase is set
   mongodbUsername: mongouser
-  ## mongodbPassword can be left empty. 
-  ## In that case, a random 10 character alphanumeric string is generated. 
+  ## mongodbPassword can be left empty.
+  ## In that case, a random 10 character alphanumeric string is generated.
   ## !!! But careful! Password generation can cause unpredictable behaviour with chart upgrades.
   mongodbPassword: mongopassword
   service:
     port: 27017
   persistence:
     storageClass: default
-    size: 1Gi 
+    size: 1Gi
   replicaSet:
     enabled: true
     replicas:
@@ -205,7 +206,7 @@ kubernetes-ingress:
     ingressClass: haproxy
     service:
       type: LoadBalancer
-    extraArgs: 
+    extraArgs:
       - --namespace-whitelist=$(POD_NAMESPACE)
     replicaCount: 1
   defaultBackend:

@@ -105,16 +105,20 @@ func (c *grpcClient) close() error {
 	return nil
 }
 
-func (c *grpcClient) SendInteractionMessage(iMsg *interaction.InteractionMessage, b *backoff.Backoff) {
-	status, err := c.interactionClient.SendInteractionMessage(context.Background(), iMsg)
+func (c *grpcClient) SendInteractionMessage(iMsg *interaction.InteractionMessage, b *backoff.Backoff) (status *interaction.InteractionStatus, err error) {
+	maxAttempts := 10
+	status, err = c.interactionClient.SendInteractionMessage(context.Background(), iMsg)
 	if err != nil {
 		d := b.Duration()
-		log.Error().Err(err).Msgf("failed to SendInteractionMessage, gRPC connection is in state %s, retrying in %s...", c.conn.GetState().String(), d)
+		log.Error().Err(err).Msgf("failed to SendInteractionMessage, gRPC connection is in state %s, %v attempts left - retrying in %s...", c.conn.GetState().String(), float64(maxAttempts)-float64(b.Attempt()), d)
 		time.Sleep(d)
-		c.SendInteractionMessage(iMsg, b)
-	} else {
-		log.Debug().Msgf("sent InteractionMessage to %s returning status %s", c.cfg.URL, status.String())
+		if b.Attempt() > float64(maxAttempts) {
+			return nil, err
+		}
+		return c.SendInteractionMessage(iMsg, b)
 	}
+
+	return status, nil
 }
 
 func (cfg *GRPCClientConfig) validate() error {
