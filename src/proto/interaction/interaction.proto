@@ -1,11 +1,8 @@
 syntax = "proto3";
 
-package interaction;
-
-// TODO
-// service InteractionEgress {
-//   rpc ReceiveInteractionMessages(ConversationMember) returns (stream InteractionMessage) {}
-// }
+// package interaction;
+// option java_package = "github.com/sap/i40-aas/interaction";
+option go_package = "github.com/sap/i40-aas/interaction";
 
 service InteractionIngress {
   rpc SendInteractionMessage(InteractionMessage) returns (InteractionStatus) {}
