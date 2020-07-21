@@ -307,8 +307,7 @@ proto.InteractionMessage.prototype.toObject = function(opt_includeInstance) {
  */
 proto.InteractionMessage.toObject = function(includeInstance, msg) {
   var f, obj = {
-    frame: (f = msg.getFrame()) && proto.Frame.toObject(includeInstance, f),
-    interactionelements: msg.getInteractionelements_asB64()
+    frame: (f = msg.getFrame()) && proto.Frame.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -350,10 +349,6 @@ proto.InteractionMessage.deserializeBinaryFromReader = function(msg, reader) {
       reader.readMessage(value,proto.Frame.deserializeBinaryFromReader);
       msg.setFrame(value);
       break;
-    case 2:
-      var value = /** @type {!Uint8Array} */ (reader.readBytes());
-      msg.setInteractionelements(value);
-      break;
     default:
       reader.skipField();
       break;
@@ -389,13 +384,6 @@ proto.InteractionMessage.serializeBinaryToWriter = function(message, writer) {
       1,
       f,
       proto.Frame.serializeBinaryToWriter
-    );
-  }
-  f = message.getInteractionelements_asU8();
-  if (f.length > 0) {
-    writer.writeBytes(
-      2,
-      f
     );
   }
 };
@@ -435,48 +423,6 @@ proto.InteractionMessage.prototype.clearFrame = function() {
  */
 proto.InteractionMessage.prototype.hasFrame = function() {
   return jspb.Message.getField(this, 1) != null;
-};
-
-
-/**
- * optional bytes interactionElements = 2;
- * @return {!(string|Uint8Array)}
- */
-proto.InteractionMessage.prototype.getInteractionelements = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
-};
-
-
-/**
- * optional bytes interactionElements = 2;
- * This is a type-conversion wrapper around `getInteractionelements()`
- * @return {string}
- */
-proto.InteractionMessage.prototype.getInteractionelements_asB64 = function() {
-  return /** @type {string} */ (jspb.Message.bytesAsB64(
-      this.getInteractionelements()));
-};
-
-
-/**
- * optional bytes interactionElements = 2;
- * Note that Uint8Array is not supported on all browsers.
- * @see http://caniuse.com/Uint8Array
- * This is a type-conversion wrapper around `getInteractionelements()`
- * @return {!Uint8Array}
- */
-proto.InteractionMessage.prototype.getInteractionelements_asU8 = function() {
-  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
-      this.getInteractionelements()));
-};
-
-
-/**
- * @param {!(string|Uint8Array)} value
- * @return {!proto.InteractionMessage} returns this
- */
-proto.InteractionMessage.prototype.setInteractionelements = function(value) {
-  return jspb.Message.setProto3BytesField(this, 2, value);
 };
 
 

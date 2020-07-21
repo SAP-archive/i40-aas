@@ -3,6 +3,7 @@ var services = require('./interaction_grpc_pb');
 
 var fs = require('fs');
 var grpc = require('grpc');
+var protobuf = require("protobufjs");
 
 function main() {
   var client = new services.InteractionIngressClient(
@@ -12,42 +13,25 @@ function main() {
 
   jsonInteraction = JSON.parse(fs.readFileSync(__dirname + '/../../sample_interaction.json'));
 
-  var frame = new messages.Frame()
-  var request = new messages.InteractionMessage(frame)
+  protobuf.load(__dirname + '/../../../interaction.proto', (err, root) => {
+    if (err)
+      throw err;
 
-  // messages.InteractionMessage.fromObject(jsonInteraction)
-  console.log(request.toObject())
+    var interactionMessage = root.lookupType("InteractionMessage");
 
-  var sender = new messages.ConversationMember()
-  var sRole = new messages.Role()
+    var errMsg = interactionMessage.verify(jsonInteraction);
+    if (errMsg)
+      throw Error(errMsg);
 
-  var receiver = new messages.ConversationMember()
+    var message = interactionMessage.create(jsonInteraction);
+    var protobuffer = interactionMessage.encode(message).finish();
 
-  var rRole = new messages.Role()
-  rRole.setName(jsonInteraction.frame.receiver.role.name)
-  receiver.setRole(rRole)
+    var request = messages.InteractionMessage.deserializeBinary(protobuffer);
 
-  var rId = new messages.Identification()
-  rId.setId(jsonInteraction.frame.receiver.identification.id)
-  rId.setIdtype(jsonInteraction.frame.receiver.identification.idType)
-  receiver.setIdentification(rId)
-
-  request.setFrame(new messages.Frame())
-  request.getFrame().setSemanticprotocol(jsonInteraction.frame.semanticProtocol)
-  request.getFrame().setType(jsonInteraction.frame.type)
-  request.getFrame().setReplyby(jsonInteraction.frame.replyBy)
-  request.getFrame().setReceiver(receiver)
-  request.getFrame().setSender(sender)
-  request.getFrame().setConversationid(jsonInteraction.frame.conversationId)
-
-  console.log(request.toObject())
-  // request.setType('aasldkfjas')
-
-  // pbjs.fromObject(jsonInteraction)
-
-  client.sendInteractionMessage(request, function(err, response) {
-    console.log('received InteractionStatusCode: ', response.getCode());
-  });
+    client.sendInteractionMessage(request, function(err, response) {
+      console.log('received InteractionStatusCode: ', response.getCode());
+    });
+  })
 
 }
 

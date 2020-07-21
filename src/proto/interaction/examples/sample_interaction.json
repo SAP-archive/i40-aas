@@ -23,37 +23,5 @@
         }
      },
      "conversationId":"123"
-  },
-  "interactionElements":[
-     {
-        "embeddedDataSpecifications":[
-
-        ],
-        "semanticId":{
-           "keys":[
-              {
-                 "idType":"IRI",
-                 "type":"GlobalReference",
-                 "value":"testID",
-                 "local":false
-              }
-           ]
-        },
-        "kind":"Instance",
-        "descriptions":[
-
-        ],
-        "idShort":"testID",
-        "identification":{
-           "id":"testID",
-           "idType":"IRI"
-        },
-        "modelType":{
-           "name":"Submodel"
-        },
-        "submodelElements":[
-
-        ]
-     }
-  ]
+  }
 }

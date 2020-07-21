@@ -1,8 +1,9 @@
 syntax = "proto3";
 
-// package interaction;
+package sap.i40aas;
 // option java_package = "github.com/sap/i40-aas/interaction";
 option go_package = "github.com/sap/i40-aas/interaction";
+option java_generic_services = true;
 
 service InteractionIngress {
   rpc SendInteractionMessage(InteractionMessage) returns (InteractionStatus) {}
@@ -20,7 +21,7 @@ enum InteractionStatusCode {
 
 message InteractionMessage {
   Frame frame = 1;
-  bytes interactionElements = 2;
+//  bytes interactionElements = 2;
 }
 
 message Frame {
