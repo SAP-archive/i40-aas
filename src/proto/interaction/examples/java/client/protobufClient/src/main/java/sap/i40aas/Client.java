@@ -17,18 +17,6 @@ import org.json.simple.parser.ParseException;
 
 public class Client {
 
-    // private final Interaction.InteractionIngress.BlockingInterface blockingStub;
-
-    // /** Construct client for accessing HelloWorld server using the existing channel. */
-    // public Client(BlockingRpcChannel channel) {
-    //   // 'channel' here is a Channel, not a ManagedChannel, so it is not this code's responsibility to
-    //   // shut it down.
-
-    //   // Passing Channels to code makes code easier to test and makes it easier to reuse Channels.
-    //   // blockingStub = GreeterGrpc.newBlockingStub(channel);
-    //   blockingStub = Interaction.InteractionIngress.newBlockingStub(channel);
-
-    // }
     public static void main(final String args[]){
 
       JSONParser jsonParser = new JSONParser();
@@ -38,15 +26,16 @@ public class Client {
           //Read JSON file
           Object obj = jsonParser.parse(reader);
 
-          //Builder structBuilder = Struct.newBuilder();
+          // Construct an InteractionMessage Builder, as described here:
+          // https://developers.google.com/protocol-buffers/docs/reference/java-generated#builders
           Interaction.InteractionMessage.Builder interactionBuilder = Interaction.InteractionMessage.newBuilder();
 
+          // Fill InteractionMessage builder with JSON content
           JsonFormat.parser().merge(obj.toString(), interactionBuilder);
 
-          //System.out.println(interactionBuilder.build().getAllFields());
-
+          // Construct the actual InteractionMessage object
           Interaction.InteractionMessage interactionMessage = interactionBuilder.build();
-          //System.out.println(interactionMessage);
+          // TODO: check that this is really the correct message format and correctly filled.
 
           System.out.println("Hello from Client!");
 
@@ -60,6 +49,12 @@ public class Client {
           .usePlaintext()
           .build();
           try {
+            // Tobi: I took this way of building the client from this example:
+            // https://github.com/grpc/grpc-java/blob/v1.30.0/examples/src/main/java/io/grpc/examples/helloworld/HelloWorldClient.java
+            // Also, for more general info see: https://grpc.io/docs/languages/java/basics/#client
+
+            // Tobi: However, I didn't managed to correctly compile the protobuf classes for java
+            // _ and I assume that's way newBlockingStub and channel aren't matching as they are in the example:
             Interaction.InteractionIngress.BlockingInterface blockingStub = Interaction.InteractionIngress.newBlockingStub(channel);
             Interaction.InteractionStatus response;
             try {
@@ -88,51 +83,3 @@ public class Client {
 
 
 }
-
-// public class HelloWorldClient {
-//   private static final Logger logger = Logger.getLogger(HelloWorldClient.class.getName());
-
-//   private final GreeterGrpc.GreeterBlockingStub blockingStub;
-
-
-
-  // /** Say hello to server. */
-  // public void greet(String name) {
-  //   logger.info("Will try to greet " + name + " ...");
-  //   HelloRequest request = HelloRequest.newBuilder().setName(name).build();
-  //   HelloReply response;
-  //   try {
-  //     response = blockingStub.sayHello(request);
-  //   } catch (StatusRuntimeException e) {
-  //     logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
-  //     return;
-  //   }
-  //   logger.info("Greeting: " + response.getMessage());
-  // }
-
-  // /**
-  //  * Greet server. If provided, the first element of {@code args} is the name to use in the
-  //  * greeting. The second argument is the target server.
-  //  */
-  // public static void main(String[] args) throws Exception {
-  //   String user = "world";
-  //   // Access a service running on the local machine on port 50051
-  //   String target = "localhost:50051";
-  //   // Allow passing in the user and target strings as command line arguments
-  //   if (args.length > 0) {
-  //     if ("--help".equals(args[0])) {
-  //       System.err.println("Usage: [name [target]]");
-  //       System.err.println("");
-  //       System.err.println("  name    The name you wish to be greeted by. Defaults to " + user);
-  //       System.err.println("  target  The server to connect to. Defaults to " + target);
-  //       System.exit(1);
-  //     }
-  //     user = args[0];
-  //   }
-  //   if (args.length > 1) {
-  //     target = args[1];
-  //   }
-
-
-//   }
-// }
