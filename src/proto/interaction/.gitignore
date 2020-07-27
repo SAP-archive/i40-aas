@@ -2,3 +2,11 @@ examples/go/client/client
 examples/go/server/server
 examples/java/client/target
 examples/java/server/target
+examples/java/client/.settings
+examples/java/server/.settings
+examples/java/client/.classpath
+examples/java/server/.classpath
+examples/java/client/.project
+examples/java/server/.project
+
+examples/java/to_client/
