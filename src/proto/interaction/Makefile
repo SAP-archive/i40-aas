@@ -23,12 +23,12 @@ nodejs:
 
 java:
 	# protoc --proto_path=./ --plugin=protoc-gen-grpc-java --grpc-java_out=examples/java/interaction interaction.proto
-	cp interaction.proto examples/java/client/src/main/interaction.proto
-	cd examples/java/client && mvn clean install
-	rm examples/java/client/src/main/interaction.proto
-	cp interaction.proto examples/java/server/src/main/interaction.proto
-	cd examples/java/server && mvn clean install
-	rm examples/java/server/src/main/interaction.proto
+	cp interaction.proto examples/java/client/src/main/proto/interaction.proto
+	# cd examples/java/client && mvn clean protobuf:compile compile install
+	rm examples/java/client/src/main/proto/interaction.proto
+	cp interaction.proto examples/java/server/src/main/proto/interaction.proto
+	cd examples/java/server && mvn clean && mvn protobuf:compile && mvn generate-sources install
+	rm examples/java/server/src/main/proto/interaction.proto
 
 client:
 	if (($(RANDOM) == 1)); then \

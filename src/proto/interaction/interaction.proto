@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package sap.i40aas.interaction;
 option java_multiple_files = true;
-option java_package = "sap.i40-aas.interaction";
+option java_package = "sap.i40aas.interaction.proto";
 option go_package = "github.com/sap/i40-aas/interaction";
 // option java_generic_services = true;
 
