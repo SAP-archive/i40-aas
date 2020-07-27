@@ -8,6 +8,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import sap.i40aas.interaction.proto.*;
+
 public class InteractionClient {
   private static final Logger logger = Logger.getLogger(InteractionClient.class.getName());
   public static void main( String[] args ) {
