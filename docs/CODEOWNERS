@@ -17,26 +17,26 @@
 /README.md @Manu3756
 
 ## deployment stuff
-/helm/ @etoster
-/.travis.yml @etoster
-/.env @heldic @etoster
-/docker-compose.*.yml @heldic
-/Makefile @heldic
-/src/compose/ @heldic
-/src/docker/ @heldic
+/helm/
+/.travis.yml
+/.env
+/docker-compose.*.yml
+/Makefile
+/src/compose/
+/src/docker/
 
 ## components
-/src/ts/cmd/adapter-registry/ @akiskips
-/src/ts/cmd/endpoint-registry/ @akiskips
-/src/ts/cmd/data-manager/ @akiskips
-/src/ts/cmd/https-endpoint-egress/ @akiskips
-/src/ts/cmd/https-endpoint-ingress/ @akiskips
-/src/ts/cmd/onboarding-skill/ @etoster
-/src/ts/cmd/storage-adapter-mongodb/ @etoster
-/src/go/cmd/endpoint-resolver/ @heldic
-/src/go/cmd/grpc-endpoint-egress/ @heldic
-/src/go/cmd/grpc-endpoint-ingress/ @heldic
-/src/go/pkg/interaction/ @heldic
-/src/go/pkg/logging/ @heldic
-/src/go/pkg/amqpclient/ @heldic
-/src/proto/ @heldic
+/src/ts/cmd/adapter-registry/
+/src/ts/cmd/endpoint-registry/
+/src/ts/cmd/data-manager/
+/src/ts/cmd/https-endpoint-egress/
+/src/ts/cmd/https-endpoint-ingress/
+/src/ts/cmd/onboarding-skill/
+/src/ts/cmd/storage-adapter-mongodb/
+/src/go/cmd/endpoint-resolver/
+/src/go/cmd/grpc-endpoint-egress/
+/src/go/cmd/grpc-endpoint-ingress/
+/src/go/pkg/interaction/
+/src/go/pkg/logging/
+/src/go/pkg/amqpclient/
+/src/proto/
