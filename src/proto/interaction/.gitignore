@@ -8,5 +8,3 @@ examples/java/client/.classpath
 examples/java/server/.classpath
 examples/java/client/.project
 examples/java/server/.project
-
-examples/java/to_client/
