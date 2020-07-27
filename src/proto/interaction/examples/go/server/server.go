@@ -3,10 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"net"
 	"os"
 
+	"github.com/golang/protobuf/jsonpb"
 	"github.com/sap/i40-aas/interaction"
 	"google.golang.org/grpc"
 )
@@ -31,13 +31,19 @@ func main() {
 	}
 	err = s.server.Serve(listener)
 	if err != nil {
-		log.Printf("errored listening for grpc connections: %s", err)
-		return
+		fmt.Printf("%v", fmt.Errorf("%v", err))
+		os.Exit(1)
 	}
 }
 
 func (s *interactionServer) SendInteractionMessage(ctx context.Context, im *interaction.InteractionMessage) (*interaction.InteractionStatus, error) {
-	fmt.Printf("got InteractionMessage: %v\n", im)
+	marshaler := jsonpb.Marshaler{}
+	imJSON, err := marshaler.MarshalToString(im)
+	if err != nil {
+		fmt.Printf("%v", fmt.Errorf("%v", err))
+		os.Exit(1)
+	}
+	fmt.Printf("got InteractionMessage: %v\n", imJSON)
 
 	return &interaction.InteractionStatus{
 		Code: 200,
