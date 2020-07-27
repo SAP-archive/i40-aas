@@ -27,7 +27,7 @@ java:
 	# cd examples/java/client && mvn clean protobuf:compile compile install
 	rm examples/java/client/src/main/proto/interaction.proto
 	cp interaction.proto examples/java/server/src/main/proto/interaction.proto
-	cd examples/java/server && mvn clean && mvn protobuf:compile && mvn generate-sources install
+	cd examples/java/server && mvn clean protobuf:compile generate-sources install
 	rm examples/java/server/src/main/proto/interaction.proto
 
 client:
