@@ -1,4 +1,4 @@
-# protobuf based AAS Interactions
+# Protobuf-based AAS Interactions
 
 ## Instructions
 Generate code from `interaction.proto` and build all client & server applications via:
@@ -6,22 +6,12 @@ Generate code from `interaction.proto` and build all client & server application
 make all
 ```
 
-Now select a language and start a gRPC server by running one of:
-1. Go: ``
-2. NodeJS: ``
-3. Java: ``
+Launch a gRPC server by running (the command will use a Go/Java/NodeJS server at random):
+```bash
+make server
+```
 
-Now select a language and start a gRPC client by running one of:
-1. Go: ``
-2. NodeJS: ``
-3. Java: ``
-
-## TODO
-
-### NodeJS
-Verify: proto-loader vs proto gen? https://github.com/grpc/grpc/tree/master/examples/node
-https://github.com/protobufjs/protobuf.js#using-proto-files
-
-### Go
-
-### Java
+Now start a gRPC client by running (the command will use a Go/Java/NodeJS client at random):
+```bash
+make client
+```
