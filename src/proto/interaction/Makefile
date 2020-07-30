@@ -24,10 +24,10 @@ nodejs:
 java:
 	# protoc --proto_path=./ --plugin=protoc-gen-grpc-java --grpc-java_out=examples/java/interaction interaction.proto
 	cp interaction.proto examples/java/client/src/main/proto/interaction.proto
-	cd examples/java/client && mvn clean protobuf:compile generate-sources install
+	cd examples/java/client && mvn clean protobuf:compile protobuf:compile-custom generate-sources package shade:shade
 	rm examples/java/client/src/main/proto/interaction.proto
 	cp interaction.proto examples/java/server/src/main/proto/interaction.proto
-	cd examples/java/server && mvn clean protobuf:compile generate-sources install
+	cd examples/java/server && mvn clean protobuf:compile protobuf:compile-custom generate-sources package shade:shade
 	rm examples/java/server/src/main/proto/interaction.proto
 
 client:
