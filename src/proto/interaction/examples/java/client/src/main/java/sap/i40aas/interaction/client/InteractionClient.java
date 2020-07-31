@@ -20,7 +20,7 @@ public class InteractionClient {
 
       JSONParser jsonParser = new JSONParser();
 
-      try (FileReader reader = new FileReader("/home/chief/i40-aas/opensource/i40-aas/src/proto/interaction/examples/sample_interaction.json"))
+      try (FileReader reader = new FileReader("./examples/sample_interaction.json"))
       {
           //Read JSON file
           Object obj = jsonParser.parse(reader);
@@ -35,8 +35,6 @@ public class InteractionClient {
           // Construct the actual InteractionMessage object
           InteractionMessage interactionMessage = interactionBuilder.build();
           // TODO: check that this is really the correct message format and correctly filled.
-
-          System.out.println("Hello from Client!");
 
           // Create a communication channel to the server, known as a Channel. Channels are thread-safe
           // and reusable. It is common to create channels at the beginning of your application and reuse
@@ -58,6 +56,7 @@ public class InteractionClient {
 
             try {
               InteractionStatus response = blockingStub.sendInteractionMessage(interactionMessage);
+              System.out.println(response.toString());
             } catch (StatusRuntimeException e) {
               System.out.println( "RPC failed: {0}" + e.getStatus().toString());
               return;
