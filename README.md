@@ -38,7 +38,6 @@
   - [Get Support](#get-support)
   - [Contributing](#contributing)
   - [Upcoming Changes](#upcoming-changes)
-  - [License](#license)
 
 ## Main Features
 
