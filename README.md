@@ -7,6 +7,7 @@
     <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/SAP/i40-aas" />
     <img alt="Repository Size" src="https://img.shields.io/github/repo-size/SAP/i40-aas" />
     <img alt="License" src="https://img.shields.io/badge/License-Apache%202.0-green.svg" />
+    <img alt="REUSE status" src="https://api.reuse.software/badge/github.com/SAP/i40-aas" />
 </div>
 
 <div align="center">
