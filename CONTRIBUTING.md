@@ -7,8 +7,7 @@ You want to contribute to _i40-aas_? Welcome! Please read this document to under
   - [Issue Handling Process](#issue-handling-process)
   - [Contribute Code](#contribute-code)
   - [Reporting Security Issues](#reporting-security-issues)
-  - [Contributor License Agreement Acceptance](#contributor-license-agreement-acceptance)
-    - [Company Contributors](#company-contributors)
+  - [Developer Certificate of Origin (DCO)](#developer-certificate-of-origin-dco)
 
 ## Analyze Issues
 
@@ -61,25 +60,6 @@ eclint fix '<path to your file>'
 
 If you find a security issue, please act responsibly and report it not in the public issue tracker, but directly to us, so we can fix it before it can be exploited.
 
-## Contributor License Agreement Acceptance
+## Developer Certificate of Origin (DCO)
 
-When you contribute (code, documentation, or anything else), you have to be aware that your contribution is covered by the same [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0) that is applied to i40-aas itself.
-In particular you need to agree to the Individual Contributor License Agreement,
-which can be [found here](https://gist.github.com/CLAassistant/bd1ea8ec8aa0357414e8).
-(This applies to all contributors, including those contributing on behalf of a company). If you agree to its content, you simply have to click on the link posted by the CLA assistant as a comment to the pull request. Click it to check the CLA, then accept it on the following screen if you agree to it. CLA assistant will save this decision for upcoming contributions and will notify you if there is any change to the CLA in the meantime.
-
-### Company Contributors
-
-If employees of a company contribute code, in **addition** to the individual agreement mentioned above, one company agreement must be submitted. This is mainly for the protection of the contributing employees.
-
-A company representative authorized to do so needs to download, fill in, and print the [Corporate Contributor License Agreement](/docs/SAP/SAP%20CCLA.pdf) form and then proceed with one of the following options:
-
-- Scan and e-mail it to [opensource@sap.com](mailto:opensource@sap.com)
-- Fax it to: +49 6227 78-45813
-- Send it by traditional letter to:
-  _OSPO Core_
-  _Dietmar-Hopp-Allee 16_
-  _69190 Walldorf_
-  _Germany_
-
-The form contains a list of employees who are authorized to contribute on behalf of your company. When this list changes, please let us know.
+Due to legal reasons, contributors will be asked to accept a DCO before they submit the first pull request to this projects, this happens in an automated fashion during the submission process. SAP uses [the standard DCO text of the Linux Foundation](https://developercertificate.org/).

@@ -7,6 +7,7 @@
     <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/SAP/i40-aas" />
     <img alt="Repository Size" src="https://img.shields.io/github/repo-size/SAP/i40-aas" />
     <img alt="License" src="https://img.shields.io/badge/License-Apache%202.0-green.svg" />
+    <img alt="REUSE status" src="https://api.reuse.software/badge/github.com/SAP/i40-aas" />
 </div>
 
 <div align="center">
@@ -25,18 +26,18 @@
 
 ## Contents
 
-- [Contents](#contents)
-- [Main Features](#main-features)
-- [Prerequisites](#prerequisites)
-- [Instructions](#instructions)
-  - [Getting Started](#getting-started)
-  - [Cleanup](#cleanup)
-- [Configuration](#configuration)
-- [Known Issues](#known-issues)
-- [Get Support](#get-support)
-- [Contributing](#contributing)
-- [Upcoming Changes](#upcoming-changes)
-- [License](#license)
+- [i40-aas](#i40-aas)
+  - [Contents](#contents)
+  - [Main Features](#main-features)
+  - [Prerequisites](#prerequisites)
+  - [Instructions](#instructions)
+    - [Getting Started](#getting-started)
+    - [Cleanup](#cleanup)
+  - [Configuration](#configuration)
+  - [Known Issues](#known-issues)
+  - [Get Support](#get-support)
+  - [Contributing](#contributing)
+  - [Upcoming Changes](#upcoming-changes)
 
 ## Main Features
 
@@ -159,8 +160,3 @@ Simply check the [Contribution Guidelines](CONTRIBUTING.md).
 
 This project follows the specification ["Details of the AssetAdministrationShell"](https://www.plattform-i40.de/PI40/Redaktion/EN/Downloads/Publikation/2018-details-of-the-asset-administration-shell.html) part 1 version 1.0, which is work in progress. As the specification changes, so will this project.
 
-## License
-
-Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved. This file is licensed under the Apache Software License, v. 2 except as noted otherwise in the [LICENSE file](LICENSE).
-
-Please note that Docker images can contain other software which may be licensed under different licenses. This License file is also included in the Docker image. For any usage of built Docker images please make sure to check the licenses of the artifacts contained in the images.
