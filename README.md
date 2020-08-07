@@ -72,7 +72,7 @@ The AAS-Service provides an implementation of the RAMI 4.0 reference architectur
 
 |                                         ![alt text][ramisap]                                          |
 | :---------------------------------------------------------------------------------------------------: |
-| _SAP's AAS Service as Integrator and Enabler for Interoperability - representation based on RAMI 4.0_ |
+| _SAP's AAS Service as Integrator and Enabler for Interoperability - representation based on [RAMI 4.0](https://www.plattform-i40.de/PI40/Redaktion/EN/Downloads/Publikation/rami40-an-introduction.pdf?__blob=publicationFile&v=7), graphic © Plattform Industrie 4.0 and ZVEI_|
 
 ## Prerequisites
 
