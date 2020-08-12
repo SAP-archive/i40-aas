@@ -6,6 +6,8 @@ option java_package = "sap.i40aas.interaction.proto";
 option go_package = "github.com/sap/i40-aas/interaction";
 // option java_generic_services = true;
 
+import "google/protobuf/any.proto";
+
 service InteractionIngress {
   rpc SendInteractionMessage(InteractionMessage) returns (InteractionStatus) {}
 }
@@ -22,7 +24,7 @@ enum InteractionStatusCode {
 
 message InteractionMessage {
   Frame frame = 1;
-  // bytes interactionElements = 2;
+  repeated google.protobuf.Any interactionElements = 2;
 }
 
 message Frame {
@@ -48,3 +50,104 @@ message Identification {
   string id = 1;
   string idType = 2;
 }
+
+
+message Submodel {
+  string idShort = 1;
+  ModelType modelType = 2;
+  Identifier identification = 3;
+  AdministrativeInformation administration = 4;
+  string category = 5;
+  repeated LangString description = 6;
+  Reference parent = 7;
+  repeated EmbeddedDataSpecification embeddedDataSpecifications = 8;
+  repeated Constraint qualifiers = 9;
+  Reference semanticId = 10;
+  string kind = 11;
+  repeated SubmodelElement submodelElements = 12;
+}
+
+message ConceptDescription {}
+
+message Referable {
+  string idShort = 1;
+  ModelType modelType = 2;
+  string category = 3;
+  repeated LangString description = 4;
+  Reference parent = 5;
+}
+
+message Identifiable {
+  string idShort = 1;
+  ModelType modelType = 2;
+  Identifier identification = 3;
+  AdministrativeInformation administration = 4;
+  string category = 5;
+  repeated LangString description = 6;
+  Reference parent = 7;
+}
+
+message Qualifiable {
+  repeated Constraint qualifiers = 1;
+}
+
+message HasSemantics {
+  Reference semanticId = 1;
+}
+
+message HasDataSpecification {
+  repeated EmbeddedDataSpecification embeddedDataSpecifications = 1;
+}
+
+message Identifier {
+  string id = 1;
+  string idType = 2;
+}
+
+message AdministrativeInformation {
+  string properties = 1;
+  string revision = 2;
+}
+
+message LangString {
+  string language = 1;
+  string text = 2;
+}
+
+message Reference {
+  repeated Key keys = 1;
+}
+
+message Key {
+  string type = 1;
+  string idType = 2;
+  string value = 3;
+  bool local = 4;
+}
+
+message ModelType {
+  string name = 1;
+}
+
+message SubmodelElement {
+  string idShort = 1;
+  ModelType modelType = 2;
+  string category = 3;
+  repeated LangString description = 4;
+  Reference parent = 5;
+  repeated EmbeddedDataSpecification embeddedDataSpecifications = 6;
+  Reference semanticId = 7;
+  repeated Constraint qualifiers = 8;
+  string kind = 9;
+  string value = 10;
+}
+
+message EmbeddedDataSpecification {
+  Reference dataSpecification = 1;
+}
+
+message Constraint {
+  ModelType modelType = 1;
+
+}
+

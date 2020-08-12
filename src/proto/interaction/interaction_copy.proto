@@ -1,0 +1,627 @@
+syntax = "proto3";
+
+package sap.i40aas.interaction;
+option java_multiple_files = true;
+option java_package = "sap.i40aas.interaction.proto";
+option go_package = "github.com/sap/i40-aas/interaction";
+// option java_generic_services = true;
+
+service InteractionIngress {
+  rpc SendInteractionMessage(InteractionMessage) returns (InteractionStatus) {}
+}
+
+message InteractionStatus {
+  InteractionStatusCode code = 1;
+}
+
+enum InteractionStatusCode {
+  UNKNOWN = 0;
+  OK = 200;
+  FAILED = 500;
+}
+
+message InteractionMessage {
+  Frame frame = 1;
+  repeated Submodel interactionElements = 2;
+}
+
+message Frame {
+  string semanticProtocol = 1;
+  string type = 2;
+  string messageId = 3;
+  uint32 replyBy = 4;
+  ConversationMember receiver = 5;
+  ConversationMember sender = 6;
+  string conversationId = 7;
+}
+
+message ConversationMember {
+  Identification identification = 1;
+  Role role = 2;
+}
+
+message Role {
+  string name = 1;
+}
+
+message Identification {
+  string id = 1;
+  string idType = 2;
+}
+
+message AASObject {
+  oneof interaction_elements_oneof {
+    AASEnvironment aas = 1;
+    Submodel submodels = 2;
+  }
+}
+
+message AASEnvironment {
+  repeated AssetAdministrationShell aas = 1;
+  repeated Submodel submodels = 2;
+  repeated Asset assets = 3;
+  repeated ConceptDescription concepts = 4;
+}
+
+message AssetAdministrationShell {
+  string idShort = 1;
+  ModelType modelType = 2;
+  Identifier identification = 3;
+  Reference asset = 4;
+  AdministrativeInformation administration = 5;
+  string category = 6;
+  repeated LangString description = 7;
+  Reference parent = 8;
+  repeated EmbeddedDataSpecification embeddedDataSpecifications = 9;
+  Reference derivedFrom = 10;
+  repeated Reference submodels = 11;
+  repeated View views = 12;
+  repeated ConceptDictionary conceptDictionaries = 13;
+  Security security = 14;
+}
+
+message Submodel {
+  string idShort = 1;
+  ModelType modelType = 2;
+  Identifier identification = 3;
+  AdministrativeInformation administration = 4;
+  string category = 5;
+  repeated LangString description = 6;
+  Reference parent = 7;
+  repeated EmbeddedDataSpecification embeddedDataSpecifications = 8;
+  repeated Constraint qualifiers = 9;
+  Reference semanticId = 10;
+  string kind = 11;
+  repeated SubmodelElement submodelElements = 12;
+}
+
+message Asset {
+  string idShort = 1;
+  ModelType modelType = 2;
+  Identifier identification = 3;
+  AdministrativeInformation administration = 4;
+  string category = 5;
+  repeated LangString description = 6;
+  Reference parent = 7;
+  repeated EmbeddedDataSpecification embeddedDataSpecifications = 8;
+  string kind = 9;
+  Reference assetIdentificationModel = 10;
+  Reference billOfMaterial = 11;
+}
+
+message ConceptDescription {
+
+}
+
+message Referable {
+  string idShort = 1;
+  ModelType modelType = 2;
+  string category = 3;
+  repeated LangString description = 4;
+  Reference parent = 5;
+}
+
+message Identifiable {
+  string idShort = 1;
+  ModelType modelType = 2;
+  Identifier identification = 3;
+  AdministrativeInformation administration = 4;
+  string category = 5;
+  repeated LangString description = 6;
+  Reference parent = 7;
+}
+
+message Qualifiable {
+  repeated Constraint qualifiers = 1;
+}
+
+message HasSemantics {
+  Reference semanticId = 1;
+}
+
+message HasDataSpecification {
+  repeated EmbeddedDataSpecification embeddedDataSpecifications = 1;
+}
+
+message Identifier {
+  string id = 1;
+  string idType = 2;
+}
+
+message AdministrativeInformation {
+  string properties = 1;
+  string revision = 2;
+}
+
+message LangString {
+  string language = 1;
+  string text = 2;
+}
+
+message Reference {
+  repeated Key keys = 1;
+}
+
+message Key {
+  string type = 1;
+  string idType = 2;
+  string value = 3;
+  bool local = 4;
+}
+
+message ModelType {
+  string name = 1;
+}
+
+message EmbeddedDataSpecification {
+  Reference dataSpecification = 1;
+  DataSpecificationContent dataSpecificationContent = 2;
+}
+
+message DataSpecificationContent {
+  string unitName = 1;
+  string unitSymbol = 2;
+  repeated LangString definition = 3;
+  string siNotation = 4;
+  string siName = 5;
+  string dinNotation = 6;
+  string eceName = 7;
+  string eceCode = 8;
+  string nistName = 9;
+  string sourceOfDefinition = 10;
+  string conversionFactor = 11;
+  string registrationAuthorityId = 12;
+  string supplier = 13;
+  string value = 14;
+  Reference valueId = 15;
+  string valueType = 16;
+  string dataType = 17;
+  repeated LangString preferredName = 18;
+  repeated LangString shortName = 19;
+  string symbol = 20;
+  string unit = 21;
+  Reference unitId = 22;
+  string valueFormat = 23;
+  string valueList = 24;
+  repeated string levelType = 25;
+}
+
+message ValueList {
+  repeated ValueObject valueReferencePairTypes = 1;
+}
+
+message ValueObject {
+  string value = 1;
+  Reference valueId = 2;
+  string valueType = 3;
+}
+
+
+
+message Constraint {
+  ModelType modelType = 1;
+}
+
+message Operation {
+  string idShort = 1;
+  ModelType modelType = 2;
+  string category = 3;
+  repeated LangString description = 4;
+  Reference parent = 5;
+  repeated EmbeddedDataSpecification embeddedDataSpecifications = 6;
+  Reference semanticId = 7;
+  repeated Constraint qualifiers = 8;
+  string kind = 9;
+  repeated OperationVariable inputVariable = 10;
+  repeated OperationVariable outputVariable = 11;
+  repeated OperationVariable inoutputVariable = 12;
+}
+
+message OperationVariable {
+  string idShort = 1;
+  ModelType modelType = 2;
+  string category = 3;
+  repeated LangString description = 4;
+  Reference parent = 5;
+  repeated EmbeddedDataSpecification embeddedDataSpecifications = 6;
+  Reference semanticId = 7;
+  repeated Constraint qualifiers = 8;
+  string kind = 9;
+  enum valueEnum {
+    string = 0;
+    LangStringArray = 1;
+    Reference = 2;
+    OperationVariableArray = 3;
+  }
+  valueEnum value = 10;
+  string mimeType = 11;
+  repeated SubmodelElement statements = 12;
+  string entityType = 13;
+  Reference asset = 14;
+  Reference observed = 15;
+  Reference valueId = 16;
+  repeated OperationVariable inputVariable = 17;
+  repeated OperationVariable outputVariable = 18;
+  repeated OperationVariable inoutputVariable = 19;
+  string valueType = 20;
+  string min = 21;
+  string max = 22;
+  Reference first = 23;
+  Reference second = 24;
+  bool allowDuplicates = 25;
+  bool ordered = 26;
+}
+
+message LangStringArray {
+  repeated LangString value = 1;
+}
+
+message OperationVariableArray {
+  repeated OperationVariable value = 1;
+}
+
+message SubmodelElementCollection {
+  string idShort = 1;
+  ModelType modelType = 2;
+  string category = 3;
+  repeated LangString description = 4;
+  Reference parent = 5;
+  repeated EmbeddedDataSpecification embeddedDataSpecifications = 6;
+  Reference semanticId = 7;
+  repeated Constraint qualifiers = 8;
+  string kind = 9;
+  repeated OperationVariable value = 10;
+  bool allowDuplicates = 11;
+  bool ordered = 12;
+}
+
+message ReferenceElement {
+  string idShort = 1;
+  ModelType modelType = 2;
+  string category = 3;
+  repeated LangString description = 4;
+  Reference parent = 5;
+  repeated EmbeddedDataSpecification embeddedDataSpecifications = 6;
+  Reference semanticId = 7;
+  repeated Constraint qualifiers = 8;
+  string kind = 9;
+  Reference value = 10;
+}
+
+message Range {
+  string idShort = 1;
+  ModelType modelType = 2;
+  string category = 3;
+  repeated LangString description = 4;
+  Reference parent = 5;
+  repeated EmbeddedDataSpecification embeddedDataSpecifications = 6;
+  Reference semanticId = 7;
+  repeated Constraint qualifiers = 8;
+  string kind = 9;
+  string valueType = 10;
+  string min = 11;
+  string max = 12;
+}
+
+message Property {
+  string idShort = 1;
+  ModelType modelType = 2;
+  string category = 3;
+  repeated LangString description = 4;
+  Reference parent = 5;
+  repeated EmbeddedDataSpecification embeddedDataSpecifications = 6;
+  Reference semanticId = 7;
+  repeated Constraint qualifiers = 8;
+  string kind = 9;
+  string value = 10;
+  Reference valueId = 11;
+  string valueType = 12;
+}
+
+message MultiLanguageProperty {
+  string idShort = 1;
+  ModelType modelType = 2;
+  string category = 3;
+  repeated LangString description = 4;
+  Reference parent = 5;
+  repeated EmbeddedDataSpecification embeddedDataSpecifications = 6;
+  Reference semanticId = 7;
+  repeated Constraint qualifiers = 8;
+  string kind = 9;
+  repeated LangString value = 10;
+  Reference valueId = 11;
+}
+
+message Event {
+  string idShort = 1;
+  ModelType modelType = 2;
+  string category = 3;
+  repeated LangString description = 4;
+  Reference parent = 5;
+  repeated EmbeddedDataSpecification embeddedDataSpecifications = 6;
+  Reference semanticId = 7;
+  repeated Constraint qualifiers = 8;
+  string kind = 9;
+}
+
+message BasicEvent {
+  string idShort = 1;
+  ModelType modelType = 2;
+  string category = 3;
+  repeated LangString description = 4;
+  Reference parent = 5;
+  repeated EmbeddedDataSpecification embeddedDataSpecifications = 6;
+  Reference semanticId = 7;
+  repeated Constraint qualifiers = 8;
+  string kind = 9;
+  Reference observed = 10;
+}
+
+
+message Entity {
+  string idShort = 1;
+  ModelType modelType = 2;
+  string category = 3;
+  repeated LangString description = 4;
+  Reference parent = 5;
+  repeated EmbeddedDataSpecification embeddedDataSpecifications = 6;
+  Reference semanticId = 7;
+  repeated Constraint qualifiers = 8;
+  string kind = 9;
+  repeated SubmodelElement statements = 10;
+  string entityType = 11;
+  Reference asset = 12;
+}
+
+message Blob {
+  string idShort = 1;
+  ModelType modelType = 2;
+  string category = 3;
+  repeated LangString description = 4;
+  Reference parent = 5;
+  repeated EmbeddedDataSpecification embeddedDataSpecifications = 6;
+  Reference semanticId = 7;
+  repeated Constraint qualifiers = 8;
+  string kind = 9;
+  string value = 10;
+  string mimeType = 11;
+}
+
+message File {
+  string idShort = 1;
+  ModelType modelType = 2;
+  string category = 3;
+  repeated LangString description = 4;
+  Reference parent = 5;
+  repeated EmbeddedDataSpecification embeddedDataSpecifications = 6;
+  Reference semanticId = 7;
+  repeated Constraint qualifiers = 8;
+  string kind = 9;
+  string value = 10;
+  string mimeType = 11;
+}
+
+message Capability {
+  string idShort = 1;
+  ModelType modelType = 2;
+  string category = 3;
+  repeated LangString description = 4;
+  Reference parent = 5;
+  repeated EmbeddedDataSpecification embeddedDataSpecifications = 6;
+  Reference semanticId = 7;
+  repeated Constraint qualifiers = 8;
+  string kind = 9;
+}
+
+message SubmodelElement {
+  string idShort = 1;
+  ModelType modelType = 2;
+  string category = 3;
+  repeated LangString description = 4;
+  Reference parent = 5;
+  repeated EmbeddedDataSpecification embeddedDataSpecifications = 6;
+  Reference semanticId = 7;
+  repeated Constraint qualifiers = 8;
+  string kind = 9;
+  // NOT IN SPEC:
+  string value = 10;
+}
+
+message View {
+  string idShort = 1;
+  ModelType modelType = 2;
+  string category = 3;
+  repeated LangString description = 4;
+  Reference parent = 5;
+  repeated EmbeddedDataSpecification embeddedDataSpecifications = 6;
+  Reference semanticId = 7;
+  repeated Reference containedElements = 8;
+}
+
+message ConceptDictionary {
+  string idShort = 1;
+  ModelType modelType = 2;
+  string category = 3;
+  repeated LangString description = 4;
+  Reference parent = 5;
+  repeated EmbeddedDataSpecification embeddedDataSpecifications = 6;
+  repeated Reference conceptDescriptions = 7;
+}
+
+message conceptDescription {
+  string idShort = 1;
+  ModelType modelType = 2;
+  Identifier identification = 3;
+  AdministrativeInformation administration = 4;
+  string category = 5;
+  repeated LangString description = 6;
+  Reference parent = 7;
+  repeated EmbeddedDataSpecification embeddedDataSpecifications = 8;
+  repeated Reference isCaseOf = 9;
+}
+
+message RelationshipElement {
+  string idShort = 1;
+  ModelType modelType = 2;
+  string category = 3;
+  repeated LangString description = 4;
+  Reference parent = 5;
+  repeated EmbeddedDataSpecification embeddedDataSpecifications = 6;
+  Reference semanticId = 7;
+  repeated Constraint qualifiers = 8;
+  string kind = 9;
+  Reference first = 10;
+  Reference second = 11;
+}
+
+message AnnotatedRelationshipElement {
+  message AnnotationArray {
+    string idShort = 1;
+    ModelType modelType = 2;
+    string category = 3;
+    repeated LangString description = 4;
+    Reference parent = 5;
+    repeated EmbeddedDataSpecification embeddedDataSpecifications = 6;
+    Reference semanticId = 7;
+    repeated Constraint qualifiers = 8;
+    string kind = 9;
+    Reference first = 11;
+    Reference second  = 12;
+    string mimeType = 13;
+    Reference valueId = 14;
+    string valueType = 15;
+    string min = 16;
+    string max = 17;
+    enum valueEnum {
+      string = 0;
+      LangStringArray = 1;
+      Reference = 2;
+    }
+    valueEnum value = 10;
+  }
+  string idShort = 1;
+  ModelType modelType = 2;
+  string category = 3;
+  repeated LangString description = 4;
+  Reference parent = 5;
+  repeated EmbeddedDataSpecification embeddedDataSpecifications = 6;
+  Reference semanticId = 7;
+  repeated Constraint qualifiers = 8;
+  string kind = 9;
+  Reference first = 10;
+  Reference second = 11;
+  repeated AnnotationArray annotation = 12;
+}
+
+message Qualifier {
+  ModelType modelType = 1;
+  Reference semanticId = 2;
+  string value = 3;
+  Reference valueId = 4;
+  string valueType = 5;
+  string type = 6;
+}
+
+message Formula {
+  ModelType modelType = 1;
+  repeated Reference dependsOn = 2;
+}
+
+message Security {
+  AccessControlPolicyPoints accessControlPolicyPoints = 1;
+  repeated BlobCertificate certificate = 2;
+  repeated Reference CertificateExtension = 3;
+}
+
+message Certificate {}
+
+message BlobCertificate {
+  Blob blobCertificate = 1;
+  repeated Reference containedExtension = 2;
+  bool lastCertificate = 3;
+}
+
+message AccessControlPolicyPoints {
+  PolicyAdministrationPoint policyAdministrationPoint = 1;
+  PolicyDecisionPoint policyDecisionPoint = 2;
+  PolicyEnforcementPoint policyEnforcementPoint = 3;
+  PolicyInformationPoints policyInformationPoints = 4;
+}
+
+message PolicyAdministrationPoint {
+  AccessControl localAccessControl = 1;
+  bool externalAccessControl = 2;
+}
+
+message PolicyInformationPoints {
+  repeated Reference internalInformationPoint = 1;
+  bool externalInformationPoint = 2;
+}
+
+message PolicyEnforcementPoint {
+  bool externalPolicyEnforcementPoint = 1;
+}
+
+message PolicyDecisionPoint {
+  bool externalPolicyDecisionPoints = 1;
+}
+
+message AccessControl {
+  Reference selectableSubjectAttributes = 1;
+  Reference defaultSubjectAttributes = 2;
+  Reference selectablePermissions = 3;
+  Reference defaultPermissions = 4;
+  Reference selectableEnvironmentAttributes = 5;
+  Reference defaultEnvironmentAttributes = 6;
+  repeated AccessPermissionRule accessPermissionRule = 7;
+}
+
+message AccessPermissionRule {
+  string idShort = 1;
+  ModelType modelType = 2;
+  string category = 3;
+  repeated LangString description = 4;
+  Reference parent = 5;
+  repeated Constraint qualifiers = 6;
+  repeated SubjectAttributes targetSubjectAttributes = 7;
+  repeated PermissionsPerObject permissionsPerObject = 8;
+}
+
+message SubjectAttributes {
+  repeated Reference subjectAttributes = 1;
+}
+
+message PermissionsPerObject {
+  Reference object = 1;
+  ObjectAttributes targetObjectAttributes = 2;
+  repeated Permission permission = 3;
+}
+
+message ObjectAttributes {
+  repeated Property objectAttribute = 1;
+}
+
+message Permission {
+  Reference permission = 1;
+  string kindOfPermission = 2;
+}
