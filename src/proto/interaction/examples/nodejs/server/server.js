@@ -7,7 +7,7 @@ var grpc = require('grpc');
  * Implements the SendInteractionMessage RPC method.
  */
 function sendInteractionMessage(call, callback) {
-  console.log("invocation by " + JSON.stringify(call.request.getFrame().toObject()));
+  console.log("invocation by " + JSON.stringify(call.request.toObject()));
 
   var reply = new messages.InteractionStatus();
   reply.setCode(200);
