@@ -122,9 +122,10 @@ func (r *EndpointResolver) processDelivery(d amqp.Delivery) {
 	if err != nil {
 		log.Error().Err(err).Msgf("failed to process %dB delivery [%v]", len(d.Body), d.DeliveryTag)
 		d.Nack(false, false)
-	}
-	log.Debug().Msgf("processed %dB delivery [%v]: ACK", len(d.Body), d.DeliveryTag)
-	d.Ack(false)
+	} else {
+    log.Debug().Msgf("processed %dB delivery [%v]: ACK", len(d.Body), d.DeliveryTag)
+    d.Ack(false)
+  }
 }
 
 func (r *EndpointResolver) processGenericEgressMsg(d amqp.Delivery) error {
