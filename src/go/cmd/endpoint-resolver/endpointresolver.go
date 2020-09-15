@@ -249,8 +249,8 @@ func (r *EndpointResolver) processGenericEgressMsg(d amqp.Delivery) error {
         protoReceiver.Identification.Id = strings.Replace(protoReceiver.Identification.Id, "\"", "", -1)
         protoReceiver.Identification.IdType = strings.Replace(protoReceiver.Identification.IdType, "\"", "", -1)
 
-        log.Info().Msgf("old receiver: %v", iMsg.Frame.Receiver)
-        log.Info().Msgf("new receiver: %v", newIMsg.Frame.Receiver)
+        log.Debug().Msgf("old receiver: %v", iMsg.Frame.Receiver)
+        log.Debug().Msgf("new receiver: %v", newIMsg.Frame.Receiver)
 
         var dat map[string]interface{}
         if err := json.Unmarshal(msg, &dat); err != nil {
@@ -268,7 +268,7 @@ func (r *EndpointResolver) processGenericEgressMsg(d amqp.Delivery) error {
         marshaler := jsonpb.Marshaler{}
         frameJSON, err := marshaler.MarshalToString(newIMsg.Frame)
         if err != nil {
-          fmt.Printf("%v", fmt.Errorf("%v", err))
+          log.Error().Err(err).Msgf("unable to Marshal interactionMessage.Frame to String")
           return err
         }
 
