@@ -8,7 +8,9 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"strconv"
+  "strconv"
+  "strings"
+  "github.com/golang/protobuf/jsonpb"
 
 	"github.com/SAP/i40-aas/src/go/pkg/interaction"
 
@@ -122,9 +124,10 @@ func (r *EndpointResolver) processDelivery(d amqp.Delivery) {
 	if err != nil {
 		log.Error().Err(err).Msgf("failed to process %dB delivery [%v]", len(d.Body), d.DeliveryTag)
 		d.Nack(false, false)
-	}
-	log.Debug().Msgf("processed %dB delivery [%v]: ACK", len(d.Body), d.DeliveryTag)
-	d.Ack(false)
+	} else {
+    log.Debug().Msgf("processed %dB delivery [%v]: ACK", len(d.Body), d.DeliveryTag)
+    d.Ack(false)
+  }
 }
 
 func (r *EndpointResolver) processGenericEgressMsg(d amqp.Delivery) error {
@@ -132,8 +135,8 @@ func (r *EndpointResolver) processGenericEgressMsg(d amqp.Delivery) error {
 		err error
 	)
 
-	msg := d.Body
-	iMsg, err := interaction.NewInteractionMessage(msg)
+  msg := d.Body
+  iMsg, err := interaction.NewInteractionMessage(msg)
 	if err != nil {
 		log.Error().Err(err).Msgf("failed to processGenericEgressMsg: %v", msg)
 		return err
@@ -207,7 +210,7 @@ func (r *EndpointResolver) processGenericEgressMsg(d amqp.Delivery) error {
 				}
 			}
 
-			resolverMsg := ResolverMsg{
+      resolverMsg := ResolverMsg{
 				EgressPayload:    msg,
 				ReceiverURL:      urlHost,
 				ReceiverType:     rType,
@@ -215,12 +218,70 @@ func (r *EndpointResolver) processGenericEgressMsg(d amqp.Delivery) error {
 				ReceiverTLSCert:  &tlsCert,
 				ReceiverUser:     &user,
 				ReceiverPassword: &password,
-			}
-			payload, err := json.Marshal(resolverMsg)
+      }
+
+      if iMsg.Frame.Receiver.Identification == nil || iMsg.Frame.Receiver.Identification.Id == "" {
+        descriptorIdentification := aasDescriptor.(map[string]interface{})["identification"]
+        descriptorIdentificationId := descriptorIdentification.(map[string]interface{})["id"]
+        descriptorIdentificationIdType := descriptorIdentification.(map[string]interface{})["idType"]
+
+        jsonDescriptorIdentificationId, err := json.Marshal(descriptorIdentificationId)
+        if err != nil {
+          log.Error().Err(err).Msgf("resolving for AASDescriptor identification id: %v", descriptorIdentificationId)
+        } else {
+          log.Debug().Msgf("resolving for AASDescriptor identification id: %v", string(jsonDescriptorIdentificationId))
+        }
+        jsonDescriptorIdentificationIdType, err := json.Marshal(descriptorIdentificationIdType)
+        if err != nil {
+          log.Error().Err(err).Msgf("resolving for AASDescriptor identification idType: %v", descriptorIdentificationIdType)
+        } else {
+          log.Debug().Msgf("resolving for AASDescriptor identification idType: %v", string(jsonDescriptorIdentificationIdType))
+        }
+
+        newIMsg, err := interaction.NewInteractionMessage(msg)
+        protoReceiver := newIMsg.GetFrame().GetReceiver()
+        if protoReceiver.GetIdentification() == nil {
+          protoReceiver.Identification = &interaction.Identification{}
+        }
+
+        protoReceiver.Identification.Id = string(jsonDescriptorIdentificationId)
+        protoReceiver.Identification.IdType = string(jsonDescriptorIdentificationIdType)
+        protoReceiver.Identification.Id = strings.Replace(protoReceiver.Identification.Id, "\"", "", -1)
+        protoReceiver.Identification.IdType = strings.Replace(protoReceiver.Identification.IdType, "\"", "", -1)
+
+        log.Debug().Msgf("old receiver: %v", iMsg.Frame.Receiver)
+        log.Debug().Msgf("new receiver: %v", newIMsg.Frame.Receiver)
+
+        var dat map[string]interface{}
+        if err := json.Unmarshal(msg, &dat); err != nil {
+          log.Error().Err(err).Msg("unable to unmarshal msg")
+          return err
+        }
+
+        msgElements := dat["interactionElements"].([]interface{})
+        msgElementsJSON, err := json.Marshal(msgElements)
+        if err != nil {
+          log.Error().Err(err).Msgf("unable to Marshal interactionElements %v", msgElements)
+          return err
+        }
+
+        marshaler := jsonpb.Marshaler{}
+        frameJSON, err := marshaler.MarshalToString(newIMsg.Frame)
+        if err != nil {
+          log.Error().Err(err).Msgf("unable to Marshal interactionMessage.Frame to String")
+          return err
+        }
+
+        newMsg := "{\"frame\":" + frameJSON + ",\"interactionElements\":" + string(msgElementsJSON) + "}"
+
+        resolverMsg.EgressPayload = []byte(newMsg)
+      }
+
+      payload, err := json.Marshal(resolverMsg)
 			if err != nil {
 				log.Error().Err(err).Msgf("unable to Marshal resolverMsg %v", resolverMsg)
 				return err
-			}
+      }
 
 			var routingKey string
 			if rType == "grpc" {
