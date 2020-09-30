@@ -288,6 +288,7 @@ jobs:
         - az aks get-credentials -n i40aas -g i40-aas
         - kubectl config get-contexts
         - helm version
+        - helm lint helm/i40-aas/
       deploy:
         - provider: script
           script: helm upgrade master helm/i40-aas --atomic --reuse-values -n aas-master --set image.release=$BUILD_TAG && helm upgrade oi4 helm/i40-aas --atomic --reuse-values -n aas-oi4 --set image.release=$BUILD_TAG
