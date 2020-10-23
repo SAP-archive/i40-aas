@@ -22,22 +22,6 @@ applyMiddleware(middleware, router);
 applyRoutes(routes, router);
 applyMiddleware(errorHandlers, router);
 
-//router.use('/ui', express.static( '/cmd/endpoint-registry/ui/i40-aas-registry-ui/webapp'));
-//router.use('/ui', express.static( '/cmd'));
-//router.use('/ui1', express.static(__dirname + '/ui'));
-
-console.log("Working directory: " + __dirname);
-//router.use('/ui', express.static('/cmd/endpoint-registry//ui/i40-aas-registry-ui/webapp'));
-
-// router.get('/ui', function(req, res) {
-//   res.sendFile((__dirname + '/ui/i40-aas-registry-ui/webapp/index.html'));
-// });
-
-
-
-
-
-
 checkEnvVar('CORE_REGISTRIES_ENDPOINTS_ENCRYPTIONKEY');
 const PORT = checkEnvVar('CORE_REGISTRIES_ENDPOINTS_PORT');
 const TLS_KEYFILE = checkEnvVar('TLS_KEYFILE');
