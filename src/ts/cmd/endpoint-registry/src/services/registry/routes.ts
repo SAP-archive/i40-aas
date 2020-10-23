@@ -4,6 +4,8 @@ import { IAASDescriptor } from './daos/interfaces/IAASDescriptor';
 import { HTTP422Error } from '../../utils/httpErrors';
 import { validateAASDescriptorRequest, validateSemanticProtocolRequest } from '../../middleware/checks';
 import { ISemanticProtocol } from './daos/interfaces/ISemanticProtocol';
+import express from 'express';
+import { resolve } from 'path';
 const logger = require('aas-logger/lib/log');
 
 
@@ -323,5 +325,22 @@ export default [
       }
 
     }
-    }
+  },
+
+  // {
+  //   path: '/ui',
+  //   method: 'get',
+  //   handler: async (req: Request, res: Response, next: NextFunction) => {
+  //     console.log('GET SemanticProtocol by semanticprotocol request received');
+  //     try {
+  //       console.log('Path parameters received:' + JSON.stringify(req.params));
+  //       // console.log('Sent back response of /semanticprotocol GET request');
+  //       res.sendFile(resolve('ui/i40-aas-registry-ui/webapp/index.html'));
+  //     } catch (e) {
+  //       res.end(e.message);
+  //     }
+  //   }
+  // }
+
+  
 ];

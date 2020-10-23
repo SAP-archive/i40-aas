@@ -1,0 +1,124 @@
+<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:f="sap.f"
+	controllerName="i40-aas-registry-ui.i40-aas-registry-ui.controller.SingleDescriptor" xmlns:html="http://www.w3.org/1999/xhtml">
+	<App>
+		<pages>
+			<Page id="SingleDescriptor" title="{i18n>descriptor}" showNavButton="true" navButtonPress=".onNavBack">
+				<content>
+					<!--*****************Begin Identification*****************-->
+					<Panel headerText="{i18n>identification}:">
+						<VBox >
+							<HBox>
+								<!--locales jason referenzieren siehe beispiel-->
+								<Text text="{i18n>id}:" class="sapUiSmallMargin" width="150px"/>
+								<!-- geht -->
+								<Input type="Text" value="{SingleDescriptor>/SingleAASDescriptor/identification/id}" valueLiveUpdate="true" width="350px" enabled="false"/>
+							</HBox>
+							<HBox>
+								<Text text="{i18n>idType}:" class="sapUiSmallMargin" width="150px"/>
+								<Select selectedKey="{SingleDescriptor>/SingleAASDescriptor/identification/idType}"
+									items="{ path: 'SingleDescriptor>/IdTypeCollection', sorter: { path: 'Name' } }" width="150px" enabled="false">
+									<core:Item key="{SingleDescriptor>TypeId}" text="{SingleDescriptor>Name}"/>
+								</Select>
+							</HBox>
+						</VBox>
+					</Panel>
+					<!--*****************End Identification*****************-->
+					<!--*****************Begin Asset*****************-->
+					<Panel headerText="{i18n>asset}:">
+						<VBox >
+							<HBox>
+								<Text text="{i18n>id}:" class="sapUiSmallMargin" width="150px"/>
+								<Input type="Text" value="{SingleDescriptor>/SingleAASDescriptor/asset/id}" valueLiveUpdate="true" width="250px" enabled="false"/>
+							</HBox>
+							<HBox>
+								<Text text="{i18n>idType}:" class="sapUiSmallMargin" width="150px"/>
+								<Select selectedKey="{SingleDescriptor>/SingleAASDescriptor/asset/idType}"
+									items="{ path: 'SingleDescriptor>/IdTypeCollection', sorter: { path: 'Name' } }" width="150px" enabled="false">
+									<core:Item key="{SingleDescriptor>TypeId}" text="{SingleDescriptor>Name}"/>
+								</Select>
+							</HBox>
+						</VBox>
+					</Panel>
+					<!--*****************End Asset*****************-->
+					<!--*****************Begin Descriptor*****************-->
+					<Panel headerText="{i18n>descriptor}:">
+						<VBox >
+							<!--<HBox class="sapUiSmallMargin">
+								<Label text="{i18n>certification}:" class="sapUiSmallMargin" width="150px"/>
+								<Input type="Text" placeholder="Sample_crt" valueLiveUpdate="true" width="200px"/>
+							</HBox>-->
+							<HBox>
+								<Text text="{i18n>signatur}:" class="sapUiSmallMargin" width="150px"/>
+								<Input type="Text" value="{SingleDescriptor>/SingleAASDescriptor/descriptor/signature}" valueLiveUpdate="true" width="250px" enabled="false"/>
+							</HBox>
+						</VBox>
+					</Panel>
+					<!--*****************End Descriptor*****************-->
+					<!--*****************Begin Added Endpoints and Details*****************-->
+					<l:Splitter height="auto">
+						<!--*****************Begin Endpoints*****************-->
+						<Panel headerText="{i18n>endpoints}:">
+							<List items="{ path: 'SingleDescriptor>/SingleAASDescriptor/descriptor/endpoints'}" noDataText="{i18n>noEndpointsAdded}" showNoData="true"
+								updateFinished="onUpdateFinished">
+								<ObjectListItem title=" {SingleDescriptor>address}" type="Navigation" press="onEndpointObjectItemPress"/>
+							</List>
+							<layoutData >
+								<l:SplitterLayoutData size="500px"/>
+							</layoutData>
+						</Panel>
+						<!--*****************End Endpoints*****************-->
+						<!--*****************Begin Details*****************-->
+						<Panel id="EndpointDetail" headerText="{i18n>entpointDetails} {SingleDescriptor>address}:">
+							<VBox >
+								<HBox>
+									<Label text="{i18n>address}:" class="sapUiSmallMargin" width="150px"/>
+									<Input type="Text" valueLiveUpdate="true" width="450px" value="{SingleDescriptor>address}" enabled="false"/>
+								</HBox>
+								<HBox>
+									<Label text="{i18n>type}:" class="sapUiSmallMargin" width="150px"/>
+									<Input type="Text" valueLiveUpdate="true" width="150px" value="{SingleDescriptor>type}" enabled="false"/>
+									<!--<Select selectedKey="{SingleDescriptor>type}" items="{ path: 'SingleDescriptor>/IdTypeCollection', sorter: { path: 'Name' } }" width="200px"
+											enabled="false">
+											<core:Item key="{TypeId}" text="{Name}"/>
+										</Select>-->
+								</HBox>
+								<HBox>
+									<Label text="{i18n>target}:" class="sapUiSmallMargin" width="150px"/>
+									<Input type="Text" valueLiveUpdate="true" width="200px" value="{SingleDescriptor>target}" enabled="false"/>
+									<!--<Select selectedKey="{SingleDescriptor>target}" items="{ path: 'SingleDescriptor>/IdTypeCollection', sorter: { path: 'Name' } }"
+											width="200px" enabled="false">
+											<core:Item key="{TargetId}" text="{Name}"/>
+										</Select>-->
+								</HBox>
+								<HBox>
+									<Label text="{i18n>user}:" class="sapUiSmallMargin" width="150px"/>
+									<Input type="Text" valueLiveUpdate="true" width="150px" value="{SingleDescriptor>user}" enabled="false"/>
+								</HBox>
+								<HBox>
+									<Label text="{i18n>password}:" class="sapUiSmallMargin" width="150px"/>
+									<Input type="Password" valueLiveUpdate="true" width="150px" value="{SingleDescriptor>password}" enabled="false"/>
+								</HBox>
+								<HBox>
+									<Label text="{i18n>tls_certificate}:" class="sapUiSmallMargin" width="150px"/>
+									<Input type="Text" valueLiveUpdate="true" width="800px" value="{SingleDescriptor>tls_certificate}" enabled="false"/>
+								</HBox>
+								<HBox>
+									<Label text="{i18n>certification}:" class="sapUiSmallMargin" width="150px"/>
+									<Input type="Text" valueLiveUpdate="true" width="400px" value="{SingleDescriptor>certificate_x509_i40}" enabled="false"/>
+								</HBox>
+							</VBox>
+						</Panel>
+						<!--*****************End Details*****************-->
+					</l:Splitter>
+					<!--*****************End Added Endpoints and Details*****************-->
+				</content>
+				<footer>
+					<Toolbar>
+						<ToolbarSpacer/>
+						<Button text="{i18n>back}" press="onClosePress"/>
+					</Toolbar>
+				</footer>
+			</Page>
+		</pages>
+	</App>
+</mvc:View>

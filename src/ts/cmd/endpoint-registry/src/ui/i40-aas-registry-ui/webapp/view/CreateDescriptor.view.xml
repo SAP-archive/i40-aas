@@ -1,0 +1,119 @@
+<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:f="sap.f"
+	controllerName="i40-aas-registry-ui.i40-aas-registry-ui.controller.CreateDescriptor" xmlns:html="http://www.w3.org/1999/xhtml">
+	<App>
+		<pages>
+			<Page id="CreateDescriptor" title="{i18n>createNewDescriptor}" showNavButton="true" navButtonPress=".onNavBack">
+				<content>
+					<!--*****************Begin Identification*****************-->
+					<Panel headerText="{i18n>identification}:">
+						<VBox >
+							<HBox>
+								<Label text="{i18n>id}:" class="sapUiSmallMargin" width="150px"/>
+								<Input type="Text" value="{/CreateDescriptorFormular/identification/id}" placeholder="www.sampleOperator/aas" valueLiveUpdate="true"
+									width="350px"/>
+							</HBox>
+							<HBox>
+								<Label text="{i18n>idType}:" class="sapUiSmallMargin" width="150px"/>
+								<Select selectedKey="{/CreateDescriptorFormular/identification/idType}" items="{ path: '/IdTypeCollection', sorter: { path: 'Name' } }"
+									width="200px">
+									<core:Item key="{TypeId}" text="{Name}"/>
+								</Select>
+							</HBox>
+						</VBox>
+					</Panel>
+					<!--*****************End Identification*****************-->
+					<!--*****************Begin Asset*****************-->
+					<Panel headerText="{i18n>asset}:">
+						<VBox >
+							<HBox>
+								<Label text="{i18n>id}:" class="sapUiSmallMargin" width="150px"/>
+								<Input type="Text" value="{/CreateDescriptorFormular/asset/id}" placeholder="Sample-Asset-Id" valueLiveUpdate="true" width="250px"/>
+							</HBox>
+							<HBox>
+								<Label text="{i18n>idType}:" class="sapUiSmallMargin" width="150px"/>
+								<Select selectedKey="{/CreateDescriptorFormular/asset/idType}" items="{ path: '/IdTypeCollection', sorter: { path: 'Name' } }" width="200px">
+									<core:Item key="{TypeId}" text="{Name}"/>
+								</Select>
+							</HBox>
+						</VBox>
+					</Panel>
+					<!--*****************End Asset*****************-->
+					<!--*****************Begin Descriptor*****************-->
+					<Panel headerText="{i18n>descriptor}:">
+						<VBox >
+							<HBox>
+								<Label text="{i18n>signatur}:" class="sapUiSmallMargin" width="150px"/>
+								<Input type="Text" value="{/CreateDescriptorFormular/descriptor/signature}" placeholder="Sample_sig" valueLiveUpdate="true" width="200px"/>
+							</HBox>
+						</VBox>
+					</Panel>
+					<!--*****************End Descriptor*****************-->
+					<!--*****************Begin Added Endpoints and Details*****************-->
+					<l:Splitter height="auto">
+						<!--*****************Begin Endpoints*****************-->
+						<Panel headerText="{i18n>endpoints}:">
+							<Button icon="sap-icon://add" type="Ghost" text="Add new Endpoint" press="onAddNewEndpointPress"/>
+							<List items="{ path: '/CreateDescriptorFormular/descriptor/endpoints' }" noDataText="{i18n>noEndpointsAdded}" showNoData="true">
+								<ObjectListItem title="{address}" type="Navigation" press="onEndpointObjectItemPress"/>
+							</List>
+							<layoutData >
+								<l:SplitterLayoutData size="100%" id="splitterSize" resizable="false"/>
+							</layoutData>
+						</Panel>
+						<!--*****************End Endpoints*****************-->
+						<!--*****************Begin Details*****************-->
+						<Panel id="EndpointDetail" headerText="{i18n>entpointDetails} {address}:" visible="false">
+							<VBox >
+								<HBox>
+									<Label text="{i18n>address}:" class="sapUiSmallMargin" width="150px"/>
+									<Input type="Text" id="EndpointAdress" placeholder="https://i40-aas-https-endpoint-ingress:2000/interaction" valueLiveUpdate="true"
+										width="450px" value="{address}"/>
+								</HBox>
+								<HBox>
+									<Label text="{i18n>type}:" class="sapUiSmallMargin" width="150px"/>
+									<Select selectedKey="{type}" id="EndpointType" items="{ path: '/EndpointTypeCollection', sorter: { path: 'Name' } }" width="200px">
+										<core:Item key="{TypeId}" text="{Name}"/>
+									</Select>
+								</HBox>
+								<HBox>
+									<Label text="{i18n>target}:" class="sapUiSmallMargin" width="150px"/>
+									<Select selectedKey="{target}" id="EndpointTarget" items="{ path: '/EndpointTargetCollection', sorter: { path: 'Name' } }" width="200px">
+										<core:Item key="{TargetId}" text="{Name}"/>
+									</Select>
+								</HBox>
+								<HBox>
+									<Label text="{i18n>user}:" class="sapUiSmallMargin" width="150px"/>
+									<Input type="Text" id="EndpointUser" placeholder="Sample_user" valueLiveUpdate="true" width="150px" value="{user}"/>
+								</HBox>
+								<HBox>
+									<Label text="{i18n>password}:" class="sapUiSmallMargin" width="150px"/>
+									<Input type="Password" id="EndpointPassword" placeholder="************" valueLiveUpdate="true" width="150px" value="{password}"/>
+								</HBox>
+								<HBox>
+									<Label text="{i18n>tls_certificate}:" class="sapUiSmallMargin" width="150px"/>
+									<Input type="Text" id="EndpointTLS_Certificate"
+										placeholder="-----BEGIN CERTIFICATE-----\nMIIEAjCCAuqgAwIBAgIJAO532Qo7zQsZMA0GCSqGSIb3DQEBCwUAMBIxEDAOBgNV\nBAMMB2k0MC1hYXMwHhcNMjAwNjA0MjAwNDExWhcNMzAwNjAyMjAwNDExWjASMR"
+										valueLiveUpdate="true" width="800px" value="{tls_certificate}"/>
+								</HBox>
+								<HBox>
+									<Label text="{i18n>certification}:" class="sapUiSmallMargin" width="150px"/>
+									<Input type="Text" id="EndpointCertification" placeholder="Sample_crt" valueLiveUpdate="true" width="400px" value="{certificate_x509_i40}"/>
+								</HBox>
+							</VBox>
+						</Panel>
+						<!--*****************End Details*****************-->
+					</l:Splitter>
+					<!--*****************End Added Endpoints and Details*****************-->
+				</content>
+				<footer>
+					<Toolbar>
+						<ToolbarSpacer/>
+						<!--<Button type="Emphasized" text="FetchToken" press="fetchToken" id="FetchToken"/>-->
+						<Button type="Emphasized" text="{i18n>createDescriptor}" icon="sap-icon://save" press="onSavePress" id="Save"/>
+						<Button text="{i18n>cancel}" press="onCancelPress"/>
+					</Toolbar>
+				</footer>
+			</Page>
+		</pages>
+	</App>
+</mvc:View>

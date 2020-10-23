@@ -1,0 +1,10 @@
+[{
+	"TypeId": "IRI",
+	"Name": "IRI"
+}, {
+	"TypeId": "Custom",
+	"Name": "Custom"
+}, {
+	"TypeId": "Other",
+	"Name": "Other"
+}]
