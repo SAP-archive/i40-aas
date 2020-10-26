@@ -37,7 +37,7 @@ sap.ui.define([
 				$.ajax({
 					'async': false,
 					'global': false,
-					'url': "AASDescriptors",
+					'url': "/AASDescriptors",
 					'dataType': "json",
 					'success': function (data) {
 						aAASDescriptors = data;
@@ -224,7 +224,7 @@ sap.ui.define([
 			//console.warn("lv_dataString = " + lv_dataString);
 
 			$.ajax({
-				url: 'semanticProtocols',
+				url: '/semanticProtocols',
 				type: 'PUT',
 				//>>>>>>>>>>>>>>>>>>>>>>>>>>> Only needed for POST-Request >>>>>>>>>>>>>>>>>>>>>>>
 				/*

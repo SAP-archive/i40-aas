@@ -122,7 +122,7 @@ sap.ui.define([
 		fetchToken: function () {
 			var that = this;
 			$.ajax({
-				url: 'AASDescriptors',
+				url: '/AASDescriptors',
 				type: 'GET',
 				headers: {
 					"x-CSRF-Token": "Fetch"
@@ -142,7 +142,7 @@ sap.ui.define([
 			//console.warn("lv_dataString = " + lv_dataString);
 
 			$.ajax({
-				url: 'AASDescriptors',
+				url: '/AASDescriptors',
 				type: 'PUT',
 				//>>>>>>>>>>>>>>>>>>>>>>>>>>> Only needed for POST-Request >>>>>>>>>>>>>>>>>>>>>>>
 				/*

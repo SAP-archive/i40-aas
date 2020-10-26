@@ -72,7 +72,7 @@
 							<VBox >
 								<HBox>
 									<Label text="{i18n>address}:" class="sapUiSmallMargin" width="150px"/>
-									<Input type="Text" valueLiveUpdate="true" width="450px" value="{SingleDescriptor>address}" enabled="false"/>
+									<Input type="Text" valueLiveUpdate="true" width="400px" value="{SingleDescriptor>address}" enabled="false"/>
 								</HBox>
 								<HBox>
 									<Label text="{i18n>type}:" class="sapUiSmallMargin" width="150px"/>
@@ -100,7 +100,7 @@
 								</HBox>
 								<HBox>
 									<Label text="{i18n>tls_certificate}:" class="sapUiSmallMargin" width="150px"/>
-									<Input type="Text" valueLiveUpdate="true" width="800px" value="{SingleDescriptor>tls_certificate}" enabled="false"/>
+									<Input type="Text" valueLiveUpdate="true" width="400px" value="{SingleDescriptor>tls_certificate}" enabled="false"/>
 								</HBox>
 								<HBox>
 									<Label text="{i18n>certification}:" class="sapUiSmallMargin" width="150px"/>

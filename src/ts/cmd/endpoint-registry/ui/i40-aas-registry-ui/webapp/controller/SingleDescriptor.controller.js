@@ -51,7 +51,7 @@ sap.ui.define([
 				$.ajax({
 					'async': false,
 					'global': false,
-					'url': "AASDescriptors/" + iAASId,
+					'url': "/AASDescriptors/" + iAASId,
 					'dataType': "json",
 					'success': function (data) {
 						aSingleAASDescriptor = data;

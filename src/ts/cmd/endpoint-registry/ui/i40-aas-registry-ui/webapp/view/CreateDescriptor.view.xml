@@ -67,7 +67,7 @@
 								<HBox>
 									<Label text="{i18n>address}:" class="sapUiSmallMargin" width="150px"/>
 									<Input type="Text" id="EndpointAdress" placeholder="https://i40-aas-https-endpoint-ingress:2000/interaction" valueLiveUpdate="true"
-										width="450px" value="{address}"/>
+										width="400px" value="{address}"/>
 								</HBox>
 								<HBox>
 									<Label text="{i18n>type}:" class="sapUiSmallMargin" width="150px"/>
@@ -93,7 +93,7 @@
 									<Label text="{i18n>tls_certificate}:" class="sapUiSmallMargin" width="150px"/>
 									<Input type="Text" id="EndpointTLS_Certificate"
 										placeholder="-----BEGIN CERTIFICATE-----\nMIIEAjCCAuqgAwIBAgIJAO532Qo7zQsZMA0GCSqGSIb3DQEBCwUAMBIxEDAOBgNV\nBAMMB2k0MC1hYXMwHhcNMjAwNjA0MjAwNDExWhcNMzAwNjAyMjAwNDExWjASMR"
-										valueLiveUpdate="true" width="800px" value="{tls_certificate}"/>
+										valueLiveUpdate="true" width="400px" value="{tls_certificate}"/>
 								</HBox>
 								<HBox>
 									<Label text="{i18n>certification}:" class="sapUiSmallMargin" width="150px"/>

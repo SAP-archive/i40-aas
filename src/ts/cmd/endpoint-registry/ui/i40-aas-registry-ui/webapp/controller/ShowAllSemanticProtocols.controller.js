@@ -15,7 +15,7 @@ sap.ui.define([
 				$.ajax({
 					'async': false,
 					'global': false,
-					'url': "semanticProtocols",
+					'url': "/semanticProtocols",
 					'dataType': "json",
 					'success': function (data) {
 						aSemanticProtocols = data;

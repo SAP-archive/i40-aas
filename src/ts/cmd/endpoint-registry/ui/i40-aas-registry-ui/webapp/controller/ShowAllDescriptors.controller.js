@@ -16,7 +16,7 @@ sap.ui.define([
 				$.ajax({
 					'async': false,
 					'global': false,
-					'url': "AASDescriptors",
+					'url': "/AASDescriptors",
 					'dataType': "json",
 					'success': function (data) {
 						aAASDescriptors = data;
