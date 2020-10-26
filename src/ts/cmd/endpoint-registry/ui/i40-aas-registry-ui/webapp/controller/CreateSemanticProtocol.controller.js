@@ -12,6 +12,10 @@ sap.ui.define([
 
 		onInit: function (oEvent) {
 
+			this.initiateModel();
+		},
+
+		initiateModel: function (oEvent) {
 			this._oPnl = this.byId("idPnl");
 
 			var aIdTypes = (function () {
@@ -60,10 +64,9 @@ sap.ui.define([
 
 			var oModel = new JSONModel(oData);
 			this.getView().setModel(oModel);
-
 		},
 
-		addInput: function () {
+		onAddDescriptorDropdown: function () {
 			var oSelect = new sap.m.Select({
 				forceSelection: false,
 				width: "250px"
@@ -101,9 +104,9 @@ sap.ui.define([
 			rowItemContainer.destroy();
 		},
 
-		onAddRolePress: function () {
-			var model = this.getView().getModel();
-			var localdata = model.getProperty("/CreateSPFormular");
+		onAddRole: function () {
+			var oModel = this.getView().getModel();
+			var localdata = oModel.getProperty("/CreateSPFormular");
 
 			var oMainObject = {};
 			oMainObject["name"] = this.getView().byId("RoleName").getValue();
@@ -128,20 +131,51 @@ sap.ui.define([
 			oMainObject["aasDescriptorIds"] = aMainObjectArray;
 
 			localdata.roles.push(oMainObject);
-			model.setProperty("/CreateSPFormular", localdata);
+			oModel.setProperty("/CreateSPFormular", localdata);
+			this.resetDescriptorDropdown();
 			MessageToast.show(this.getView().getModel(
 				"i18n").getResourceBundle().getText("roleCreated"));
+			this.getView().byId("RoleName").setValue("");
 
-			var lastAddedRole = model.getProperty("/CreateSPFormular/roles").length - 1;
+			this.showDetailsOfLastAddedRole();
+			this.enableSplitscreen();
+		},
+
+		showDetailsOfLastAddedRole: function () {
+			var oModel = this.getView().getModel();
+			var lastAddedRole = oModel.getProperty("/CreateSPFormular/roles").length - 1;
 			var newRolePath = "/CreateSPFormular/roles/" + lastAddedRole;
 			this.getView().byId("roleDetail").bindElement(newRolePath);
+		},
 
+		showDetailsOfRoleWithIndex: function (index) {
+			var oModel = this.getView().getModel();
+			var roleCount = oModel.getProperty("/CreateSPFormular/roles").length;
+			if (index <= 0) {
+				this.getView().byId("roleDetail").bindElement("/CreateSPFormular/roles/" + "0");
+				if (roleCount === 0) {
+					this.disableSplitscreen();
+				}
+			} else if (index > roleCount - 1) {
+				this.showDetailsOfLastAddedRole();
+			} else {
+				this.getView().byId("roleDetail").bindElement("/CreateSPFormular/roles/" + index);
+			}
+		},
+
+		enableSplitscreen: function () {
 			this.getView().byId("roleDetail").setVisible(true);
 			this.getView().byId("splitterSize").setSize("500px");
 			this.getView().byId("splitterSize").setResizable(true);
 		},
 
-		onRoleObjectItemPress: function (oEvent) {
+		disableSplitscreen: function () {
+			this.getView().byId("roleDetail").setVisible(false);
+			this.getView().byId("splitterSize").setSize("100%");
+			this.getView().byId("splitterSize").setResizable(false);
+		},
+
+		onRoleObjectItem: function (oEvent) {
 			var oItem = oEvent.getSource();
 			var oCtx = oItem.getBindingContext();
 			var path = oCtx.getPath();
@@ -149,30 +183,28 @@ sap.ui.define([
 		},
 
 		onDeleteRoleObject: function (oEvent) {
-			/*var oItem = oEvent.getSource();
-			var oCtx = oItem.getParent().getBindingContext();
-			var path = oCtx.getPath();*/
-
 			var oItem = oEvent.getParameter('listItem');
 			var oCtx = oItem.getBindingContext();
 			var path = oCtx.getPath();
 			var idx = path.charAt(path.lastIndexOf('/') + 1);
 
+			var oModel = this.getView().getModel();
+			var pathToRoles = oModel.getProperty("/CreateSPFormular/roles");
 			if (idx !== -1) {
-				var oModel = this.getView().getModel();
-				var pathToRoles = oModel.getProperty("/CreateSPFormular/roles");
+
 				pathToRoles.splice(idx, 1);
 
 				oModel.setProperty("/CreateSPFormular/roles", pathToRoles);
 
 				var oList = this.getView().byId("RoleList");
 				oList.getBinding("items").refresh(true);
-
 			}
-
+			this.showDetailsOfRoleWithIndex(idx);
 		},
 
 		onNavBack: function () {
+			//this.resetScreenToInitial(); clear Screen not onNavBack??
+
 			var oHistory = History.getInstance();
 			var sPreviousHash = oHistory.getPreviousHash();
 
@@ -182,9 +214,10 @@ sap.ui.define([
 				var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 				oRouter.navTo("overview", true);
 			}
+
 		},
 
-		onSavePress: function () {
+		onCreateSemanticProtocol: function () {
 			var that = this;
 			var lv_data = this.getView().getModel().getProperty("/CreateSPFormular");
 			var lv_dataString = JSON.stringify(lv_data);
@@ -209,11 +242,31 @@ sap.ui.define([
 				//console.warn("response = " + response);
 				if (status === "success") {
 					MessageToast.show(that.getView().getModel("i18n").getResourceBundle().getText("semanticProtocolCreated"));
+					that.resetScreenToInitial();
 				} else {
 					MessageToast.show(status + ": " + response);
 				}
 
 			});
+
+		},
+
+		resetDescriptorDropdown: function () {
+			var oView = this.getView();
+			var oPanel = oView.byId("idPnl");
+			var oCtx = oPanel.getContent();
+
+			for (var i = 0; i < oCtx.length; i++) {
+				oCtx[i].destroy(true);
+			}
+			this.onAddDescriptorDropdown();
+		},
+
+		resetScreenToInitial: function () {
+			this.getView().byId("RoleName").setValue("");
+			this.resetDescriptorDropdown();
+			this.initiateModel();
+			this.disableSplitscreen();
 		},
 
 		onCancelPress: function () {
@@ -226,6 +279,7 @@ sap.ui.define([
 				var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 				oRouter.navTo("overview", true);
 			}
+			this.resetScreenToInitial();
 			MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("canceled"));
 		}
 

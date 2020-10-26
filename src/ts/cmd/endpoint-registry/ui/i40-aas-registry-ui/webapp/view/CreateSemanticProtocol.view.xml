@@ -42,11 +42,11 @@
 											</items>
 										</FlexBox>
 									</Panel>
-									<Button type="Ghost" icon="sap-icon://add" text="{i18n>addDescriptor}" press="addInput"/>
+									<Button type="Ghost" icon="sap-icon://add" text="{i18n>addDescriptor}" press="onAddDescriptorDropdown"/>
 								</VBox>
 							</HBox>
 							<HBox>
-								<Button icon="sap-icon://add" type="Ghost" text="Add Role" press="onAddRolePress"/>
+								<Button icon="sap-icon://add" type="Ghost" text="Add Role" press="onAddRole"/>
 							</HBox>
 						</VBox>
 					</Panel>
@@ -57,7 +57,7 @@
 						<Panel headerText="{i18n>addedRoles}:">
 							<List id="RoleList" items="{ path: '/CreateSPFormular/roles' }" noDataText="{i18n>noRolesAdded}" showNoData="true" mode="Delete"
 								delete="onDeleteRoleObject">
-								<ObjectListItem title="{name}" type="Navigation" press="onRoleObjectItemPress"></ObjectListItem>
+								<ObjectListItem title="{name}" type="Navigation" press="onRoleObjectItem"></ObjectListItem>
 							</List>
 							<layoutData>
 								<l:SplitterLayoutData size="100%" id="splitterSize" resizable="false"/>
@@ -82,7 +82,7 @@
 				<footer>
 					<Toolbar>
 						<ToolbarSpacer/>
-						<Button type="Emphasized" icon="sap-icon://save" text="{i18n>createSP}" press="onSavePress"/>
+						<Button type="Emphasized" icon="sap-icon://save" text="{i18n>createSP}" press="onCreateSemanticProtocol"/>
 						<Button text="Cancel" press="onCancelPress"/>
 					</Toolbar>
 				</footer>

@@ -1,1 +1,1 @@
-{"type":"com.sap.html5.application-content","builders":{"default":"sap.nodejs","configs":{}},"runners":{"configs":{}},"attributes":{},"description":"mta_i40-aas-registry-ui_ui_deployer","mixinTypes":["mtamodule"]}
+{"type":"com.sap.html5.application-content","builders":{"default":"sap.nodejs","configs":{}},"runners":{"configs":{}},"attributes":{},"description":"","mixinTypes":["mtamodule"]}
