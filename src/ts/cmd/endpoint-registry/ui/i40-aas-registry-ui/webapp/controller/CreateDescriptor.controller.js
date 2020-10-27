@@ -11,6 +11,11 @@ sap.ui.define([
 
 		onInit: function () {
 
+			this.initiateModel();
+		},
+
+		initiateModel: function () {
+
 			var aIdTypes = (function () {
 				var aIdTypes = null;
 				$.ajax({
@@ -103,10 +108,19 @@ sap.ui.define([
 			var newEndpointPath = "/CreateDescriptorFormular/descriptor/endpoints/" + lastAddedEndpoint;
 			this.getView().byId("EndpointDetail").bindElement(newEndpointPath);
 
+			this.enableSplitscreen();
+		},
+
+		enableSplitscreen: function () {
 			this.getView().byId("EndpointDetail").setVisible(true);
 			this.getView().byId("splitterSize").setSize("500px");
 			this.getView().byId("splitterSize").setResizable(true);
+		},
 
+		disableSplitscreen: function () {
+			this.getView().byId("EndpointDetail").setVisible(false);
+			this.getView().byId("splitterSize").setSize("100%");
+			this.getView().byId("splitterSize").setResizable(false);
 		},
 
 		onEndpointObjectItemPress: function (oEvent) {
@@ -135,7 +149,7 @@ sap.ui.define([
 		*/
 		//<<<<<<<<<<<<<<<<<<<<<<<<<<<< Only needed for POST-Resquest <<<<<<<<<<<<<<<<<<<<<<
 
-		onSavePress: function () {
+		onCreateDescriptor: function () {
 			var that = this;
 			var lv_data = this.getView().getModel().getProperty("/CreateDescriptorFormular");
 			var lv_dataString = JSON.stringify(lv_data);
@@ -155,16 +169,19 @@ sap.ui.define([
 				dataType: "json",
 				data: lv_dataString
 			}).always(function (data, status, response) {
-				//console.warn("data = " + data);
-				//console.warn("status = " + status);
-				//console.warn("response = " + response);
 				if (status === "success") {
 					MessageToast.show(that.getView().getModel("i18n").getResourceBundle().getText("descriptorCreated"));
+					that.resetScreenToInitial();
 				} else {
 					MessageToast.show(status + ": " + response);
 				}
 
 			});
+		},
+
+		resetScreenToInitial: function () {
+			this.initiateModel();
+			this.disableSplitscreen();
 		},
 
 		onCancelPress: function () {
@@ -177,6 +194,7 @@ sap.ui.define([
 				var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 				oRouter.navTo("overview", true);
 			}
+			this.resetScreenToInitial();
 			MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("canceled"));
 		},
 
