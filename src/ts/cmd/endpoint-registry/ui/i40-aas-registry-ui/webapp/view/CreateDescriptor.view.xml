@@ -8,9 +8,9 @@
 					<Panel headerText="{i18n>identification}:">
 						<VBox >
 							<HBox>
-								<Label text="{i18n>id}:" class="sapUiSmallMargin" width="150px"/>
+								<Label text="{i18n>id}:" class="sapUiSmallMargin" width="150px" labelFor="InputAasId"/>
 								<Input type="Text" value="{/CreateDescriptorFormular/identification/id}" placeholder="www.sampleOperator/aas" valueLiveUpdate="true"
-									width="350px"/>
+									width="350px" required="true" id="InputAasId" liveChange = "onLiveChange"/>
 							</HBox>
 							<HBox>
 								<Label text="{i18n>idType}:" class="sapUiSmallMargin" width="150px"/>
@@ -26,8 +26,9 @@
 					<Panel headerText="{i18n>asset}:">
 						<VBox >
 							<HBox>
-								<Label text="{i18n>id}:" class="sapUiSmallMargin" width="150px"/>
-								<Input type="Text" value="{/CreateDescriptorFormular/asset/id}" placeholder="Sample-Asset-Id" valueLiveUpdate="true" width="250px"/>
+								<Label text="{i18n>id}:" class="sapUiSmallMargin" width="150px" labelFor="InputAssetId"/>
+								<Input type="Text" value="{/CreateDescriptorFormular/asset/id}" placeholder="Sample-Asset-Id" 
+								valueLiveUpdate="true" width="250px" required="true" id="InputAssetId" liveChange = "onLiveChange"/>
 							</HBox>
 							<HBox>
 								<Label text="{i18n>idType}:" class="sapUiSmallMargin" width="150px"/>
@@ -65,9 +66,9 @@
 						<Panel id="EndpointDetail" headerText="{i18n>entpointDetails} {address}:" visible="false">
 							<VBox >
 								<HBox>
-									<Label text="{i18n>address}:" class="sapUiSmallMargin" width="150px"/>
-									<Input type="Text" id="EndpointAdress" placeholder="https://i40-aas-https-endpoint-ingress:2000/interaction" valueLiveUpdate="true"
-										width="400px" value="{address}"/>
+									<Label text="{i18n>address}:" class="sapUiSmallMargin" width="150px" labelFor="EndpointAddress"/>
+									<Input type="Text" id="EndpointAddress" placeholder="https://i40-aas-https-endpoint-ingress:2000/interaction" valueLiveUpdate="true"
+										width="400px" value="{address}" liveChange="onLiveChange" required="true"/>
 								</HBox>
 								<HBox>
 									<Label text="{i18n>type}:" class="sapUiSmallMargin" width="150px"/>
@@ -109,7 +110,7 @@
 					<Toolbar>
 						<ToolbarSpacer/>
 						<!--<Button type="Emphasized" text="FetchToken" press="fetchToken" id="FetchToken"/>-->
-						<Button type="Emphasized" text="{i18n>createDescriptor}" icon="sap-icon://save" press="onCreateDescriptor" id="Save"/>
+						<Button type="Emphasized" text="{i18n>createDescriptor}" icon="sap-icon://save" press="onCreateDescriptor" id="Create"/>
 						<Button text="{i18n>cancel}" press="onCancelPress"/>
 					</Toolbar>
 				</footer>
