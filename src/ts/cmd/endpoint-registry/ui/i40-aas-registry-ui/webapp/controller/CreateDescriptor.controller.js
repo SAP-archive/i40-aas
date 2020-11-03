@@ -32,7 +32,7 @@ sap.ui.define([
         return aIdTypes;
       })();
 
-      var a = aas.IdTypeEnum  //keyType
+      var a = aas.IdTypeEnum //keyType
 
       console.log(a);
 
@@ -111,18 +111,18 @@ sap.ui.define([
       };
 
       var aAASDescriptors = (function () {
-				var aAASDescriptors = null;
-				$.ajax({
-					'async': false,
-					'global': false,
-					'url': "/AASDescriptors",
-					'dataType': "json",
-					'success': function (data) {
-						aAASDescriptors = data;
-					}
-				});
-				return aAASDescriptors;
-			})();
+        var aAASDescriptors = null;
+        $.ajax({
+          'async': false,
+          'global': false,
+          'url': "/AASDescriptors",
+          'dataType': "json",
+          'success': function (data) {
+            aAASDescriptors = data;
+          }
+        });
+        return aAASDescriptors;
+      })();
 
 
       var oData = {
@@ -161,8 +161,17 @@ sap.ui.define([
       var lastAddedEndpoint = model.getProperty("/CreateDescriptorFormular/descriptor/endpoints").length - 1;
       var newEndpointPath = "/CreateDescriptorFormular/descriptor/endpoints/" + lastAddedEndpoint;
       this.getView().byId("EndpointDetail").bindElement(newEndpointPath);
-
       this.enableSplitscreen();
+      
+      
+      // Check Endpoint Adress duplicate (New Endpoint):
+      var endpointAddress = this.getView().byId("EndpointAddress");
+      if (this.epAddressDuplicate()) {
+        endpointAddress.setValueState(sap.ui.core.ValueState.Error);
+        endpointAddress.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("addressDuplicate"));
+      }
+      this.checkCreateButton();
+
     },
 
     enableSplitscreen: function () {
@@ -216,36 +225,41 @@ sap.ui.define([
     // Looking for dublicate in local data from DB (one request):
     aasIdDuplicate: function (aasId) {
       var AASDescriptors = this.getView().getModel().getProperty("/AASDescriptorsCollection")
-      for (var i = 0; i < AASDescriptors.length; i++){
-          if (aasId === AASDescriptors[i].identification.id){
-            return true;
-          }
+      for (var i = 0; i < AASDescriptors.length; i++) {
+        if (aasId === AASDescriptors[i].identification.id) {
+          return true;
+        }
       }
       return false;
     },
 
     assetIdDuplicate: function (assetId) {
       var AASDescriptors = this.getView().getModel().getProperty("/AASDescriptorsCollection")
-      for (var i = 0; i < AASDescriptors.length; i++){
-          if (assetId === AASDescriptors[i].asset.id){
-            return true;
-          }
+      for (var i = 0; i < AASDescriptors.length; i++) {
+        if (assetId === AASDescriptors[i].asset.id) {
+          return true;
+        }
       }
       return false;
     },
     // InProgress: Better implement a loop to check the Endpoint Addresses from any Endpoint at any time!
-    epAddressDuplicate: function (endpointAddress) {
+    epAddressDuplicate: function () {
       debugger;
-      var count = 0;
+      
       var endpoints = this.getView().getModel().getProperty("/CreateDescriptorFormular/descriptor/endpoints")
-      for (var i = 0; i < endpoints.length; i++){
-          if (endpointAddress === endpoints[i].address){
-            count ++;
+      for (var i = 0; i < Math.round(endpoints.length / 2); i++) {  //Just need to compare the first half of the objects with all other objects
+        var count = 0;
+        for (var j = 0; j < endpoints.length; j++) {
+          if (endpoints[i].address === endpoints[j].address) {
+            count++;
             // count = 1 is its self -> count > 1 means there is a duplicate
-            if (count > 1){
+            if (count > 1) {
               return true;
             }
           }
+
+        }
+
       }
       return false;
     },
@@ -279,24 +293,31 @@ sap.ui.define([
         inputControl.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("duplicate"));
       }
       // Only check for duplicate if Inputfield is descriptor/endpoints/address
-      if (inputControl === endpointAddress && this.epAddressDuplicate(newValue)) {
+      if (inputControl === endpointAddress && this.epAddressDuplicate()) {
         inputControl.setValueState(sap.ui.core.ValueState.Error);
-        inputControl.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("duplicate"));
+        inputControl.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("addressDuplicate"));
       }
 
+      this.checkCreateButton();
 
 
-      // Disable CreateButton if ValueState of AssetId or AssId is Error
+
+    },
+    // Disable CreateButton if ValueState of AssetId, AssId or endpointAdress is Error & enable if not
+    checkCreateButton: function () {
+      var inputAasId = this.getView().byId("InputAasId");
+      var inputAssetId = this.getView().byId("InputAssetId");
+      var createButton = this.getView().byId("Create");
+      var endpointAddress = this.getView().byId("EndpointAddress");
+
       var aasIdValueState = inputAasId.getValueState();
       var assetIdValueState = inputAssetId.getValueState();
-      if (aasIdValueState == "Error" || assetIdValueState == "Error"){
+      var endpointAddressValueState = endpointAddress.getValueState();
+      if (aasIdValueState == "Error" || assetIdValueState == "Error" || endpointAddressValueState== "Error") {
         createButton.setEnabled(false);
       } else {
         createButton.setEnabled(true);
       }
-
-
-
     },
 
 
@@ -367,8 +388,11 @@ sap.ui.define([
       this.disableSplitscreen();
       var inputAasId = this.getView().byId("InputAasId");
       var inputAssetId = this.getView().byId("InputAssetId");
+      var endpointAddress = this.getView().byId("EndpointAddress");
       inputAasId.setValueState(sap.ui.core.ValueState.None);
       inputAssetId.setValueState(sap.ui.core.ValueState.None);
+      endpointAddress.setValueState(sap.ui.core.ValueState.None);
+      this.checkCreateButton();
     },
 
 
