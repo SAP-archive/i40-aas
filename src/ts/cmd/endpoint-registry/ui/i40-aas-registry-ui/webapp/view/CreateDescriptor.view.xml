@@ -109,8 +109,7 @@
 				<footer>
 					<Toolbar>
 						<ToolbarSpacer/>
-						<!--<Button type="Emphasized" text="FetchToken" press="fetchToken" id="FetchToken"/>-->
-						<Button type="Emphasized" text="{i18n>createDescriptor}" icon="sap-icon://save" press="onCreateDescriptor" id="Create"/>
+						<Button type="Emphasized" text="{i18n>createDescriptor}" icon="sap-icon://save" press="onCreateDescriptor" id="CreateButton"/>
 						<Button text="{i18n>cancel}" press="onCancelPress"/>
 					</Toolbar>
 				</footer>
