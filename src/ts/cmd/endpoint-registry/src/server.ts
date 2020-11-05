@@ -15,6 +15,8 @@ import { RegistryFactory } from './services/registry/daos/postgres/RegistryFacto
 const logger = require('aas-logger/lib/log');
 
 const router = express();
+router.use('/ui', express.static('/cmd/endpoint-registry/dist/ui/i40-aas-registry-ui/webapp'));
+
 applyRoutes(healthRoute, router);
 applyMiddleware(middleware, router);
 applyRoutes(routes, router);
