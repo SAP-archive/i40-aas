@@ -27,31 +27,25 @@ sap.ui.define([
 
     initiateModel: function () {
 
-      var aIdTypes = (function () {
-        var aIdTypes = null;
-        $.ajax({
-          'async': false,
-          'global': false,
-          'url': "mockserver/mockdata/Dropdowns/IdTypes.json",
-          'dataType': "json",
-          'success': function (data) {
-            aIdTypes = data;
-          }
-        });
-        return aIdTypes;
-      })();
+      // Use Object Lib for IdType Dropdown menu
+      var oIdTypes = aas.IdTypeEnum
+      var IdTypeKeys = Object.keys(oIdTypes);
 
-      // Todo: Use Object Lib for IdType Dropdown
-      var a = aas.IdTypeEnum //keyType
-      console.log(a);
-      //
-
+      var aIdTypes = new Array();
+      for (var i = 0; i < IdTypeKeys.length; i++) {
+        var oObject = {};
+        oObject["TypeId"] = IdTypeKeys[i];
+        oObject["Name"] = IdTypeKeys[i];
+				aIdTypes.push(JSON.parse(JSON.stringify(oObject)));
+			}
+      
+      
       var aEndpointTypes = (function () {
         var aEndpointTypes = null;
         $.ajax({
           'async': false,
           'global': false,
-          'url': "mockserver/mockdata/Dropdowns/EndpointTypes.json",
+          'url': "model/EndpointTypes.json",
           'dataType': "json",
           'success': function (data) {
             aEndpointTypes = data;
@@ -65,7 +59,7 @@ sap.ui.define([
         $.ajax({
           'async': false,
           'global': false,
-          'url': "mockserver/mockdata/Dropdowns/EndpointTargets.json",
+          'url': "model/EndpointTargets.json",
           'dataType': "json",
           'success': function (data) {
             aEndpointTargets = data;
