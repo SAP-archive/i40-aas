@@ -39,48 +39,41 @@ sap.ui.define([
       };
       var oModel = new JSONModel(oData);
       this.getView().setModel(oModel, "DescriptorList");
-
-
-
     },
+
+    // --------------- Begin auto refresh -------------------------
 
     startAutorefreshModel: function (timeInMilliseconds) {
       var self = this;
       this.intervalHandle = setInterval(function () {
         self.initiateModel();
       }, timeInMilliseconds);
-
+      
     },
 
     stopAutorefreshModel: function () {
       if (this.intervalHandle)
         clearInterval(this.intervalHandle);
     },
+    // --------------- End auto refresh -------------------------
 
-    // --------------- Begin SingleDescriptor -------------------------
+    // --------------- Begin route to SingleDescriptor -------------------------
 
     onOpenSingleDescriptor: function (oEvent) {
       var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
       var oItem = oEvent.getSource();
 
-      //eslint no-console: ["error", { allow: ["warn", "error"] }]
-      //console.warn("oItem = " + oItem);
-      //console.warn("AASId = " + oItem.getBindingContext("DescriptorList").getProperty("identification/id"));
       var AASId = oItem.getBindingContext("DescriptorList").getProperty("identification/id");
       var AASIdEncoded = encodeURIComponent(AASId);
-      //var AASIdDecoded = decodeURIComponent(AASIdEncoded);
-      //console.warn("AASId = " + AASId);
-      //console.warn("AASIdEncoded = " + AASIdEncoded);
-      //console.warn("AASIdDecoded = " + AASIdDecoded);
 
       oRouter.navTo("SingleDescriptor", {
         AASId: AASIdEncoded
-	  });
+      });
 
-	  this.stopAutorefreshModel();
+      this.stopAutorefreshModel();
     },
 
-    // --------------- End SingleDescriptor ---------------------------
+    // --------------- End route to SingleDescriptor -------------------------
 
     onNavBack: function () {
       var oHistory = History.getInstance();
