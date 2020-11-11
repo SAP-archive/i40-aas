@@ -1,0 +1,14 @@
+{
+  "xsappname": "mta_i40-aas-registry-ui",
+  "tenant-mode": "dedicated",
+  "description": "Security profile of called application",
+  "role-templates": [
+    {
+      "name": "Token_Exchange",
+      "description": "UAA",
+      "scope-references": [
+        "uaa.user"
+      ]
+    }
+  ]
+}
