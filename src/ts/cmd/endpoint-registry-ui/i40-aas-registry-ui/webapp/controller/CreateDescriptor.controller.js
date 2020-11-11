@@ -1,3 +1,5 @@
+
+
 sap.ui.define([
   "sap/ui/core/mvc/Controller",
   "sap/ui/core/routing/History",
@@ -38,8 +40,8 @@ sap.ui.define([
         oObject["Name"] = IdTypeKeys[i];
 				aIdTypes.push(JSON.parse(JSON.stringify(oObject)));
 			}
-      
-      
+
+
       var aEndpointTypes = (function () {
         var aEndpointTypes = null;
         $.ajax({
@@ -88,7 +90,7 @@ sap.ui.define([
         $.ajax({
           'async': false,
           'global': false,
-          'url': "/AASDescriptors",
+          'url': "/resources/AASDescriptors",
           'dataType': "json",
           'success': function (data) {
             aAASDescriptors = data;

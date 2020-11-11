@@ -34,7 +34,7 @@ sap.ui.define([
 			// Use Object Lib for IdType Dropdown menu
 			var oIdTypes = aas.IdTypeEnum
 			var IdTypeKeys = Object.keys(oIdTypes);
-	  
+
 			var aIdTypes = new Array();
 			for (var i = 0; i < IdTypeKeys.length; i++) {
 			  var oObject = {};
@@ -48,7 +48,7 @@ sap.ui.define([
 				$.ajax({
 					'async': false,
 					'global': false,
-					'url': "/semanticProtocols/" + iSPId,
+					'url': "/resources/semanticProtocols/" + iSPId,
 					'dataType': "json",
 					'success': function (data) {
 						aSingleSemanticProtocol = data;

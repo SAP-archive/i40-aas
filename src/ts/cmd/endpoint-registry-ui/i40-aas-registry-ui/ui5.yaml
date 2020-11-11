@@ -15,15 +15,22 @@ builder:
     - name: webide-extension-task-resources
       afterTask: generateVersionInfo
       configuration:
-        nameSpace: i40-aas-registry-ui 
+        nameSpace: i40-aas-registry-ui
     - name: webide-extension-task-copyFile
       afterTask: webide-extension-task-resources
       configuration:
-        srcFile: "/xs-app.json" 
-        destFile: "/xs-app.json" 
+        srcFile: "/xs-app.json"
+        destFile: "/xs-app.json"
     - name: webide-extension-task-lint
       afterTask: webide-extension-task-copyFile
       configuration:
         destDir: dist
         appFolder: webapp
         nameSpace: i40-aas-registry-ui
+server:
+  customMiddleware:
+  - name: ui5-middleware-simpleproxy
+    mountPath: /resources/
+    afterMiddleware: compression
+    configuration:
+      baseUri: http://localhost:4400/

@@ -25,7 +25,7 @@ sap.ui.define([
         $.ajax({
           'async': false,
           'global': false,
-          'url': "/AASDescriptors",
+          'url': "/resources/AASDescriptors",
           'dataType': "json",
           'success': function (data) {
             aAASDescriptors = data;
@@ -48,7 +48,7 @@ sap.ui.define([
       this.intervalHandle = setInterval(function () {
         self.initiateModel();
       }, timeInMilliseconds);
-      
+
     },
 
     stopAutorefreshModel: function () {
