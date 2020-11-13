@@ -1,0 +1,59 @@
+ID: mta_i40-aas-registry-ui
+_schema-version: '2.1'
+parameters:
+  deploy_mode: html5-repo
+version: 0.0.1
+modules:
+  - name: mta-i40-aas-registry-ui-approuter
+    type: approuter.nodejs
+    path: mta-i40-aas-registry-ui-approuter
+    parameters:
+      disk-quota: 256M
+      memory: 256M
+    requires:
+      - name: mta_i40-aas-registry-ui_html5_repo_runtime
+      - name: uaa_mta_i40-aas-registry-ui
+      - name: dest_mta_i40-aas-registry-ui
+  - name: mta_i40-aas-registry-ui_ui_deployer
+    type: com.sap.html5.application-content
+    path: mta_i40-aas-registry-ui_ui_deployer
+    requires:
+      - name: mta_i40-aas-registry-ui_html5_repo_host
+    build-parameters:
+      requires:
+        - name: i40-aas-registry-ui
+          artifacts:
+            - './*'
+          target-path: resources/i40-aas-registry-ui
+  - name: i40-aas-registry-ui
+    type: html5
+    path: i40-aas-registry-ui
+    build-parameters:
+      builder: custom
+      commands:
+        - npm install
+        - npm run build
+      supported-platforms: []
+      build-result: dist
+resources:
+  - name: mta_i40-aas-registry-ui_html5_repo_runtime
+    parameters:
+      service-plan: app-runtime
+      service: html5-apps-repo
+    type: org.cloudfoundry.managed-service
+  - name: mta_i40-aas-registry-ui_html5_repo_host
+    parameters:
+      service-plan: app-host
+      service: html5-apps-repo
+    type: org.cloudfoundry.managed-service
+  - name: uaa_mta_i40-aas-registry-ui
+    parameters:
+      path: ./xs-security.json
+      service-plan: application
+      service: xsuaa
+    type: org.cloudfoundry.managed-service
+  - name: dest_mta_i40-aas-registry-ui
+    parameters:
+      service-plan: lite
+      service: destination
+    type: org.cloudfoundry.managed-service
