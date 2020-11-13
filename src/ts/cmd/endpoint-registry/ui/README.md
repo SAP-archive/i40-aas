@@ -1,1 +1,0 @@
-# i40-aas-registry-ui
