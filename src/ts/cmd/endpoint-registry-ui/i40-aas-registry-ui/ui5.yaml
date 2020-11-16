@@ -33,4 +33,7 @@ server:
     mountPath: /resources/
     afterMiddleware: compression
     configuration:
-      baseUri: http://localhost:4400/
+      baseUri: https://localhost:4400/
+      strictSSL: false
+      username: admin
+      password: admin

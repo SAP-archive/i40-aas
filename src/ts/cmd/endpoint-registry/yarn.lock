@@ -275,14 +275,13 @@
     "@types/qs" "*"
     "@types/range-parser" "*"
 
-"@types/express@*", "@types/express@^4.17.0":
-  "integrity" "sha512-wLhcKh3PMlyA2cNAB9sjM1BntnhPMiM0JOBwPBqttjHev2428MLEB4AYVN+d8s2iyCVZac+o41Pflm/ZH5vLXQ=="
-  "resolved" "https://registry.npmjs.org/@types/express/-/express-4.17.8.tgz"
-  "version" "4.17.8"
+"@types/express@*", "@types/express@4.17.0":
+  "integrity" "sha512-CjaMu57cjgjuZbh9DpkloeGxV45CnMGlVd+XpG7Gm9QgVrd7KFq+X4HY0vM+2v0bczS48Wg7bvnMY5TN+Xmcfw=="
+  "resolved" "https://registry.npmjs.org/@types/express/-/express-4.17.0.tgz"
+  "version" "4.17.0"
   dependencies:
     "@types/body-parser" "*"
     "@types/express-serve-static-core" "*"
-    "@types/qs" "*"
     "@types/serve-static" "*"
 
 "@types/mime@*":
@@ -341,6 +340,7 @@
 
 "aas-logger@file:../../pkg/aas-logger":
   "resolved" "file:../../pkg/aas-logger"
+  "version" "1.0.4"
   dependencies:
     "moment" "^2.24.0"
     "winston" "^3.2.1"
@@ -1253,7 +1253,7 @@
   dependencies:
     "basic-auth" "^2.0.1"
 
-"express@^4.17.1":
+"express@4.17.1":
   "integrity" "sha512-mHJ9O79RqluphRrcw2X/GTh3k9tVv8YcoyY4Kkh4WDMUYKRZUq0h1o0w2rrrxBqM7VoeUVqgb27xlEMXTnYt4g=="
   "resolved" "https://registry.npmjs.org/express/-/express-4.17.1.tgz"
   "version" "4.17.1"
@@ -3127,7 +3127,7 @@
     "source-map-support" "^0.5.17"
     "yn" "3.1.1"
 
-"tsc-watch@^4.2.3":
+"tsc-watch@^4.2.9":
   "integrity" "sha512-DlTaoDs74+KUpyWr7dCGhuscAUKCz6CiFduBN7R9RbLJSSN1moWdwoCLASE7+zLgGvV5AwXfYDiEMAsPGaO+Vw=="
   "resolved" "https://registry.npmjs.org/tsc-watch/-/tsc-watch-4.2.9.tgz"
   "version" "4.2.9"
