@@ -33,7 +33,7 @@ if (TLS_ENABLED == 'true') {
     key: fs.readFileSync(TLS_KEYFILE),
     cert: fs.readFileSync(TLS_CERTFILE)
   }, router).listen(PORT, () => {
-    logger.info(`A Server is running http://localhost:${PORT}...`);
+    logger.info(`A Server is running https://localhost:${PORT}...`);
   });
 } else {
   http.createServer(router).listen(PORT, () =>
