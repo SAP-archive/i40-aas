@@ -8,9 +8,9 @@
 					<Panel headerText="{i18n>identification}:">
 						<VBox >
 							<HBox>
-								<Label text="{i18n>id}:" class="sapUiSmallMargin" width="150px"/>
+								<Label text="{i18n>id}:" class="sapUiSmallMargin" width="150px" labelFor="InputSpId"/>
 								<Input type="Text" value="{/CreateSPFormular/identification/id}" placeholder="i40:registry-semanticProtocol/onboarding"
-									valueLiveUpdate="true" width="350px"/>
+									valueLiveUpdate="true" width="350px" required="true" id="InputSpId" liveChange = "onLiveChange"/>
 							</HBox>
 							<HBox>
 								<Label text="{i18n>idType}:" class="sapUiSmallMargin" width="150px"/>
@@ -26,16 +26,16 @@
 					<Panel headerText="{i18n>roles}:">
 						<VBox >
 							<HBox>
-								<Label text="{i18n>roleName}:" class="sapUiSmallMargin" width="150px"/>
-								<Input type="Text" id="RoleName" placeholder="Operator" valueLiveUpdate="true" width="250px"/>
+								<Label text="{i18n>roleName}:" class="sapUiSmallMargin" width="150px" labelFor="InputRoleName"/>
+								<Input type="Text" id="InputRoleName" placeholder="Operator" valueLiveUpdate="true" width="250px" required="true" liveChange = "onLiveChange"/>
 							</HBox>
 							<HBox>
-								<Label text="{i18n>aasDescriptor}:" class="sapUiSmallMargin" width="150px"/>
+								<Label text="{i18n>aasDescriptor}:" class="sapUiSmallMargin" width="150px" required="true"/>
 								<VBox>
 									<Panel id="idPnl">
 										<FlexBox id="idFB" alignItems="Center" justifyContent="Start">
 											<items>
-												<Select id="DescriptorId" items="{ path: '/AASDescriptors', sorter: { path: 'identification/id' } }" width="250px" forceSelection="false">
+												<Select id="DescriptorId" items="{ path: '/AASDescriptors', sorter: { path: 'identification/id' } }" width="250px" forceSelection="false" change = "onSelect">
 													<core:Item key="{key}" text="{identification/id}"/>
 												</Select>
 												<core:Icon src="sap-icon://delete" press="onDeleteCcMail"/>
@@ -46,7 +46,7 @@
 								</VBox>
 							</HBox>
 							<HBox>
-								<Button icon="sap-icon://add" type="Ghost" text="Add Role" press="onAddRole"/>
+								<Button icon="sap-icon://add" type="Ghost" text="Add Role" press="onAddRole" id="AddRoleButton"/>
 							</HBox>
 						</VBox>
 					</Panel>
@@ -82,7 +82,7 @@
 				<footer>
 					<Toolbar>
 						<ToolbarSpacer/>
-						<Button type="Emphasized" icon="sap-icon://save" text="{i18n>createSP}" press="onCreateSemanticProtocol"/>
+						<Button type="Emphasized" icon="sap-icon://save" text="{i18n>createSP}" press="onCreateSemanticProtocol" id="CreateButton"/>
 						<Button text="Cancel" press="onCancelPress"/>
 					</Toolbar>
 				</footer>

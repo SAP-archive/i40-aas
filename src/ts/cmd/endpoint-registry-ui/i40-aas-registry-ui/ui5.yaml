@@ -35,5 +35,3 @@ server:
     configuration:
       baseUri: https://localhost:4400/
       strictSSL: false
-      username: admin
-      password: admin
