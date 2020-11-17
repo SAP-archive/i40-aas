@@ -259,7 +259,7 @@ sap.ui.define([
         //console.warn("lv_dataString = " + lv_dataString);
 
         $.ajax({
-          url: '/AASDescriptors',
+          url: '/resources/AASDescriptors',
           type: 'PUT',
           contentType: "application/json",
           dataType: "json",
