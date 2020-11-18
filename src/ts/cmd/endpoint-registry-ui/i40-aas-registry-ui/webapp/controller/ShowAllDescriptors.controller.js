@@ -22,7 +22,7 @@ sap.ui.define([
     initiateModel: function () {
       var aAASDescriptors = (function () {
         var aAASDescriptors = null;
-        $.ajax({
+        jQuery.ajax({
           'async': false,
           'global': false,
           'url': "/resources/AASDescriptors",

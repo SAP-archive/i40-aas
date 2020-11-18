@@ -16,7 +16,7 @@ sap.ui.define([
 				var oCtx = oItem.getBindingContext('SingleSemanticProtocol');
 				var path = oCtx.getPath();
 				var namedModelPath = "SingleSemanticProtocol>" + path;
-				this.getView().byId("roleDetail").bindElement(namedModelPath);
+				this.byId("roleDetail").bindElement(namedModelPath);
 			}
 
 		},
@@ -45,7 +45,7 @@ sap.ui.define([
 
 			var aSingleSemanticProtocol = (function () {
 				var aSingleSemanticProtocol = null;
-				$.ajax({
+				jQuery.ajax({
 					'async': false,
 					'global': false,
 					'url': "/resources/semanticProtocols/" + iSPId,
@@ -71,7 +71,7 @@ sap.ui.define([
 			var oCtx = oItem.getBindingContext('SingleSemanticProtocol');
 			var path = oCtx.getPath();
 			var namedModelPath = "SingleSemanticProtocol>" + path;
-			this.getView().byId("roleDetail").bindElement(namedModelPath);
+			this.byId("roleDetail").bindElement(namedModelPath);
 		},
 
 		onNavBack: function () {

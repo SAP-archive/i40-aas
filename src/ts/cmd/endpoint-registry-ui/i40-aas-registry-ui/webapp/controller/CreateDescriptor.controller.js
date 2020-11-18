@@ -20,31 +20,28 @@ sap.ui.define([
 
     getInputs: function () {
       return {
-        inputAasId: this.getView().byId("InputAasId"),
-        inputAssetId: this.getView().byId("InputAssetId"),
-        createButton: this.getView().byId("CreateButton"),
-        endpointAddress: this.getView().byId("EndpointAddress"),
+        inputAasId: this.byId("InputAasId"),
+        inputAssetId: this.byId("InputAssetId"),
+        createButton: this.byId("CreateButton"),
+        endpointAddress: this.byId("EndpointAddress"),
       }
     },
 
     initiateModel: function () {
-
       // Use Object Lib for IdType Dropdown menu
-      var oIdTypes = aas.IdTypeEnum
-      var IdTypeKeys = Object.keys(oIdTypes);
-
-      var aIdTypes = new Array();
-      for (var i = 0; i < IdTypeKeys.length; i++) {
+      var oIdTypeEnum = aas.IdTypeEnum
+      var aIdTypeKeys = Object.keys(oIdTypeEnum);
+      
+      var aIdTypes = aIdTypeKeys.map(function(Key){
         var oObject = {};
-        oObject["TypeId"] = IdTypeKeys[i];
-        oObject["Name"] = IdTypeKeys[i];
-				aIdTypes.push(JSON.parse(JSON.stringify(oObject)));
-			}
-
+        oObject["TypeId"] = Key;
+        oObject["Name"] = Key;
+        return oObject
+      });       
 
       var aEndpointTypes = (function () {
         var aEndpointTypes = null;
-        $.ajax({
+        jQuery.ajax({
           'async': false,
           'global': false,
           'url': "model/EndpointTypes.json",
@@ -58,7 +55,7 @@ sap.ui.define([
 
       var aEndpointTargets = (function () {
         var aEndpointTargets = null;
-        $.ajax({
+        jQuery.ajax({
           'async': false,
           'global': false,
           'url': "model/EndpointTargets.json",
@@ -87,7 +84,7 @@ sap.ui.define([
 
       var aAASDescriptors = (function () {
         var aAASDescriptors = null;
-        $.ajax({
+        jQuery.ajax({
           'async': false,
           'global': false,
           'url': "/resources/AASDescriptors",
@@ -122,7 +119,7 @@ sap.ui.define([
       var localdata = model.getProperty("/CreateDescriptorFormular");
       var addOneMoreEndpoint = {};
       addOneMoreEndpoint["address"] = "New Endpoint";
-      addOneMoreEndpoint["type"] = "grpc";
+      addOneMoreEndpoint["type"] = "https";
       addOneMoreEndpoint["target"] = "cloud";
       addOneMoreEndpoint["user"] = "";
       addOneMoreEndpoint["password"] = "";
@@ -133,7 +130,7 @@ sap.ui.define([
       MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("endpointCreated"));
       var lastAddedEndpoint = model.getProperty("/CreateDescriptorFormular/descriptor/endpoints").length - 1;
       var newEndpointPath = "/CreateDescriptorFormular/descriptor/endpoints/" + lastAddedEndpoint;
-      this.getView().byId("EndpointDetail").bindElement(newEndpointPath);
+      this.byId("EndpointDetail").bindElement(newEndpointPath);
       this.enableSplitscreen();
 
       // Check Endpoint Adress duplicate (New Endpoint):
@@ -145,22 +142,22 @@ sap.ui.define([
     },
 
     enableSplitscreen: function () {
-      this.getView().byId("EndpointDetail").setVisible(true);
-      this.getView().byId("splitterSize").setSize("500px");
-      this.getView().byId("splitterSize").setResizable(true);
+      this.byId("EndpointDetail").setVisible(true);
+      this.byId("splitterSize").setSize("500px");
+      this.byId("splitterSize").setResizable(true);
     },
 
     disableSplitscreen: function () {
-      this.getView().byId("EndpointDetail").setVisible(false);
-      this.getView().byId("splitterSize").setSize("100%");
-      this.getView().byId("splitterSize").setResizable(false);
+      this.byId("EndpointDetail").setVisible(false);
+      this.byId("splitterSize").setSize("100%");
+      this.byId("splitterSize").setResizable(false);
     },
 
     onEndpointObjectItemPress: function (oEvent) {
       var oItem = oEvent.getSource();
       var oCtx = oItem.getBindingContext();
       var path = oCtx.getPath();
-      this.getView().byId("EndpointDetail").bindElement(path);
+      this.byId("EndpointDetail").bindElement(path);
     },
 
     aasIdDuplicate: function (aasId) {
@@ -206,7 +203,7 @@ sap.ui.define([
     onLiveChange(oEvent) {
       var id = oEvent.getParameter("id");
       var newValue = oEvent.getParameter("newValue");
-      var inputControl = this.getView().byId(id);
+      var inputControl = this.byId(id);
 
       inputControl.setValueState(sap.ui.core.ValueState.None);
       this.getInputs().createButton.setEnabled(true);
