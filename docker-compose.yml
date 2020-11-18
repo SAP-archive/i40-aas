@@ -158,6 +158,27 @@ services:
     volumes:
       - ./src/compose/volumes/certs/:/etc/ssl/certs/
   ##########################################
+  i40-aas-endpoint-registry-ui:
+    image: sapi40/i40-aas-endpoint-registry-ui
+    ports:
+      - "${CORE_REGISTRIES_ENDPOINTS_UI_PORT}:${CORE_REGISTRIES_ENDPOINTS_UI_PORT}"
+    environment:
+      ## logging
+      - LOGGING_LOGLEVEL=${LOGGING_LOGLEVEL}
+      - LOGGING_LOGOUTPUT=${LOGGING_LOGOUTPUT}
+      ## endpoint-registry
+      - CORE_REGISTRIES_ENDPOINTS_HOST=i40-aas-endpoint-registry
+      - CORE_REGISTRIES_ENDPOINTS_USER=${CORE_REGISTRIES_ENDPOINTS_USER}
+      - CORE_REGISTRIES_ENDPOINTS_PASSWORD=${CORE_REGISTRIES_ENDPOINTS_PASSWORD}
+      - CORE_REGISTRIES_ENDPOINTS_PORT=${CORE_REGISTRIES_ENDPOINTS_PORT}
+      - CORE_REGISTRIES_ENDPOINTS_ENCRYPTIONKEY=${CORE_REGISTRIES_ENDPOINTS_ENCRYPTIONKEY}
+      ## TLS
+      - TLS_ENABLED=${TLS_ENABLED}
+      - TLS_KEYFILE=${TLS_KEYFILE}
+      - TLS_CERTFILE=${TLS_CERTFILE}
+    volumes:
+      - ./src/compose/volumes/certs/:/etc/ssl/certs/
+  ##########################################
   i40-aas-adapter-registry:
     image: sapi40/i40-aas-adapter-registry
     ports:

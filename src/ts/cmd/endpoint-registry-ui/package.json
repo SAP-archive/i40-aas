@@ -8,7 +8,9 @@
     "ui5-middleware-simpleproxy": "^0.6.0"
   },
   "scripts": {
-    "build": "ui5 build --clean-dest --include-task=generateManifestBundle generateCachebusterInfo"
+    "build": "ui5 build --clean-dest --include-task=generateManifestBundle generateCachebusterInfo",
+    "set": "npm set @sap:registry=https://npm.sap.com",
+    "start": "npx ui5 serve -o index.html --accept-remote-connections"
   },
   "ui5": {
     "dependencies": [
@@ -19,3 +21,4 @@
     "i40-aas-objects": "0.3.6"
   }
 }
+
