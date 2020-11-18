@@ -20,25 +20,9 @@ sap.ui.define([
     },
 
     initiateModel: function () {
-      var aAASDescriptors = (function () {
-        var aAASDescriptors = null;
-        jQuery.ajax({
-          'async': false,
-          'global': false,
-          'url': "/resources/AASDescriptors",
-          'dataType': "json",
-          'success': function (data) {
-            aAASDescriptors = data;
-          }
-        });
-        return aAASDescriptors;
-      })();
-
-      var oData = {
-        "AASDescriptorsCollection": aAASDescriptors
-      };
-      var oModel = new JSONModel(oData);
+      var oModel = new JSONModel();
       this.getView().setModel(oModel, "DescriptorList");
+      oModel.loadData("/resources/AASDescriptors");
     },
 
     // --------------- Begin auto refresh -------------------------
