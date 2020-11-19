@@ -32,7 +32,7 @@ sap.ui.define([
 
       var aAASDescriptors = (function () {
         var aAASDescriptors = null;
-        $.ajax({
+        jQuery.ajax({
           'async': false,
           'global': false,
           'url': "/resources/AASDescriptors",
@@ -54,7 +54,7 @@ sap.ui.define([
 
       var aSemanticProtocols = (function () {
         var aSemanticProtocols = null;
-        $.ajax({
+        jQuery.ajax({
           'async': false,
           'global': false,
           'url': "/resources/semanticProtocols",
@@ -150,7 +150,7 @@ sap.ui.define([
         var localdata = oModel.getProperty("/CreateSPFormular");
 
         var oMainObject = {};
-        oMainObject["name"] = this.getView().byId("InputRoleName").getValue();
+        oMainObject["name"] = this.byId("InputRoleName").getValue();
         var aMainObjectArray = new Array();
         var oObject = {};
 
@@ -165,7 +165,7 @@ sap.ui.define([
         oModel.setProperty("/CreateSPFormular", localdata);
         this.resetDescriptorDropdown();
         MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("roleCreated"));
-        this.getView().byId("InputRoleName").setValue("");
+        this.byId("InputRoleName").setValue("");
 
         this.showDetailsOfLastAddedRole();
         this.enableSplitscreen();
@@ -176,41 +176,41 @@ sap.ui.define([
       var oModel = this.getView().getModel();
       var lastAddedRole = oModel.getProperty("/CreateSPFormular/roles").length - 1;
       var newRolePath = "/CreateSPFormular/roles/" + lastAddedRole;
-      this.getView().byId("roleDetail").bindElement(newRolePath);
+      this.byId("roleDetail").bindElement(newRolePath);
     },
 
     showDetailsOfRoleWithIndex: function (index) {
       var oModel = this.getView().getModel();
       var roleCount = oModel.getProperty("/CreateSPFormular/roles").length;
       if (index <= 0) {
-        this.getView().byId("roleDetail").bindElement("/CreateSPFormular/roles/" + "0");
+        this.byId("roleDetail").bindElement("/CreateSPFormular/roles/" + "0");
         if (roleCount === 0) {
           this.disableSplitscreen();
         }
       } else if (index > roleCount - 1) {
         this.showDetailsOfLastAddedRole();
       } else {
-        this.getView().byId("roleDetail").bindElement("/CreateSPFormular/roles/" + index);
+        this.byId("roleDetail").bindElement("/CreateSPFormular/roles/" + index);
       }
     },
 
     enableSplitscreen: function () {
-      this.getView().byId("roleDetail").setVisible(true);
-      this.getView().byId("splitterSize").setSize("500px");
-      this.getView().byId("splitterSize").setResizable(true);
+      this.byId("roleDetail").setVisible(true);
+      this.byId("splitterSize").setSize("500px");
+      this.byId("splitterSize").setResizable(true);
     },
 
     disableSplitscreen: function () {
-      this.getView().byId("roleDetail").setVisible(false);
-      this.getView().byId("splitterSize").setSize("100%");
-      this.getView().byId("splitterSize").setResizable(false);
+      this.byId("roleDetail").setVisible(false);
+      this.byId("splitterSize").setSize("100%");
+      this.byId("splitterSize").setResizable(false);
     },
 
     onRoleObjectItem: function (oEvent) {
       var oItem = oEvent.getSource();
       var oCtx = oItem.getBindingContext();
       var path = oCtx.getPath();
-      this.getView().byId("roleDetail").bindElement(path);
+      this.byId("roleDetail").bindElement(path);
     },
 
     onDeleteRoleObject: function (oEvent) {
@@ -227,7 +227,7 @@ sap.ui.define([
 
         oModel.setProperty("/CreateSPFormular/roles", pathToRoles);
 
-        var oList = this.getView().byId("RoleList");
+        var oList = this.byId("RoleList");
         oList.getBinding("items").refresh(true);
       }
       this.showDetailsOfRoleWithIndex(idx);
@@ -251,7 +251,7 @@ sap.ui.define([
         var lv_data = this.getView().getModel().getProperty("/CreateSPFormular");
         var lv_dataString = JSON.stringify(lv_data);
 
-        $.ajax({
+        jQuery.ajax({
           url: '/resources/semanticProtocols',
           type: 'PUT',
           contentType: "application/json",
@@ -274,11 +274,11 @@ sap.ui.define([
     //-----------------Begin Input Validation--------------------------//
     getInputs: function () {
       return {
-        inputSpId: this.getView().byId("InputSpId"),
-        inputRoleName: this.getView().byId("InputRoleName"),
-        createButton: this.getView().byId("CreateButton"),
-        addRoleButton: this.getView().byId("AddRoleButton"),
-        aasDescriptorSelect: this.getView().byId("idPnl")
+        inputSpId: this.byId("InputSpId"),
+        inputRoleName: this.byId("InputRoleName"),
+        createButton: this.byId("CreateButton"),
+        addRoleButton: this.byId("AddRoleButton"),
+        aasDescriptorSelect: this.byId("idPnl")
       }
     },
 
@@ -382,7 +382,7 @@ sap.ui.define([
     onLiveChange(oEvent) {
       var id = oEvent.getParameter("id");
       var newValue = oEvent.getParameter("newValue");
-      var inputControl = this.getView().byId(id);
+      var inputControl = this.byId(id);
 
       inputControl.setValueState(sap.ui.core.ValueState.None);
       this.getInputs().createButton.setEnabled(true);
@@ -426,7 +426,7 @@ sap.ui.define([
     //-----------------End Input Validation--------------------------//
 
     resetScreenToInitial: function () {
-      this.getView().byId("InputRoleName").setValue("");
+      this.byId("InputRoleName").setValue("");
       this.resetDescriptorDropdown();
       this.initiateModel();
       this.disableSplitscreen();

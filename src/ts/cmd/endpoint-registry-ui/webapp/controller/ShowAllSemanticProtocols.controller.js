@@ -22,7 +22,7 @@ sap.ui.define([
     initiateModel: function () {
       var aSemanticProtocols = (function () {
         var aSemanticProtocols = null;
-        $.ajax({
+        jQuery.ajax({
           'async': false,
           'global': false,
           'url': "/resources/semanticProtocols",

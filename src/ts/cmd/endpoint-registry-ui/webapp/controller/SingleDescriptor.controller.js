@@ -16,7 +16,7 @@ sap.ui.define([
 				var oCtx = oItem.getBindingContext('SingleDescriptor');
 				var path = oCtx.getPath();
 				var namedModelPath = "SingleDescriptor>" + path;
-				this.getView().byId("EndpointDetail").bindElement(namedModelPath);
+				this.byId("EndpointDetail").bindElement(namedModelPath);
 			}
 
 		},
@@ -46,7 +46,7 @@ sap.ui.define([
 
 			var aSingleAASDescriptor = (function () {
 				var aSingleAASDescriptor = null;
-				$.ajax({
+				jQuery.ajax({
 					'async': false,
 					'global': false,
 					'url': "/resources/AASDescriptors/" + iAASId,
@@ -72,7 +72,7 @@ sap.ui.define([
 			var oCtx = oItem.getBindingContext('SingleDescriptor');
 			var path = oCtx.getPath();
 			var namedModelPath = "SingleDescriptor>" + path;
-			this.getView().byId("EndpointDetail").bindElement(namedModelPath);
+			this.byId("EndpointDetail").bindElement(namedModelPath);
 		},
 
 		onNavBack: function () {
