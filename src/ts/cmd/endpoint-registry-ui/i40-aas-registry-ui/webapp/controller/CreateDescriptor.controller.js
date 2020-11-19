@@ -233,7 +233,7 @@ sap.ui.define([
     // Check the Endpoint Addresses from any Endpoint of this Descriptor for duplicate. Returns true if a duplicate is found
     epAddressDuplicate: function () {
       var endpoints = this.getView().getModel().getProperty("/CreateDescriptorFormular/descriptor/endpoints")
-      for (var i = 0; i < Math.round(endpoints.length / 2); i++) { //Just need to compare the first half of the objects with all other objects
+      for (var i = 0; i < endpoints.length; i++) {
         var count = 0;
         for (var j = 0; j < endpoints.length; j++) {
           if (endpoints[i].address === endpoints[j].address) {
@@ -273,6 +273,7 @@ sap.ui.define([
         inputControl.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("duplicate"));
       }
       // Only check for duplicate if Inputfield is descriptor/endpoints/address
+      debugger;
       if (inputControl === this.getById().endpointAddress && this.epAddressDuplicate()) {
         inputControl.setValueState(sap.ui.core.ValueState.Error);
         inputControl.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("addressDuplicate"));

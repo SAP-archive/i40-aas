@@ -367,7 +367,7 @@ sap.ui.define([
             // count = 1 is its self -> count > 1 means there is a duplicate
             if (count > 1) {
               inputControl.setValueState(sap.ui.core.ValueState.Error);
-              inputControl.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("descriptorDuplicateOrEmpty"));
+              inputControl.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("descriptorDuplicate"));
             } else {
               inputControl.setValueState(sap.ui.core.ValueState.None);
             }
