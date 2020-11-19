@@ -54,7 +54,7 @@
 						<!--*****************Begin Endpoints*****************-->
 						<Panel headerText="{i18n>endpoints}:">
 							<Button icon="sap-icon://add" type="Ghost" text="Add new Endpoint" press="onAddNewEndpointPress"/>
-							<List items="{ path: '/CreateDescriptorFormular/descriptor/endpoints' }" noDataText="{i18n>noEndpointsAdded}" showNoData="true">
+							<List id="EndpointList" items="{ path: '/CreateDescriptorFormular/descriptor/endpoints' }" noDataText="{i18n>noEndpointsAdded}" showNoData="true" mode="Delete" delete="onDeleteEndpoint">
 								<ObjectListItem title="{address}" type="Navigation" press="onEndpointObjectItemPress"/>
 							</List>
 							<layoutData >
