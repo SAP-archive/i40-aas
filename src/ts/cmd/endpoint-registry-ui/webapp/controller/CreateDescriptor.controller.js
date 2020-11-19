@@ -1,5 +1,3 @@
-
-
 sap.ui.define([
   "sap/ui/core/mvc/Controller",
   "sap/ui/core/routing/History",
@@ -18,12 +16,13 @@ sap.ui.define([
       this.initiateModel();
     },
 
-    getInputs: function () {
+    getById: function () {
       return {
         inputAasId: this.byId("InputAasId"),
         inputAssetId: this.byId("InputAssetId"),
         createButton: this.byId("CreateButton"),
         endpointAddress: this.byId("EndpointAddress"),
+        endpointDetails: this.byId("EndpointDetail"),
       }
     },
 
@@ -31,13 +30,13 @@ sap.ui.define([
       // Use Object Lib for IdType Dropdown menu
       var oIdTypeEnum = aas.IdTypeEnum
       var aIdTypeKeys = Object.keys(oIdTypeEnum);
-      
-      var aIdTypes = aIdTypeKeys.map(function(Key){
+
+      var aIdTypes = aIdTypeKeys.map(function (Key) {
         var oObject = {};
         oObject["TypeId"] = Key;
         oObject["Name"] = Key;
         return oObject
-      });       
+      });
 
       var aEndpointTypes = (function () {
         var aEndpointTypes = null;
@@ -114,6 +113,7 @@ sap.ui.define([
 
     },
 
+    // Add an endpoint to the current descriptor
     onAddNewEndpointPress: function () {
       var model = this.getView().getModel();
       var localdata = model.getProperty("/CreateDescriptorFormular");
@@ -128,38 +128,87 @@ sap.ui.define([
       localdata.descriptor.endpoints.push(addOneMoreEndpoint);
       model.setProperty("/CreateDescriptorFormular", localdata);
       MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("endpointCreated"));
-      var lastAddedEndpoint = model.getProperty("/CreateDescriptorFormular/descriptor/endpoints").length - 1;
-      var newEndpointPath = "/CreateDescriptorFormular/descriptor/endpoints/" + lastAddedEndpoint;
-      this.byId("EndpointDetail").bindElement(newEndpointPath);
+
+      this.showDetailsOfLastAddedEndpoint();
       this.enableSplitscreen();
 
-      // Check Endpoint Adress duplicate (New Endpoint):
+      // Check for endpoint address duplicate (in this case for address: New Endpoint)
       if (this.epAddressDuplicate()) {
-        this.getInputs().endpointAddress.setValueState(sap.ui.core.ValueState.Error);
-        this.getInputs().endpointAddress.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("addressDuplicate"));
+        this.getById().endpointAddress.setValueState(sap.ui.core.ValueState.Error);
+        this.getById().endpointAddress.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("addressDuplicate"));
       }
       this.checkCreateButton();
     },
 
+    // Delete an (previously added) endpoint from the descriptor
+    onDeleteEndpoint: function (oEvent) {
+      debugger;
+      var oItem = oEvent.getParameter('listItem');
+      var oCtx = oItem.getBindingContext();
+      var path = oCtx.getPath();
+      var idx = path.charAt(path.lastIndexOf('/') + 1);
+
+      var oModel = this.getView().getModel();
+      var aEndpoints = oModel.getProperty("/CreateDescriptorFormular/descriptor/endpoints");
+      if (idx !== -1) {
+
+        aEndpoints.splice(idx, 1);
+
+        oModel.setProperty("/CreateDescriptorFormular/descriptor/endpoints", aEndpoints);
+
+        var oList = this.byId("EndpointList");
+        oList.getBinding("items").refresh(true);
+        MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("endpointDeleted"));
+      }
+      this.showDetailsOfEndpointWithIndex(idx);
+    },
+
+    // Shows the details the last added endpoint in the endpoint details part of the splitscreen
+    showDetailsOfLastAddedEndpoint: function () {
+      var oModel = this.getView().getModel();
+      var lastAddedEndpoint = oModel.getProperty("/CreateDescriptorFormular/descriptor/endpoints").length - 1;
+      var newEndpointPath = "/CreateDescriptorFormular/descriptor/endpoints/" + lastAddedEndpoint;
+      this.getById().endpointDetails.bindElement(newEndpointPath);
+    },
+
+    // Shows the details of an endpoint with a given index in the endpoint details part of the splitscreen
+    showDetailsOfEndpointWithIndex: function (index) {
+      var oModel = this.getView().getModel();
+      var endpointCount = oModel.getProperty("/CreateDescriptorFormular/descriptor/endpoints").length;
+      if (index <= 0) {
+        this.getById().endpointDetails.bindElement("/CreateDescriptorFormular/descriptor/endpoints/" + "0");
+        if (endpointCount === 0) {
+          this.disableSplitscreen();
+        }
+      } else if (index > endpointCount - 1) {
+        this.showDetailsOfLastAddedEndpoint();
+      } else {
+        this.getById().endpointDetails.bindElement("/CreateDescriptorFormular/descriptor/endpoints/" + index);
+      }
+    },
+
+
     enableSplitscreen: function () {
-      this.byId("EndpointDetail").setVisible(true);
+      this.getById().endpointDetails.setVisible(true);
       this.byId("splitterSize").setSize("500px");
       this.byId("splitterSize").setResizable(true);
     },
 
     disableSplitscreen: function () {
-      this.byId("EndpointDetail").setVisible(false);
+      this.getById().endpointDetails.setVisible(false);
       this.byId("splitterSize").setSize("100%");
       this.byId("splitterSize").setResizable(false);
     },
 
+    // Shows the details of the selected endpoint in the endpoint details part of the splitscreen
     onEndpointObjectItemPress: function (oEvent) {
       var oItem = oEvent.getSource();
       var oCtx = oItem.getBindingContext();
       var path = oCtx.getPath();
-      this.byId("EndpointDetail").bindElement(path);
+      this.getById().endpointDetails.bindElement(path);
     },
 
+    // Compares the given aasId with all existing aasIds. Returns true if the same id exists already
     aasIdDuplicate: function (aasId) {
       var AASDescriptors = this.getView().getModel().getProperty("/AASDescriptorsCollection")
       for (var i = 0; i < AASDescriptors.length; i++) {
@@ -170,6 +219,7 @@ sap.ui.define([
       return false;
     },
 
+    // Compares the given assetId with all existing assetIds. Returns true if the same id exists already
     assetIdDuplicate: function (assetId) {
       var AASDescriptors = this.getView().getModel().getProperty("/AASDescriptorsCollection")
       for (var i = 0; i < AASDescriptors.length; i++) {
@@ -180,10 +230,10 @@ sap.ui.define([
       return false;
     },
 
-    // Check the Endpoint Addresses from any Endpoint for duplicate
+    // Check the Endpoint Addresses from any Endpoint of this Descriptor for duplicate. Returns true if a duplicate is found
     epAddressDuplicate: function () {
       var endpoints = this.getView().getModel().getProperty("/CreateDescriptorFormular/descriptor/endpoints")
-      for (var i = 0; i < Math.round(endpoints.length / 2); i++) { //Just need to compare the first half of the objects with all other objects
+      for (var i = 0; i < endpoints.length; i++) {
         var count = 0;
         for (var j = 0; j < endpoints.length; j++) {
           if (endpoints[i].address === endpoints[j].address) {
@@ -206,24 +256,25 @@ sap.ui.define([
       var inputControl = this.byId(id);
 
       inputControl.setValueState(sap.ui.core.ValueState.None);
-      this.getInputs().createButton.setEnabled(true);
+      this.getById().createButton.setEnabled(true);
       // Check if Field is empty
       if (newValue === "") {
         inputControl.setValueState(sap.ui.core.ValueState.Error);
         inputControl.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("cantBeEmpty"));
       }
       // Only check for duplicate if Inputfield is identification/id
-      if (inputControl === this.getInputs().inputAasId && this.aasIdDuplicate(newValue)) {
+      if (inputControl === this.getById().inputAasId && this.aasIdDuplicate(newValue)) {
         inputControl.setValueState(sap.ui.core.ValueState.Error);
         inputControl.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("duplicate"));
       }
       // Only check for duplicate if Inputfield is asset/id
-      if (inputControl === this.getInputs().inputAssetId && this.assetIdDuplicate(newValue)) {
+      if (inputControl === this.getById().inputAssetId && this.assetIdDuplicate(newValue)) {
         inputControl.setValueState(sap.ui.core.ValueState.Error);
         inputControl.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("duplicate"));
       }
       // Only check for duplicate if Inputfield is descriptor/endpoints/address
-      if (inputControl === this.getInputs().endpointAddress && this.epAddressDuplicate()) {
+      debugger;
+      if (inputControl === this.getById().endpointAddress && this.epAddressDuplicate()) {
         inputControl.setValueState(sap.ui.core.ValueState.Error);
         inputControl.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("addressDuplicate"));
       }
@@ -235,25 +286,25 @@ sap.ui.define([
     },
     // Disable CreateButton if ValueState of AssetId, AssId or endpointAdress is Error & enable if not
     checkCreateButton: function () {
-      if (this.getInputs().inputAasId.getValueState() == "Error" || this.getInputs().inputAssetId.getValueState() == "Error" || this.getInputs().endpointAddress.getValueState() == "Error") {
-        this.getInputs().createButton.setEnabled(false);
+      if (this.getById().inputAasId.getValueState() == "Error" || this.getById().inputAssetId.getValueState() == "Error" || this.getById().endpointAddress.getValueState() == "Error") {
+        this.getById().createButton.setEnabled(false);
       } else {
-        this.getInputs().createButton.setEnabled(true);
+        this.getById().createButton.setEnabled(true);
       }
     },
 
+    // Sending the data to the DB
     onCreateDescriptor: function () {
-      if (this.getInputs().inputAasId.getValue() === "") {
-        this.getInputs().inputAasId.setValueState(sap.ui.core.ValueState.Error);
-        this.getInputs().inputAasId.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("cantBeEmpty"));
-      } else if (this.getInputs().inputAssetId.getValue() === "") {
-        this.getInputs().inputAssetId.setValueState(sap.ui.core.ValueState.Error);
-        this.getInputs().inputAssetId.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("cantBeEmpty"));
+      if (this.getById().inputAasId.getValue() === "") {
+        this.getById().inputAasId.setValueState(sap.ui.core.ValueState.Error);
+        this.getById().inputAasId.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("cantBeEmpty"));
+      } else if (this.getById().inputAssetId.getValue() === "") {
+        this.getById().inputAssetId.setValueState(sap.ui.core.ValueState.Error);
+        this.getById().inputAssetId.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("cantBeEmpty"));
       } else {
         var that = this;
         var lv_data = this.getView().getModel().getProperty("/CreateDescriptorFormular");
         var lv_dataString = JSON.stringify(lv_data);
-        //console.warn("lv_dataString = " + lv_dataString);
 
         $.ajax({
           url: '/resources/AASDescriptors',
@@ -272,12 +323,13 @@ sap.ui.define([
       }
     },
 
+    // Rest all fields and Models to initial
     resetScreenToInitial: function () {
       this.initiateModel();
       this.disableSplitscreen();
-      this.getInputs().inputAasId.setValueState(sap.ui.core.ValueState.None);
-      this.getInputs().inputAssetId.setValueState(sap.ui.core.ValueState.None);
-      this.getInputs().endpointAddress.setValueState(sap.ui.core.ValueState.None);
+      this.getById().inputAasId.setValueState(sap.ui.core.ValueState.None);
+      this.getById().inputAssetId.setValueState(sap.ui.core.ValueState.None);
+      this.getById().endpointAddress.setValueState(sap.ui.core.ValueState.None);
       this.checkCreateButton();
     },
 
