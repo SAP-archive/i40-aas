@@ -2,8 +2,9 @@ sap.ui.define([
   "sap/ui/core/mvc/Controller",
   "sap/ui/model/json/JSONModel",
   "sap/ui/core/routing/History",
-  "sap/m/MessageToast"
-], function (Controller, JSONModel, History, MessageToast) {
+  "sap/m/MessageToast",
+  "sap/m/MessageBox"
+], function (Controller, JSONModel, History, MessageToast, MessageBox) {
   "use strict";
 
   return Controller.extend("i40-aas-registry-ui.i40-aas-registry-ui.controller.ShowAllDescriptors", {
@@ -23,6 +24,9 @@ sap.ui.define([
       var oModel = new JSONModel();
       this.getView().setModel(oModel, "DescriptorList");
       oModel.loadData("/resources/AASDescriptors");
+      // oModel.attachRequestCompleted(function() {
+      //   console.log(oModel.getData());
+      // });
     },
 
     // --------------- Begin auto refresh -------------------------
@@ -43,6 +47,7 @@ sap.ui.define([
 
     // --------------- Begin route to SingleDescriptor -------------------------
 
+    // Open detail view of selected descriptor
     onOpenSingleDescriptor: function (oEvent) {
       var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
       var oItem = oEvent.getSource();
@@ -58,6 +63,37 @@ sap.ui.define([
     },
 
     // --------------- End route to SingleDescriptor -------------------------
+
+    // Delete selected Descriptor
+    onDeleteDescriptor: function (oEvent) {
+      var AASID = oEvent.getParameters().listItem.getBindingContext("DescriptorList").getProperty("identification/id");
+
+      MessageBox.confirm("Do you really want to delete the Descriptor: \"" + AASID + "\" ?", {
+        title: "Delete Descriptor: \"" + AASID + "\"",
+        icon: MessageBox.Icon.WARNING,
+        actions: [MessageBox.Action.DELETE, MessageBox.Action.CANCEL],
+        emphasizedAction: MessageBox.Action.DELETE,
+        onClose: function (sAction) {
+          if (sAction == "DELETE") {
+            var that = this;
+            jQuery.ajax({
+              url: "/resources/AASDescriptors/" + AASID,
+              type: "DELETE",
+              async: true
+            }).always(function (data, status, response) {
+              if (status === "success") {
+                MessageToast.show(that.getView().getModel("i18n").getResourceBundle().getText("descriptorDeleted"));
+                that.initiateModel();
+              } else {
+                MessageToast.show(status + ": " + response);
+              }
+            });
+          } else {
+            MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("canceled"));
+          }
+        }.bind(this)
+      });
+    },
 
     onNavBack: function () {
       var oHistory = History.getInstance();
