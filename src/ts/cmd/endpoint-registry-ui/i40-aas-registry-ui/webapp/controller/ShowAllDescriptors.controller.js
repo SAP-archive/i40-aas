@@ -75,19 +75,36 @@ sap.ui.define([
         emphasizedAction: MessageBox.Action.DELETE,
         onClose: function (sAction) {
           if (sAction == "DELETE") {
+
+
             var that = this;
-            jQuery.ajax({
-              url: "/resources/AASDescriptors/" + AASID,
-              type: "DELETE",
-              async: true
-            }).always(function (data, status, response) {
-              if (status === "success") {
+            return fetch("/resources/AASDescriptors/" + AASID, {
+              method: "DELETE"
+            }).then((response) => {
+              if (response.ok) {
                 MessageToast.show(that.getView().getModel("i18n").getResourceBundle().getText("descriptorDeleted"));
                 that.initiateModel();
               } else {
-                MessageToast.show(status + ": " + response);
+                MessageToast.show(response.statusText);
               }
-            });
+            }).catch(err => {
+              console.error(err)
+            })
+
+            //   var that = this;
+            //   jQuery.ajax({
+            //     url: "/resources/AASDescriptors/" + AASID,
+            //     type: "DELETE",
+            //     async: true
+            //   }).always(function (data, status, response) {
+            //     if (status === "success") {
+            //       MessageToast.show(that.getView().getModel("i18n").getResourceBundle().getText("descriptorDeleted"));
+            //       that.initiateModel();
+            //     } else {
+            //       MessageToast.show(status + ": " + response);
+            //     }
+            //   });
+
           } else {
             MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("canceled"));
           }
