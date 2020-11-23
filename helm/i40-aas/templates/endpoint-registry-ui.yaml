@@ -1,0 +1,108 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-endpoint-registry-ui
+  labels:
+    service: endpoint-registry
+    {{- include "i40-aas.labels" . | nindent 4 }}
+  annotations:
+    ingress.kubernetes.io/path-rewrite: "/([^/]*)(/?.*) \\2"
+spec:
+  ports:
+  - targetPort: endpoint
+    port: {{ .Values.core.registries.endpoints.port }}
+    protocol: TCP
+  selector:
+    service: endpoint-registry
+    {{- include "i40-aas.selectorLabels" . | nindent 4 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-endpoint-registry
+  labels:
+    service: endpoint-registry
+    {{- include "i40-aas.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      service: endpoint-registry
+      {{- include "i40-aas.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        service: endpoint-registry
+        {{- include "i40-aas.selectorLabels" . | nindent 8 }}
+    spec:
+      securityContext:
+        runAsNonRoot: true
+      containers:
+      - name: endpoint-registry
+        image: "{{ .Values.image.repository }}/i40-aas-endpoint-registry:{{ .Values.image.release }}"
+        securityContext:
+          runAsUser: 1001
+          readOnlyRootFilesystem: true
+        ports:
+        - name: endpoint
+          containerPort: {{ .Values.core.registries.endpoints.port }}
+        env:
+        - name: LOGGING_LOGLEVEL
+          value: {{ .Values.logging.logLevel | quote }}
+        - name: LOGGING_LOGOUTPUT
+          value: {{ .Values.logging.logOutput | quote }}
+        - name: CORE_REGISTRIES_ENDPOINTS_PORT
+          value: {{ .Values.core.registries.endpoints.port | quote }}
+        - name: CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-host-collection
+              key: CORE_REGISTRIES_ENDPOINTS_DATABASE_HOST
+        - name: CORE_REGISTRIES_ENDPOINTS_DATABASE_PORT
+          value: {{ .Values.endpointregistrypostgres.service.port | quote }}
+        - name: CORE_REGISTRIES_ENDPOINTS_DATABASE_NAME
+          value: {{ .Values.endpointregistrypostgres.postgresqlDatabase | quote }}
+        - name: CORE_REGISTRIES_ENDPOINTS_DATABASE_USER
+          value: {{ .Values.endpointregistrypostgres.postgresqlUsername | quote }}
+        - name: CORE_REGISTRIES_ENDPOINTS_DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-endpointregistrypostgres
+              key: postgresql-password
+        - name: TLS_ENABLED
+          value: {{ .Values.security.tls.enabled | quote }}
+        - name: TLS_KEYFILE
+          value: {{ .Values.security.tls.keyfile | quote }}
+        - name: TLS_CERTFILE
+          value: {{ .Values.security.tls.crtfile | quote }}
+        envFrom:
+        - secretRef:
+            name: {{ .Release.Name }}-core-registries-endpoints
+        volumeMounts:
+        {{- if .Values.security.certificates }}
+        - name: certs
+          mountPath: "/etc/ssl/certs"
+          readOnly: true
+        {{- end }}
+        resources:
+          {{- toYaml .Values.resources.ts | nindent 10 }}
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: endpoint
+            {{- if .Values.security.tls.enabled }}
+            scheme: HTTPS
+            {{- else }}
+            scheme: HTTP
+            {{- end }}
+          initialDelaySeconds: 600
+          periodSeconds: 60
+      volumes:
+      {{- if .Values.security.certificates }}
+      - name: certs
+        secret:
+          secretName: {{ .Values.security.certificates.secretName }}
+          optional: true
+      {{- end }}
+---
