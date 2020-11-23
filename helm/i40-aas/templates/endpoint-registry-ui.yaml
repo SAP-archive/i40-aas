@@ -11,7 +11,7 @@ metadata:
 spec:
   ports:
   - targetPort: endpoint-ui
-    port: {{ .Values.core.registries.endpoints.port }}
+    port: {{ .Values.core.registries.endpointsUI.port }}
     protocol: TCP
   selector:
     service: endpoint-registry-ui
@@ -41,12 +41,12 @@ spec:
       containers:
       - name: endpoint-registry-ui
         image: "{{ .Values.image.repository }}/i40-aas-endpoint-registry-ui:{{ .Values.image.release }}"
-        securityContext:
-          runAsUser: 1001
-          readOnlyRootFilesystem: true
+        # securityContext:
+          # runAsUser: 1001
+          # readOnlyRootFilesystem: true
         ports:
         - name: endpoint-ui
-          containerPort: {{ .Values.core.registries.endpoints.port }}
+          containerPort: {{ .Values.core.registries.endpointsUI.port }}
         env:
         - name: LOGGING_LOGLEVEL
           value: {{ .Values.logging.logLevel | quote }}
@@ -59,39 +59,36 @@ spec:
               key: CORE_REGISTRIES_ENDPOINTS_HOST
         - name: CORE_REGISTRIES_ENDPOINTS_PORT
           value: {{ .Values.core.registries.endpoints.port | quote }}
-        - name: TLS_ENABLED
-          value: {{ .Values.security.tls.enabled | quote }}
-        - name: TLS_KEYFILE
-          value: {{ .Values.security.tls.keyfile | quote }}
-        - name: TLS_CERTFILE
-          value: {{ .Values.security.tls.crtfile | quote }}
-        envFrom:
-        - secretRef:
-            name: {{ .Release.Name }}-core-registries-endpoints-ui
-        volumeMounts:
-        {{- if .Values.security.certificates }}
-        - name: certs
-          mountPath: "/etc/ssl/certs"
-          readOnly: true
-        {{- end }}
+        # - name: TLS_ENABLED
+        #   value: {{ .Values.security.tls.enabled | quote }}
+        # - name: TLS_KEYFILE
+        #   value: {{ .Values.security.tls.keyfile | quote }}
+        # - name: TLS_CERTFILE
+        #   value: {{ .Values.security.tls.crtfile | quote }}
+        # volumeMounts:
+        # {{- if .Values.security.certificates }}
+        # - name: certs
+        #   mountPath: "/etc/ssl/certs"
+        #   readOnly: true
+        # {{- end }}
         resources:
           {{- toYaml .Values.resources.ts | nindent 10 }}
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: endpoint-ui
-            {{- if .Values.security.tls.enabled }}
-            scheme: HTTPS
-            {{- else }}
-            scheme: HTTP
-            {{- end }}
-          initialDelaySeconds: 600
-          periodSeconds: 60
-      volumes:
-      {{- if .Values.security.certificates }}
-      - name: certs
-        secret:
-          secretName: {{ .Values.security.certificates.secretName }}
-          optional: true
-      {{- end }}
+        # livenessProbe:
+        #   httpGet:
+        #     path: /health
+        #     port: endpoint-ui
+        #     {{- if .Values.security.tls.enabled }}
+        #     scheme: HTTPS
+        #     {{- else }}
+        #     scheme: HTTP
+        #     {{- end }}
+        #   initialDelaySeconds: 600
+        #   periodSeconds: 60
+      # volumes:
+      # {{- if .Values.security.certificates }}
+      # - name: certs
+      #   secret:
+      #     secretName: {{ .Values.security.certificates.secretName }}
+      #     optional: true
+      # {{- end }}
 ---
