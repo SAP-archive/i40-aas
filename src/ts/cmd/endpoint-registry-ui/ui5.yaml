@@ -33,5 +33,7 @@ server:
     mountPath: /resources/
     afterMiddleware: compression
     configuration:
-      baseUri: https://localhost:4400/
+      baseUri: http://${CORE_REGISTRIES_ENDPOINTS_HOST}:${CORE_REGISTRIES_ENDPOINTS_PORT}
+      username: ${CORE_REGISTRIES_ENDPOINTS_USER}
+      password: ${CORE_REGISTRIES_ENDPOINTS_PASSWORD}
       strictSSL: false
