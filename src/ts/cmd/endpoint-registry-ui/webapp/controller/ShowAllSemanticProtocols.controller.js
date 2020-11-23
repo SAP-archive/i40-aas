@@ -2,8 +2,9 @@ sap.ui.define([
   "sap/ui/core/mvc/Controller",
   "sap/ui/model/json/JSONModel",
   "sap/ui/core/routing/History",
-  "sap/m/MessageToast"
-], function (Controller, JSONModel, History, MessageToast) {
+  "sap/m/MessageToast",
+  "sap/m/MessageBox"
+], function (Controller, JSONModel, History, MessageToast, MessageBox) {
   "use strict";
 
   return Controller.extend("i40-aas-registry-ui.i40-aas-registry-ui.controller.ShowAllSemanticProtocols", {
@@ -18,27 +19,11 @@ sap.ui.define([
       this.initiateModel();
       this.startAutorefreshModel(30000);
     },
-
+    //Get the SemanticProtocols from the Server
     initiateModel: function () {
-      var aSemanticProtocols = (function () {
-        var aSemanticProtocols = null;
-        jQuery.ajax({
-          'async': false,
-          'global': false,
-          'url': "/resources/semanticProtocols",
-          'dataType': "json",
-          'success': function (data) {
-            aSemanticProtocols = data;
-          }
-        });
-        return aSemanticProtocols;
-      })();
-
-      var oData = {
-        "SemanticProtocolsCollection": aSemanticProtocols
-      };
-      var oModel = new JSONModel(oData);
+      var oModel = new JSONModel();
       this.getView().setModel(oModel, "SemanticProtocolList");
+      oModel.loadData("/resources/semanticProtocols");
     },
 
     // --------------- Begin auto refresh -------------------------
@@ -73,6 +58,39 @@ sap.ui.define([
     },
 
     // --------------- End route to SingleSemanticProtocol ---------------------------
+
+
+    // Delete selected SemanticProtocol
+    onDeleteSP: function (oEvent) {
+      var SPId = oEvent.getParameters().listItem.getBindingContext("SemanticProtocolList").getProperty("identification/id");
+
+      MessageBox.confirm("Do you really want to delete the SemanticProtocol: \"" + SPId + "\" ?", {
+        title: "Delete SemanticProtocol: \"" + SPId + "\"",
+        icon: MessageBox.Icon.WARNING,
+        actions: [MessageBox.Action.DELETE, MessageBox.Action.CANCEL],
+        emphasizedAction: MessageBox.Action.DELETE,
+        onClose: function (sAction) {
+          if (sAction == "DELETE") {
+
+            var that = this;
+            return fetch("/resources/semanticProtocols/" + SPId, {
+              method: "DELETE"
+            }).then((response) => {
+              if (response.ok) {
+                MessageToast.show(that.getView().getModel("i18n").getResourceBundle().getText("semanticProtocolDeleted"));
+                that.initiateModel();
+              } else {
+                MessageToast.show(response.statusText);
+              }
+            }).catch(err => {
+              console.error(err)
+            })
+          } else {
+            MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("canceled"));
+          }
+        }.bind(this)
+      });
+    },
 
     onNavBack: function () {
       var oHistory = History.getInstance();
