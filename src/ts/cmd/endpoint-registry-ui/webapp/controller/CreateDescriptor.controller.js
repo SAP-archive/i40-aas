@@ -142,7 +142,6 @@ sap.ui.define([
 
     // Delete an (previously added) endpoint from the descriptor
     onDeleteEndpoint: function (oEvent) {
-      debugger;
       var oItem = oEvent.getParameter('listItem');
       var oCtx = oItem.getBindingContext();
       var path = oCtx.getPath();
@@ -273,7 +272,6 @@ sap.ui.define([
         inputControl.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("duplicate"));
       }
       // Only check for duplicate if Inputfield is descriptor/endpoints/address
-      debugger;
       if (inputControl === this.getById().endpointAddress && this.epAddressDuplicate()) {
         inputControl.setValueState(sap.ui.core.ValueState.Error);
         inputControl.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("addressDuplicate"));
@@ -306,7 +304,7 @@ sap.ui.define([
         var lv_data = this.getView().getModel().getProperty("/CreateDescriptorFormular");
         var lv_dataString = JSON.stringify(lv_data);
 
-        $.ajax({
+        jQuery.ajax({
           url: '/resources/AASDescriptors',
           type: 'PUT',
           contentType: "application/json",
