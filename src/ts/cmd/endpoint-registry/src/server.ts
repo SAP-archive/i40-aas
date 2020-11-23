@@ -15,6 +15,8 @@ import { RegistryFactory } from './services/registry/daos/postgres/RegistryFacto
 const logger = require('aas-logger/lib/log');
 
 const router = express();
+router.use('/ui', express.static('/cmd/endpoint-registry/dist/ui/i40-aas-registry-ui/webapp'));
+
 applyRoutes(healthRoute, router);
 applyMiddleware(middleware, router);
 applyRoutes(routes, router);
@@ -31,7 +33,7 @@ if (TLS_ENABLED == 'true') {
     key: fs.readFileSync(TLS_KEYFILE),
     cert: fs.readFileSync(TLS_CERTFILE)
   }, router).listen(PORT, () => {
-    logger.info(`A Server is running http://localhost:${PORT}...`);
+    logger.info(`A Server is running https://localhost:${PORT}...`);
   });
 } else {
   http.createServer(router).listen(PORT, () =>

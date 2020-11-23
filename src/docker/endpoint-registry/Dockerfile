@@ -52,8 +52,10 @@ COPY pkg/aas-logger/package.json /pkg/aas-logger/
 
 ## copy build output from previous stage
 COPY --from=builder /cmd/endpoint-registry/dist /cmd/endpoint-registry/dist
+COPY --from=builder /cmd/endpoint-registry/ui /cmd/endpoint-registry/dist/ui
 COPY --from=builder /production-dependencies/node_modules /cmd/endpoint-registry/node_modules
 COPY cmd/endpoint-registry/package.json /cmd/endpoint-registry
+
 
 USER aasuser
 EXPOSE 4400
