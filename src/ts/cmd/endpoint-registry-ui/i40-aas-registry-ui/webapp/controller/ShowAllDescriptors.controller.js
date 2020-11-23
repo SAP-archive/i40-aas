@@ -20,13 +20,11 @@ sap.ui.define([
       this.startAutorefreshModel(30000);
     },
 
+    //Get the Descriptors from the Server
     initiateModel: function () {
       var oModel = new JSONModel();
       this.getView().setModel(oModel, "DescriptorList");
       oModel.loadData("/resources/AASDescriptors");
-      // oModel.attachRequestCompleted(function() {
-      //   console.log(oModel.getData());
-      // });
     },
 
     // --------------- Begin auto refresh -------------------------
@@ -90,21 +88,6 @@ sap.ui.define([
             }).catch(err => {
               console.error(err)
             })
-
-            //   var that = this;
-            //   jQuery.ajax({
-            //     url: "/resources/AASDescriptors/" + AASID,
-            //     type: "DELETE",
-            //     async: true
-            //   }).always(function (data, status, response) {
-            //     if (status === "success") {
-            //       MessageToast.show(that.getView().getModel("i18n").getResourceBundle().getText("descriptorDeleted"));
-            //       that.initiateModel();
-            //     } else {
-            //       MessageToast.show(status + ": " + response);
-            //     }
-            //   });
-
           } else {
             MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("canceled"));
           }
