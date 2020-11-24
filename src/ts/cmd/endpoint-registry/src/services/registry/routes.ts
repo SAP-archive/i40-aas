@@ -4,6 +4,8 @@ import { IAASDescriptor } from './daos/interfaces/IAASDescriptor';
 import { HTTP422Error } from '../../utils/httpErrors';
 import { validateAASDescriptorRequest, validateSemanticProtocolRequest } from '../../middleware/checks';
 import { ISemanticProtocol } from './daos/interfaces/ISemanticProtocol';
+import express from 'express';
+import { resolve } from 'path';
 const logger = require('aas-logger/lib/log');
 
 
@@ -323,5 +325,6 @@ export default [
       }
 
     }
-    }
+  },
+
 ];

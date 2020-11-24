@@ -55,6 +55,7 @@ COPY --from=builder /cmd/endpoint-registry/dist /cmd/endpoint-registry/dist
 COPY --from=builder /production-dependencies/node_modules /cmd/endpoint-registry/node_modules
 COPY cmd/endpoint-registry/package.json /cmd/endpoint-registry
 
+
 USER aasuser
 EXPOSE 4400
 

@@ -1,0 +1,10 @@
+[{
+	"TypeId": "grpc",
+	"Name": "grpc"
+}, {
+	"TypeId": "https",
+	"Name": "https"
+}, {
+	"TypeId": "Other",
+	"Name": "Other"
+}]
