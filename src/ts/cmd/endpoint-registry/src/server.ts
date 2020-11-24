@@ -34,8 +34,9 @@ if (TLS_ENABLED == 'true') {
   https.createServer({
     key: fs.readFileSync(TLS_KEYFILE),
     cert: fs.readFileSync(TLS_CERTFILE)
-  }, router).listen(4400, HOST, () =>
-    logger.info(`A Server is running without SSL http://${HOST}:${PORT}...`));
+  }, router).listen(PORT, () => {
+    logger.info(`A Server is running https://localhost:${PORT}...`);
+  });
 } else {
   http.createServer(router).listen(4400, HOST,  () =>
     logger.info(`A Server is running without SSL http://${HOST}:${PORT}...`)
