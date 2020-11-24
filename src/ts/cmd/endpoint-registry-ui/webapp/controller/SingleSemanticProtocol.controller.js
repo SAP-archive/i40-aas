@@ -16,7 +16,7 @@ sap.ui.define([
 				var oCtx = oItem.getBindingContext('SingleSemanticProtocol');
 				var path = oCtx.getPath();
 				var namedModelPath = "SingleSemanticProtocol>" + path;
-				this.getView().byId("roleDetail").bindElement(namedModelPath);
+				this.byId("roleDetail").bindElement(namedModelPath);
 			}
 
 		},
@@ -31,26 +31,24 @@ sap.ui.define([
 			const iSPId = oEvent.getParameter("arguments").SPId;
 			// console.warn("iSPId = " + iSPId);
 
-			var aIdTypes = (function () {
-				var aIdTypes = null;
-				$.ajax({
-					'async': false,
-					'global': false,
-					'url': "mockserver/mockdata/Dropdowns/IdTypes.json",
-					'dataType': "json",
-					'success': function (data) {
-						aIdTypes = data;
-					}
-				});
-				return aIdTypes;
-			})();
+			// Use Object Lib for IdType Dropdown menu
+			var oIdTypes = aas.IdTypeEnum
+			var IdTypeKeys = Object.keys(oIdTypes);
+
+			var aIdTypes = new Array();
+			for (var i = 0; i < IdTypeKeys.length; i++) {
+			  var oObject = {};
+			  oObject["TypeId"] = IdTypeKeys[i];
+			  oObject["Name"] = IdTypeKeys[i];
+					  aIdTypes.push(JSON.parse(JSON.stringify(oObject)));
+				  }
 
 			var aSingleSemanticProtocol = (function () {
 				var aSingleSemanticProtocol = null;
-				$.ajax({
+				jQuery.ajax({
 					'async': false,
 					'global': false,
-					'url': "/semanticProtocols/" + iSPId,
+					'url': "/resources/semanticProtocols/" + iSPId,
 					'dataType': "json",
 					'success': function (data) {
 						aSingleSemanticProtocol = data;
@@ -73,7 +71,7 @@ sap.ui.define([
 			var oCtx = oItem.getBindingContext('SingleSemanticProtocol');
 			var path = oCtx.getPath();
 			var namedModelPath = "SingleSemanticProtocol>" + path;
-			this.getView().byId("roleDetail").bindElement(namedModelPath);
+			this.byId("roleDetail").bindElement(namedModelPath);
 		},
 
 		onNavBack: function () {

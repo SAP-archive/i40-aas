@@ -16,7 +16,7 @@ sap.ui.define([
 				var oCtx = oItem.getBindingContext('SingleDescriptor');
 				var path = oCtx.getPath();
 				var namedModelPath = "SingleDescriptor>" + path;
-				this.getView().byId("EndpointDetail").bindElement(namedModelPath);
+				this.byId("EndpointDetail").bindElement(namedModelPath);
 			}
 
 		},
@@ -32,26 +32,24 @@ sap.ui.define([
 			const iAASId = oEvent.getParameter("arguments").AASId;
 			// console.warn("iAASId = " + iAASId);
 
-			var aIdTypes = (function () {
-				var aIdTypes = null;
-				$.ajax({
-					'async': false,
-					'global': false,
-					'url': "mockserver/mockdata/Dropdowns/IdTypes.json",
-					'dataType': "json",
-					'success': function (data) {
-						aIdTypes = data;
-					}
-				});
-				return aIdTypes;
-			})();
+			// Use Object Lib for IdType Dropdown menu
+			var oIdTypes = aas.IdTypeEnum
+			var IdTypeKeys = Object.keys(oIdTypes);
+
+			var aIdTypes = new Array();
+			for (var i = 0; i < IdTypeKeys.length; i++) {
+			  var oObject = {};
+			  oObject["TypeId"] = IdTypeKeys[i];
+			  oObject["Name"] = IdTypeKeys[i];
+					  aIdTypes.push(JSON.parse(JSON.stringify(oObject)));
+				  }
 
 			var aSingleAASDescriptor = (function () {
 				var aSingleAASDescriptor = null;
-				$.ajax({
+				jQuery.ajax({
 					'async': false,
 					'global': false,
-					'url': "/AASDescriptors/" + iAASId,
+					'url': "/resources/AASDescriptors/" + iAASId,
 					'dataType': "json",
 					'success': function (data) {
 						aSingleAASDescriptor = data;
@@ -74,7 +72,7 @@ sap.ui.define([
 			var oCtx = oItem.getBindingContext('SingleDescriptor');
 			var path = oCtx.getPath();
 			var namedModelPath = "SingleDescriptor>" + path;
-			this.getView().byId("EndpointDetail").bindElement(namedModelPath);
+			this.byId("EndpointDetail").bindElement(namedModelPath);
 		},
 
 		onNavBack: function () {
