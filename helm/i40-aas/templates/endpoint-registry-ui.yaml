@@ -52,13 +52,18 @@ spec:
           value: {{ .Values.logging.logLevel | quote }}
         - name: LOGGING_LOGOUTPUT
           value: {{ .Values.logging.logOutput | quote }}
-        - name: CORE_REGISTRIES_ENDPOINTS_HOST
+        - name: UI5_MIDDLEWARE_SIMPLE_PROXY_BASEURI
+          value: {{ .Values.core.registries.endpoints.baseuri | quote }}
+        - name: UI5_MIDDLEWARE_SIMPLE_PROXY_USERNAME
           valueFrom:
-            configMapKeyRef:
-              name: {{ .Release.Name }}-host-collection
-              key: CORE_REGISTRIES_ENDPOINTS_HOST
-        - name: CORE_REGISTRIES_ENDPOINTS_PORT
-          value: {{ .Values.core.registries.endpoints.port | quote }}
+            secretKeyRef:
+              name: {{ .Release.Name }}-core-registries-endpoints
+              key: CORE_REGISTRIES_ENDPOINTS_USER
+        - name: UI5_MIDDLEWARE_SIMPLE_PROXY_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-core-registries-endpoints
+              key: CORE_REGISTRIES_ENDPOINTS_PASSWORD
         # - name: TLS_ENABLED
         #   value: {{ .Values.security.tls.enabled | quote }}
         # - name: TLS_KEYFILE
