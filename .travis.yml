@@ -13,6 +13,7 @@ env:
     - SVC=adapter-registry
     - SVC=data-manager
     - SVC=endpoint-registry
+    - SVC=endpoint-registry-ui
     - SVC=https-endpoint-egress
     - SVC=https-endpoint-ingress
     - SVC=onboarding-skill
