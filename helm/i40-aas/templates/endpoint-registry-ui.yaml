@@ -36,8 +36,8 @@ spec:
         service: endpoint-registry-ui
         {{- include "i40-aas.selectorLabels" . | nindent 8 }}
     spec:
-      securityContext:
-        runAsNonRoot: true
+      # securityContext:
+      #  runAsNonRoot: true
       containers:
       - name: endpoint-registry-ui
         image: "{{ .Values.image.repository }}/i40-aas-endpoint-registry-ui:{{ .Values.image.release }}"
@@ -53,7 +53,7 @@ spec:
         - name: LOGGING_LOGOUTPUT
           value: {{ .Values.logging.logOutput | quote }}
         - name: UI5_MIDDLEWARE_SIMPLE_PROXY_BASEURI
-          value: {{ .Values.core.registries.endpoints.baseuri | quote }}
+          value: {{ .Values.core.registries.endpointsUI.baseuri | quote }}
         - name: UI5_MIDDLEWARE_SIMPLE_PROXY_USERNAME
           valueFrom:
             secretKeyRef:
