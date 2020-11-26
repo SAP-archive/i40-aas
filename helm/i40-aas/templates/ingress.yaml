@@ -42,6 +42,10 @@ spec:
         backend:
           serviceName: {{ .Release.Name }}-endpoint-registry
           servicePort: {{ .Values.core.registries.endpoints.port }}
+      - path: /endpoint-registry-ui
+        backend:
+          serviceName: {{ .Release.Name }}-endpoint-registry-ui
+          servicePort: {{ .Values.core.registries.endpointsUI.port }}
       - path: /data-manager
         backend:
           serviceName: {{ .Release.Name }}-data-manager
