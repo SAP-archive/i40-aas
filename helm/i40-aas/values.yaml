@@ -132,7 +132,7 @@ core:
       encryptionkey: ENC_key123!
 
     endpointsUI:
-      port: 8080
+      port: 4401
       baseuri: ""
       ## Leave empty "" to generate a random 20 character alphanumeric string.
       encryptionkey: ENC_key123!
