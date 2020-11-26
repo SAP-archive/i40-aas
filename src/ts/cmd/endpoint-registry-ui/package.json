@@ -10,7 +10,7 @@
   "scripts": {
     "build": "ui5 build --clean-dest --include-task=generateManifestBundle generateCachebusterInfo",
     "set": "npm set @sap:registry=https://npm.sap.com",
-    "start": "npx ui5 serve -o index.html --accept-remote-connections"
+    "start": "npx ui5 serve -o index.html -p 4401 --accept-remote-connections"
   },
   "ui5": {
     "dependencies": [

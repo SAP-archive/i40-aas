@@ -18,6 +18,6 @@ RUN adduser -D aasuser
 USER aasuser
 
 
-EXPOSE 8080
+EXPOSE 4400
 ENTRYPOINT [ "npm", "start" ]
 
