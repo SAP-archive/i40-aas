@@ -2,7 +2,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: {{ .Release.Name }}
-  labels: 
+  labels:
     service: ingress
     {{- include "i40-aas.labels" . | nindent 4 }}
   annotations:
@@ -27,27 +27,27 @@ spec:
     {{- end }}
     http:
       paths:
-      - backend: 
+      - backend:
           serviceName: {{ .Release.Name }}-grpc-endpoint-ingress
           servicePort: {{ .Values.core.ingress.grpc.port }}
       - path: /https-endpoint
-        backend: 
+        backend:
           serviceName: {{ .Release.Name }}-https-endpoint-ingress
           servicePort: {{ .Values.core.ingress.http.port }}
       - path: /adapter-registry
-        backend: 
+        backend:
           serviceName: {{ .Release.Name }}-adapter-registry
           servicePort: {{ .Values.core.registries.adapters.port }}
       - path: /endpoint-registry
-        backend: 
+        backend:
           serviceName: {{ .Release.Name }}-endpoint-registry
-          servicePort: {{ .Values.core.registries.endpoints.port }}        
+          servicePort: {{ .Values.core.registries.endpoints.port }}
       - path: /data-manager
-        backend: 
+        backend:
           serviceName: {{ .Release.Name }}-data-manager
-          servicePort: {{ .Values.core.dataManager.port }}       
+          servicePort: {{ .Values.core.dataManager.port }}
       - path: /storage-adapter-mongodb
-        backend: 
+        backend:
           serviceName: {{ .Release.Name }}-storage-adapter-mongodb
           servicePort: {{ .Values.applicationAdapters.mongoDb.port }}
 ---
