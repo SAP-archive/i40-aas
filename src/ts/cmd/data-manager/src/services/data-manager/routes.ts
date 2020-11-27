@@ -51,10 +51,10 @@ export default [
         * receive an array of Submodels and find the respective adapter for each submodel
         to be forwarded
         */
-        if (req.query.submodelid || req.query.semanticId) {
+        if (req.query.submodelid || req.query.semanticid) {
           let result = await RoutingController.getSubmodels({
             submodelid: req.query.submodelid,
-            submodelsemanticid: req.query.semanticId,
+            submodelsemanticid: req.query.semanticid,
           });
           res.status(200).end(JSON.stringify(result.data));
         } else {
