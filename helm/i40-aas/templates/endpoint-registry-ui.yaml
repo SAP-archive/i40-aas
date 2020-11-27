@@ -64,18 +64,18 @@ spec:
             secretKeyRef:
               name: {{ .Release.Name }}-core-registries-endpoints
               key: CORE_REGISTRIES_ENDPOINTS_PASSWORD
-        # - name: TLS_ENABLED
-        #   value: {{ .Values.security.tls.enabled | quote }}
-        # - name: TLS_KEYFILE
-        #   value: {{ .Values.security.tls.keyfile | quote }}
-        # - name: TLS_CERTFILE
-        #   value: {{ .Values.security.tls.crtfile | quote }}
-        # volumeMounts:
-        # {{- if .Values.security.certificates }}
-        # - name: certs
-        #   mountPath: "/etc/ssl/certs"
-        #   readOnly: true
-        # {{- end }}
+         - name: TLS_ENABLED
+           value: {{ .Values.security.tls.enabled | quote }}
+         - name: TLS_KEYFILE
+           value: {{ .Values.security.tls.keyfile | quote }}
+         - name: TLS_CERTFILE
+           value: {{ .Values.security.tls.crtfile | quote }}
+         volumeMounts:
+         {{- if .Values.security.certificates }}
+         - name: certs
+           mountPath: "/etc/ssl/certs"
+           readOnly: true
+         {{- end }}
         resources:
           {{- toYaml .Values.resources.ts | nindent 10 }}
         # livenessProbe:
@@ -89,11 +89,11 @@ spec:
         #     {{- end }}
         #   initialDelaySeconds: 600
         #   periodSeconds: 60
-      # volumes:
-      # {{- if .Values.security.certificates }}
-      # - name: certs
-      #   secret:
-      #     secretName: {{ .Values.security.certificates.secretName }}
-      #     optional: true
-      # {{- end }}
+      volumes:
+      {{- if .Values.security.certificates }}
+      - name: certs
+        secret:
+          secretName: {{ .Values.security.certificates.secretName }}
+          optional: true
+      {{- end }}
 ---

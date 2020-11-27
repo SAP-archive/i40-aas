@@ -21,7 +21,7 @@ version: 0.3.0
 #appVersion: 1.16.0
 
 dependencies:
-  - alias: endpointregistrypostgres
+  - alias: endpointregistrypostgres 
     name: postgresql
     version: 8.9.1
     repository: https://charts.bitnami.com/bitnami
@@ -34,4 +34,4 @@ dependencies:
     repository: https://charts.bitnami.com/bitnami
   - name: kubernetes-ingress
     version: 1.4.1
-    repository: https://haproxytech.github.io/helm-charts    
+    repository: https://haproxytech.github.io/helm-charts
