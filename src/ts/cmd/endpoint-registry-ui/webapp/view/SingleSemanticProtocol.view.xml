@@ -9,14 +9,14 @@
 						<VBox >
 							<HBox>
 								<Text text="{i18n>id}:" class="sapUiSmallMargin" width="150px"/>
-								<Input type="Text" value="{SingleSemanticProtocol>/SingleSemanticProtocolData/identification/id}" valueLiveUpdate="true" width="350px"
+								<Input type="Text" value="{SingleSemanticProtocol>/identification/id}" valueLiveUpdate="true" width="350px"
 									enabled="false"/>
 							</HBox>
 							<HBox>
 								<Text text="{i18n>idType}:" class="sapUiSmallMargin" width="150px"/>
-								<Select selectedKey="{SingleSemanticProtocol>/SingleSemanticProtocolData/identification/idType}"
-									items="{ path: 'SingleSemanticProtocol>/IdTypeCollection', sorter: { path: 'Name' } }" width="150px" enabled="false">
-									<core:Item key="{SingleSemanticProtocol>TypeId}" text="{SingleSemanticProtocol>Name}"/>
+								<Select selectedKey="{SingleSemanticProtocol>/identification/idType}"
+									items="{ path: 'IdTypeCollection>/', sorter: { path: 'Name' } }" width="150px" enabled="false">
+									<core:Item key="{IdTypeCollection>TypeId}" text="{IdTypeCollection>Name}"/>
 								</Select>
 							</HBox>
 						</VBox>
@@ -26,7 +26,7 @@
 					<l:Splitter height="auto">
 						<!--*****************Begin Roles*****************-->
 						<Panel>
-							<List items="{ path: 'SingleSemanticProtocol>/SingleSemanticProtocolData/roles' }" headerText="{i18n>roles}:" noDataText="{i18n>noRoles}"
+							<List items="{ path: 'SingleSemanticProtocol>/roles' }" headerText="{i18n>roles}:" noDataText="{i18n>noRoles}"
 								showNoData="true" updateFinished="onUpdateFinished">
 								<ObjectListItem title="{SingleSemanticProtocol>name}" type="Navigation" press="onRoleObjectItemPress"></ObjectListItem>
 							</List>
@@ -54,7 +54,7 @@
 				<footer>
 					<Toolbar>
 						<ToolbarSpacer/>
-						<Button text="{i18n>back}" press="onCancelPress"/>
+						<Button text="{i18n>back}" press="onNavBack"/>
 					</Toolbar>
 				</footer>
 			</Page>

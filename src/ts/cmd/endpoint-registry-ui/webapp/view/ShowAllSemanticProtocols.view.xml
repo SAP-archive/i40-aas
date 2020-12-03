@@ -5,7 +5,7 @@
 			<Page id="ShowAllSemanticProtocols" title="{i18n>allSemanticProtocols}" showNavButton="true" navButtonPress=".onNavBack"
 				class="sapUiResponsiveContentPadding">
 				<content>
-					<List items="{ path: 'SemanticProtocolList>/', sorter: { path: 'Name' } }" mode="Delete" delete="onDeleteSP">
+					<List items="{ path: 'SemanticProtocolList>/', sorter: { path: 'identification/id' } }" mode="Delete" delete="onDeleteSP">
 						<StandardListItem title="{SemanticProtocolList>identification/id}" icon="sap-icon://connected" iconDensityAware="false" iconInset="false"
 							type="Navigation" press="onOpenSingleSemanticProtocol"/>
 					</List>

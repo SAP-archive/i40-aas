@@ -18,32 +18,31 @@ sap.ui.define([
     initiateModel: function (oEvent) {
       this._oPnl = this.byId("idPnl");
 
-      // Use Object Lib for IdType Dropdown menu
-      var oIdTypes = aas.IdTypeEnum
-      var IdTypeKeys = Object.keys(oIdTypes);
+      // Set model for ID-Type dropdown menu by using Object Lib
+      var oIdTypeEnum = aas.IdTypeEnum
+      var aIdTypeKeys = Object.keys(oIdTypeEnum);
 
-      var aIdTypes = new Array();
-      for (var i = 0; i < IdTypeKeys.length; i++) {
+      var aIdTypes = aIdTypeKeys.map(function (Key) {
         var oObject = {};
-        oObject["TypeId"] = IdTypeKeys[i];
-        oObject["Name"] = IdTypeKeys[i];
-        aIdTypes.push(JSON.parse(JSON.stringify(oObject)));
-      }
+        oObject["TypeId"] = Key;
+        oObject["Name"] = Key;
+        return oObject
+      });
 
-      var aAASDescriptors = (function () {
-        var aAASDescriptors = null;
-        jQuery.ajax({
-          'async': false,
-          'global': false,
-          'url': "/resources/AASDescriptors",
-          'dataType': "json",
-          'success': function (data) {
-            aAASDescriptors = data;
-          }
-        });
-        return aAASDescriptors;
-      })();
+      var oModelIdTypes = new JSONModel(aIdTypes);
+      this.getView().setModel(oModelIdTypes, "IdTypeCollection");
 
+      //Set model for exisiting Descriptors
+      var oModelAASDescriptors = new JSONModel();
+      this.getView().setModel(oModelAASDescriptors, "AASDescriptorsCollection");
+      oModelAASDescriptors.loadData("/resources/AASDescriptors");
+
+      //Set model for exisiting SemanticProtocols
+      var oModelSemanticProtocols = new JSONModel();
+      this.getView().setModel(oModelSemanticProtocols, "SemanticProtocolsCollection");
+      oModelSemanticProtocols.loadData("/resources/semanticProtocols");
+
+      //Set model for a new SemanticProtocol
       var aCreateSPFormular = {
         "identification": {
           "id": "",
@@ -52,34 +51,12 @@ sap.ui.define([
         "roles": []
       };
 
-      var aSemanticProtocols = (function () {
-        var aSemanticProtocols = null;
-        jQuery.ajax({
-          'async': false,
-          'global': false,
-          'url': "/resources/semanticProtocols",
-          'dataType': "json",
-          'success': function (data) {
-            aSemanticProtocols = data;
-          }
-        });
-        return aSemanticProtocols;
-      })();
+      var oModelCreateSPFormular = new JSONModel(aCreateSPFormular);
+      this.getView().setModel(oModelCreateSPFormular);
 
-      var oData = {
-        "IdTypeCollection": aIdTypes,
-
-        "AASDescriptors": aAASDescriptors,
-
-        "CreateSPFormular": aCreateSPFormular,
-
-        "SemanticProtocolsCollection": aSemanticProtocols
-      };
-
-      var oModel = new JSONModel(oData);
-      this.getView().setModel(oModel);
     },
 
+    // Add to the Role a new dropdown for AASDescriptor selection
     onAddDescriptorDropdown: function () {
       var oController = this.getView().getController();
       var oSelect = new sap.m.Select({
@@ -91,14 +68,14 @@ sap.ui.define([
 
       });
       var oItemTemplate = new sap.ui.core.Item({
-        text: '{identification/id}', // here goes your binding for the property "Name" of your item
+        text: '{AASDescriptorsCollection>identification/id}', // here goes your binding for the property "Name" of your item
         //key: '{key}' //not needed???
       });
 
       var oSorter = new sap.ui.model.Sorter('identification/id');
 
       oSelect.bindItems({
-        path: "/AASDescriptors",
+        path: "AASDescriptorsCollection>/",
         template: oItemTemplate,
         sorter: oSorter,
         templateShareable: true
@@ -117,6 +94,7 @@ sap.ui.define([
 
     },
 
+    // Delete from the Role a dropdown for AASDescriptor selection
     onDeleteCcMail: function (oEvent) {
       var descriptorDropdowns = this.getInputs().aasDescriptorSelect.getContent();
       // One dropdown is mandatory -> last dropdown is not deletable
@@ -129,6 +107,7 @@ sap.ui.define([
 
   },
 
+    // Add a new Role to the SemanticProtocol
     onAddRole: function () {
       var descriptorDropdowns = this.getInputs().aasDescriptorSelect.getContent();
 
@@ -147,7 +126,7 @@ sap.ui.define([
         }
       } else {
         var oModel = this.getView().getModel();
-        var localdata = oModel.getProperty("/CreateSPFormular");
+        var localdata = oModel.getProperty("/");
 
         var oMainObject = {};
         oMainObject["name"] = this.byId("InputRoleName").getValue();
@@ -162,7 +141,7 @@ sap.ui.define([
         oMainObject["aasDescriptorIds"] = aMainObjectArray;
 
         localdata.roles.push(oMainObject);
-        oModel.setProperty("/CreateSPFormular", localdata);
+        oModel.setProperty("/", localdata);
         this.resetDescriptorDropdown();
         MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("roleCreated"));
         this.byId("InputRoleName").setValue("");
@@ -172,40 +151,45 @@ sap.ui.define([
       }
     },
 
+    //Shows the last added Role in the detail screen
     showDetailsOfLastAddedRole: function () {
       var oModel = this.getView().getModel();
-      var lastAddedRole = oModel.getProperty("/CreateSPFormular/roles").length - 1;
-      var newRolePath = "/CreateSPFormular/roles/" + lastAddedRole;
+      var lastAddedRole = oModel.getProperty("/roles").length - 1;
+      var newRolePath = "/roles/" + lastAddedRole;
       this.byId("roleDetail").bindElement(newRolePath);
     },
 
+    //Shows the Role with a index "index" in the detail screen
     showDetailsOfRoleWithIndex: function (index) {
       var oModel = this.getView().getModel();
-      var roleCount = oModel.getProperty("/CreateSPFormular/roles").length;
+      var roleCount = oModel.getProperty("/roles").length;
       if (index <= 0) {
-        this.byId("roleDetail").bindElement("/CreateSPFormular/roles/" + "0");
+        this.byId("roleDetail").bindElement("/roles/" + "0");
         if (roleCount === 0) {
           this.disableSplitscreen();
         }
       } else if (index > roleCount - 1) {
         this.showDetailsOfLastAddedRole();
       } else {
-        this.byId("roleDetail").bindElement("/CreateSPFormular/roles/" + index);
+        this.byId("roleDetail").bindElement("/roles/" + index);
       }
     },
 
+    //Enable splitscreen
     enableSplitscreen: function () {
       this.byId("roleDetail").setVisible(true);
       this.byId("splitterSize").setSize("500px");
       this.byId("splitterSize").setResizable(true);
     },
 
+    //Disable splitscreen
     disableSplitscreen: function () {
       this.byId("roleDetail").setVisible(false);
       this.byId("splitterSize").setSize("100%");
       this.byId("splitterSize").setResizable(false);
     },
 
+    //Shows the pressed role in the detail screen
     onRoleObjectItem: function (oEvent) {
       var oItem = oEvent.getSource();
       var oCtx = oItem.getBindingContext();
@@ -213,6 +197,7 @@ sap.ui.define([
       this.byId("roleDetail").bindElement(path);
     },
 
+    // Delete a role from the SemanticProtocol
     onDeleteRoleObject: function (oEvent) {
       var oItem = oEvent.getParameter('listItem');
       var oCtx = oItem.getBindingContext();
@@ -220,12 +205,12 @@ sap.ui.define([
       var idx = path.charAt(path.lastIndexOf('/') + 1);
 
       var oModel = this.getView().getModel();
-      var pathToRoles = oModel.getProperty("/CreateSPFormular/roles");
+      var pathToRoles = oModel.getProperty("/roles");
       if (idx !== -1) {
 
         pathToRoles.splice(idx, 1);
 
-        oModel.setProperty("/CreateSPFormular/roles", pathToRoles);
+        oModel.setProperty("/roles", pathToRoles);
 
         var oList = this.byId("RoleList");
         oList.getBinding("items").refresh(true);
@@ -233,6 +218,7 @@ sap.ui.define([
       this.showDetailsOfRoleWithIndex(idx);
     },
 
+    //Create the SemanticProtocol with all its added roles and send it to the DB
     onCreateSemanticProtocol: function () {
       if (this.getInputs().inputSpId.getValue() === "") {
         this.getInputs().inputSpId.setValueState(sap.ui.core.ValueState.Error);
@@ -248,27 +234,26 @@ sap.ui.define([
         });
       } else {
         var that = this;
-        var lv_data = this.getView().getModel().getProperty("/CreateSPFormular");
-        var lv_dataString = JSON.stringify(lv_data);
+        var lv_data = this.getView().getModel().getProperty("/");
 
-        jQuery.ajax({
-          url: '/resources/semanticProtocols',
-          type: 'PUT',
-          contentType: "application/json",
-          dataType: "json",
-          data: lv_dataString
-        }).always(function (data, status, response) {
-          if (status === "success") {
+        fetch("/resources/semanticProtocols", {
+          method: "PUT",
+          body: JSON.stringify(lv_data),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        }).then((response) => {
+          if (response.ok) {
             MessageToast.show(that.getView().getModel("i18n").getResourceBundle().getText("semanticProtocolCreated"));
             that.resetScreenToInitial();
           } else {
-            MessageToast.show(status + ": " + response);
+            MessageToast.show(response.statusText);
           }
-
-        });
-
+        }).catch(err => {
+          console.error(err)
+        })
       }
-
     },
 
     //-----------------Begin Input Validation--------------------------//
@@ -284,7 +269,7 @@ sap.ui.define([
 
     //Check if the Semantic Protocol ID already exists
     spIdDuplicate: function (spId) {
-      var SemanticProtocols = this.getView().getModel().getProperty("/SemanticProtocolsCollection")
+      var SemanticProtocols = this.getView().getModel("SemanticProtocolsCollection").getProperty("/")
       for (var i = 0; i < SemanticProtocols.length; i++) {
         if (spId === SemanticProtocols[i].identification.id) {
           return true;
@@ -295,7 +280,7 @@ sap.ui.define([
 
     //Check if the Role Name already exists
     roleNameDuplicate: function (roleName) {
-      var Roles = this.getView().getModel().getProperty("/CreateSPFormular/roles")
+      var Roles = this.getView().getModel().getProperty("/roles")
       if (typeof Roles !== 'undefined' && Roles.length > 0) {
         // the array is defined and has at least one element
         for (var i = 0; i < Roles.length; i++) {
@@ -311,7 +296,7 @@ sap.ui.define([
 
     //Check if a Role is already added
     roleAdded: function () {
-      var Roles = this.getView().getModel().getProperty("/CreateSPFormular/roles")
+      var Roles = this.getView().getModel().getProperty("/roles")
       if (typeof Roles !== 'undefined' && Roles.length > 0) {
         return true;
       }
@@ -425,6 +410,7 @@ sap.ui.define([
 
     //-----------------End Input Validation--------------------------//
 
+    // Clear Screen and show initial screen
     resetScreenToInitial: function () {
       this.byId("InputRoleName").setValue("");
       this.resetDescriptorDropdown();
@@ -436,6 +422,7 @@ sap.ui.define([
       this.checkAddRoleButton();
     },
 
+    // Delete all Descriptor dropdowns except one 
     resetDescriptorDropdown: function () {
       var oView = this.getView();
       var oPanel = oView.byId("idPnl");

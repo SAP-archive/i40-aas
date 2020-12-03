@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "",
   "devDependencies": {
-    "@ui5/cli": "2.6.4",
+    "@ui5/cli": "^2.6.4",
     "i40-aas-objects": "0.2.6",
     "ui5-middleware-simpleproxy": "^0.6.0"
   },
@@ -22,4 +22,3 @@
     "i40-aas-objects": "0.3.6"
   }
 }
-

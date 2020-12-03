@@ -21,49 +21,31 @@ sap.ui.define([
 
 		},
 		onInit: function () {
-			/* eslint-env es6 */
-			/* eslint-disable no-console */
 			const oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 			oRouter.getRoute("SingleSemanticProtocol").attachMatched(this._onRouteMatched, this);
 		},
 
 		_onRouteMatched: function (oEvent) {
 			const iSPId = oEvent.getParameter("arguments").SPId;
-			// console.warn("iSPId = " + iSPId);
 
-			// Use Object Lib for IdType Dropdown menu
-			var oIdTypes = aas.IdTypeEnum
-			var IdTypeKeys = Object.keys(oIdTypes);
-
-			var aIdTypes = new Array();
-			for (var i = 0; i < IdTypeKeys.length; i++) {
+			// Set model for ID-Type dropdown menu by using Object Lib
+			var oIdTypeEnum = aas.IdTypeEnum
+			var aIdTypeKeys = Object.keys(oIdTypeEnum);
+	  
+			var aIdTypes = aIdTypeKeys.map(function (Key) {
 			  var oObject = {};
-			  oObject["TypeId"] = IdTypeKeys[i];
-			  oObject["Name"] = IdTypeKeys[i];
-					  aIdTypes.push(JSON.parse(JSON.stringify(oObject)));
-				  }
+			  oObject["TypeId"] = Key;
+			  oObject["Name"] = Key;
+			  return oObject
+			});
+			
+			var oModelIdTypes = new JSONModel(aIdTypes);
+			this.getView().setModel(oModelIdTypes, "IdTypeCollection");
 
-			var aSingleSemanticProtocol = (function () {
-				var aSingleSemanticProtocol = null;
-				jQuery.ajax({
-					'async': false,
-					'global': false,
-					'url': "/resources/semanticProtocols/" + iSPId,
-					'dataType': "json",
-					'success': function (data) {
-						aSingleSemanticProtocol = data;
-					}
-				});
-				return aSingleSemanticProtocol;
-			})();
-
-			var oData = {
-				"IdTypeCollection": aIdTypes,
-
-				"SingleSemanticProtocolData": aSingleSemanticProtocol
-			};
-			var oModel = new JSONModel(oData);
-			this.getView().setModel(oModel, "SingleSemanticProtocol");
+			// Set model for the SemanticProtocol with a specific SemanticProtocolId
+			var oModelSingleSemanticProtocol = new JSONModel();
+			this.getView().setModel(oModelSingleSemanticProtocol, "SingleSemanticProtocol");
+			oModelSingleSemanticProtocol.loadData("/resources/semanticProtocols/" + iSPId);
 		},
 
 		onRoleObjectItemPress: function (oEvent) {

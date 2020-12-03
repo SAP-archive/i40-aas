@@ -27,7 +27,7 @@ sap.ui.define([
     },
 
     initiateModel: function () {
-      // Use Object Lib for IdType Dropdown menu
+      // Set model for ID-Type dropdown menu by using Object Lib
       var oIdTypeEnum = aas.IdTypeEnum
       var aIdTypeKeys = Object.keys(oIdTypeEnum);
 
@@ -38,34 +38,25 @@ sap.ui.define([
         return oObject
       });
 
-      var aEndpointTypes = (function () {
-        var aEndpointTypes = null;
-        jQuery.ajax({
-          'async': false,
-          'global': false,
-          'url': "model/EndpointTypes.json",
-          'dataType': "json",
-          'success': function (data) {
-            aEndpointTypes = data;
-          }
-        });
-        return aEndpointTypes;
-      })();
+      var oModelIdTypes = new JSONModel(aIdTypes);
+      this.getView().setModel(oModelIdTypes, "IdTypeCollection");
+      
+      //Set model for Endpoint Type dropdown menu
+      var oModelEndpointTypes = new JSONModel();
+      this.getView().setModel(oModelEndpointTypes, "EndpointTypeCollection");
+      oModelEndpointTypes.loadData("model/EndpointTypes.json");
 
-      var aEndpointTargets = (function () {
-        var aEndpointTargets = null;
-        jQuery.ajax({
-          'async': false,
-          'global': false,
-          'url': "model/EndpointTargets.json",
-          'dataType': "json",
-          'success': function (data) {
-            aEndpointTargets = data;
-          }
-        });
-        return aEndpointTargets;
-      })();
+      //Set model for Endpoint Target dropdown menu
+      var oModelEndpointTargets = new JSONModel();
+      this.getView().setModel(oModelEndpointTargets, "EndpointTargetCollection");
+      oModelEndpointTargets.loadData("model/EndpointTargets.json");
 
+      //Set model for exisiting Descriptors
+      var oModelAASDescriptors = new JSONModel();
+      this.getView().setModel(oModelAASDescriptors, "AASDescriptorsCollection");
+      oModelAASDescriptors.loadData("/resources/AASDescriptors");
+
+      //Set model for a new Descriptor
       var aCreateDescriptorFormular = {
         "asset": {
           "id": "",
@@ -81,42 +72,15 @@ sap.ui.define([
         }
       };
 
-      var aAASDescriptors = (function () {
-        var aAASDescriptors = null;
-        jQuery.ajax({
-          'async': false,
-          'global': false,
-          'url': "/resources/AASDescriptors",
-          'dataType': "json",
-          'success': function (data) {
-            aAASDescriptors = data;
-          }
-        });
-        return aAASDescriptors;
-      })();
-
-      var oData = {
-        "IdTypeCollection": aIdTypes,
-
-        "EndpointTypeCollection": aEndpointTypes,
-
-        "EndpointTargetCollection": aEndpointTargets,
-
-        "CreateDescriptorFormular": aCreateDescriptorFormular,
-
-        "AASDescriptorsCollection": aAASDescriptors
-
-      };
-      // set explored app's demo model on this sample
-      var oModel = new JSONModel(oData);
-      this.getView().setModel(oModel);
+      var oModelCreateDescriptorFormular = new JSONModel(aCreateDescriptorFormular);
+      this.getView().setModel(oModelCreateDescriptorFormular);
 
     },
 
     // Add an endpoint to the current descriptor
     onAddNewEndpointPress: function () {
       var model = this.getView().getModel();
-      var localdata = model.getProperty("/CreateDescriptorFormular");
+      var localdata = model.getProperty("/");
       var addOneMoreEndpoint = {};
       addOneMoreEndpoint["address"] = "New Endpoint";
       addOneMoreEndpoint["type"] = "https";
@@ -126,7 +90,7 @@ sap.ui.define([
       addOneMoreEndpoint["tls_certificate"] = "";
       addOneMoreEndpoint["certificate_x509_i40"] = "";
       localdata.descriptor.endpoints.push(addOneMoreEndpoint);
-      model.setProperty("/CreateDescriptorFormular", localdata);
+      model.setProperty("/", localdata);
       MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("endpointCreated"));
 
       this.showDetailsOfLastAddedEndpoint();
@@ -148,12 +112,12 @@ sap.ui.define([
       var idx = path.charAt(path.lastIndexOf('/') + 1);
 
       var oModel = this.getView().getModel();
-      var aEndpoints = oModel.getProperty("/CreateDescriptorFormular/descriptor/endpoints");
+      var aEndpoints = oModel.getProperty("/descriptor/endpoints");
       if (idx !== -1) {
 
         aEndpoints.splice(idx, 1);
 
-        oModel.setProperty("/CreateDescriptorFormular/descriptor/endpoints", aEndpoints);
+        oModel.setProperty("/descriptor/endpoints", aEndpoints);
 
         var oList = this.byId("EndpointList");
         oList.getBinding("items").refresh(true);
@@ -165,24 +129,24 @@ sap.ui.define([
     // Shows the details the last added endpoint in the endpoint details part of the splitscreen
     showDetailsOfLastAddedEndpoint: function () {
       var oModel = this.getView().getModel();
-      var lastAddedEndpoint = oModel.getProperty("/CreateDescriptorFormular/descriptor/endpoints").length - 1;
-      var newEndpointPath = "/CreateDescriptorFormular/descriptor/endpoints/" + lastAddedEndpoint;
+      var lastAddedEndpoint = oModel.getProperty("/descriptor/endpoints").length - 1;
+      var newEndpointPath = "/descriptor/endpoints/" + lastAddedEndpoint;
       this.getById().endpointDetails.bindElement(newEndpointPath);
     },
 
     // Shows the details of an endpoint with a given index in the endpoint details part of the splitscreen
     showDetailsOfEndpointWithIndex: function (index) {
       var oModel = this.getView().getModel();
-      var endpointCount = oModel.getProperty("/CreateDescriptorFormular/descriptor/endpoints").length;
+      var endpointCount = oModel.getProperty("/descriptor/endpoints").length;
       if (index <= 0) {
-        this.getById().endpointDetails.bindElement("/CreateDescriptorFormular/descriptor/endpoints/" + "0");
+        this.getById().endpointDetails.bindElement("/descriptor/endpoints/" + "0");
         if (endpointCount === 0) {
           this.disableSplitscreen();
         }
       } else if (index > endpointCount - 1) {
         this.showDetailsOfLastAddedEndpoint();
       } else {
-        this.getById().endpointDetails.bindElement("/CreateDescriptorFormular/descriptor/endpoints/" + index);
+        this.getById().endpointDetails.bindElement("/descriptor/endpoints/" + index);
       }
     },
 
@@ -209,7 +173,7 @@ sap.ui.define([
 
     // Compares the given aasId with all existing aasIds. Returns true if the same id exists already
     aasIdDuplicate: function (aasId) {
-      var AASDescriptors = this.getView().getModel().getProperty("/AASDescriptorsCollection")
+      var AASDescriptors = this.getView().getModel("AASDescriptorsCollection").getProperty("/")
       for (var i = 0; i < AASDescriptors.length; i++) {
         if (aasId === AASDescriptors[i].identification.id) {
           return true;
@@ -220,7 +184,7 @@ sap.ui.define([
 
     // Compares the given assetId with all existing assetIds. Returns true if the same id exists already
     assetIdDuplicate: function (assetId) {
-      var AASDescriptors = this.getView().getModel().getProperty("/AASDescriptorsCollection")
+      var AASDescriptors = this.getView().getModel("AASDescriptorsCollection").getProperty("/")
       for (var i = 0; i < AASDescriptors.length; i++) {
         if (assetId === AASDescriptors[i].asset.id) {
           return true;
@@ -231,7 +195,7 @@ sap.ui.define([
 
     // Check the Endpoint Addresses from any Endpoint of this Descriptor for duplicate. Returns true if a duplicate is found
     epAddressDuplicate: function () {
-      var endpoints = this.getView().getModel().getProperty("/CreateDescriptorFormular/descriptor/endpoints")
+      var endpoints = this.getView().getModel().getProperty("/descriptor/endpoints")
       for (var i = 0; i < endpoints.length; i++) {
         var count = 0;
         for (var j = 0; j < endpoints.length; j++) {
@@ -301,23 +265,25 @@ sap.ui.define([
         this.getById().inputAssetId.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("cantBeEmpty"));
       } else {
         var that = this;
-        var lv_data = this.getView().getModel().getProperty("/CreateDescriptorFormular");
-        var lv_dataString = JSON.stringify(lv_data);
+        var lv_data = this.getView().getModel().getProperty("/");
 
-        jQuery.ajax({
-          url: '/resources/AASDescriptors',
-          type: 'PUT',
-          contentType: "application/json",
-          dataType: "json",
-          data: lv_dataString
-        }).always(function (data, status, response) {
-          if (status === "success") {
+        fetch("/resources/AASDescriptors", {
+          method: "PUT",
+          body: JSON.stringify(lv_data),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        }).then((response) => {
+          if (response.ok) {
             MessageToast.show(that.getView().getModel("i18n").getResourceBundle().getText("descriptorCreated"));
             that.resetScreenToInitial();
           } else {
-            MessageToast.show(status + ": " + response);
+            MessageToast.show(response.statusText);
           }
-        });
+        }).catch(err => {
+          console.error(err)
+        })
       }
     },
 

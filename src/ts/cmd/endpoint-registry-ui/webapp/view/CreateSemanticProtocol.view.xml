@@ -9,14 +9,14 @@
 						<VBox >
 							<HBox>
 								<Label text="{i18n>id}:" class="sapUiSmallMargin" width="150px" labelFor="InputSpId"/>
-								<Input type="Text" value="{/CreateSPFormular/identification/id}" placeholder="i40:registry-semanticProtocol/onboarding"
+								<Input type="Text" value="{/identification/id}" placeholder="i40:registry-semanticProtocol/onboarding"
 									valueLiveUpdate="true" width="350px" required="true" id="InputSpId" liveChange = "onLiveChange"/>
 							</HBox>
 							<HBox>
 								<Label text="{i18n>idType}:" class="sapUiSmallMargin" width="150px"/>
-								<Select selectedKey="{/CreateSPFormular/identification/idType}" items="{ path: '/IdTypeCollection', sorter: { path: 'Name' } }"
+								<Select selectedKey="{/identification/idType}" items="{ path: 'IdTypeCollection>/', sorter: { path: 'Name' } }"
 									width="200px">
-									<core:Item key="{TypeId}" text="{Name}"/>
+									<core:Item key="{IdTypeCollection>TypeId}" text="{IdTypeCollection>Name}"/>
 								</Select>
 							</HBox>
 						</VBox>
@@ -35,8 +35,8 @@
 									<Panel id="idPnl">
 										<FlexBox id="idFB" alignItems="Center" justifyContent="Start">
 											<items>
-												<Select id="DescriptorId" items="{ path: '/AASDescriptors', sorter: { path: 'identification/id' } }" width="250px" forceSelection="false" change = "onSelect">
-													<core:Item key="{key}" text="{identification/id}"/>
+												<Select id="DescriptorId" items="{ path: 'AASDescriptorsCollection>/', sorter: { path: 'identification/id' } }" width="250px" forceSelection="false" change = "onSelect">
+													<core:Item key="{key}" text="{AASDescriptorsCollection>identification/id}"/>
 												</Select>
 												<core:Icon src="sap-icon://delete" press="onDeleteCcMail"/>
 											</items>
@@ -55,7 +55,7 @@
 					<l:Splitter height="auto">
 						<!--*****************Begin Roles*****************-->
 						<Panel headerText="{i18n>addedRoles}:">
-							<List id="RoleList" items="{ path: '/CreateSPFormular/roles' }" noDataText="{i18n>noRolesAdded}" showNoData="true" mode="Delete"
+							<List id="RoleList" items="{ path: '/roles' }" noDataText="{i18n>noRolesAdded}" showNoData="true" mode="Delete"
 								delete="onDeleteRoleObject">
 								<ObjectListItem title="{name}" type="Navigation" press="onRoleObjectItem"></ObjectListItem>
 							</List>
