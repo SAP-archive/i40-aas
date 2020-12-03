@@ -266,22 +266,24 @@ sap.ui.define([
       } else {
         var that = this;
         var lv_data = this.getView().getModel().getProperty("/");
-        var lv_dataString = JSON.stringify(lv_data);
 
-        jQuery.ajax({
-          url: '/resources/AASDescriptors',
-          type: 'PUT',
-          contentType: "application/json",
-          dataType: "json",
-          data: lv_dataString
-        }).always(function (data, status, response) {
-          if (status === "success") {
+        fetch("/resources/AASDescriptors", {
+          method: "PUT",
+          body: JSON.stringify(lv_data),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        }).then((response) => {
+          if (response.ok) {
             MessageToast.show(that.getView().getModel("i18n").getResourceBundle().getText("descriptorCreated"));
             that.resetScreenToInitial();
           } else {
-            MessageToast.show(status + ": " + response);
+            MessageToast.show(response.statusText);
           }
-        });
+        }).catch(err => {
+          console.error(err)
+        })
       }
     },
 

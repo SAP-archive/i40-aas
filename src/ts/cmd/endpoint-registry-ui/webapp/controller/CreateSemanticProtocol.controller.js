@@ -218,7 +218,7 @@ sap.ui.define([
       this.showDetailsOfRoleWithIndex(idx);
     },
 
-    //Create the SemanticProtocol with all its added roles
+    //Create the SemanticProtocol with all its added roles and send it to the DB
     onCreateSemanticProtocol: function () {
       if (this.getInputs().inputSpId.getValue() === "") {
         this.getInputs().inputSpId.setValueState(sap.ui.core.ValueState.Error);
@@ -235,26 +235,25 @@ sap.ui.define([
       } else {
         var that = this;
         var lv_data = this.getView().getModel().getProperty("/");
-        var lv_dataString = JSON.stringify(lv_data);
 
-        jQuery.ajax({
-          url: '/resources/semanticProtocols',
-          type: 'PUT',
-          contentType: "application/json",
-          dataType: "json",
-          data: lv_dataString
-        }).always(function (data, status, response) {
-          if (status === "success") {
+        fetch("/resources/semanticProtocols", {
+          method: "PUT",
+          body: JSON.stringify(lv_data),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        }).then((response) => {
+          if (response.ok) {
             MessageToast.show(that.getView().getModel("i18n").getResourceBundle().getText("semanticProtocolCreated"));
             that.resetScreenToInitial();
           } else {
-            MessageToast.show(status + ": " + response);
+            MessageToast.show(response.statusText);
           }
-
-        });
-
+        }).catch(err => {
+          console.error(err)
+        })
       }
-
     },
 
     //-----------------Begin Input Validation--------------------------//

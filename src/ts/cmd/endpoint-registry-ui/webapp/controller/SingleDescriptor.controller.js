@@ -8,6 +8,35 @@ sap.ui.define([
 
 	return Controller.extend("i40-aas-registry-ui.i40-aas-registry-ui.controller.SingleDescriptor", {
 
+		onInit: function () {
+			const oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+			oRouter.getRoute("SingleDescriptor").attachMatched(this._onRouteMatched, this);
+		},
+
+		_onRouteMatched: function (oEvent) {
+			const iAASId = oEvent.getParameter("arguments").AASId;
+
+			// Set model for ID-Type dropdown menu by using Object Lib
+			var oIdTypeEnum = aas.IdTypeEnum
+			var aIdTypeKeys = Object.keys(oIdTypeEnum);
+	  
+			var aIdTypes = aIdTypeKeys.map(function (Key) {
+			  var oObject = {};
+			  oObject["TypeId"] = Key;
+			  oObject["Name"] = Key;
+			  return oObject
+			});
+			
+			var oModelIdTypes = new JSONModel(aIdTypes);
+			this.getView().setModel(oModelIdTypes, "IdTypeCollection");
+
+			// Set model for the AASDescriptor with a specific AASId
+			var oModelaSingleDescriptor = new JSONModel();
+			this.getView().setModel(oModelaSingleDescriptor, "SingleDescriptor");
+			oModelaSingleDescriptor.loadData("/resources/AASDescriptors/" + iAASId);
+		},
+
+		// Shows initial the details of the first endpoint in the endpoint details part of the splitscreen
 		onUpdateFinished: function (oEvent) {
 			var oList = oEvent.getSource();
 			var aItems = oList.getItems();
@@ -18,55 +47,9 @@ sap.ui.define([
 				var namedModelPath = "SingleDescriptor>" + path;
 				this.byId("EndpointDetail").bindElement(namedModelPath);
 			}
-
 		},
-
-		onInit: function () {
-			/* eslint-env es6 */
-			/* eslint-disable no-console */
-			const oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-			oRouter.getRoute("SingleDescriptor").attachMatched(this._onRouteMatched, this);
-		},
-
-		_onRouteMatched: function (oEvent) {
-			const iAASId = oEvent.getParameter("arguments").AASId;
-			// console.warn("iAASId = " + iAASId);
-
-			// Use Object Lib for IdType Dropdown menu
-			var oIdTypes = aas.IdTypeEnum
-			var IdTypeKeys = Object.keys(oIdTypes);
-
-			var aIdTypes = new Array();
-			for (var i = 0; i < IdTypeKeys.length; i++) {
-			  var oObject = {};
-			  oObject["TypeId"] = IdTypeKeys[i];
-			  oObject["Name"] = IdTypeKeys[i];
-					  aIdTypes.push(JSON.parse(JSON.stringify(oObject)));
-				  }
-
-			var aSingleAASDescriptor = (function () {
-				var aSingleAASDescriptor = null;
-				jQuery.ajax({
-					'async': false,
-					'global': false,
-					'url': "/resources/AASDescriptors/" + iAASId,
-					'dataType': "json",
-					'success': function (data) {
-						aSingleAASDescriptor = data;
-					}
-				});
-				return aSingleAASDescriptor;
-			})();
-
-			var oData = {
-				"IdTypeCollection": aIdTypes,
-
-				"SingleAASDescriptor": aSingleAASDescriptor
-			};
-			var oModel = new JSONModel(oData);
-			this.getView().setModel(oModel, "SingleDescriptor");
-		},
-
+		
+		// Shows the details of the selected endpoint in the endpoint details part of the splitscreen
 		onEndpointObjectItemPress: function (oEvent) {
 			var oItem = oEvent.getSource();
 			var oCtx = oItem.getBindingContext('SingleDescriptor');
