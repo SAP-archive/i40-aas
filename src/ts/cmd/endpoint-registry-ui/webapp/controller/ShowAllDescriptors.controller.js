@@ -24,7 +24,7 @@ sap.ui.define([
     initiateModel: function () {
       var oModel = new JSONModel();
       this.getView().setModel(oModel, "DescriptorList");
-      oModel.loadData("/resources/AASDescriptors");
+      oModel.loadData("/endpoint-registry/AASDescriptors");
     },
 
     // --------------- Begin auto refresh -------------------------
@@ -76,7 +76,7 @@ sap.ui.define([
 
 
             var that = this;
-            return fetch("/resources/AASDescriptors/" + AASID, {
+            return fetch("/endpoint-registry/AASDescriptors/" + AASID, {
               method: "DELETE"
             }).then((response) => {
               if (response.ok) {

@@ -45,7 +45,7 @@ sap.ui.define([
 			// Set model for the SemanticProtocol with a specific SemanticProtocolId
 			var oModelSingleSemanticProtocol = new JSONModel();
 			this.getView().setModel(oModelSingleSemanticProtocol, "SingleSemanticProtocol");
-			oModelSingleSemanticProtocol.loadData("/resources/semanticProtocols/" + iSPId);
+			oModelSingleSemanticProtocol.loadData("/endpoint-registry/semanticProtocols/" + iSPId);
 		},
 
 		onRoleObjectItemPress: function (oEvent) {

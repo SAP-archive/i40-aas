@@ -35,12 +35,12 @@ sap.ui.define([
       //Set model for exisiting Descriptors
       var oModelAASDescriptors = new JSONModel();
       this.getView().setModel(oModelAASDescriptors, "AASDescriptorsCollection");
-      oModelAASDescriptors.loadData("/resources/AASDescriptors");
+      oModelAASDescriptors.loadData("/endpoint-registry/AASDescriptors");
 
       //Set model for exisiting SemanticProtocols
       var oModelSemanticProtocols = new JSONModel();
       this.getView().setModel(oModelSemanticProtocols, "SemanticProtocolsCollection");
-      oModelSemanticProtocols.loadData("/resources/semanticProtocols");
+      oModelSemanticProtocols.loadData("/endpoint-registry/semanticProtocols");
 
       //Set model for a new SemanticProtocol
       var aCreateSPFormular = {
@@ -236,7 +236,7 @@ sap.ui.define([
         var that = this;
         var lv_data = this.getView().getModel().getProperty("/");
 
-        fetch("/resources/semanticProtocols", {
+        fetch("/endpoint-registry/semanticProtocols", {
           method: "PUT",
           body: JSON.stringify(lv_data),
           headers: {
