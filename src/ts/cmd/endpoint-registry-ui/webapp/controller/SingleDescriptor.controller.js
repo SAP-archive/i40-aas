@@ -33,7 +33,7 @@ sap.ui.define([
 			// Set model for the AASDescriptor with a specific AASId
 			var oModelaSingleDescriptor = new JSONModel();
 			this.getView().setModel(oModelaSingleDescriptor, "SingleDescriptor");
-			oModelaSingleDescriptor.loadData("/resources/AASDescriptors/" + iAASId);
+			oModelaSingleDescriptor.loadData("/endpoint-registry/AASDescriptors/" + iAASId);
 		},
 
 		// Shows initial the details of the first endpoint in the endpoint details part of the splitscreen

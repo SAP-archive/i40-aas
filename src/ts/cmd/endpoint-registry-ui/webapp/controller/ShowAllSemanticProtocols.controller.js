@@ -23,7 +23,7 @@ sap.ui.define([
     initiateModel: function () {
       var oModel = new JSONModel();
       this.getView().setModel(oModel, "SemanticProtocolList");
-      oModel.loadData("/resources/semanticProtocols");
+      oModel.loadData("/endpoint-registry/semanticProtocols");
     },
 
     // --------------- Begin auto refresh -------------------------
@@ -73,7 +73,7 @@ sap.ui.define([
           if (sAction == "DELETE") {
 
             var that = this;
-            return fetch("/resources/semanticProtocols/" + SPId, {
+            return fetch("/endpoint-registry/semanticProtocols/" + SPId, {
               method: "DELETE"
             }).then((response) => {
               if (response.ok) {

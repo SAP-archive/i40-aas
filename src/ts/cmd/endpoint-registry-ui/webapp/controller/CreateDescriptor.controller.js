@@ -54,7 +54,7 @@ sap.ui.define([
       //Set model for exisiting Descriptors
       var oModelAASDescriptors = new JSONModel();
       this.getView().setModel(oModelAASDescriptors, "AASDescriptorsCollection");
-      oModelAASDescriptors.loadData("/resources/AASDescriptors");
+      oModelAASDescriptors.loadData("/endpoint-registry/AASDescriptors");
 
       //Set model for a new Descriptor
       var aCreateDescriptorFormular = {
@@ -267,7 +267,7 @@ sap.ui.define([
         var that = this;
         var lv_data = this.getView().getModel().getProperty("/");
 
-        fetch("/resources/AASDescriptors", {
+        fetch("/endpoint-registry/AASDescriptors", {
           method: "PUT",
           body: JSON.stringify(lv_data),
           headers: {
