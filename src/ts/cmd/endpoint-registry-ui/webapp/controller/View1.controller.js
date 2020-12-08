@@ -1,38 +1,38 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
-	"sap/ui/model/json/JSONModel",
-	"sap/m/MessageToast",
-	"sap/ui/core/routing/History",
-	"sap/base/Log"
+  "sap/ui/core/mvc/Controller",
+  "sap/ui/model/json/JSONModel",
+  "sap/m/MessageToast",
+  "sap/ui/core/routing/History",
+  "sap/base/Log"
 ], function (Controller, JSONModel, MessageToast, History, Log) {
-	"use strict";
-	return Controller.extend("i40-aas-registry-ui.i40-aas-registry-ui.controller.View1", {
-		onInit: function () {
-			
-		},
-		onShowAllDescriptorsPress: function () {
-			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+  "use strict";
+  return Controller.extend("i40-aas-registry-ui.i40-aas-registry-ui.controller.View1", {
+    onInit: function () {
 
-			oRouter.navTo("ShowAllDescriptors");
-		},
+    },
+    onShowAllDescriptorsPress: function () {
+      var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 
-		onCreateDescriptorPress: function () {
-			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+      oRouter.navTo("ShowAllDescriptors");
+    },
 
-			oRouter.navTo("CreateDescriptor");
-		},
+    onCreateDescriptorPress: function () {
+      var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 
-		onShowAllSemanticProtocolsPress: function () {
-			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+      oRouter.navTo("CreateDescriptor");
+    },
 
-			oRouter.navTo("ShowAllSemanticProtocols");
-		},
+    onShowAllSemanticProtocolsPress: function () {
+      var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 
-		onCreateSemanticProtocolPress: function () {
-			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+      oRouter.navTo("ShowAllSemanticProtocols");
+    },
 
-			oRouter.navTo("CreateSemanticProtocol");
-		}
-	});
+    onCreateSemanticProtocolPress: function () {
+      var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+
+      oRouter.navTo("CreateSemanticProtocol");
+    }
+  });
 
 });

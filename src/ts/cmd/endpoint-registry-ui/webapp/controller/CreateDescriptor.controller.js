@@ -40,7 +40,7 @@ sap.ui.define([
 
       var oModelIdTypes = new JSONModel(aIdTypes);
       this.getView().setModel(oModelIdTypes, "IdTypeCollection");
-      
+
       //Set model for Endpoint Type dropdown menu
       var oModelEndpointTypes = new JSONModel();
       this.getView().setModel(oModelEndpointTypes, "EndpointTypeCollection");

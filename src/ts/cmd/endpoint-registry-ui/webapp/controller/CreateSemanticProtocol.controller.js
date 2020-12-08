@@ -10,12 +10,25 @@ sap.ui.define([
 
   return Controller.extend("i40-aas-registry-ui.i40-aas-registry-ui.controller.CreateSemanticProtocol", {
 
-    onInit: function (oEvent) {
 
-      this.initiateModel();
+
+    onInit: function () {
+      this.getView().addEventDelegate({
+        onAfterShow: this.initiateModel,
+      }, this);
     },
 
-    initiateModel: function (oEvent) {
+    getById: function () {
+      return {
+        inputSpId: this.byId("InputSpId"),
+        inputRoleName: this.byId("InputRoleName"),
+        createButton: this.byId("CreateButton"),
+        addRoleButton: this.byId("AddRoleButton"),
+        aasDescriptorSelect: this.byId("idPnl")
+      }
+    },
+
+    initiateModel: function () {
       this._oPnl = this.byId("idPnl");
 
       // Set model for ID-Type dropdown menu by using Object Lib
@@ -96,24 +109,24 @@ sap.ui.define([
 
     // Delete from the Role a dropdown for AASDescriptor selection
     onDeleteCcMail: function (oEvent) {
-      var descriptorDropdowns = this.getInputs().aasDescriptorSelect.getContent();
+      var descriptorDropdowns = this.getById().aasDescriptorSelect.getContent();
       // One dropdown is mandatory -> last dropdown is not deletable
-      if (typeof descriptorDropdowns !== 'undefined' && descriptorDropdowns.length > 1) { 
+      if (typeof descriptorDropdowns !== 'undefined' && descriptorDropdowns.length > 1) {
         var rowItemContainer = oEvent.getSource().getParent();
-      rowItemContainer.destroy();
+        rowItemContainer.destroy();
       } else {
         MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("descriptorMandatory"));
-    }
+      }
 
-  },
+    },
 
     // Add a new Role to the SemanticProtocol
     onAddRole: function () {
-      var descriptorDropdowns = this.getInputs().aasDescriptorSelect.getContent();
+      var descriptorDropdowns = this.getById().aasDescriptorSelect.getContent();
 
-      if (this.getInputs().inputRoleName.getValue() === "") {
-        this.getInputs().inputRoleName.setValueState(sap.ui.core.ValueState.Error);
-        this.getInputs().inputRoleName.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("cantBeEmpty"));
+      if (this.getById().inputRoleName.getValue() === "") {
+        this.getById().inputRoleName.setValueState(sap.ui.core.ValueState.Error);
+        this.getById().inputRoleName.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("cantBeEmpty"));
         MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("cantBeEmpty"));
         this.checkAddRoleButton();
       } else if (this.aasDescriptorDuplicateOrEmpty()) {
@@ -220,15 +233,15 @@ sap.ui.define([
 
     //Create the SemanticProtocol with all its added roles and send it to the DB
     onCreateSemanticProtocol: function () {
-      if (this.getInputs().inputSpId.getValue() === "") {
-        this.getInputs().inputSpId.setValueState(sap.ui.core.ValueState.Error);
-        this.getInputs().inputSpId.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("cantBeEmpty"));
+      if (this.getById().inputSpId.getValue() === "") {
+        this.getById().inputSpId.setValueState(sap.ui.core.ValueState.Error);
+        this.getById().inputSpId.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("cantBeEmpty"));
         MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("cantBeEmpty"));
         this.checkCreateButton();
 
       } else if (!this.roleAdded()) {
-        //this.getInputs().inputRoleName.setValueState(sap.ui.core.ValueState.Warning);
-        this.getInputs().inputRoleName.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("noRoleAdded"));
+        //this.getById().inputRoleName.setValueState(sap.ui.core.ValueState.Warning);
+        this.getById().inputRoleName.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("noRoleAdded"));
         MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("noRoleAdded"), {
           duration: 5000
         });
@@ -257,15 +270,7 @@ sap.ui.define([
     },
 
     //-----------------Begin Input Validation--------------------------//
-    getInputs: function () {
-      return {
-        inputSpId: this.byId("InputSpId"),
-        inputRoleName: this.byId("InputRoleName"),
-        createButton: this.byId("CreateButton"),
-        addRoleButton: this.byId("AddRoleButton"),
-        aasDescriptorSelect: this.byId("idPnl")
-      }
-    },
+
 
     //Check if the Semantic Protocol ID already exists
     spIdDuplicate: function (spId) {
@@ -306,7 +311,7 @@ sap.ui.define([
 
     // Check if a AASDescriptor already is choosen in a other dropdown or a dropdown ist empty
     aasDescriptorDuplicateOrEmpty: function () {
-      var descriptorDropdowns = this.getInputs().aasDescriptorSelect.getContent();
+      var descriptorDropdowns = this.getById().aasDescriptorSelect.getContent();
 
 
       if (typeof descriptorDropdowns !== 'undefined' && descriptorDropdowns.length > 0) {
@@ -338,10 +343,10 @@ sap.ui.define([
       var id = oEvent.getParameter("id");
       var newSelectedItemText = oEvent.getParameter('selectedItem').getText();
       var inputControl = sap.ui.getCore().byId(id);
-      var descriptorDropdowns = this.getInputs().aasDescriptorSelect.getContent();
+      var descriptorDropdowns = this.getById().aasDescriptorSelect.getContent();
 
       inputControl.setValueState(sap.ui.core.ValueState.None);
-      this.getInputs().addRoleButton.setEnabled(true);
+      this.getById().addRoleButton.setEnabled(true);
 
 
       if (typeof descriptorDropdowns !== 'undefined' && descriptorDropdowns.length > 0) {
@@ -370,19 +375,19 @@ sap.ui.define([
       var inputControl = this.byId(id);
 
       inputControl.setValueState(sap.ui.core.ValueState.None);
-      this.getInputs().createButton.setEnabled(true);
+      this.getById().createButton.setEnabled(true);
       // Check if Field is empty
       if (newValue === "") {
         inputControl.setValueState(sap.ui.core.ValueState.Error);
         inputControl.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("cantBeEmpty"));
       }
       // Only check for duplicate if Inputfield is identification/id
-      if (inputControl === this.getInputs().inputSpId && this.spIdDuplicate(newValue)) {
+      if (inputControl === this.getById().inputSpId && this.spIdDuplicate(newValue)) {
         inputControl.setValueState(sap.ui.core.ValueState.Error);
         inputControl.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("duplicate"));
       }
       // Only check for duplicate if Inputfield is roles/name
-      if (inputControl === this.getInputs().inputRoleName && this.roleNameDuplicate(newValue)) {
+      if (inputControl === this.getById().inputRoleName && this.roleNameDuplicate(newValue)) {
         inputControl.setValueState(sap.ui.core.ValueState.Error);
         inputControl.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("roleNameDuplicate"));
       }
@@ -392,19 +397,19 @@ sap.ui.define([
     },
     // Disable CreateButton if ValueState of spId or endpointAdress is Error & enable if not
     checkCreateButton: function () {
-      if (this.getInputs().inputSpId.getValueState() == "Error") {
-        this.getInputs().createButton.setEnabled(false);
+      if (this.getById().inputSpId.getValueState() == "Error") {
+        this.getById().createButton.setEnabled(false);
       } else {
-        this.getInputs().createButton.setEnabled(true);
+        this.getById().createButton.setEnabled(true);
       }
     },
 
     // Disable AddRoleButton if ValueState of roleName, spId or endpointAdress is Error & enable if not
     checkAddRoleButton: function () {
-      if (this.getInputs().inputRoleName.getValueState() == "Error") {
-        this.getInputs().addRoleButton.setEnabled(false);
+      if (this.getById().inputRoleName.getValueState() == "Error") {
+        this.getById().addRoleButton.setEnabled(false);
       } else {
-        this.getInputs().addRoleButton.setEnabled(true);
+        this.getById().addRoleButton.setEnabled(true);
       }
     },
 
@@ -416,8 +421,8 @@ sap.ui.define([
       this.resetDescriptorDropdown();
       this.initiateModel();
       this.disableSplitscreen();
-      this.getInputs().inputSpId.setValueState(sap.ui.core.ValueState.None);
-      this.getInputs().inputRoleName.setValueState(sap.ui.core.ValueState.None);
+      this.getById().inputSpId.setValueState(sap.ui.core.ValueState.None);
+      this.getById().inputRoleName.setValueState(sap.ui.core.ValueState.None);
       this.checkCreateButton();
       this.checkAddRoleButton();
     },
