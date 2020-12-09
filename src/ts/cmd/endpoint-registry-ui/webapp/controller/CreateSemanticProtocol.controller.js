@@ -241,7 +241,7 @@ sap.ui.define([
 
       } else if (!this.roleAdded()) {
         //this.getById().inputRoleName.setValueState(sap.ui.core.ValueState.Warning);
-        this.getById().inputRoleName.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("noRoleAdded"));
+        //this.getById().inputRoleName.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("noRoleAdded"));
         MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("noRoleAdded"), {
           duration: 5000
         });
