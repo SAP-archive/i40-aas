@@ -131,6 +131,12 @@ core:
       password: admin
       encryptionkey: ENC_key123!
 
+    endpointsUI:
+      port: 4401
+      baseuri: ""
+      ## Leave empty "" to generate a random 20 character alphanumeric string.
+      encryptionkey: ENC_key123!
+
 applicationAdapters:
   mongoDb:
     port: 3100

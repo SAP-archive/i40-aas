@@ -57,6 +57,12 @@ services:
       context: src/ts
       dockerfile: ../docker/endpoint-registry/Dockerfile
   ##########################################
+  i40-aas-endpoint-registry-ui:
+    image: sapi40/i40-aas-endpoint-registry-ui:${BUILD_TAG}
+    build:
+      context: src/ts
+      dockerfile: ../docker/endpoint-registry-ui/Dockerfile
+  ##########################################
   i40-aas-adapter-registry:
     image: sapi40/i40-aas-adapter-registry:${BUILD_TAG}
     build:

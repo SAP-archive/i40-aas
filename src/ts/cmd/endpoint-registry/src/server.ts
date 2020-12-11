@@ -15,7 +15,6 @@ import { RegistryFactory } from './services/registry/daos/postgres/RegistryFacto
 const logger = require('aas-logger/lib/log');
 
 const router = express();
-router.use('/ui', express.static('/cmd/endpoint-registry/dist/ui/i40-aas-registry-ui/webapp'));
 
 applyRoutes(healthRoute, router);
 applyMiddleware(middleware, router);
@@ -28,20 +27,25 @@ const TLS_KEYFILE = checkEnvVar('TLS_KEYFILE');
 const TLS_CERTFILE = checkEnvVar('TLS_CERTFILE');
 const TLS_ENABLED = checkEnvVar('TLS_ENABLED');
 
+const HOST = '0.0.0.0';
+
+
 if (TLS_ENABLED == 'true') {
   https.createServer({
     key: fs.readFileSync(TLS_KEYFILE),
     cert: fs.readFileSync(TLS_CERTFILE)
   }, router).listen(PORT, () => {
-    logger.info(`A Server is running http://localhost:${PORT}...`);
+    logger.info(`A Server is running https://localhost:${PORT}...`);
   });
 } else {
-  http.createServer(router).listen(PORT, () =>
-    logger.info(`A Server is running http://localhost:${PORT}...`)
+  http.createServer(router).listen(4400, HOST,  () =>
+    logger.info(`A Server is running without SSL http://${HOST}:${PORT}...`)
   );
 }
 
 export { router as app };
+
+//router.listen(PORT, '0.0.0.0');
 
 function checkEnvVar(variableName: string): string {
   let retVal: string | undefined = process.env[variableName];
