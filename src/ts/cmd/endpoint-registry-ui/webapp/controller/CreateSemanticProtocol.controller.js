@@ -417,7 +417,7 @@ sap.ui.define([
 
     // Clear Screen and show initial screen
     resetScreenToInitial: function () {
-      this.byId("InputRoleName").setValue("");
+      this.getById().inputRoleName.setValue("");
       this.resetDescriptorDropdown();
       this.initiateModel();
       this.disableSplitscreen();
