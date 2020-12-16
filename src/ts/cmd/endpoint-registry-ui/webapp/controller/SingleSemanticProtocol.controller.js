@@ -31,12 +31,18 @@ sap.ui.define([
         addRoleButton: this.byId("AddRoleButton"),
         addDescriptorButton: this.byId("AddDescriptorButton"),
         roleDetail: this.byId("roleDetail"),
-        descriptorIdInput: this.byId("DescriptorIdInput")
+        descriptorIdInput: this.byId("DescriptorIdInput"),
+        SPId: this.getView().getModel("SingleSemanticProtocol").getProperty("/identification/id"),
+        SPIdType: this.getView().getModel("SingleSemanticProtocol").getProperty("/identification/idType")
       }
     },
 
     _onRouteMatched: function (oEvent) {
-      const iSPId = oEvent.getParameter("arguments").SPId;
+      const SPIdEncoded = oEvent.getParameter("arguments").SPId;
+
+      this.setSingleSemanticProtocol(SPIdEncoded);
+      this.setAASDescriptorsCollection();
+
 
       // Set model for ID-Type dropdown menu by using Object Lib
       var oIdTypeEnum = aas.IdTypeEnum
@@ -52,25 +58,22 @@ sap.ui.define([
       var oModelIdTypes = new JSONModel(aIdTypes);
       this.getView().setModel(oModelIdTypes, "IdTypeCollection");
 
-      this.initiateModel(iSPId);
       this.getById().roleDetail.bindElement("SingleSemanticProtocol>/roles/0");
-
 
     },
 
-    initiateModel: function (SPIdEncoded) {
-
-      // Set model for the SemanticProtocol with a specific SemanticProtocolId
-      var oModelSingleSemanticProtocol = new JSONModel();
-      this.getView().setModel(oModelSingleSemanticProtocol, "SingleSemanticProtocol");
-      oModelSingleSemanticProtocol.loadData("/endpoint-registry/semanticProtocols/" + SPIdEncoded);
-
-
-      //Set model for exisiting Descriptors
+    //Create and Set model for exisiting Descriptors
+    setAASDescriptorsCollection: function () {
       var oModelAASDescriptors = new JSONModel();
       this.getView().setModel(oModelAASDescriptors, "AASDescriptorsCollection");
       oModelAASDescriptors.loadData("/endpoint-registry/AASDescriptors");
+    },
 
+    // Create and Set model for the SemanticProtocol with a specific SemanticProtocolId
+    setSingleSemanticProtocol: function (SPIdEncoded) {
+      var oModelSingleSemanticProtocol = new JSONModel();
+      this.getView().setModel(oModelSingleSemanticProtocol, "SingleSemanticProtocol");
+      oModelSingleSemanticProtocol.loadData("/endpoint-registry/semanticProtocols/" + SPIdEncoded);
     },
 
 
@@ -80,31 +83,39 @@ sap.ui.define([
       var SPIdEncoded = encodeURIComponent(SPId);
       var localSemanticProtocol = this.getView().getModel("SingleSemanticProtocol").getProperty("/");
       var oMainObject = {};
-      oMainObject["name"] = this.getById().inputRoleName.getValue();
-      localSemanticProtocol.roles.push(oMainObject);
 
-      fetch("/endpoint-registry/admin/semanticProtocols", {
-        method: "PUT",
-        body: JSON.stringify(localSemanticProtocol),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        }
-      }).then((response) => {
-        if (response.ok) {
-          MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("roleCreated"));
-          this.getById().inputRoleName.setValue("");
+      if (this.getById().inputRoleName.getValue() !== "") {
+        oMainObject["name"] = this.getById().inputRoleName.getValue();
+        localSemanticProtocol.roles.push(oMainObject);
 
-          this.showDetailsOfLastAddedRole();
-          this.initiateModel(SPIdEncoded);
+        fetch("/endpoint-registry/admin/semanticProtocols", {
+          method: "PUT",
+          body: JSON.stringify(localSemanticProtocol),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        }).then((response) => {
+          if (response.ok) {
+            MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("roleCreated"));
+            this.getById().inputRoleName.setValue("");
 
+            this.showDetailsOfLastAddedRole();
+            this.setSingleSemanticProtocol(SPIdEncoded);
+            this.clearDescriptorIdInput();
+            this.getById().descriptorIdInput.setValueState(sap.ui.core.ValueState.None);
+            this.checkAddDescriptorButton();
 
-        } else {
-          MessageToast.show(response.statusText);
-        }
-      }).catch(err => {
-        console.error(err)
-      })
+          } else {
+            MessageToast.show(response.statusText);
+          }
+        }).catch(err => {
+          console.error(err)
+        })
+      } else {
+        MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("cantBeEmpty"));
+      }
+
     },
 
     // Delete a role from the SemanticProtocol
@@ -117,8 +128,8 @@ sap.ui.define([
       var localSemanticProtocol = this.getView().getModel("SingleSemanticProtocol");
       var roles = localSemanticProtocol.getProperty("/roles");
 
-      var oModel = this.getView().getModel("SingleSemanticProtocol");
-      var roleCount = oModel.getProperty("/roles").length;
+      //var oModel = this.getView().getModel("SingleSemanticProtocol");
+      var roleCount = localSemanticProtocol.getProperty("/roles").length;
 
       if (roleCount > 1) {
 
@@ -137,7 +148,8 @@ sap.ui.define([
         }).then((response) => {
           if (response.ok) {
             MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("roleDeleted"));
-            //this.initiateModel(SPId);
+            var vergleich = this.getView().getModel("SingleSemanticProtocol");
+            //this.setSingleSemanticProtocol(SPId);
           } else {
             MessageToast.show(response.statusText);
           }
@@ -152,48 +164,47 @@ sap.ui.define([
 
     // Add a new Descriptor to the selected Role of the SemanticProtocol
     onAddDescriptor: function () {
-      console.log("test");
-
-     
       var rolePath = this.getById().roleDetail.getElementBinding("SingleSemanticProtocol").getPath();
       var localDescriptors = this.getView().getModel("SingleSemanticProtocol").getProperty(rolePath + "/aasDescriptorIds");
       var oMainObject = {};
-      oMainObject["id"] = this.getById().descriptorIdInput.getSelectedItem().getText();
-      localDescriptors.push(oMainObject);
+      if (this.getById().descriptorIdInput.getSelectedItem() !== null) {
+        oMainObject["id"] = this.getById().descriptorIdInput.getSelectedItem().getText();
+        localDescriptors.push(oMainObject);
 
-      var SPId = this.getView().getModel("SingleSemanticProtocol").getProperty("/identification/id");
-      var SPIdEncoded = encodeURIComponent(SPId);
-      var roleName = this.getView().getModel("SingleSemanticProtocol").getProperty(rolePath + "/name");
+        var SPId = this.getView().getModel("SingleSemanticProtocol").getProperty("/identification/id");
+        var SPIdEncoded = encodeURIComponent(SPId);
 
-      fetch("/endpoint-registry/semanticProtocols/" + SPId + "/role/" + roleName + "/AASDescriptors", {
-        method: "PATCH",
-        body: JSON.stringify(localDescriptors),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        }
-      }).then((response) => {
-        if (response.ok) {
-          MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("descriptorAdded"));
-          this.initiateModel(SPIdEncoded);
-          this.clearDescriptorIdInput();
+        var roleName = this.getView().getModel("SingleSemanticProtocol").getProperty(rolePath + "/name");
 
-        } else {
-          MessageToast.show(response.statusText);
-        }
-      }).catch(err => {
-        console.error(err)
-      })
-      //TODO Clear not work until now!!
-      this.clearDescriptorIdInput();
-      console.log("again");
+        fetch("/endpoint-registry/semanticProtocols/" + SPIdEncoded + "/role/" + roleName + "/AASDescriptors", {
+          method: "PATCH",
+          body: JSON.stringify(localDescriptors),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        }).then((response) => {
+          if (response.ok) {
+            MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("descriptorAdded"));
+            this.setSingleSemanticProtocol(SPIdEncoded);
 
+          } else {
+            MessageToast.show(response.statusText);
+          }
+        }).catch(err => {
+          console.error(err)
+        })
+        this.clearDescriptorIdInput();
+      } else {
+        MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("NoDescriptorSelected"));
+      }
 
     },
 
     // Delete a Descriptor from the selected Role
     onDeleteDescriptor: function (oEvent) {
       var SPId = this.getView().getModel("SingleSemanticProtocol").getProperty("/identification/id");
+      var SPIdEncoded = encodeURIComponent(SPId);
       var rolePath = this.getById().roleDetail.getElementBinding("SingleSemanticProtocol").getPath();
       var roleName = this.getView().getModel("SingleSemanticProtocol").getProperty(rolePath + "/name");
 
@@ -203,12 +214,12 @@ sap.ui.define([
       var descriptorId = this.getView().getModel("SingleSemanticProtocol").getProperty(descriptorPath + "/id");
 
 
-      fetch("/endpoint-registry/semanticProtocols/" + SPId + "/role/" + roleName + "/AASDescriptors/" + descriptorId, {
+      fetch("/endpoint-registry/semanticProtocols/" + SPIdEncoded + "/role/" + roleName + "/AASDescriptors/" + descriptorId, {
         method: "DELETE"
       }).then((response) => {
         if (response.ok) {
           MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("descriptorDeleted"));
-          this.initiateModel(SPId);
+          this.setSingleSemanticProtocol(SPIdEncoded);
         } else {
           MessageToast.show(response.statusText);
         }
@@ -217,9 +228,9 @@ sap.ui.define([
       })
 
       this.clearDescriptorIdInput();
+      this.getById().descriptorIdInput.setValueState(sap.ui.core.ValueState.None);
+      this.checkAddDescriptorButton();
     },
-
-
 
     clearDescriptorIdInput: function () {
       this.getById().descriptorIdInput.setSelectedItem("");
@@ -232,9 +243,7 @@ sap.ui.define([
       var roleCount = oModel.getProperty("/roles").length;
       if (index <= 0) {
         this.byId("roleDetail").bindElement("SingleSemanticProtocol>/roles/" + "0");
-        if (roleCount === 0) {
-          //this.disableSplitscreen();
-        }
+        if (roleCount === 0) {}
       } else if (index > roleCount - 1) {
         this.showDetailsOfLastAddedRole();
       } else {
@@ -269,9 +278,6 @@ sap.ui.define([
 
     //-----------------Begin Input Validation--------------------------//
 
-
-
-
     //Check if the Role Name already exists
     roleNameDuplicate: function (roleName) {
       var Roles = this.getView().getModel("SingleSemanticProtocol").getProperty("/roles")
@@ -287,7 +293,6 @@ sap.ui.define([
       return false;
 
     },
-
 
     //Shows a red border around the select field as long as a duplicate selection is found
     onSelect(oEvent) {
@@ -308,19 +313,6 @@ sap.ui.define([
         this.getById().descriptorIdInput.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("duplicate"));
       }
       this.checkAddDescriptorButton();
-
-
-      // var rolePath = this.getById().roleDetail.getElementBinding("SingleSemanticProtocol").getPath();
-      // var localDescriptors = this.getView().getModel("SingleSemanticProtocol").getProperty(rolePath + "/aasDescriptorIds");
-
-
-
-      // var SPId = this.getView().getModel("SingleSemanticProtocol").getProperty("/identification/id");
-      // var SPIdEncoded = encodeURIComponent(SPId);
-      // var roleName = this.getView().getModel("SingleSemanticProtocol").getProperty(rolePath + "/name");
-
-
-
 
     },
 
@@ -344,9 +336,7 @@ sap.ui.define([
 
     //Shows a red border around the input field as long as a empty or duplicate entry is found
     onLiveChange(oEvent) {
-      //var id = oEvent.getParameter("id");
       var newValue = oEvent.getParameter("newValue");
-      //var inputControl = this.byId(id);
 
       this.getById().inputRoleName.setValueState(sap.ui.core.ValueState.None);
       // Set ValueState Error and add ValueStateText if Inputfield is empty
@@ -386,6 +376,12 @@ sap.ui.define([
     onNavBack: function () {
       var oHistory = History.getInstance();
       var sPreviousHash = oHistory.getPreviousHash();
+      this.getById().inputRoleName.setValue("");
+      this.clearDescriptorIdInput();
+      this.getById().descriptorIdInput.setValueState(sap.ui.core.ValueState.None);
+      this.getById().inputRoleName.setValueState(sap.ui.core.ValueState.None);
+      this.checkAddDescriptorButton();
+      this.checkAddRoleButton();
 
       if (sPreviousHash !== undefined) {
         window.history.go(-1);
@@ -395,18 +391,6 @@ sap.ui.define([
       }
     },
 
-    onClosePress: function () {
-      var oHistory = History.getInstance();
-      var sPreviousHash = oHistory.getPreviousHash();
-
-      if (sPreviousHash !== undefined) {
-        window.history.go(-1);
-      } else {
-        var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-        oRouter.navTo("overview", true);
-      }
-
-    }
 
   });
 
