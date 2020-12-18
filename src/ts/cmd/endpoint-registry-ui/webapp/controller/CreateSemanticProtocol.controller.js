@@ -74,7 +74,7 @@ sap.ui.define([
       var oController = this.getView().getController();
       var oSelect = new sap.m.Select({
         forceSelection: false,
-        width: "250px",
+        width: "350px",
         change: function (oEvent) {
           oController.onSelect(oEvent)
         }
@@ -191,7 +191,7 @@ sap.ui.define([
     //Enable splitscreen
     enableSplitscreen: function () {
       this.byId("roleDetail").setVisible(true);
-      this.byId("splitterSize").setSize("500px");
+      this.byId("splitterSize").setSize("400px");
       this.byId("splitterSize").setResizable(true);
     },
 

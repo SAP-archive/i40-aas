@@ -272,14 +272,6 @@ sap.ui.define([
       this.clearDescriptorIdInput();
     },
 
-    //Enable splitscreen
-    enableSplitscreen: function () {
-      this.byId("roleDetail").setVisible(true);
-      this.byId("splitterSize").setSize("500px");
-      this.byId("splitterSize").setResizable(true);
-    },
-
-
     //-----------------Begin Input Validation--------------------------//
 
     //Check if the Role Name already exists

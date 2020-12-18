@@ -63,7 +63,7 @@
 								<ObjectListItem title=" {SingleDescriptor>address}" type="Navigation" press="onEndpointObjectItemPress"/>
 							</List>
 							<layoutData >
-								<l:SplitterLayoutData size="500px"/>
+								<l:SplitterLayoutData size="400px"/>
 							</layoutData>
 						</Panel>
 						<!--*****************End Endpoints*****************-->

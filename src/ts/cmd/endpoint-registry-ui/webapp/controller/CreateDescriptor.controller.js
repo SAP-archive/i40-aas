@@ -151,7 +151,7 @@ sap.ui.define([
 
     enableSplitscreen: function () {
       this.getById().endpointDetails.setVisible(true);
-      this.byId("splitterSize").setSize("500px");
+      this.byId("splitterSize").setSize("400px");
       this.byId("splitterSize").setResizable(true);
     },
 

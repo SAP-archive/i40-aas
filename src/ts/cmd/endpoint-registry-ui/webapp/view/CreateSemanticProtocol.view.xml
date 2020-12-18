@@ -35,7 +35,7 @@
 									<Panel id="idPnl">
 										<FlexBox id="idFB" alignItems="Center" justifyContent="Start">
 											<items>
-												<Select id="DescriptorId" items="{ path: 'AASDescriptorsCollection>/', sorter: { path: 'identification/id' } }" width="250px" forceSelection="false" change = "onSelect">
+												<Select id="DescriptorId" items="{ path: 'AASDescriptorsCollection>/', sorter: { path: 'identification/id' } }" width="350px" forceSelection="false" change = "onSelect">
 													<core:Item key="{key}" text="{AASDescriptorsCollection>identification/id}"/>
 												</Select>
 												<core:Icon src="sap-icon://delete" press="onDeleteCcMail"/>
