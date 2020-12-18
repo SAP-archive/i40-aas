@@ -1,5 +1,9 @@
-<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:forms="sap.ui.layout.form" xmlns:l="sap.ui.layout"
-	controllerName="i40-aas-registry-ui.i40-aas-registry-ui.controller.CreateSemanticProtocol" xmlns:html="http://www.w3.org/1999/xhtml">
+<mvc:View xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:forms="sap.ui.layout.form"
+	xmlns:l="sap.ui.layout" controllerName="i40-aas-registry-ui.i40-aas-registry-ui.controller.CreateSemanticProtocol"
+	xmlns:html="http://www.w3.org/1999/xhtml">
 	<App>
 		<pages>
 			<Page id="CreateSemanticProtocol" title="{i18n>createNewSP}" showNavButton="true" navButtonPress=".onNavBack">
@@ -9,13 +13,11 @@
 						<VBox >
 							<HBox>
 								<Label text="{i18n>id}:" class="sapUiSmallMargin" width="150px" labelFor="InputSpId"/>
-								<Input type="Text" value="{/identification/id}" placeholder="i40:registry-semanticProtocol/onboarding"
-									valueLiveUpdate="true" width="350px" required="true" id="InputSpId" liveChange = "onLiveChange"/>
+								<Input type="Text" value="{/identification/id}" placeholder="i40:registry-semanticProtocol/onboarding" valueLiveUpdate="true" width="350px" required="true" id="InputSpId" liveChange = "onLiveChange"/>
 							</HBox>
 							<HBox>
 								<Label text="{i18n>idType}:" class="sapUiSmallMargin" width="150px"/>
-								<Select selectedKey="{/identification/idType}" items="{ path: 'IdTypeCollection>/', sorter: { path: 'Name' } }"
-									width="200px">
+								<Select selectedKey="{/identification/idType}" items="{ path: 'IdTypeCollection>/', sorter: { path: 'Name' } }" width="200px">
 									<core:Item key="{IdTypeCollection>TypeId}" text="{IdTypeCollection>Name}"/>
 								</Select>
 							</HBox>
@@ -55,8 +57,7 @@
 					<l:Splitter height="auto">
 						<!--*****************Begin Roles*****************-->
 						<Panel headerText="{i18n>addedRoles}:">
-							<List id="RoleList" items="{ path: '/roles' }" noDataText="{i18n>noRolesAdded}" showNoData="true" mode="Delete"
-								delete="onDeleteRoleObject">
+							<List id="RoleList" items="{ path: '/roles' }" noDataText="{i18n>noRolesAdded}" showNoData="true" mode="Delete" delete="onDeleteRoleObject">
 								<ObjectListItem title="{name}" type="Navigation" press="onRoleObjectItem"></ObjectListItem>
 							</List>
 							<layoutData>

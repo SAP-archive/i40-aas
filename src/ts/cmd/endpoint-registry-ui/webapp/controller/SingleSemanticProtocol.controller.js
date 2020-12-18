@@ -148,8 +148,6 @@ sap.ui.define([
         }).then((response) => {
           if (response.ok) {
             MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("roleDeleted"));
-            var vergleich = this.getView().getModel("SingleSemanticProtocol");
-            //this.setSingleSemanticProtocol(SPId);
           } else {
             MessageToast.show(response.statusText);
           }

@@ -1,13 +1,13 @@
-<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
-	controllerName="i40-aas-registry-ui.i40-aas-registry-ui.controller.ShowAllSemanticProtocols" xmlns:html="http://www.w3.org/1999/xhtml">
+<mvc:View xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m" controllerName="i40-aas-registry-ui.i40-aas-registry-ui.controller.ShowAllSemanticProtocols"
+	xmlns:html="http://www.w3.org/1999/xhtml">
 	<App>
 		<pages>
-			<Page id="ShowAllSemanticProtocols" title="{i18n>allSemanticProtocols}" showNavButton="true" navButtonPress=".onNavBack"
-				class="sapUiResponsiveContentPadding">
+			<Page id="ShowAllSemanticProtocols" title="{i18n>allSemanticProtocols}" showNavButton="true" navButtonPress=".onNavBack" class="sapUiResponsiveContentPadding">
 				<content>
 					<List items="{ path: 'SemanticProtocolList>/', sorter: { path: 'identification/id' } }" mode="Delete" delete="onDeleteSP">
-						<StandardListItem title="{SemanticProtocolList>identification/id}" icon="sap-icon://connected" iconDensityAware="false" iconInset="false"
-							type="Navigation" press="onOpenSingleSemanticProtocol"/>
+						<StandardListItem title="{SemanticProtocolList>identification/id}" icon="sap-icon://connected" iconDensityAware="false" iconInset="false" type="Navigation" press="onOpenSingleSemanticProtocol"/>
 					</List>
 				</content>
 			</Page>

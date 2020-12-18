@@ -43,7 +43,6 @@
 								<l:SplitterLayoutData size="400px"/>
 							</layoutData>
 						</Panel>
-
 						<!--*****************End Roles*****************-->
 						<!--*****************Begin Details*****************-->
 						<Panel id="roleDetail" headerText="{i18n>roleDetails} {SingleSemanticProtocol>name}:">

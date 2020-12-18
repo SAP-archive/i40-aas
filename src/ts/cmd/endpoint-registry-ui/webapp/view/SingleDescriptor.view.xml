@@ -1,5 +1,9 @@
-<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:f="sap.f"
-	controllerName="i40-aas-registry-ui.i40-aas-registry-ui.controller.SingleDescriptor" xmlns:html="http://www.w3.org/1999/xhtml">
+<mvc:View xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.f" controllerName="i40-aas-registry-ui.i40-aas-registry-ui.controller.SingleDescriptor"
+	xmlns:html="http://www.w3.org/1999/xhtml">
 	<App>
 		<pages>
 			<Page id="SingleDescriptor" title="{i18n>descriptor}" showNavButton="true" navButtonPress=".onNavBack">
@@ -8,15 +12,12 @@
 					<Panel headerText="{i18n>identification}:">
 						<VBox >
 							<HBox>
-								<!--locales jason referenzieren siehe beispiel-->
 								<Text text="{i18n>id}:" class="sapUiSmallMargin" width="150px"/>
-								<!-- geht -->
 								<Input type="Text" value="{SingleDescriptor>/identification/id}" valueLiveUpdate="true" width="350px" enabled="false"/>
 							</HBox>
 							<HBox>
 								<Text text="{i18n>idType}:" class="sapUiSmallMargin" width="150px"/>
-								<Select selectedKey="{SingleDescriptor>/identification/idType}"
-									items="{ path: 'IdTypeCollection>/', sorter: { path: 'Name' } }" width="150px" enabled="false">
+								<Select selectedKey="{SingleDescriptor>/identification/idType}" items="{ path: 'IdTypeCollection>/', sorter: { path: 'Name' } }" width="150px" enabled="false">
 									<core:Item key="{IdTypeCollection>TypeId}" text="{IdTypeCollection>Name}"/>
 								</Select>
 							</HBox>
@@ -32,8 +33,7 @@
 							</HBox>
 							<HBox>
 								<Text text="{i18n>idType}:" class="sapUiSmallMargin" width="150px"/>
-								<Select selectedKey="{SingleDescriptor>/asset/idType}"
-									items="{ path: 'IdTypeCollection>/', sorter: { path: 'Name' } }" width="150px" enabled="false">
+								<Select selectedKey="{SingleDescriptor>/asset/idType}" items="{ path: 'IdTypeCollection>/', sorter: { path: 'Name' } }" width="150px" enabled="false">
 									<core:Item key="{IdTypeCollection>TypeId}" text="{IdTypeCollection>Name}"/>
 								</Select>
 							</HBox>
@@ -42,11 +42,7 @@
 					<!--*****************End Asset*****************-->
 					<!--*****************Begin Descriptor*****************-->
 					<Panel headerText="{i18n>descriptor}:">
-						<VBox >
-							<!--<HBox class="sapUiSmallMargin">
-								<Label text="{i18n>certification}:" class="sapUiSmallMargin" width="150px"/>
-								<Input type="Text" placeholder="Sample_crt" valueLiveUpdate="true" width="200px"/>
-							</HBox>-->
+						<VBox>
 							<HBox>
 								<Text text="{i18n>signatur}:" class="sapUiSmallMargin" width="150px"/>
 								<Input type="Text" value="{SingleDescriptor>/descriptor/signature}" valueLiveUpdate="true" width="250px" enabled="false"/>
@@ -58,8 +54,7 @@
 					<l:Splitter height="auto">
 						<!--*****************Begin Endpoints*****************-->
 						<Panel headerText="{i18n>endpoints}:">
-							<List items="{ path: 'SingleDescriptor>/descriptor/endpoints'}" noDataText="{i18n>noEndpointsAdded}" showNoData="true"
-								updateFinished="onUpdateFinished">
+							<List items="{ path: 'SingleDescriptor>/descriptor/endpoints'}" noDataText="{i18n>noEndpointsAdded}" showNoData="true" updateFinished="onUpdateFinished">
 								<ObjectListItem title=" {SingleDescriptor>address}" type="Navigation" press="onEndpointObjectItemPress"/>
 							</List>
 							<layoutData >
@@ -77,18 +72,10 @@
 								<HBox>
 									<Label text="{i18n>type}:" class="sapUiSmallMargin" width="150px"/>
 									<Input type="Text" valueLiveUpdate="true" width="150px" value="{SingleDescriptor>type}" enabled="false"/>
-									<!--<Select selectedKey="{SingleDescriptor>type}" items="{ path: 'SingleDescriptor>/IdTypeCollection', sorter: { path: 'Name' } }" width="200px"
-											enabled="false">
-											<core:Item key="{TypeId}" text="{Name}"/>
-										</Select>-->
 								</HBox>
 								<HBox>
 									<Label text="{i18n>target}:" class="sapUiSmallMargin" width="150px"/>
 									<Input type="Text" valueLiveUpdate="true" width="200px" value="{SingleDescriptor>target}" enabled="false"/>
-									<!--<Select selectedKey="{SingleDescriptor>target}" items="{ path: 'SingleDescriptor>/IdTypeCollection', sorter: { path: 'Name' } }"
-											width="200px" enabled="false">
-											<core:Item key="{TargetId}" text="{Name}"/>
-										</Select>-->
 								</HBox>
 								<HBox>
 									<Label text="{i18n>user}:" class="sapUiSmallMargin" width="150px"/>
