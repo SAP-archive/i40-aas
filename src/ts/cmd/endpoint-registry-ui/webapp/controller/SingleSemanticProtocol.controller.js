@@ -148,8 +148,6 @@ sap.ui.define([
         }).then((response) => {
           if (response.ok) {
             MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("roleDeleted"));
-            var vergleich = this.getView().getModel("SingleSemanticProtocol");
-            //this.setSingleSemanticProtocol(SPId);
           } else {
             MessageToast.show(response.statusText);
           }
@@ -175,8 +173,9 @@ sap.ui.define([
         var SPIdEncoded = encodeURIComponent(SPId);
 
         var roleName = this.getView().getModel("SingleSemanticProtocol").getProperty(rolePath + "/name");
+        var roleNameEncoded = encodeURIComponent(roleName);
 
-        fetch("/endpoint-registry/semanticProtocols/" + SPIdEncoded + "/role/" + roleName + "/AASDescriptors", {
+        fetch("/endpoint-registry/semanticProtocols/" + SPIdEncoded + "/role/" + roleNameEncoded + "/AASDescriptors", {
           method: "PATCH",
           body: JSON.stringify(localDescriptors),
           headers: {
@@ -206,15 +205,18 @@ sap.ui.define([
       var SPId = this.getView().getModel("SingleSemanticProtocol").getProperty("/identification/id");
       var SPIdEncoded = encodeURIComponent(SPId);
       var rolePath = this.getById().roleDetail.getElementBinding("SingleSemanticProtocol").getPath();
+
       var roleName = this.getView().getModel("SingleSemanticProtocol").getProperty(rolePath + "/name");
+      var roleNameEncoded = encodeURIComponent(roleName);
 
       var oItem = oEvent.getParameter('listItem');
       var oCtx = oItem.getBindingContext("SingleSemanticProtocol");
       var descriptorPath = oCtx.getPath();
       var descriptorId = this.getView().getModel("SingleSemanticProtocol").getProperty(descriptorPath + "/id");
+      var descriptorIdEncoded = encodeURIComponent(descriptorId);
 
 
-      fetch("/endpoint-registry/semanticProtocols/" + SPIdEncoded + "/role/" + roleName + "/AASDescriptors/" + descriptorId, {
+      fetch("/endpoint-registry/semanticProtocols/" + SPIdEncoded + "/role/" + roleNameEncoded + "/AASDescriptors/" + descriptorIdEncoded, {
         method: "DELETE"
       }).then((response) => {
         if (response.ok) {
@@ -267,14 +269,6 @@ sap.ui.define([
       this.getById().roleDetail.bindElement(namedModelPath);
       this.clearDescriptorIdInput();
     },
-
-    //Enable splitscreen
-    enableSplitscreen: function () {
-      this.byId("roleDetail").setVisible(true);
-      this.byId("splitterSize").setSize("500px");
-      this.byId("splitterSize").setResizable(true);
-    },
-
 
     //-----------------Begin Input Validation--------------------------//
 

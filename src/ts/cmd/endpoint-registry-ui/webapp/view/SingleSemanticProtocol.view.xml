@@ -40,17 +40,16 @@
 								<ObjectListItem title="{SingleSemanticProtocol>name}" type="Navigation" press="onRoleObjectItemPress"></ObjectListItem>
 							</List>
 							<layoutData>
-								<l:SplitterLayoutData size="500px"/>
+								<l:SplitterLayoutData size="400px"/>
 							</layoutData>
 						</Panel>
-
 						<!--*****************End Roles*****************-->
 						<!--*****************Begin Details*****************-->
 						<Panel id="roleDetail" headerText="{i18n>roleDetails} {SingleSemanticProtocol>name}:">
 							<VBox >
 								<HBox>
 									<Label text="{i18n>aasDescriptor}:" class="sapUiSmallMargin" width="150px" required="true"/>
-									<Select id="DescriptorIdInput" items="{ path: 'AASDescriptorsCollection>/', sorter: { path: 'identification/id' } }" width="250px" forceSelection="false" change = "onSelect">
+									<Select id="DescriptorIdInput" items="{ path: 'AASDescriptorsCollection>/', sorter: { path: 'identification/id' } }" width="350px" forceSelection="false" change = "onSelect">
 										<core:Item key="{key}" text="{AASDescriptorsCollection>identification/id}"/>
 									</Select>
 									<Button type="Ghost" icon="sap-icon://add" text="{i18n>addDescriptor}" press="onAddDescriptor" id="AddDescriptorButton"/>
