@@ -2,6 +2,9 @@
 	"TargetId": "cloud",
 	"Name": "cloud"
 }, {
+	"TargetId": "edge",
+	"Name": "edge"
+}, {
 	"TargetId": "Other",
 	"Name": "Other"
 }]

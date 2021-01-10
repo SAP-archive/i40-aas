@@ -1,5 +1,6 @@
-<mvc:View xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
-	controllerName="i40-aas-registry-ui.i40-aas-registry-ui.controller.View1">
+<mvc:View xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m" controllerName="i40-aas-registry-ui.i40-aas-registry-ui.controller.View1">
 	<App id="idAppControl">
 		<pages>
 			<Page title="i40-AAS-Registry-UI">
@@ -21,8 +22,7 @@
 							<ImageContent src="sap-icon://write-new"/>
 						</TileContent>
 					</GenericTile>
-					<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="{i18n>showAllSemanticProtocols}"
-						press="onShowAllSemanticProtocolsPress">
+					<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="{i18n>showAllSemanticProtocols}" press="onShowAllSemanticProtocolsPress">
 						<TileContent>
 							<ImageContent src="sap-icon://show"/>
 						</TileContent>
