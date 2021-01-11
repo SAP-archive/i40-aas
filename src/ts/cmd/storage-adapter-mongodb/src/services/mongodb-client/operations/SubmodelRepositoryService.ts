@@ -35,9 +35,31 @@ class SubmodelRepositoryService {
 */
   async getSubmodels(): Promise<Submodel[]> {
     await this.dbClient.connect();
+
+
     return (await this.dbClient.getAll())
       .filter((x) => x.serializedSubmodel)
       .map((x) => JSON.parse(x.serializedSubmodel));
+  }
+
+
+  async getSubmodel(submodelid:string): Promise<string> {
+    await this.dbClient.connect();
+
+    let equipmentDescription = md5(submodelid)
+    logger.debug("submodelId: "+equipmentDescription);
+
+    let stateRecord: ISubmodelRecord | null = await this.dbClient.getOneByKey({
+      _id: equipmentDescription,
+    });
+    if(stateRecord){
+      return stateRecord.serializedSubmodel as string;
+    }
+    else
+    throw boom.notFound(
+      'Submodel not found in Database'
+    );
+
   }
 
   async createEquipmentAndSetInitialValues(
@@ -48,6 +70,9 @@ class SubmodelRepositoryService {
       equipmentDescription = (submodel.getSubmodelElementByIdShort(
         SubmodelRepositoryService.KEY_PROPERTY
       ) as Property).value;
+
+      logger.debug("update equipment "+equipmentDescription)
+      logger.debug("update hash "+ md5(equipmentDescription))
     } catch (error) {
       logger.debug(error);
       throw boom.badRequest(
