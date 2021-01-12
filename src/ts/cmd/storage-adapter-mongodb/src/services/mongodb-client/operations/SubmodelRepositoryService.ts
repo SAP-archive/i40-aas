@@ -66,13 +66,18 @@ class SubmodelRepositoryService {
     submodel: Submodel
   ): Promise<WriteOpResult> {
     let equipmentDescription: string | undefined;
+    let submodelId: string;
+
     try {
+
+      submodelId = submodel.identification.id as string
+
       equipmentDescription = (submodel.getSubmodelElementByIdShort(
         SubmodelRepositoryService.KEY_PROPERTY
       ) as Property).value;
 
-      logger.debug("update equipment "+equipmentDescription)
-      logger.debug("update hash "+ md5(equipmentDescription))
+      logger.debug("update equipment "+submodelId)
+      logger.debug("update hash "+ md5(submodelId))
     } catch (error) {
       logger.debug(error);
       throw boom.badRequest(
@@ -88,12 +93,12 @@ class SubmodelRepositoryService {
     }
 
     let previousSubmodel: ISubmodelRecord | null = await this.getPreviousSubmodelFromDb(
-      md5(equipmentDescription)
+      md5(submodelId)
     );
     let versionCounter = previousSubmodel ? previousSubmodel.version : 0;
     const result = await this.dbClient.update(
       {
-        _id: md5(equipmentDescription),
+        _id: md5(submodelId),
         version: versionCounter++,
       }, //find by
       {
