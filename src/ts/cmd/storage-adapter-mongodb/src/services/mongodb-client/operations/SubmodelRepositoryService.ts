@@ -46,11 +46,11 @@ class SubmodelRepositoryService {
   async getSubmodel(submodelid:string): Promise<string> {
     await this.dbClient.connect();
 
-    let equipmentDescription = md5(submodelid)
-    logger.debug("submodelId: "+equipmentDescription);
+    let dbId = md5(submodelid)
+    //logger.debug("DB_ID: "+dbId);
 
     let stateRecord: ISubmodelRecord | null = await this.dbClient.getOneByKey({
-      _id: equipmentDescription,
+      _id: dbId,
     });
     if(stateRecord){
       return stateRecord.serializedSubmodel as string;
