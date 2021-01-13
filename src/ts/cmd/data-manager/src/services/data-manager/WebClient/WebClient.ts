@@ -6,7 +6,7 @@ const logger = require('aas-logger/lib/log');
 
 class WebClient {
   constructor(private cert?: string) {}
-  
+
   //TODO: remove the hardcoding of params, its also case sensitive!
   private getURLRequestConfig(
     params?: object,
@@ -51,6 +51,7 @@ class WebClient {
   //parameters to cover both getAdapter from Registry and getSubmodel from Adapter
   async getSubmodelFromAdapterRequest<T>(
     url: string,
+    submodelid: string,
     username?: string,
     password?: string
   ): Promise<AxiosResponse<T>> {
@@ -58,7 +59,7 @@ class WebClient {
 
     const response = await Axios.get<T>(
       url,
-      this.getURLRequestConfig(undefined, username, password)
+      this.getURLRequestConfig({submodelid:submodelid}, username, password)
     );
     return response as AxiosResponse<T>;
   }
@@ -74,8 +75,8 @@ class WebClient {
     logger.debug('POSTing to adapter with url: ' + url);
 
     const response = await Axios.post<T>(
-      url, 
-      body, 
+      url,
+      body,
       this.getURLRequestConfig(undefined, username, password)
     );
     logger.debug('Adapter response ' + response.statusText);

@@ -35,19 +35,49 @@ class SubmodelRepositoryService {
 */
   async getSubmodels(): Promise<Submodel[]> {
     await this.dbClient.connect();
+
+
     return (await this.dbClient.getAll())
       .filter((x) => x.serializedSubmodel)
       .map((x) => JSON.parse(x.serializedSubmodel));
+  }
+
+
+  async getSubmodel(submodelid:string): Promise<string> {
+    await this.dbClient.connect();
+
+    let dbId = md5(submodelid)
+    //logger.debug("DB_ID: "+dbId);
+
+    let stateRecord: ISubmodelRecord | null = await this.dbClient.getOneByKey({
+      _id: dbId,
+    });
+    if(stateRecord){
+      return stateRecord.serializedSubmodel as string;
+    }
+    else
+    throw boom.notFound(
+      'Submodel not found in Database'
+    );
+
   }
 
   async createEquipmentAndSetInitialValues(
     submodel: Submodel
   ): Promise<WriteOpResult> {
     let equipmentDescription: string | undefined;
+    let submodelId: string;
+
     try {
+
+      submodelId = submodel.identification.id as string
+
       equipmentDescription = (submodel.getSubmodelElementByIdShort(
         SubmodelRepositoryService.KEY_PROPERTY
       ) as Property).value;
+
+      logger.debug("update equipment "+submodelId)
+      logger.debug("update hash "+ md5(submodelId))
     } catch (error) {
       logger.debug(error);
       throw boom.badRequest(
@@ -63,12 +93,12 @@ class SubmodelRepositoryService {
     }
 
     let previousSubmodel: ISubmodelRecord | null = await this.getPreviousSubmodelFromDb(
-      md5(equipmentDescription)
+      md5(submodelId)
     );
     let versionCounter = previousSubmodel ? previousSubmodel.version : 0;
     const result = await this.dbClient.update(
       {
-        _id: md5(equipmentDescription),
+        _id: md5(submodelId),
         version: versionCounter++,
       }, //find by
       {

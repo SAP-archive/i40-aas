@@ -19,6 +19,10 @@ const logger = require('aas-logger/lib/log');
 var chai = require('chai');
 chai.should();
 let md5 = require('md5');
+
+var submodelId = 'sap.com/aas/submodels/part-100-device-information-model';
+
+
 function checkEnvVar(variableName: string): string {
   let retVal: string | undefined = process.env[variableName];
   if (retVal) {
@@ -55,7 +59,7 @@ function getProperty(idShort: string, value: string | undefined): Property {
     valueType: AnyAtomicTypeEnum.string,
   });
 }
-function getSubmodel(properties: Property[]): Submodel {
+function getSubmodel(submodelId: string, properties: Property[]): Submodel {
   let retVal: Submodel = Submodel.fromJSON({
     embeddedDataSpecifications: [],
     semanticId: {
@@ -74,7 +78,7 @@ function getSubmodel(properties: Property[]): Submodel {
     idShort: 'opc-ua-devices',
     identification: {
       id:
-        'sap.com/aas/submodels/part-100-device-information-model/10JF-1234-Jf14-PP22',
+        submodelId,
       idType: IdTypeEnum.IRI,
     },
     modelType: {
@@ -112,6 +116,7 @@ describe('createEquipmentAndSetInitialValues', function () {
     logger.info('Using authentication');
   }
   before(async () => {
+
     if (
       APPLICATION_ADAPTERS_MONGODB_DATABASE_USER &&
       APPLICATION_ADAPTERS_MONGODB_DATABASE_PASSWORD
@@ -139,8 +144,8 @@ describe('createEquipmentAndSetInitialValues', function () {
   afterEach(async () => {
     sinon.restore();
   });
-  it('will throw a 400 error if productinstanceuri is not defined in provided submodel', async function () {
-    let submodel: Submodel = getSubmodel([
+  it('will throw a 400 error if submodelid is not defined in provided submodel', async function () {
+    let submodel: Submodel = getSubmodel(submodelId,[
       getProperty('manufactureruri', 'foobar.com'),
       getProperty('model', 'Nx6'),
     ]);
@@ -158,7 +163,7 @@ describe('createEquipmentAndSetInitialValues', function () {
     fail('Error should have been thrown');
   });
   it('will throw a 400 error if productinstanceuri has no value in provided submodel', async function () {
-    let submodel: Submodel = getSubmodel([
+    let submodel: Submodel = getSubmodel(submodelId,[
       getProperty('manufactureruri', 'foobar.com'),
       getProperty('model', 'Nx6'),
       getProperty('productinstanceuri', undefined),
@@ -179,13 +184,13 @@ describe('createEquipmentAndSetInitialValues', function () {
   it('will update the corresponding submodel if it is asked to create a submodel with an id already in the database', async function () {
     const uuidv1 = require('uuid/v1');
     let uri = uuidv1();
-    let submodel: Submodel = getSubmodel([
+    let submodel: Submodel = getSubmodel(submodelId,[
       getProperty('manufactureruri', 'foobar.com'),
       getProperty('model', 'Nx6'),
       getProperty('productinstanceuri', uri),
     ]);
 
-    let submodelUpdated: Submodel = getSubmodel([
+    let submodelUpdated: Submodel = getSubmodel(submodelId,[
       getProperty('manufactureruri', 'foobar.com'),
       getProperty('model', 'Ny6'),
       getProperty('productinstanceuri', uri),
@@ -203,7 +208,7 @@ describe('createEquipmentAndSetInitialValues', function () {
     );
     const submodelRecord: ISubmodelRecord | null = await mongoDbClient.getOneByKey(
       {
-        _id: md5(uri),
+        _id: md5(submodelId),
       }
     );
     if (submodelRecord === null) {
@@ -268,13 +273,13 @@ describe('getSubmodels', function () {
   });
   it('returns a list of previously created submodels', async function () {
     const uuidv1 = require('uuid/v1');
-    let submodel: Submodel = getSubmodel([
+    let submodel: Submodel = getSubmodel(submodelId,[
       getProperty('manufactureruri', 'foobar.com'),
       getProperty('model', 'Nx6'),
       getProperty('productinstanceuri', uuidv1()),
     ]);
 
-    let submodelOther: Submodel = getSubmodel([
+    let submodelOther: Submodel = getSubmodel(submodelId+"/2",[
       getProperty('manufactureruri', 'foobar.com'),
       getProperty('model', 'Nx6'),
       getProperty('productinstanceuri', uuidv1()),
@@ -353,15 +358,15 @@ describe('delete', function () {
   it('deletes by id', async function () {
     const uuidv1 = require('uuid/v1');
     let id1 = uuidv1();
-    logger.debug('Generated id-md5:' + md5(id1));
-    let submodel: Submodel = getSubmodel([
+    logger.debug('Generated id-md5:' + md5(submodelId));
+    let submodel: Submodel = getSubmodel(submodelId,[
       getProperty('manufactureruri', 'foobar.com'),
       getProperty('model', 'Nx6'),
       getProperty('productinstanceuri', id1),
     ]);
     let id2 = uuidv1();
-    logger.debug('Generated id-md5:' + md5(id2));
-    let submodelOther: Submodel = getSubmodel([
+    logger.debug('Generated id-md5:' + md5(submodelId+"/2"));
+    let submodelOther: Submodel = getSubmodel(submodelId+"/2",[
       getProperty('manufactureruri', 'foobar.com'),
       getProperty('model', 'Nx6'),
       getProperty('productinstanceuri', id2),
@@ -383,10 +388,10 @@ describe('delete', function () {
 
     expect(result.length).to.equal(2);
 
-    await submodelRepositoryService.delete(md5(id1));
+    await submodelRepositoryService.delete(md5(submodelId));
     result = await submodelRepositoryService.getSubmodels();
     expect(result.length).to.equal(1);
-    await submodelRepositoryService.delete(md5(id2));
+    await submodelRepositoryService.delete(md5(submodelId+"/2"));
     result = await submodelRepositoryService.getSubmodels();
     expect(result.length).to.equal(0);
   });

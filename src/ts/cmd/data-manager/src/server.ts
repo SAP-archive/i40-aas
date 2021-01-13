@@ -57,7 +57,7 @@ applyMiddleware(errorHandlers, router);
 
 var webClient: WebClient;
 
-if ( TLS_ENABLED == 'true' ) { 
+if ( TLS_ENABLED == 'true' ) {
   webClient = new WebClient(fs.readFileSync(TLS_CERTFILE, "utf8"));
 } else {
   webClient = new WebClient();

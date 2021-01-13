@@ -75,7 +75,16 @@ export default [
     method: 'get',
     handler: async (req: Request, res: Response, next: NextFunction) => {
       try {
-        let results = await repositoryService.getSubmodels();
+        let results: any;
+        //if the submodel id is given as a query param fetch it, else fetch all submodels
+        if(req.query.submodelid){
+           results = await repositoryService.getSubmodel(req.query.submodelid as string);
+        }
+        else{
+          results = await repositoryService.getSubmodels();
+
+        }
+
         res.set('Content-Type', 'application/json').send(results);
       } catch (e) {
         if (!e.isBoom) {
