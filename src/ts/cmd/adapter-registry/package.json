@@ -27,7 +27,7 @@
     "swagger-ui-express": "^4.1.2"
   },
   "devDependencies": {
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "@types/sinon": "^7.0.13",
     "@types/chai": "^4.1.7",
     "@types/dotenv": "^6.1.1",
