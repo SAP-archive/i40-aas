@@ -1,13 +1,13 @@
-<mvc:View xmlns:core="sap.ui.core"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m" controllerName="i40-aas-registry-ui.i40-aas-registry-ui.controller.ShowAllDescriptors"
-	xmlns:html="http://www.w3.org/1999/xhtml">
+<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
+	controllerName="i40-aas-registry-ui.i40-aas-registry-ui.controller.ShowAllDescriptors" xmlns:html="http://www.w3.org/1999/xhtml">
 	<App>
 		<pages>
-			<Page id="ShowAllDescriptors" title="{i18n>allDescriptors}" showNavButton="true" navButtonPress=".onNavBack" class="sapUiResponsiveContentPadding">
+			<Page id="ShowAllDescriptors" title="{i18n>allDescriptors}" showNavButton="true" navButtonPress=".onNavBack"
+				class="sapUiResponsiveContentPadding">
 				<content>
 					<List id="ListDescriptors" items="{ path: 'DescriptorList>/', sorter: { path: 'identification/id' } }" mode="Delete" delete="onDeleteDescriptor">
-						<StandardListItem title="{DescriptorList>identification/id}" icon="sap-icon://document-text" iconDensityAware="false" iconInset="false" type="Navigation" press="onOpenSingleDescriptor"/>
+						<StandardListItem title="{DescriptorList>identification/id}" icon="sap-icon://document-text" iconDensityAware="false" iconInset="false"
+							type="Navigation" press="onOpenSingleDescriptor"/>
 					</List>
 				</content>
 			</Page>
