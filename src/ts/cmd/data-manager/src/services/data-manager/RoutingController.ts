@@ -41,14 +41,14 @@ module RoutingController {
 
     return Promise.all(submodels);
   }
-  export async function getSubmodels(params: object) {
+  export async function getSubmodels(params: readSubmodelParams) {
     if (adapterConn && registryConn) {
       let adapter: IStorageAdapter = await registryConn.getAdapterFromRegistry(
         params
       );
 
-      logger.debug('Adapter to the submodel from: ' + JSON.stringify(adapter));
-      let result = await adapterConn.getSubmoduleFromAdapter(adapter);
+      logger.debug('Adapter to get the submodel from: ' + JSON.stringify(adapter));
+      let result = await adapterConn.getSubmodelFromAdapter(adapter,  params.submodelid);
       return result;
     } else {
       logger.error(' Adapter or Registry connector not initialised');
@@ -63,5 +63,12 @@ module RoutingController {
     adapterConn = aC;
   }
 }
+
+//the parameters that can be passed to a /GET submodel query
+export type readSubmodelParams = {
+  submodelid: string,
+  submodelsemanticid: string
+}
+
 
 export { RoutingController };
