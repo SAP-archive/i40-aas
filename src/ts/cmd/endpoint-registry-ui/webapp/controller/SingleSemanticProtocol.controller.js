@@ -245,7 +245,7 @@ sap.ui.define([
       var roleCount = oModel.getProperty("/roles").length;
       if (index <= 0) {
         this.byId("roleDetail").bindElement("SingleSemanticProtocol>/roles/" + "0");
-        if (roleCount === 0) { }
+        if (roleCount === 0) {}
       } else if (index > roleCount - 1) {
         this.showDetailsOfLastAddedRole();
       } else {
