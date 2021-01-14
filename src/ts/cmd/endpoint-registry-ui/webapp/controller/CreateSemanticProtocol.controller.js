@@ -74,11 +74,7 @@ sap.ui.define([
       var oController = this.getView().getController();
       var oSelect = new sap.m.Select({
         forceSelection: false,
-<<<<<<< HEAD
         width: "350px",
-=======
-        width: "250px",
->>>>>>> master
         change: function (oEvent) {
           oController.onSelect(oEvent)
         }
@@ -419,11 +415,7 @@ sap.ui.define([
 
     // Clear Screen and show initial screen
     resetScreenToInitial: function () {
-<<<<<<< HEAD
       this.getById().inputRoleName.setValue("");
-=======
-      this.byId("InputRoleName").setValue("");
->>>>>>> master
       this.resetDescriptorDropdown();
       this.initiateModel();
       this.disableSplitscreen();
@@ -433,7 +425,7 @@ sap.ui.define([
       this.checkAddRoleButton();
     },
 
-    // Delete all Descriptor dropdowns except one
+    // Delete all Descriptor dropdowns except one 
     resetDescriptorDropdown: function () {
       var oView = this.getView();
       var oPanel = oView.byId("idPnl");
