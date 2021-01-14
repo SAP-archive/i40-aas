@@ -74,7 +74,11 @@ sap.ui.define([
       var oController = this.getView().getController();
       var oSelect = new sap.m.Select({
         forceSelection: false,
+<<<<<<< HEAD
         width: "350px",
+=======
+        width: "250px",
+>>>>>>> master
         change: function (oEvent) {
           oController.onSelect(oEvent)
         }
@@ -191,7 +195,11 @@ sap.ui.define([
     //Enable splitscreen
     enableSplitscreen: function () {
       this.byId("roleDetail").setVisible(true);
+<<<<<<< HEAD
       this.byId("splitterSize").setSize("400px");
+=======
+      this.byId("splitterSize").setSize("500px");
+>>>>>>> master
       this.byId("splitterSize").setResizable(true);
     },
 
@@ -240,6 +248,11 @@ sap.ui.define([
         this.checkCreateButton();
 
       } else if (!this.roleAdded()) {
+<<<<<<< HEAD
+=======
+        //this.getById().inputRoleName.setValueState(sap.ui.core.ValueState.Warning);
+        //this.getById().inputRoleName.setValueStateText(this.getView().getModel("i18n").getResourceBundle().getText("noRoleAdded"));
+>>>>>>> master
         MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("noRoleAdded"), {
           duration: 5000
         });
@@ -415,7 +428,11 @@ sap.ui.define([
 
     // Clear Screen and show initial screen
     resetScreenToInitial: function () {
+<<<<<<< HEAD
       this.getById().inputRoleName.setValue("");
+=======
+      this.byId("InputRoleName").setValue("");
+>>>>>>> master
       this.resetDescriptorDropdown();
       this.initiateModel();
       this.disableSplitscreen();

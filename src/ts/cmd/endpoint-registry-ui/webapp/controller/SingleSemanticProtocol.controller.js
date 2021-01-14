@@ -25,6 +25,7 @@ sap.ui.define([
       oRouter.getRoute("SingleSemanticProtocol").attachMatched(this._onRouteMatched, this);
     },
 
+<<<<<<< HEAD
     getById: function () {
       return {
         inputRoleName: this.byId("InputRoleName"),
@@ -43,6 +44,10 @@ sap.ui.define([
       this.setSingleSemanticProtocol(SPIdEncoded);
       this.setAASDescriptorsCollection();
 
+=======
+    _onRouteMatched: function (oEvent) {
+      const iSPId = oEvent.getParameter("arguments").SPId;
+>>>>>>> master
 
       // Set model for ID-Type dropdown menu by using Object Lib
       var oIdTypeEnum = aas.IdTypeEnum
@@ -58,6 +63,7 @@ sap.ui.define([
       var oModelIdTypes = new JSONModel(aIdTypes);
       this.getView().setModel(oModelIdTypes, "IdTypeCollection");
 
+<<<<<<< HEAD
       this.getById().roleDetail.bindElement("SingleSemanticProtocol>/roles/0");
 
     },
@@ -259,6 +265,12 @@ sap.ui.define([
       var lastAddedRole = oModel.getProperty("/roles").length - 1;
       var newRolePath = "SingleSemanticProtocol>/roles/" + lastAddedRole;
       this.getById().roleDetail.bindElement(newRolePath);
+=======
+      // Set model for the SemanticProtocol with a specific SemanticProtocolId
+      var oModelSingleSemanticProtocol = new JSONModel();
+      this.getView().setModel(oModelSingleSemanticProtocol, "SingleSemanticProtocol");
+      oModelSingleSemanticProtocol.loadData("/endpoint-registry/semanticProtocols/" + iSPId);
+>>>>>>> master
     },
 
     onRoleObjectItemPress: function (oEvent) {
@@ -266,6 +278,7 @@ sap.ui.define([
       var oCtx = oItem.getBindingContext('SingleSemanticProtocol');
       var path = oCtx.getPath();
       var namedModelPath = "SingleSemanticProtocol>" + path;
+<<<<<<< HEAD
       this.getById().roleDetail.bindElement(namedModelPath);
       this.clearDescriptorIdInput();
     },
@@ -376,6 +389,13 @@ sap.ui.define([
       this.getById().inputRoleName.setValueState(sap.ui.core.ValueState.None);
       this.checkAddDescriptorButton();
       this.checkAddRoleButton();
+=======
+      this.byId("roleDetail").bindElement(namedModelPath);
+    },
+
+    onNavBack: function () {
+      var oHistory = History.getInstance();
+      var sPreviousHash = oHistory.getPreviousHash();
 
       if (sPreviousHash !== undefined) {
         window.history.go(-1);
@@ -385,6 +405,24 @@ sap.ui.define([
       }
     },
 
+    onClosePress: function () {
+      var oHistory = History.getInstance();
+      var sPreviousHash = oHistory.getPreviousHash();
+>>>>>>> master
+
+      if (sPreviousHash !== undefined) {
+        window.history.go(-1);
+      } else {
+        var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+        oRouter.navTo("overview", true);
+      }
+<<<<<<< HEAD
+    },
+
+=======
+
+    }
+>>>>>>> master
 
   });
 

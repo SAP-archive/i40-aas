@@ -20,7 +20,7 @@
   "dependencies": {
     "AMQP-Client": "link:../../pkg/AMQP-Client",
     "aas-logger": "link:../../pkg/aas-logger",
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "compression": "^1.7.4",
     "express": "^5.0.0-alpha.7",
     "i40-aas-objects": "0.2.6"

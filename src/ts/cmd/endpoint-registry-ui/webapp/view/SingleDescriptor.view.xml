@@ -13,11 +13,20 @@
 						<VBox >
 							<HBox>
 								<Text text="{i18n>id}:" class="sapUiSmallMargin" width="150px"/>
+<<<<<<< HEAD:src/ts/cmd/endpoint-registry-ui/webapp/view/SingleDescriptor.view.xml
+=======
+								<!-- geht -->
+>>>>>>> master:src/ts/cmd/endpoint-registry/ui/i40-aas-registry-ui/webapp/view/SingleDescriptor.view.xml
 								<Input type="Text" value="{SingleDescriptor>/identification/id}" valueLiveUpdate="true" width="350px" enabled="false"/>
 							</HBox>
 							<HBox>
 								<Text text="{i18n>idType}:" class="sapUiSmallMargin" width="150px"/>
+<<<<<<< HEAD:src/ts/cmd/endpoint-registry-ui/webapp/view/SingleDescriptor.view.xml
 								<Select selectedKey="{SingleDescriptor>/identification/idType}" items="{ path: 'IdTypeCollection>/', sorter: { path: 'Name' } }" width="150px" enabled="false">
+=======
+								<Select selectedKey="{SingleDescriptor>/identification/idType}"
+									items="{ path: 'IdTypeCollection>/', sorter: { path: 'Name' } }" width="150px" enabled="false">
+>>>>>>> master:src/ts/cmd/endpoint-registry/ui/i40-aas-registry-ui/webapp/view/SingleDescriptor.view.xml
 									<core:Item key="{IdTypeCollection>TypeId}" text="{IdTypeCollection>Name}"/>
 								</Select>
 							</HBox>
@@ -33,7 +42,12 @@
 							</HBox>
 							<HBox>
 								<Text text="{i18n>idType}:" class="sapUiSmallMargin" width="150px"/>
+<<<<<<< HEAD:src/ts/cmd/endpoint-registry-ui/webapp/view/SingleDescriptor.view.xml
 								<Select selectedKey="{SingleDescriptor>/asset/idType}" items="{ path: 'IdTypeCollection>/', sorter: { path: 'Name' } }" width="150px" enabled="false">
+=======
+								<Select selectedKey="{SingleDescriptor>/asset/idType}"
+									items="{ path: 'IdTypeCollection>/', sorter: { path: 'Name' } }" width="150px" enabled="false">
+>>>>>>> master:src/ts/cmd/endpoint-registry/ui/i40-aas-registry-ui/webapp/view/SingleDescriptor.view.xml
 									<core:Item key="{IdTypeCollection>TypeId}" text="{IdTypeCollection>Name}"/>
 								</Select>
 							</HBox>
@@ -54,7 +68,12 @@
 					<l:Splitter height="auto">
 						<!--*****************Begin Endpoints*****************-->
 						<Panel headerText="{i18n>endpoints}:">
+<<<<<<< HEAD:src/ts/cmd/endpoint-registry-ui/webapp/view/SingleDescriptor.view.xml
 							<List items="{ path: 'SingleDescriptor>/descriptor/endpoints'}" noDataText="{i18n>noEndpointsAdded}" showNoData="true" updateFinished="onUpdateFinished">
+=======
+							<List items="{ path: 'SingleDescriptor>/descriptor/endpoints'}" noDataText="{i18n>noEndpointsAdded}" showNoData="true"
+								updateFinished="onUpdateFinished">
+>>>>>>> master:src/ts/cmd/endpoint-registry/ui/i40-aas-registry-ui/webapp/view/SingleDescriptor.view.xml
 								<ObjectListItem title=" {SingleDescriptor>address}" type="Navigation" press="onEndpointObjectItemPress"/>
 							</List>
 							<layoutData >

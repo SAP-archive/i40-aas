@@ -17,7 +17,11 @@ sap.ui.define([
 
     onAfterShow: function () {
       this.initiateModel();
+<<<<<<< HEAD
       //this.startAutorefreshModel(30000); Every 30 Seconds Refresh Timer
+=======
+      this.startAutorefreshModel(30000);
+>>>>>>> master
     },
     //Get the SemanticProtocols from the Server
     initiateModel: function () {
@@ -63,8 +67,11 @@ sap.ui.define([
     // Delete selected SemanticProtocol
     onDeleteSP: function (oEvent) {
       var SPId = oEvent.getParameters().listItem.getBindingContext("SemanticProtocolList").getProperty("identification/id");
+<<<<<<< HEAD
       var SPIdEncoded = encodeURIComponent(SPId);
 
+=======
+>>>>>>> master
 
       MessageBox.confirm("Do you really want to delete the SemanticProtocol: \"" + SPId + "\" ?", {
         title: "Delete SemanticProtocol: \"" + SPId + "\"",
@@ -75,7 +82,11 @@ sap.ui.define([
           if (sAction == "DELETE") {
 
             var that = this;
+<<<<<<< HEAD
             return fetch("/endpoint-registry/semanticProtocols/" + SPIdEncoded, {
+=======
+            return fetch("/endpoint-registry/semanticProtocols/" + SPId, {
+>>>>>>> master
               method: "DELETE"
             }).then((response) => {
               if (response.ok) {

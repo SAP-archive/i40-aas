@@ -14,7 +14,11 @@ sap.ui.define([
     },
 
     _onRouteMatched: function (oEvent) {
+<<<<<<< HEAD
       const AASIdEncoded = oEvent.getParameter("arguments").AASId;
+=======
+      const iAASId = oEvent.getParameter("arguments").AASId;
+>>>>>>> master
 
       // Set model for ID-Type dropdown menu by using Object Lib
       var oIdTypeEnum = aas.IdTypeEnum
@@ -33,7 +37,11 @@ sap.ui.define([
       // Set model for the AASDescriptor with a specific AASId
       var oModelaSingleDescriptor = new JSONModel();
       this.getView().setModel(oModelaSingleDescriptor, "SingleDescriptor");
+<<<<<<< HEAD
       oModelaSingleDescriptor.loadData("/endpoint-registry/AASDescriptors/" + AASIdEncoded);
+=======
+      oModelaSingleDescriptor.loadData("/endpoint-registry/AASDescriptors/" + iAASId);
+>>>>>>> master
     },
 
     // Shows initial the details of the first endpoint in the endpoint details part of the splitscreen

@@ -39,7 +39,7 @@
   "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
     "aas-logger": "link:../../pkg/aas-logger",
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "express": "^5.0.0-alpha.7",
