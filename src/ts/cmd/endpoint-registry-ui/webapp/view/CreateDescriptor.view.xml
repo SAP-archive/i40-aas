@@ -13,11 +13,21 @@
 						<VBox >
 							<HBox>
 								<Label text="{i18n>id}:" class="sapUiSmallMargin" width="150px" labelFor="InputAasId"/>
+<<<<<<< HEAD:src/ts/cmd/endpoint-registry-ui/webapp/view/CreateDescriptor.view.xml
 								<Input type="Text" value="{/identification/id}" placeholder="www.sampleOperator/aas" valueLiveUpdate="true" width="350px" required="true" id="InputAasId" liveChange = "onLiveChange"/>
 							</HBox>
 							<HBox>
 								<Label text="{i18n>idType}:" class="sapUiSmallMargin" width="150px"/>
 								<Select selectedKey="{/identification/idType}" items="{ path: 'IdTypeCollection>/', sorter: { path: 'Name' } }" width="200px">
+=======
+								<Input type="Text" value="{/identification/id}" placeholder="www.sampleOperator/aas" valueLiveUpdate="true"
+									width="350px" required="true" id="InputAasId" liveChange = "onLiveChange"/>
+							</HBox>
+							<HBox>
+								<Label text="{i18n>idType}:" class="sapUiSmallMargin" width="150px"/>
+								<Select selectedKey="{/identification/idType}" items="{ path: 'IdTypeCollection>/', sorter: { path: 'Name' } }"
+									width="200px">
+>>>>>>> origin/master:src/ts/cmd/endpoint-registry/ui/i40-aas-registry-ui/webapp/view/CreateDescriptor.view.xml
 									<core:Item key="{IdTypeCollection>TypeId}" text="{IdTypeCollection>Name}"/>
 								</Select>
 							</HBox>
@@ -29,7 +39,12 @@
 						<VBox >
 							<HBox>
 								<Label text="{i18n>id}:" class="sapUiSmallMargin" width="150px" labelFor="InputAssetId"/>
+<<<<<<< HEAD:src/ts/cmd/endpoint-registry-ui/webapp/view/CreateDescriptor.view.xml
 								<Input type="Text" value="{/asset/id}" placeholder="Sample-Asset-Id" valueLiveUpdate="true" width="250px" required="true" id="InputAssetId" liveChange = "onLiveChange"/>
+=======
+								<Input type="Text" value="{/asset/id}" placeholder="Sample-Asset-Id" 
+								valueLiveUpdate="true" width="250px" required="true" id="InputAssetId" liveChange = "onLiveChange"/>
+>>>>>>> origin/master:src/ts/cmd/endpoint-registry/ui/i40-aas-registry-ui/webapp/view/CreateDescriptor.view.xml
 							</HBox>
 							<HBox>
 								<Label text="{i18n>idType}:" class="sapUiSmallMargin" width="150px"/>
@@ -68,7 +83,12 @@
 							<VBox >
 								<HBox>
 									<Label text="{i18n>address}:" class="sapUiSmallMargin" width="150px" labelFor="EndpointAddress"/>
+<<<<<<< HEAD:src/ts/cmd/endpoint-registry-ui/webapp/view/CreateDescriptor.view.xml
 									<Input type="Text" id="EndpointAddress" placeholder="https://i40-aas-https-endpoint-ingress:2000/interaction" valueLiveUpdate="true" width="400px" value="{address}" liveChange="onLiveChange" required="true"/>
+=======
+									<Input type="Text" id="EndpointAddress" placeholder="https://i40-aas-https-endpoint-ingress:2000/interaction" valueLiveUpdate="true"
+										width="400px" value="{address}" liveChange="onLiveChange" required="true"/>
+>>>>>>> origin/master:src/ts/cmd/endpoint-registry/ui/i40-aas-registry-ui/webapp/view/CreateDescriptor.view.xml
 								</HBox>
 								<HBox>
 									<Label text="{i18n>type}:" class="sapUiSmallMargin" width="150px"/>

@@ -54,7 +54,7 @@ export default [
         if (req.query.submodelid || req.query.semanticid) {
           let result = await RoutingController.getSubmodels({
             submodelid: req.query.submodelid as string,
-            submodelsemanticid: req.query.semanticid  as string,
+            submodelsemanticid: req.query.semanticid as string,
           });
           res.status(200).end(JSON.stringify(result.data));
         } else {
