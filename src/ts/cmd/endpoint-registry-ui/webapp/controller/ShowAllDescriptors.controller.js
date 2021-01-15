@@ -17,7 +17,7 @@ sap.ui.define([
 
     onAfterShow: function () {
       this.initiateModel();
-      this.startAutorefreshModel(30000);
+      //this.startAutorefreshModel(30000); Every 30 Seconds Refresh Timer
     },
 
     //Get the Descriptors from the Server
@@ -65,6 +65,7 @@ sap.ui.define([
     // Delete selected Descriptor
     onDeleteDescriptor: function (oEvent) {
       var AASID = oEvent.getParameters().listItem.getBindingContext("DescriptorList").getProperty("identification/id");
+      var AASIDEncoded = encodeURIComponent(AASID);
 
       MessageBox.confirm("Do you really want to delete the Descriptor: \"" + AASID + "\" ?", {
         title: "Delete Descriptor: \"" + AASID + "\"",
@@ -76,7 +77,7 @@ sap.ui.define([
 
 
             var that = this;
-            return fetch("/endpoint-registry/AASDescriptors/" + AASID, {
+            return fetch("/endpoint-registry/AASDescriptors/" + AASIDEncoded, {
               method: "DELETE"
             }).then((response) => {
               if (response.ok) {
