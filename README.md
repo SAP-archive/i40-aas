@@ -7,7 +7,7 @@
     <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/SAP/i40-aas" />
     <img alt="Repository Size" src="https://img.shields.io/github/repo-size/SAP/i40-aas" />
     <img alt="License" src="https://img.shields.io/badge/License-Apache%202.0-green.svg" />
-    <img alt="REUSE status" src="https://api.reuse.software/badge/github.com/SAP/i40-aas" />
+    <a href="https://api.reuse.software/info/github.com/SAP/i40-aas" title="REUSE status"><img alt="REUSE status" src="https://api.reuse.software/badge/github.com/SAP/i40-aas" /></a>
 </div>
 
 <div align="center">
@@ -160,3 +160,6 @@ Simply check the [Contribution Guidelines](CONTRIBUTING.md).
 
 This project follows the specification ["Details of the AssetAdministrationShell"](https://www.plattform-i40.de/PI40/Redaktion/EN/Downloads/Publikation/2018-details-of-the-asset-administration-shell.html) part 1 version 1.0, which is work in progress. As the specification changes, so will this project.
 
+## Licensing
+
+Please see our [LICENSE](LICENSE) for copyright and license information. Detailed information including third-party components and their licensing/copyright information is available [via the REUSE tool](https://api.reuse.software/info/github.com/SAP/i40-aas).
