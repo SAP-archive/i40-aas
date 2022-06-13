@@ -1,3 +1,13 @@
+:warning: **Note:** i40-aas has been archived and will no longer be maintaned by the community. The Open Source implementations of an Asset Administration Shell (AAS) infrastructure in the context of the activities within the [Industrial Digital Twin Association (IDTA)](https://industrialdigitaltwin.org/) and [Eclipse Digital Twin Top-Level Project](https://projects.eclipse.org/projects/dt) are carried out in the following projects:
+
+-	[Eclipse AAS Model for Java (AAS4J)](https://projects.eclipse.org/projects/dt.aas4j) provides libraries for Java implementing the specification of the AAS such as metamodels, submodels, serialization and deserialization modules, validators, and transformation libraries to other industry standards.
+
+-	AAS Cloud Repository provides a reference implementation for the AAS Repository based on the API specifications of the AAS.
+
+By working within the [Eclipse Digital Twin Top-Level Project](https://projects.eclipse.org/projects/dt), we have bigger Open Source community backed up by the Eclipse Foundation to bring Digital Twins based on AAS to the next level.
+
+Looking forward to seeing in the [Eclipse AAS Model for Java (AAS4J)](https://projects.eclipse.org/projects/dt.aas4j) and AAS Cloud Repository community within the [Eclipse Digital Twin Top-Level Project](https://projects.eclipse.org/projects/dt)!
+
 <h1 align="center">
   i40-aas
 </h1>
@@ -9,20 +19,6 @@
     <img alt="License" src="https://img.shields.io/badge/License-Apache%202.0-green.svg" />
     <a href="https://api.reuse.software/info/github.com/SAP/i40-aas" title="REUSE status"><img alt="REUSE status" src="https://api.reuse.software/badge/github.com/SAP/i40-aas" /></a>
 </div>
-
-<div align="center">
-
-  ### ⚠️ **i40-aas** is **alpha** ⚠️
-
-</div>
-
-<div align="center">
-
-  **i40-aas** welcomes [contributions](#contributing). Please read about [known issues](#known-issues) and [upcoming changes](#upcoming-changes).
-
-</div>
-
-<br/>
 
 ## Contents
 
