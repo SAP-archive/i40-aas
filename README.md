@@ -2,11 +2,11 @@
 
 -	[Eclipse AAS Model for Java (AAS4J)](https://projects.eclipse.org/projects/dt.aas4j) provides libraries for Java implementing the specification of the AAS such as metamodels, submodels, serialization and deserialization modules, validators, and transformation libraries to other industry standards.
 
--	IDTA AAS Cloud Repository (currently admin-shell.io/aas-cloud-repository) provides a reference implementation for the AAS Repository based on the API specifications of the AAS.
+-	AAS Cloud Repository provides a reference implementation for the AAS Repository based on the API specifications of the AAS.
 
-By working within the [Eclipse Digital Twin Top-Level Project](https://projects.eclipse.org/projects/dt) , we have bigger Open Source community backed up by the Eclipse Foundation to bring Digital Twins based on AAS to the next level.
+By working within the [Eclipse Digital Twin Top-Level Project](https://projects.eclipse.org/projects/dt), we have bigger Open Source community backed up by the Eclipse Foundation to bring Digital Twins based on AAS to the next level.
 
-Looking forward to seeing in the [Eclipse AAS Model for Java (AAS4J)](https://projects.eclipse.org/projects/dt.aas4j) and AAS Cloud Repository (currently admin-shell.io/aas-cloud-repository) ” community!
+Looking forward to seeing in the [Eclipse AAS Model for Java (AAS4J)](https://projects.eclipse.org/projects/dt.aas4j) and AAS Cloud Repository community within the [Eclipse Digital Twin Top-Level Project](https://projects.eclipse.org/projects/dt)!
 
 <h1 align="center">
   i40-aas
